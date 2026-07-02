@@ -41,6 +41,8 @@ jobs:
             set -e
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm ls
+            nvm use 22
             cd /var/www/madeirense
             git pull origin staging
             yarn install --frozen-lockfile --production
