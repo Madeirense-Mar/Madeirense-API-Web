@@ -26,8 +26,6 @@ jobs:
 
       - name: Build shared code
         run: yarn build-shared-code
-        env:
-          DATABASE_URL: "mysql://user:password@localhost:3306/madeirense" 
 
       - name: Build API and Web
         run: yarn concurrently "yarn workspace api build" "yarn workspace web build"
@@ -38,6 +36,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           script: |
             set -e
             cd /var/www/madeirense
@@ -56,6 +55,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           source: "packages/web/dist/*"
           target: "/var/www/madeirense/web/dist"
           strip_components: 3
