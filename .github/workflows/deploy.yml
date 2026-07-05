@@ -47,8 +47,10 @@ jobs:
             cd /var/www/madeirense
             git pull origin staging
             yarn install --frozen-lockfile --production
+            DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              yarn workspace @Madeirense/database prisma
             pm2 reload ecosystem.config.js --env production || \
-            pm2 start ecosystem.config.js --env production
+              pm2 start ecosystem.config.js --env production
             pm2 save
 
       - name: Sync web build to VPS
