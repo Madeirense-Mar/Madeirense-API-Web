@@ -44,8 +44,7 @@ jobs:
             git pull origin staging
             yarn install --frozen-lockfile 
             DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-              yarn workspace @Madeirense/database prisma
-            yarn build:api 
+              yarn build:api 
             pm2 reload ecosystem.config.js --env production || \
               pm2 start ecosystem.config.js --env production
             pm2 save
