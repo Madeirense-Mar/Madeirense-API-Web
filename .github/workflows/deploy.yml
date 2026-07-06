@@ -27,8 +27,8 @@ jobs:
       - name: Build shared code
         run: yarn build-shared-code
 
-      - name: Build API and Web
-        run: yarn concurrently "yarn workspace api build" "yarn workspace web build"
+      - name: Build Web
+        run: yarn workspace web build
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
@@ -41,14 +41,11 @@ jobs:
             set -e
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm ls
-            nvm use 22
-            npm ls --depth=0
-            cd /var/www/madeirense
             git pull origin staging
-            yarn install --frozen-lockfile --production
+            yarn install --frozen-lockfile 
             DATABASE_URL="${{ secrets.DATABASE_URL }}" \
               yarn workspace @Madeirense/database prisma
+            yarn build:api 
             pm2 reload ecosystem.config.js --env production || \
               pm2 start ecosystem.config.js --env production
             pm2 save
