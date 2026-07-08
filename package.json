@@ -9,8 +9,8 @@
     },
     "scripts": {
         "build": "yarn build-shared-code && concurrently \"yarn workspace api build\" \"yarn workspace web build\"",
-        "build-shared-code": "yarn workspace @Madeirense/database prisma && yarn workspace @Madeirense/database build && yarn workspace @Madeirense/shared build",
-        "build:api": "yarn build-shared-code && yarn workspace api build",
+        "build-shared-code": "yarn workspace @Madeirense/database generate && yarn workspace @Madeirense/database build && yarn workspace @Madeirense/shared build",
+        "build:api": "yarn workspace @Madeirense/database prisma db pull && yarn build-shared-code && yarn workspace api build",
         "build:dev-web": "yarn build-shared-code:dev && concurrently \"yarn workspace api build\" \"yarn workspace web build\"",
         "build-shared-code:dev": "yarn workspace @Madeirense/database prisma:dev && yarn workspace @Madeirense/database build && yarn workspace @Madeirense/shared build",
         "build:staging": "yarn build-shared-code:staging && concurrently \"yarn workspace api build\" \"yarn workspace web build\"",
