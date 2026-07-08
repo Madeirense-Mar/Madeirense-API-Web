@@ -41,6 +41,7 @@ jobs:
             set -e
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd /var/www/madeirense 
             git pull origin staging
             yarn install --frozen-lockfile 
             DATABASE_URL="${{ secrets.DATABASE_URL }}" \
