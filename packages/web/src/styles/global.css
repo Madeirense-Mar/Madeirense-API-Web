@@ -52,11 +52,10 @@ body {
 
     margin: 0;
 
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-family: "Albert Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
 
     background-color: var(--background-color);
 }
@@ -104,6 +103,48 @@ dialog * {
     color: var(--base-text-color);
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Climate Crisis", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+        "YEAR" 1979;
+}
+
+h1 {
+    font-size: 17.942rem;
+}
+
+h2 {
+    font-size: 11.089rem;
+}
+
+h3 {
+    font-size: 6.854rem;
+}
+
+h4 {
+    font-size: 3.436rem;
+}
+
+h5 {
+    font-size: 2.618rem;
+}
+
+h6 {
+    font-size: 1.618rem;
+}
+
+p {
+    font-size: 1rem;
+}
+
+/*#region Media*/
 @media only screen and (min-width: 344px) {
     body #root {
         width: 95vw;
@@ -127,3 +168,4 @@ dialog * {
         width: 60vw;
     }
 }
+/*#endregion*/
