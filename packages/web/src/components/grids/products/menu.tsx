@@ -296,21 +296,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
                             }}
                         />
                     })}
-                    {list.map((item, idx) => {
-                        if (!item) return null;
-
-                        const ref = idx === list.length - 1 ? lastElementRef : undefined;
-
-                        return <ProductCard
-                            key={item.product_id}
-                            product={item}
-                            disableActions={mode === "admin"}
-                            {...{
-                                ref,
-                                mode
-                            }}
-                        />
-                    })}
                 </div>
 
                 {isFetchingNextPage && <li>
