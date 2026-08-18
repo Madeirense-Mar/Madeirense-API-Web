@@ -1,3 +1,6 @@
+//Application
+export type * from "./application/types.js";
+
 //Business
 export * from "./madeirense/locales/index.js";
 export * from "./madeirense/utilities/enumerators.js";
