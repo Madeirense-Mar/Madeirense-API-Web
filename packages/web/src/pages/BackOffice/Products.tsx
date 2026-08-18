@@ -52,7 +52,7 @@ function BackOfficeProductsPage() {
                     Ver/Atribuir descontos
                 </Button>
 
-                <Button variant="secondary" onClick={openAddProductModal}>
+                <Button variant="secondary" shape="circle" onClick={openAddProductModal}>
                     <Icon name="Plus" />
                 </Button>
             </header>

@@ -1,7 +1,7 @@
 .button {
     --xs-size: 20px;
-    --s-size: 40px;
-    --m-size: 70px;
+    --s-size: 30px;
+    --m-size: 40px;
     --l-size: 100px;
     --xl-size: 200px;
 
@@ -13,7 +13,12 @@
     --button-border-width: 1px;
     --button-border-radius: 10px;
     
+    @apply flex flex-row justify-center items-center gap-2;
+
     height: var(--button-height);
+    min-height: var(--button-height);
+    max-height: var(--button-height);
+
     width: var(--button-width);
 
     border-width: var(--button-border-width, 1px);
@@ -25,13 +30,28 @@
 
     color: var(--button-text-color, transparent);
     
-    padding: 0 var(--button-padding-x, var(--button-padding-x-left), var(--button-padding)) var(--button-padding-x, var(--button-padding-x-right), var(--button-padding)) 0;
+    padding: 0 var(--button-padding-x, var(--button-padding-x-left, var(--button-padding))) 0 var(--button-padding-x, var(--button-padding-x-right, var(--button-padding)));
 
     cursor: pointer;
 }
 
+.button svg {
+    display: inline-flex;
+
+    color: var(--button-text-color);
+
+    transition: rotate 0.5s ease-in-out, scale 0.5s ease-in-out;
+}
+
+.button:hover svg {
+    scale: 1.3;
+    rotate: 35deg;
+}
+
 .circle {
     composes: button;
+
+    --button-padding: 0px;
 
     @apply rounded-full;
 
@@ -81,10 +101,16 @@
 
 .primary {
     composes: button;
+
+    --button-background-color: var(--neutral-light);
+    --button-text-color: var(--neutral-dark);
 }
 
 .secondary {
     composes: button;
+    
+    --button-border-color: var(--neutral-light);
+    --button-text-color: var(--neutral-light);
 }
 
 .selected {
