@@ -2,7 +2,7 @@
     /*  Follows the tokens defined in the PenPot file:
             - https://design.penpot.app/#/workspace?team-id=9529fedc-e097-80ce-8008-648354c60462&file-id=9529fedc-e097-80ce-8008-6483893adb97&page-id=9529fedc-e097-80ce-8008-6483893adb98&board-id=8f2f5877-217e-8035-8008-6d98d44c3027&layout=tokens
     */
-    
+
     /*#region Colors*/
     --accent: #9b0808;
 
@@ -62,6 +62,8 @@ body {
 }
 
 body[data-theme*="dark"] {
+    --base-text-color: var(--neutral-light);
+
     --border-color: var(--neutral-light);
     
     --text-color: var(--neutral-light);
@@ -69,6 +71,8 @@ body[data-theme*="dark"] {
 }
 
 body[data-theme*="light"] {
+    --base-text-color: var(--neutral-dark);
+
     --border-color: var(--neutral-dark);
     
     --text-color: var(--neutral-dark);
