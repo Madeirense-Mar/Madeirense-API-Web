@@ -1,3 +1,25 @@
 .grid {
     composes: grid from "../grid.module.css";
 }
+
+@media only screen and (min-width: 344px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(270px, 1fr));
+    }
+}
+
+@media only screen and (min-width: 428px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(330px, 1fr));
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(330px, 1fr));
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+    
+}

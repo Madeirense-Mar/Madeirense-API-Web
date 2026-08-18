@@ -1,23 +1,27 @@
+/*#region Card*/
 .card {
     composes: card from "./card.module.css";
-    
+
+    --card-border-radius: 10px;
     --padding: 20px;
 
-    @apply flex flex-col justify-start items-center;
+    @apply flex flex-col justify-start items-center gap-2;
     
     overflow: hidden;
     
     height: auto;
 
-    border-color: var(--card-border-color, var(--neutral));
+    border-color: var(--card-border-color, var(--card-neutral));
     border-radius: var(--card-border-radius);
     border-style: var(--card-border-style, solid);
     border-width: var(--card-border-width, var(--border-width));
 
     background-color: var(--card-background-color, white);
+
+    padding: var(--padding);
 }
 
-.card *:not([data-text="price"]) {
+.card *:not([data-text]) {
     font-size: small;
 }
 
@@ -30,7 +34,7 @@
 }
 
 .card button:last-of-type {
-    border: var(--border-width) solid var(--neutral);
+    border: var(--border-width) solid var(--card-neutral);
 }
 
 .card span[data-text="quantity"] {
@@ -39,50 +43,28 @@
     border-radius: 50%;
 }
 
-.card div[data-section="description"] {
-    padding: var(--padding);
-}
-
 .card div[data-section="tags"] {
-    @apply w-full flex flex-row justify-center items-center flex-nowrap;
+    @apply w-full flex flex-row justify-start items-center flex-nowrap gap-2;
+
     min-height: 24px;
+
     overflow: hidden;
-    padding-left: var(--padding);
-    padding-right: var(--padding);
-    border-bottom: var(--border-width) solid var(--neutral);
-}
-
-.card div[data-section="tags"] span[data-text="tag"] {
-    border-color: var(--neutral);
-    border-radius: 0px;
-    border-bottom-width: 0px;
-    border-top-width: 0px;
-}
-
-.card div[data-section="tags"] span[data-text="tag"]:not(:last-child) {
-    border-right-width: 0px;
 }
 
 .card div[data-section="thumbnail"] {
     --height: 200px;
 
-    width: 100%;
     height: var(--height);
     min-height: var(--height);
     max-height: var(--height);
-    border-bottom: var(--border-width) solid var(--neutral);
+
+    width: 100%;
+
+    border-radius: var(--card-border-radius);
+
     background-position: center center;
     background-size: 100%;
     background-repeat: no-repeat;
-}
-
-.card h4 {
-    --h: 40px;
-
-    @apply font-bold text-center;
-    height: var(--h);
-    min-height: var(--h);
-    max-height: var(--h);
 }
 
 .card p {
@@ -93,7 +75,9 @@
     font-size: large;
     font-weight: 700;
 }
+/*#endregion*/
 
+/*#region Variants*/
 /* TODO: Unimplemented style > danger */
 .danger {
     composes: card;
@@ -107,6 +91,8 @@
 /* TODO: Unimplemented style > primary */
 .primary {
     composes: card;
+
+    --card-border-color: var(--primary-light);
 }
 
 /* TODO: Unimplemented style > secondary */
@@ -128,3 +114,4 @@
 .warning {
     composes: card;
 }
+/*#endregion*/

@@ -47,6 +47,8 @@ import {
     nextPageTriggerSetup
 } from "components/lists/utilities/functions";
 
+import styles from "./menu.module.css";
+
 import type { 
     $Enums, 
     Products
@@ -278,7 +280,22 @@ function ProductsMenuGrid(_props: IPropTypes) {
                     </Tag>}
                 </div>}
 
-                <div data-grid="ProductCard" className="w-full">
+                <div data-grid="ProductCard" className={resolveClassNames(styles.grid, "w-full")}>
+                    {list.map((item, idx) => {
+                        if (!item) return null;
+
+                        const ref = idx === list.length - 1 ? lastElementRef : undefined;
+
+                        return <ProductCard
+                            key={item.product_id}
+                            product={item}
+                            disableActions={mode === "admin"}
+                            {...{
+                                ref,
+                                mode
+                            }}
+                        />
+                    })}
                     {list.map((item, idx) => {
                         if (!item) return null;
 

@@ -18,7 +18,6 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
-import AnchorButton from "components/buttons/anchor";
 import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tag";
@@ -35,7 +34,6 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { withVariant } from "components/types";
-import { Welcome$Enumerators } from "pages/Welcome";
 
 // ***************************************************************************************************************
 
@@ -113,6 +111,7 @@ function ProductCard(_props: IProductCardProps) {
         ].includes(state),
 
         "isProductCarted": deliveryCart.some(p => p.product_id === product.product_id),
+        "isProductAvailableToBeCarted": user && !deliveryCart.find(p => p.product_id === product.product_id),
 
         "isSaved": user?.Favorites?.find(({ product_id: pId }) => pId === product_id) !== undefined,
 
@@ -229,12 +228,6 @@ function ProductCard(_props: IProductCardProps) {
                 {getLabel(product_type)}
             </Tag>
 
-            {/* <Tag>
-                <StarIcon />
-
-                4.8
-            </span> */}
-
             {(discount > 0) && <Tag>
                 <Icon name="Discount" />
 
@@ -255,27 +248,21 @@ function ProductCard(_props: IProductCardProps) {
 
         </div>}
 
-        <div data-section="description" className="w-full flex flex-col justify-start items-center gap-4">
-            <h4>{name.toLocaleUpperCase()}</h4>
+        <div data-section="description" className="w-full flex flex-col justify-start items-start gap-4">
+            <p data-text="name" className="font-bold">{name}</p>
 
-            {(discount > 0)
-                ? <div className="flex flex-col justify-center items-center">
-                    <span data-text="price" className="font-bold text-sm line-through">{formatNumber(price)}</span>
-                    <span data-text="price" className="font-bold text-2xl">{!discountedPrice ? "Grátis" : formatNumber(discountedPrice)}</span>
-                </div>
+            <div className="w-full flex flex-row items-center">
+                {(discount > 0)
+                    ? <div className="flex flex-col justify-center items-start mr-auto">
+                        <span data-text="price" className="font-bold text-sm line-through">{formatNumber(price)}</span>
+                        <span data-text="price" className="font-bold text-2xl">{!discountedPrice ? "Grátis" : formatNumber(discountedPrice)}</span>
+                    </div>
 
-                : <span data-text="price" className="font-bold text-2xl">{!price ? "Grátis" : formatNumber(price)}</span>
-            }
+                    : <span data-text="price" className="font-bold text-2xl mr-auto">{!price ? "Grátis" : formatNumber(price)}</span>
+                }
 
-            {!disableActions && <>
-                {!assertions.isProductCarted && <>
-                    {!user && <AnchorButton variant="secondary" to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}}`}>
-                        <Icon name="Login" />
-
-                        {LoginToOrder}
-                    </AnchorButton>}
-
-                    {user && <Button variant="secondary" onClick={addToCart} className="w-full max-w-[500px]" disabled={assertions.isAddingToCartDisabled}>
+                {!disableActions && <>
+                    {(assertions.isProductAvailableToBeCarted) && <Button variant="secondary" onClick={addToCart} className="w-full max-w-[500px]" disabled={assertions.isAddingToCartDisabled}>
                         {(state === "adding")
                             ? <Icon name="Loading" className="animate-spin" />
 
@@ -285,23 +272,25 @@ function ProductCard(_props: IProductCardProps) {
                                 Adicionar
                             </>}
                     </Button>}
+
+                    {assertions.isProductCarted && <div data-state={(state === "favoriting") ? "disabled" : "idle"} className="flex flex-row justify-center items-center w-full gap-2 max-w-[500px]">
+                        <Button variant="secondary" data-shape="round" onClick={removeFromCart} disabled={assertions.isWorking}>
+                            {(state === "removing") ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                        </Button>
+
+                        <span data-text="quantity">
+                            {quantity}
+                        </span>
+
+                        <Button onClick={addToCart} variant="secondary" data-shape="round" disabled={assertions.isWorking}>
+                            {(state === "adding") ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                        </Button>
+                    </div>}
                 </>}
-
-                {assertions.isProductCarted && <div data-state={(state === "favoriting") ? "disabled" : "idle"} className="flex flex-row justify-center items-center w-full gap-2 max-w-[500px]">
-                    <Button variant="secondary" data-shape="round" onClick={removeFromCart} disabled={assertions.isWorking}>
-                        {(state === "removing") ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
-                    </Button>
-
-                    <span data-text="quantity">
-                        {quantity}
-                    </span>
-
-                    <Button onClick={addToCart} variant="secondary" data-shape="round" disabled={assertions.isWorking}>
-                        {(state === "adding") ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
-                    </Button>
-                </div>}
-            </>}
+            </div>
         </div>
+
+        {!user && <span className="mt-auto italic opacity-30">{LoginToOrder}</span>}
     </div>;
 };
 
