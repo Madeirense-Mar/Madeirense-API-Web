@@ -117,7 +117,8 @@
         ]
     },
     "include": [
-        "src"
+        "src", 
+        "postcss.config.js"
     ],
     "references": [
         {
