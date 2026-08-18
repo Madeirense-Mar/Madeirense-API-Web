@@ -1,20 +1,32 @@
 :root {
+    /*  Follows the tokens defined in the PenPot file:
+            - https://design.penpot.app/#/workspace?team-id=9529fedc-e097-80ce-8008-648354c60462&file-id=9529fedc-e097-80ce-8008-6483893adb97&page-id=9529fedc-e097-80ce-8008-6483893adb98&board-id=8f2f5877-217e-8035-8008-6d98d44c3027&layout=tokens
+    */
+    
+    /*#region Colors*/
     --accent: #9b0808;
+
     --primary: #0b5196;
     --primary-light: #61a7ec;
     --primary-dark: #05223d;
+
     --secondary: #fbe200;
     --secondary-light: #fff388;
     --secondary-dark: #3f3900;
+
     --neutral: #a2a2a2;
     --neutral-dark: #1a1a1a;
     --neutral-light: #fff;
+
     --success: #8dd751;
     --success-dark: #1a3404;
-
+    /*#endregion*/
+    
+    /*#region Spacing*/
     --border-width: 1px;
-
+    
     --page-margin: 10px;
+    /*#endregion*/
 }
 
 *:not(div:has(.uc-visual-drop-area) *) {
@@ -26,11 +38,14 @@
 
 body {
     --h: 100vh;
+    --w: 100vw;
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 
     height: var(--h);
+    width: var(--w);
 
     overflow-x: hidden;
     overflow-y: auto;
@@ -83,4 +98,28 @@ code {
 
 dialog * {
     color: var(--base-text-color);
+}
+
+@media only screen and (min-width: 344px) {
+    body #root {
+        width: 95vw;
+    }
+}
+
+@media only screen and (min-width: 428px) {
+    body #root {
+        width: 70vw;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    body #root {
+        width: 80vw;
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+    body #root {
+        width: 60vw;
+    }
 }
