@@ -29,7 +29,8 @@
     /*#endregion*/
 }
 
-*:not(div:has(.uc-visual-drop-area) *) {
+/* *:not(div:has(.uc-visual-drop-area) *) { */
+* {
     z-index: 0;
     color: var(--text-color);
     box-sizing: border-box;
