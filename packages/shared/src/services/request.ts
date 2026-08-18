@@ -4,7 +4,7 @@ import {
 
 import { APIError } from './error.js';
 
-import type { valuePair } from 'types.js';
+import type { valuePair } from 'types';
 
 import type {
     API$Types,
