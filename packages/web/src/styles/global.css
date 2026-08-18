@@ -1,12 +1,19 @@
 :root {
-    --danger: #ff0000;
-    --neutral: #b9804a;
-    --primary: #ffd700;
-    --secondary: #002f6c;
-    --success: #389b50;
-    --warning: #f0b639;
+    --accent: #9b0808;
+    --primary: #0b5196;
+    --primary-light: #61a7ec;
+    --primary-dark: #05223d;
+    --secondary: #fbe200;
+    --secondary-light: #fff388;
+    --secondary-dark: #3f3900;
+    --neutral: #a2a2a2;
+    --neutral-dark: #1a1a1a;
+    --neutral-light: #fff;
+    --success: #8dd751;
+    --success-dark: #1a3404;
 
-    --background-color: color-mix(in srgb, var(--neutral), black 70%);
+    --danger: #ff0000;
+    --warning: #f0b639;
 
     --border-color: #dadada;
     --border-width: 1px;
@@ -44,6 +51,14 @@ body {
     -moz-osx-font-smoothing: grayscale;
 
     background-color: var(--background-color);
+}
+
+body[data-theme="sea"] {
+    --background-color: color-mix(in srgb, var(--primary), black 70%);
+}
+
+body[data-theme="land"] {
+    --background-color: color-mix(in srgb, var(--secondary-dark), black 70%);
 }
 
 code {
