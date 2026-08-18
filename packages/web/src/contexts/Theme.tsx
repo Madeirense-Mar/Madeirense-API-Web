@@ -6,8 +6,8 @@ import {
 } from "react";
 
 import {
-    DOMAttributes
-} from "utilities/constants";
+    Root$Enumerators
+} from "styles/enumerators";
 
 import {
     Application$Types
@@ -71,7 +71,7 @@ const ThemeProvider = ({ children }: any) => {
         if (!$body)
             return;
 
-        $body.setAttribute(DOMAttributes.THEME, currentTheme);
+        $body.setAttribute(Root$Enumerators.Attributes.Styles.theme, currentTheme);
     }, [currentTheme])
 
     return <ThemeContext.Provider value={{ switchTheme, toggleVariant }}>
