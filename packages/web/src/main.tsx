@@ -1,7 +1,16 @@
 import "@uploadcare/react-uploader/core.css";
 
+//#region Styles
 import "styles/tailwind.css";
 import "styles/global.css";
+
+//#region Components default styles
+import "styles/card.css";
+//#endregion
+
+//#region Grouped components default styles
+//#endregion
+//#endregion
 
 // ***************************************************************************************************************
 
