@@ -26,6 +26,7 @@ import { FlasherProvider } from "contexts/Flasher";
 import { NotificationsProvider } from "contexts/Notifications";
 import { OrdersProvider } from "contexts/Orders";
 import { ProfileProvider } from "contexts/Profile";
+import { ThemeProvider } from "contexts/Theme";
 
 import AppRouter from "router";
 
@@ -38,6 +39,7 @@ const root = ReactDOM.createRoot(
 const queryClient = new QueryClient(MXP$App.configurations.dependencies['@tanstack/react-query']);
 
 const providers = [
+    ThemeProvider,
     NotificationsProvider,
     AppProvider,
     ProfileProvider,

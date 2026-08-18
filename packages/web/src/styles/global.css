@@ -12,14 +12,7 @@
     --success: #8dd751;
     --success-dark: #1a3404;
 
-    --danger: #ff0000;
-    --warning: #f0b639;
-
-    --border-color: #dadada;
     --border-width: 1px;
-
-    --text-color: #dadada;
-    --text-contrast-color: #dadada;
 
     --page-margin: 10px;
 }
@@ -53,12 +46,34 @@ body {
     background-color: var(--background-color);
 }
 
-body[data-theme="sea"] {
-    --background-color: color-mix(in srgb, var(--primary), black 70%);
+body[data-theme*="dark"] {
+    --border-color: var(--neutral-light);
+    
+    --text-color: var(--neutral-light);
+    --text-contrast-color: var(--neutral-light);
 }
 
-body[data-theme="land"] {
+body[data-theme*="light"] {
+    --border-color: var(--neutral-dark);
+    
+    --text-color: var(--neutral-dark);
+    --text-contrast-color: var(--neutral-dark);
+}
+
+body[data-theme="land-dark"] {
     --background-color: color-mix(in srgb, var(--secondary-dark), black 70%);
+}
+
+body[data-theme="land-light"] {
+    --background-color: color-mix(in srgb, var(--secondary-light), white 70%);
+}
+
+body[data-theme="sea-dark"] {
+    --background-color: var(--primary-dark);
+}
+
+body[data-theme="sea-light"] {
+    --background-color: color-mix(in srgb, var(--primary-light), black 70%);
 }
 
 code {

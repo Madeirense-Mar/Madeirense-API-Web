@@ -1,13 +1,15 @@
 export namespace Application$Types {
-    type themes = (
-        |   "sea"
-        |   "land"
-    );
-
-    type themeVariants = (
-        |   "dark"
-        |   "light"
-    );
-
-    export type themetype = `${themes}${`-${themeVariants}` | ""}`;
+    export namespace Themes {
+        export type options = (
+            |   "sea"
+            |   "land"
+        );
+    
+        export type variants = (
+            |   "dark"
+            |   "light"
+        );
+    
+        export type types = `${options}-${variants}`;
+    }
 };
