@@ -11,7 +11,7 @@
     --button-padding: 12px;
 
     --button-border-width: 1px;
-    --button-border-radius: 10px;
+    --button-border-radius: 99999px;
     
     @apply flex flex-row justify-center items-center gap-2;
 
@@ -38,8 +38,6 @@
 .button svg {
     display: inline-flex;
 
-    color: var(--button-text-color);
-
     transition: rotate 0.5s ease-in-out, scale 0.5s ease-in-out;
 }
 
@@ -63,8 +61,6 @@
 
 .rect {
     composes: button;
-
-    @apply rounded-lg;
 }
 
 .xs .s .m .l .xl {

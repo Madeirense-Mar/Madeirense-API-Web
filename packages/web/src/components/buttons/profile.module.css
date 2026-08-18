@@ -1,11 +1,18 @@
 .button {
     composes: button from "./button.module.css";
 
+    --button-width: var(--button-height);
+    
     @apply flex flex-col justify-center items-center;
+
+    max-width: var(--button-width);
+    min-width: var(--button-width);
 
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+
+    outline: calc(3 * var(--button-border-width)) var(--button-border-color);
 }
 
 .button>div {
@@ -37,6 +44,10 @@
     composes: button;
 
     --button-background-color: #e6e6e6;
+}
+
+[data-theme*="dark"] .primary {
+    --button-border-color: var(--neutral-dark);
 }
 
 /* TODO: Unimplemented style > secondary */

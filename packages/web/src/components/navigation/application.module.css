@@ -1,19 +1,18 @@
 .nav {
     @apply flex flex-row items-center gap-4;
+
     position: relative;
     z-index: 11 !important;
+
     grid-area: application-nav;
-    border-bottom: var(--border-width) solid var(--border-color);
+
+    padding: var(--base-padding);
+
     background-color: var(--secondary);
-    padding: 0px var(--container-padding);
 }
 
-.nav * {
-    color: var(--base-text-contrast-color) !important;
-}
-
-.nav [data-text="title"] {
-    @apply font-bold text-3xl;
+[data-theme*="dark"] .nav * {
+    color: var(--neutral-dark);
 }
 
 .nav #login {

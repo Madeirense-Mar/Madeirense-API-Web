@@ -8,14 +8,9 @@
     max-width: var(--aside-menu-width);
     min-width: 0px;
     
-    padding-top: calc(var(--application-nav-bar-height));
-    padding-bottom: var(--application-nav-bar-height);    
+    padding-top: var(--base-padding);
+    padding-bottom: var(--base-padding);
 
-    transition-duration: 0.5s;
-}
-
-.menu ul {
-    overflow: hidden;
     transition-duration: 0.5s;
 }
 
@@ -26,6 +21,38 @@
     background-color: transparent;
     border-color: transparent;
     width: 0px;
+}
+
+.menu[data-toggled] {
+    --px: calc(var(--container-padding) - 8px);
+
+    background-color: var(--secondary-dark);
+    border-right: calc(var(--border-width) * 2) solid var(--secondary);
+    padding-left: var(--px);
+    padding-right: var(--px);
+    width: var(--max-width);
+}
+
+.menu ul {
+    overflow: hidden;
+
+    padding-bottom: var(--container-padding);
+    padding-top: var(--container-padding);
+
+    margin-top: var(--base-padding);
+    
+    transition-duration: 0.5s;
+}
+
+.menu #toggler {
+    position: absolute;
+    top: calc(var(--application-nav-bar-height) / 2);
+    left: 100%;
+    transition: transform 2s ease-in-out;
+}
+
+.menu #toggler svg {
+    transition: transform 1s ease-in-out;
 }
 
 .menu:not([data-toggled]) ul {
@@ -44,16 +71,6 @@
     transform: translate(-10%, -35%);
 }
 
-.menu[data-toggled] {
-    --px: calc(var(--container-padding) - 8px);
-
-    background-color: var(--base-background);
-    border-right: calc(var(--border-width) * 2) solid var(--secondary);
-    padding-left: var(--px);
-    padding-right: var(--px);
-    width: var(--max-width);
-}
-
 .menu[data-toggled] ul {
     opacity: 1;
     width: 100%;
@@ -65,16 +82,4 @@
 
 .menu[data-toggled] #toggler:hover {
     transform: translate(-70%, -35%);
-}
-
-.menu #toggler {
-    border: none;
-    position: absolute;
-    top: calc(var(--application-nav-bar-height) / 2);
-    left: 100%;
-    transition: transform 2s ease-in-out;
-}
-
-.menu #toggler svg {
-    transition: transform 1s ease-in-out;
 }

@@ -159,8 +159,8 @@ const AddProductForm = ({
         }
     };
 
-    return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
-        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+    return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4" {...props}>
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-3 p-2 rounded-md">
             <legend>Sobre</legend>
 
             <header className="w-full flex flex-row justify-between items-center">
@@ -185,7 +185,7 @@ const AddProductForm = ({
             {[
                 status === "uploading-thumbnail",
                 data?.uploadedThumbnailURL !== ""
-            ].includes(true) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
+            ].includes(true) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px]">
                     {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
                 </div>}
 
@@ -264,13 +264,13 @@ const AddProductForm = ({
                     <Icon name="Loading" className="animate-spin" />
                 </Button>
 
-                : <div className="w-full flex flex-row justify-start items-center gap-2">
-                    <Button value="once" type="submit" className="w-full">
-                        Adicionar
-                    </Button>
-
+                : <div className="w-full flex flex-row justify-between items-center gap-2">
                     <Button value="another" type="submit" variant="secondary">
                         Submeter e adicionar outro
+                    </Button>
+
+                    <Button value="once" type="submit" className="w-full">
+                        Adicionar
                     </Button>
                 </div>
             }

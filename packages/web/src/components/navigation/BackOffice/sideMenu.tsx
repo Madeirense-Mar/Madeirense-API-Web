@@ -24,6 +24,7 @@ import styles from "./sideMenu.module.css";
 import type {
     $Enums
 } from "@Madeirense/database/browser";
+import { Root$Enumerators } from "styles/enumerators";
 
 // ***************************************************************************************************************
 
@@ -106,14 +107,16 @@ function SideMenu({ className, ...props }: ComponentProps<"aside">) {
 
     const [toggled, toggle] = useState<boolean>(false);
 
+    const toggleMenu = () => toggle(t => !t);
+    
     return <aside
         className={resolveClassNames(styles.menu, className)}
         {...{
-            ...((toggled) ? { "data-toggled": "" } : {})
+            ...((toggled) ? { [Root$Enumerators.Attributes.States.toggled]: "" } : {})
         }}
         {...props}
     >
-        <Button id="toggler" title="Abrir/Fechar" onClick={() => toggle(t => !t)}>
+        <Button id="toggler" title="Abrir/Fechar" shape="circle" onClick={toggleMenu}>
             <Icon name="ChevronRight" className={toggled ? "rotate-180" : ""} />
         </Button>
 

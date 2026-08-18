@@ -59,7 +59,7 @@ const ModalProvider = ({ children }: any) => {
             <header>
                 {Boolean(options?.title) && <h2>{options?.title}</h2>}
 
-                <Button id="eject" onClick={handleClose} data-shape="round" variant='secondary' className='ml-auto opacity-15 hover:opacity-100'>
+                <Button id="eject" onClick={handleClose} data-shape="round" variant='secondary' className='ml-auto'>
                     <Icon name="Close" />
                 </Button>
             </header>
