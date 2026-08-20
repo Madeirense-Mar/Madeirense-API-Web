@@ -23,6 +23,7 @@ import {
     type appPreferencesType,
     type cartedProductType,
     type cartSummaryType,
+    MENU_PRODUCT_TYPES,
 } from "@Madeirense/shared";
 
 import type {
@@ -167,20 +168,15 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             const { Products: product } = (await clients.carts.addItem(product_id)) ?? {};
 
             switch (product?.product_type) {
-                case "beverage":
-                case "main":
-                case "dessert":
-                case "starter":
-                    array = [...state.cart.deliveryCart];
-                    type = "delivery";
-                    break;
-
                 case "ticket":
                     array = [...state.cart.eventCart];
                     type = "event";
                     break;
 
-                default: throw new Error(`Invalid product type: ${product?.product_type}`);
+                default:
+                    array = [...state.cart.deliveryCart];
+                    type = "delivery";
+                    break;
             };
 
             const index = array.findIndex(pr => pr.product_id === product?.product_id);
@@ -280,7 +276,9 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         try {
             const cart = (await clients.carts.getMyCart()) ?? [];
 
-            const deliveryCart = cart.filter(p => !p.product_type ? false : (["beverage", "dessert", "main", "starter"] as $Enums.Products_product_type[]).includes(p.product_type));
+            console.log({ cart });
+            
+            const deliveryCart = cart.filter(p => !p.product_type ? false : (MENU_PRODUCT_TYPES).includes(p.product_type));
             const deliverySummary = (await clients.carts.getSummary("delivery")) ?? DEFAULT_SUMMARY;
 
             const eventCart = cart.filter(p => !p.product_type ? false : (["ticket"] as $Enums.Products_product_type[]).includes(p.product_type));
@@ -316,20 +314,15 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             let type: cartType;
 
             switch (product.product_type) {
-                case "beverage":
-                case "main":
-                case "dessert":
-                case "starter":
-                    array = [...state.cart.deliveryCart];
-                    type = "delivery";
-                    break;
-
                 case "ticket":
                     array = [...state.cart.eventCart];
                     type = "event";
                     break;
 
-                default: throw new Error(`Invalid product type: ${product.product_type}`);
+                default:
+                    array = [...state.cart.deliveryCart];
+                    type = "delivery";
+                    break;
             };
 
             const index = array.findIndex(pr => pr.product_id === product_id);

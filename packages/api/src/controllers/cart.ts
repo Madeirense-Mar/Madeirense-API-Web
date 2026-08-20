@@ -779,20 +779,23 @@ export const removeFromCartByProduct = async (
             success: false,
         });
 
+        console.log(req.query, cartItem);
+
         switch (true) {
-            case (cartItem.quantity > 1):
-                await prisma.cart.update({
-                    where: { cart_id: cartItem.cart_id },
-                    data: {
-                        quantity: { decrement: parseInt(quantity as string) }
-                    }
+            case (cartItem.quantity <= 1):
+            case (cartItem.quantity === parseInt(quantity as string)):
+                await prisma.cart.delete({
+                    where: { cart_id: cartItem.cart_id }
                 });
 
                 break;
 
             default:
-                await prisma.cart.delete({
-                    where: { cart_id: cartItem.cart_id }
+                await prisma.cart.update({
+                    where: { cart_id: cartItem.cart_id },
+                    data: {
+                        quantity: { decrement: parseInt(quantity as string) }
+                    }
                 });
 
                 break;

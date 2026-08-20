@@ -23,7 +23,6 @@ import Icon from "components/icon";
 import Tag from "components/tag";
 
 import { useApp } from "contexts/App";
-import { useCart } from "contexts/Cart";
 import { useNotifications } from "contexts/Notifications";
 import { useProfile } from "contexts/Profile";
 
@@ -34,6 +33,7 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { variantType, withVariant } from "components/types";
+import CartQuantityControlForm from "components/forms/cartQuantityControl";
 
 // ***************************************************************************************************************
 
@@ -67,14 +67,6 @@ function ProductCard(_props: IProductCardProps) {
         get
     } = useApp();
 
-    const {
-        add,
-        remove,
-        cart
-    } = useCart();
-
-    const { deliveryCart } = cart;
-
     const { push } = useNotifications();
 
     const {
@@ -83,9 +75,7 @@ function ProductCard(_props: IProductCardProps) {
         unfavorite
     } = useProfile();
 
-    const [state, setState] = useState<"adding" | "removing" | "favoriting" | "idle">("idle");
-
-    const quantity = deliveryCart.find(p => p.product_id === product.product_id)?.quantity;
+    const [state, setState] = useState<"favoriting" | "idle">("idle");
 
     const {
         delisted = false,
@@ -105,21 +95,9 @@ function ProductCard(_props: IProductCardProps) {
     const restaurant = get("Restaurants")?.find(r => r.restaurant_id === restaurant_id);
 
     const assertions = {
-        "isAddingToCartDisabled": [
-            "adding",
-            "removing",
-            "favoriting",
-        ].includes(state),
-
-        "isProductCarted": deliveryCart.some(p => p.product_id === product.product_id),
-        "isProductAvailableToBeCarted": user && !deliveryCart.find(p => p.product_id === product.product_id),
+        "isCartingEnabled": user && !disableActions,
 
         "isSaved": user?.Favorites?.find(({ product_id: pId }) => pId === product_id) !== undefined,
-
-        "isWorking": [
-            "adding",
-            "removing"
-        ].includes(state),
 
         "hasNotifications": [delisted].some(Boolean)
     };
@@ -143,22 +121,6 @@ function ProductCard(_props: IProductCardProps) {
             default: return "primary";
         }
     })(product_composition);
-
-    async function addToCart() {
-        setState("adding");
-
-        await add(product.product_id);
-
-        setState("idle");
-    };
-
-    async function removeFromCart() {
-        setState("removing");
-
-        await remove(product.product_id);
-
-        setState("idle");
-    };
 
     function handleNavigation() {
         navigate(location.pathname.includes("back-office")
@@ -305,32 +267,9 @@ function ProductCard(_props: IProductCardProps) {
                     : <span data-text="price" className="font-bold text-2xl mr-auto">{!price ? "Grátis" : formatNumber(price)}</span>
                 }
 
-                {!disableActions && <>
-                    {(assertions.isProductAvailableToBeCarted) && <Button variant={$additionButtonVariant} onClick={addToCart} className="w-full max-w-[500px]" disabled={assertions.isAddingToCartDisabled}>
-                        {(state === "adding")
-                            ? <Icon name="Loading" className="animate-spin" />
-
-                            : <>
-                                <Icon name="Add" />
-
-                                Adicionar
-                            </>}
-                    </Button>}
-
-                    {assertions.isProductCarted && <div data-state={(state === "favoriting") ? "disabled" : "idle"} className="flex flex-row justify-center items-center w-full gap-2 max-w-[500px]">
-                        <Button variant="secondary" data-shape="round" onClick={removeFromCart} disabled={assertions.isWorking}>
-                            {(state === "removing") ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
-                        </Button>
-
-                        <span data-text="quantity">
-                            {quantity}
-                        </span>
-
-                        <Button onClick={addToCart} variant="secondary" data-shape="round" disabled={assertions.isWorking}>
-                            {(state === "adding") ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
-                        </Button>
-                    </div>}
-                </>}
+                {assertions.isCartingEnabled && <CartQuantityControlForm productId={product_id} buttonVariants={{
+                    add: $additionButtonVariant
+                }} />}
             </div>
         </div>
 

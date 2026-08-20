@@ -1,0 +1,34 @@
+.form {
+    @apply flex flex-row justify-center items-center;
+
+    overflow: hidden;
+
+    border: var(--form-border-width, 0) solid var(--form-border-color, var(--neutral-dark));
+    border-radius: 10px;
+    background-color: var(--form-background-color, transparent);
+}
+
+.form[data-carting="true"] {
+    --form-background-color: var(--primary-dark);
+    --form-border-width: 1px;
+}
+
+.form[data-carting="true"] span {
+    --spacing: 10px;
+    
+    margin-left: var(--spacing);
+    margin-right: var(--spacing);
+
+    color: var(--neutral-light);
+}
+
+.action-button {
+    --spacing: 5px;
+    
+    padding-left: var(--spacing);
+    padding-right: var(--spacing);
+    
+    background-color: var(--neutral-light);
+    
+    color: var(--neutral-dark) !important;
+}

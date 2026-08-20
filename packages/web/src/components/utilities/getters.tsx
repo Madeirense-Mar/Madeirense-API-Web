@@ -30,6 +30,7 @@ export function getLabelIcon<T = labelType>(label: T, props?: Omit<ComponentProp
         case "ready": name = "CheckList"; break;
         case "starter": name = "Circle"; break;
         case "beverage": name = "Drink"; break;
+        case "garnish": name = "Salad"; break;
         case "dessert": name = "Dessert"; break;
         case "ticket": name = "Ticket"; break;
         case "main": name = "Food"; break;

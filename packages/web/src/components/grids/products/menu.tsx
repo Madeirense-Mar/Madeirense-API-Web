@@ -121,6 +121,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
     const list = [
         { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },
         { key: "Entradas", value: { value: "starter", icon: <Icon name="Circle" /> } },
+        { key: "Guarnições", value: { value: "garnish", icon: <Icon name="Salad" /> } },
         { key: "Principais", value: { value: "main", icon: <Icon name="Food" /> } },
         { key: "Sobremesas", value: { value: "dessert", icon: <Icon name="Dessert" /> } },
         { key: "Bebidas", value: { value: "beverage", icon: <Icon name="Drink" /> } },
@@ -266,6 +267,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
 
                     {listFilter !== "all" && <Tag>
                         {listFilter === "starter" && <Icon name="Circle" />}
+                        {listFilter === "garnish" && <Icon name="Salad" />}
                         {listFilter === "beverage" && <Icon name="Drink" />}
                         {listFilter === "dessert" && <Icon name="Dessert" />}
                         {listFilter === "main" && <Icon name="Food" />}
