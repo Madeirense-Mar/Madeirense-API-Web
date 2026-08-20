@@ -33,7 +33,7 @@ import type {
     Products
 } from "@Madeirense/database/browser";
 
-import type { withVariant } from "components/types";
+import type { variantType, withVariant } from "components/types";
 
 // ***************************************************************************************************************
 
@@ -94,6 +94,7 @@ function ProductCard(_props: IProductCardProps) {
         price: _p,
         thumbnail,
         product_id,
+        product_composition,
         product_type,
         restaurant_id
     } = product;
@@ -122,7 +123,17 @@ function ProductCard(_props: IProductCardProps) {
 
         "hasNotifications": [delisted].some(Boolean)
     };
-    
+
+    const $tagVariant = ((composition: typeof product_composition) : variantType => {
+        switch (composition) {
+            case "meat": return "danger";
+            case "wheat": return "success";
+            case "vegan": return "warning";
+        
+            default: return "primary";
+        }
+    })(product_composition);
+
     async function addToCart() {
         setState("adding");
 
@@ -182,7 +193,11 @@ function ProductCard(_props: IProductCardProps) {
         }
     }
 
-    return <div className={resolveClassNames(styles[variant], className)} {...props}>
+    return <div className={resolveClassNames(
+        styles[variant], 
+        !product_composition ? null : styles[product_composition], 
+        className
+    )} {...props}>
         {(!disableActions && (user !== undefined)) && <div data-section="actions">
             <Button 
                 value={assertions.isSaved ? "remove" : "save"} 
@@ -199,28 +214,44 @@ function ProductCard(_props: IProductCardProps) {
             </Button>
         </div>}
 
-        {assertions.hasNotifications && <div data-section="notification">
-            {delisted && <Tag data-placing="notification" variant="warning">
+        <div
+            className={resolveClassNames(
+                disableLink ? undefined : "cursor-pointer",
+                "flex flex-row justify-end items-start gap-2",
+                "p-2"
+            )}
+            onClick={(disableLink || (state === "favoriting")) ? undefined : handleNavigation}
+            style={{ backgroundImage: `url(${thumbnail})` }}
+            data-section="thumbnail"
+        >
+            <div data-section="notification">
+            {(discount > 0) && <Tag variant={$tagVariant}>
+                <Icon name="Discount" />
+
+                {`${discount}%`}
+            </Tag>}
+
+            {(appState === "syncing-Products") && <Tag variant={$tagVariant}>
+                <Icon name="Loading" className="animate-spin" />
+            </Tag>}
+
+            {assertions.hasNotifications && delisted && <Tag data-placing="notification" variant="warning">
                 <Icon name="ExclamationCircle" />
 
                 Ocultado
             </Tag>}
-        </div>}
+        </div>
 
-        <div
-            className={disableLink ? undefined : "cursor-pointer"}
-            onClick={(disableLink || (state === "favoriting")) ? undefined : handleNavigation}
-            style={{ backgroundImage: `url(${thumbnail})` }}
-            data-section="thumbnail"
-        ></div>
+        </div>
 
         <div data-section="tags">
-            {["updating", "fetching"].some(s => appState.includes(s)) && <Tag>
+            {["updating", "fetching"].some(s => appState.includes(s)) && <Tag variant={$tagVariant}>
                 <Icon name="Loading" className="animate-spin" />
             </Tag>}
 
-            <Tag>
+            <Tag variant={$tagVariant}>
                 {product_type === "starter" && <Icon name="Circle" />}
+                {product_type === "garnish" && <Icon name="BowlRice" />}
                 {product_type === "beverage" && <Icon name="Drink" />}
                 {product_type === "dessert" && <Icon name="Dessert" />}
                 {product_type === "main" && <Icon name="Food" />}
@@ -228,15 +259,18 @@ function ProductCard(_props: IProductCardProps) {
                 {getLabel(product_type)}
             </Tag>
 
-            {(discount > 0) && <Tag>
-                <Icon name="Discount" />
+            <Tag variant={$tagVariant}>
+                {product_composition === "alcoholic" && <Icon name="SolidDrink" />}
+                {product_composition === "non_alcoholic" && <Icon name="NoDrinks" />}
+                {product_composition === "fish" && <Icon name="FishSharp" />}
+                {product_composition === "meat" && <Icon name="Meat" />}
+                {product_composition === "merchandise" && <Icon name="Product" />}
+                {product_composition === "mixed" && <Icon name="Salad" />}
+                {product_composition === "vegan" && <Icon name="Vegan" />}
+                {product_composition === "wheat" && <Icon name="Wheat" />}
 
-                {`${discount}%`}
-            </Tag>}
-
-            {(appState === "syncing-Products") && <Tag>
-                <Icon name="Loading" className="animate-spin" />
-            </Tag>}
+                {getLabel(product_composition)}
+            </Tag>
         </div>
 
         {restaurant && <div data-section="tags">

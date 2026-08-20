@@ -94,7 +94,7 @@ body[data-theme*="light"] {
 }
 
 body[data-theme="land-dark"] {
-    --background-color: color-mix(in srgb, var(--secondary-dark), black 70%);
+    --background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
 }
 
 body[data-theme="land-light"] {

@@ -11,16 +11,20 @@
     color: var(--tag-text-color, black);
     
     background-color: var(--tag-background-color, transparent);
+
+    font-weight: 600;
+}
+
+.tag * {
+    color: inherit;
 }
 
 .danger {
     composes: tag;
 
-    --tag-border-color: #f87171;
-
-    --tag-text-color: #7f1d1d;
-
     --tag-background-color: #fee2e2;
+    --tag-border-color: #f87171;
+    --tag-text-color: #7f1d1d;
 }
 
 /* TODO: Unimplemented style > important */
@@ -31,17 +35,14 @@
 .primary {
     composes: tag;
 
-    --tag-border-color: var(--secondary);
-
-    --tag-text-color: var(--secondary);
-
-    --tag-background-color: transparent;
+    --tag-background-color: var(--primary-dark);
+    --tag-border-color: var(--primary-dark);
+    --tag-text-color: var(--neutral-light);
 }
 
 .primary:hover {
-    --tag-text-color: #fff;
-
     --tag-background-color: var(--secondary);
+    --tag-text-color: #fff;
 }
 
 /* TODO: Unimplemented style > secondary */
@@ -54,12 +55,25 @@
     composes: tag;
 }
 
-/* TODO: Unimplemented style > success */
 .success {
     composes: tag;
+}
+
+/* TODO: Unimplemented style > success */
+[data-theme*="dark"] .success {
+    --tag-background-color: var(--success-dark);
+    --tag-border-color: var(--success);
+    --tag-text-color: var(--success);
 }
 
 /* TODO: Unimplemented style > warning */
 .warning {
     composes: tag;
+}
+
+[data-theme*="dark"] .warning {
+    --tag-background-color: var(--secondary);
+    --tag-border-style: dotted;
+    --tag-border-color: var(--secondary-dark);
+    --tag-text-color: var(--secondary-dark);
 }

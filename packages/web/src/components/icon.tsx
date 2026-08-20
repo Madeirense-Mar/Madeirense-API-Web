@@ -2,11 +2,13 @@ import { IconBaseProps } from "react-icons";
 
 import {
     AiFillGift,
+    AiFillProduct,
     AiOutlineLoading3Quarters
 } from "react-icons/ai";
 
 import {
     BiFoodMenu,
+    BiSolidDrink,
     BiSolidHide
 } from "react-icons/bi";
 
@@ -61,6 +63,7 @@ import {
 } from "react-icons/fa";
 
 import {
+    FaBowlRice,
     FaCashRegister,
     FaCreditCard,
     FaFacebookF,
@@ -78,7 +81,8 @@ import {
 import {
     GiPartyPopper,
     GiSwipeCard,
-    GiTakeMyMoney
+    GiTakeMyMoney,
+    GiWheat 
 } from "react-icons/gi";
 
 import {
@@ -105,6 +109,7 @@ import {
 import {
     IoChatboxEllipsesOutline,
     IoDocumentTextOutline,
+    IoFishSharp,
     IoHourglassOutline,
     IoNotifications,
     IoNotificationsOff,
@@ -114,7 +119,8 @@ import {
 } from "react-icons/io5";
 
 import {
-    LuDessert
+    LuDessert,
+    LuVegan 
 } from "react-icons/lu";
 
 import {
@@ -135,6 +141,7 @@ import {
     MdOutlineFlashAuto,
     MdOutlineLogin,
     MdOutlineHistory,
+    MdOutlineNoDrinks,
     MdOutlineNotes,
     MdOutlineReportGmailerrorred,
     MdOutlineTakeoutDining,
@@ -169,7 +176,9 @@ import {
     TbMapCheck,
     TbMapCancel,
     TbMapOff,
+    TbMeat,
     TbPasswordMobilePhone,
+    TbSalad,
     TbToolsKitchen,
 } from "react-icons/tb";
 
@@ -183,6 +192,7 @@ const registry = {
     ArrowLeft: FaArrowLeft,
     ArrowRight: FaArrowRight,
     ArrowUp: FaArrowUp,
+    BowlRice: FaBowlRice,
     Calendar1: RiCalendarTodoLine,
     CalendarExpired: FaRegCalendarTimes,
     Camera: FaCamera,
@@ -213,6 +223,7 @@ const registry = {
     EyeSlash: FaRegEyeSlash,
     Facebook: FaFacebook,
     Facebook2: FaFacebookF,
+    FishSharp: IoFishSharp,
     FlashAuto: MdOutlineFlashAuto,
     Filter: FaFilter,
     Food: PiBowlFoodFill,
@@ -242,12 +253,14 @@ const registry = {
     MapMarked: FaMapMarkedAlt,
     MapMarker: FaMapMarkerAlt,
     MapOff: TbMapOff,
+    Meat: TbMeat,
     Megaphone: RiMegaphoneLine,
     Minus: FaMinus,
     MobileOTP: TbPasswordMobilePhone,
     Money: PiMoneyWavyFill,
     MoneyTransfer: FaMoneyBillTransfer,
     MyLocation: MdMyLocation,
+    NoDrinks: MdOutlineNoDrinks,
     Notes: MdOutlineNotes,
     Notification: IoNotifications,
     NotificationActive: MdNotificationsActive,
@@ -264,17 +277,20 @@ const registry = {
     Phone: MdPhone,
     Plus: GoPlus,
     Plus2: FaPlus,
+    Product: AiFillProduct,
     Queue: HiMiniQueueList,
     Recycle: FaRecycle,
     Restaurant: MdFoodBank,
     Report: IoDocumentTextOutline,
     Running: PiSneakerMoveBold,
+    Salad: TbSalad,
     Save: FaSave,
     Search: FaSearch,
     Send: IoSend,
     Settings: FaCog,
     Shield: BsShieldLock,
     ShoppingCart: FaShoppingCart,
+    SolidDrink: BiSolidDrink,
     Star: FaStar,
     Store: FaStore,
     SwipeCard: GiSwipeCard,
@@ -291,8 +307,10 @@ const registry = {
     UserRegistration: LiaUserPlusSolid,
     UserStaff: FaUser,
     Users: FaUsers,
+    Vegan: LuVegan, 
     Video: MdOndemandVideo,
     Warning: IoIosWarning,
+    Wheat: GiWheat,
     Work: MdOutlineWork
 };
 
