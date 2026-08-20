@@ -8,6 +8,7 @@
     overflow: hidden;
 
     height: auto;
+    min-height: 372px;
 
     border-color: var(--card-border-color, var(--card-neutral));
     border-radius: var(--card-border-radius);
@@ -166,9 +167,6 @@
 
 .vegan {
     composes: card;
-}
-
-[data-theme*="dark"] .vegan {
 }
 
 [data-theme="sea-dark"] .vegan {

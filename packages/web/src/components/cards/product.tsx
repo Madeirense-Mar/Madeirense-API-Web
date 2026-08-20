@@ -29,7 +29,7 @@ import { useProfile } from "contexts/Profile";
 
 import styles from './product.module.css';
 
-import type { 
+import type {
     Products
 } from "@Madeirense/database/browser";
 
@@ -103,10 +103,10 @@ function ProductCard(_props: IProductCardProps) {
     const price = parseFloat(_p.toString());
     const discountedPrice = !discount ? 0 : price - (price * discount) / 100;
     const restaurant = get("Restaurants")?.find(r => r.restaurant_id === restaurant_id);
-    
+
     const assertions = {
         "isAddingToCartDisabled": [
-            "adding", 
+            "adding",
             "removing",
             "favoriting",
         ].includes(state),
@@ -117,19 +117,19 @@ function ProductCard(_props: IProductCardProps) {
         "isSaved": user?.Favorites?.find(({ product_id: pId }) => pId === product_id) !== undefined,
 
         "isWorking": [
-            "adding", 
+            "adding",
             "removing"
         ].includes(state),
 
         "hasNotifications": [delisted].some(Boolean)
     };
 
-    const $tagVariant = ((composition: typeof product_composition) : variantType => {
+    const $tagVariant = ((composition: typeof product_composition): variantType => {
         switch (composition) {
             case "meat": return "danger";
             case "wheat": return "success";
             case "vegan": return "warning";
-        
+
             default: return "primary";
         }
     })(product_composition);
@@ -151,8 +151,8 @@ function ProductCard(_props: IProductCardProps) {
     };
 
     function handleNavigation() {
-        navigate(location.pathname.includes("back-office") 
-            ? `${Madeirense$Enumerators.Pages.BackOffice.Products}/${product.product_id}` : 
+        navigate(location.pathname.includes("back-office")
+            ? `${Madeirense$Enumerators.Pages.BackOffice.Products}/${product.product_id}` :
             `${Madeirense$Enumerators.Pages.App.Product}/${product.product_id}`
         );
     };
@@ -194,26 +194,10 @@ function ProductCard(_props: IProductCardProps) {
     }
 
     return <div className={resolveClassNames(
-        styles[variant], 
-        !product_composition ? null : styles[product_composition], 
+        styles[variant],
+        !product_composition ? null : styles[product_composition],
         className
     )} {...props}>
-        {(!disableActions && (user !== undefined)) && <div data-section="actions">
-            <Button 
-                value={assertions.isSaved ? "remove" : "save"} 
-                onClick={(state === "favoriting") ? undefined : toggleProductFavoriting} 
-                shape="circle" 
-                disabled={(state === "favoriting")}
-            >
-                {((state === "favoriting"))
-                    ? <Icon name="Loading" className="animate-spin" />
-                    : (assertions.isSaved)
-                        ? <Icon name="HeartFilled" className="pointer-events-none" />
-                        : <Icon name="HeartEmpty" className="pointer-events-none" />
-                }
-            </Button>
-        </div>}
-
         <div
             className={resolveClassNames(
                 disableLink ? undefined : "cursor-pointer",
@@ -224,24 +208,40 @@ function ProductCard(_props: IProductCardProps) {
             style={{ backgroundImage: `url(${thumbnail})` }}
             data-section="thumbnail"
         >
+            {(!disableActions && (user !== undefined)) && <div className="mr-auto">
+                <Button
+                    size="s"
+                    value={assertions.isSaved ? "remove" : "save"}
+                    onClick={(state === "favoriting") ? undefined : toggleProductFavoriting}
+                    shape="circle"
+                    disabled={(state === "favoriting")}
+                >
+                    {((state === "favoriting"))
+                        ? <Icon name="Loading" className="animate-spin" />
+                        : (assertions.isSaved)
+                            ? <Icon name="HeartFilled" className="pointer-events-none" />
+                            : <Icon name="HeartEmpty" className="pointer-events-none" />
+                    }
+                </Button>
+            </div>}
+
             <div data-section="notification">
-            {(discount > 0) && <Tag variant={$tagVariant}>
-                <Icon name="Discount" />
+                {(discount > 0) && <Tag variant={$tagVariant}>
+                    <Icon name="Discount" />
 
-                {`${discount}%`}
-            </Tag>}
+                    {`${discount}%`}
+                </Tag>}
 
-            {(appState === "syncing-Products") && <Tag variant={$tagVariant}>
-                <Icon name="Loading" className="animate-spin" />
-            </Tag>}
+                {(appState === "syncing-Products") && <Tag variant={$tagVariant}>
+                    <Icon name="Loading" className="animate-spin" />
+                </Tag>}
 
-            {assertions.hasNotifications && delisted && <Tag data-placing="notification" variant="warning">
-                <Icon name="ExclamationCircle" />
+                {assertions.hasNotifications && delisted && <Tag data-placing="notification" variant="warning">
+                    <Icon name="ExclamationCircle" />
 
-                Ocultado
-            </Tag>}
-        </div>
-
+                    Ocultado
+                </Tag>}
+            </div>
         </div>
 
         <div data-section="tags">

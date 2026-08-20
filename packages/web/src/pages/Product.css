@@ -1,29 +1,18 @@
-main[data-view="product-table"] {
-    display: grid;
-    position: relative;
-    overflow: auto;
-    gap: 0px;
-    width: 100%;
-    height: auto;
-    min-height: 100%;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-        "card"
-        "table"
-    ;
+#root[data-page="product"] {
+    display: flex;
+    flex-direction: column;
 }
 
-main[data-view="product-table"] div[class*="ProductCard"] {
-    --h: 410px;
-
-    height: var(--h);
-    max-height: var(--h);
-    min-height: var(--h);
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-bottom: none;
-    grid-area: card;
+main[data-view="product-table"] {
+    position: relative;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+    width: 100%;
+    
+    overflow: auto;
 }
 
 main[data-view="product-table"] > header {
