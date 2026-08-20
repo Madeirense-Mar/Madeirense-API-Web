@@ -542,6 +542,7 @@ CREATE TABLE `Products` (
   `discount` decimal(5,2) NOT NULL DEFAULT 0.00,
   `thumbnail` varchar(255) DEFAULT NULL,
   `product_type` enum('starter','main','dessert','beverage','ticket') DEFAULT NULL,
+  `product_composition` enum('meat','fish','wheat','vegan','alcoholic','non-alcoholic','mixed','merchandise') DEFAULT NULL,
   `prep_time_minutes` int(11) NOT NULL DEFAULT 0,
   `event_id` int(11) DEFAULT NULL,
   `delisted` tinyint(1) DEFAULT 0,
@@ -561,7 +562,15 @@ CREATE TABLE `Products` (
 
 LOCK TABLES `Products` WRITE;
 /*!40000 ALTER TABLE `Products` DISABLE KEYS */;
-INSERT INTO `Products` VALUES (1,'BOLO CACAU','Pão Típico da ilha da Madeira , Amassado Com Batata Doce , Cozido a Carvão , Barrado com Manteiga de Alho Caseira',3000.00,NULL,0.00,'https://res.cloudinary.com/lkm/image/upload/w_200,h_220,c_pad/production/4206/2024/03/20240314210557022_411a2adbe7274bc2b345dc5a4fe3ae19_jnxqoi.png','starter',0,NULL,0,'2025-09-23 13:55:20','2025-10-03 08:27:17'),(3,'PRODUTO ERRADO','ERRO',3000.00,NULL,0.00,NULL,'main',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),(4,'OUTRO PRODUTO','QUALQUER COISA DEMIAS',24000.00,NULL,0.00,NULL,'main',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),(5,'UMA BEBIDA','É UMA BEBIDA',1250.00,NULL,0.00,NULL,'beverage',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),(6,'UMA BEBIDA','É UMA BEBIDA',1250.00,NULL,0.00,NULL,'beverage',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),(7,'\"Ativação do Aplicativo Madeirense\" Bilhete','Venha comemorar a ativação do aplicativo de encomendas do Madeirense.',0.00,4,0.00,'https://ucarecdn.com/13fb2700-92e1-4144-ab5d-9f1e6cde7cf0/','ticket',0,2,0,'2025-09-23 13:55:20','2025-09-23 13:55:28'),(8,'\"Teste testes\" Bilhete','Muitos testes para a melhor do utilizador final',0.00,3,0.00,'https://ucarecdn.com/482019d9-765b-49fd-976c-39bd49abc328/','ticket',0,3,0,'2025-09-23 13:55:20','2025-09-23 13:55:28'),(9,'Thai Noodles','Fresco e ricoc',25000.00,NULL,10.00,'https://ucarecdn.com/07bbb254-0fce-4870-892c-4232f0b74d29/','main',0,NULL,0,'2025-09-23 13:55:20','2025-10-07 16:35:12');
+INSERT INTO `Products` VALUES 
+  (1,'BOLO CACAU','Pão Típico da ilha da Madeira , Amassado Com Batata Doce , Cozido a Carvão , Barrado com Manteiga de Alho Caseira',3000.00,NULL,0.00,'https://res.cloudinary.com/lkm/image/upload/w_200,h_220,c_pad/production/4206/2024/03/20240314210557022_411a2adbe7274bc2b345dc5a4fe3ae19_jnxqoi.png','starter','wheat',0,NULL,0,'2025-09-23 13:55:20','2025-10-03 08:27:17'),
+  (3,'PRODUTO ERRADO','ERRO',3000.00,NULL,0.00,NULL,'main','meat',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),
+  (4,'OUTRO PRODUTO','QUALQUER COISA DEMIAS',24000.00,NULL,0.00,NULL,'main','meat',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),
+  (5,'UMA BEBIDA','É UMA BEBIDA',1250.00,NULL,0.00,NULL,'beverage','liquid',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),
+  (6,'UMA BEBIDA','É UMA BEBIDA',1250.00,NULL,0.00,NULL,'beverage','liquid',0,NULL,1,'2025-09-23 13:55:20','2025-09-23 13:55:28'),
+  (7,'\"Ativação do Aplicativo Madeirense\" Bilhete','Venha comemorar a ativação do aplicativo de encomendas do Madeirense.',0.00,4,0.00,'https://ucarecdn.com/13fb2700-92e1-4144-ab5d-9f1e6cde7cf0/','ticket','merchandise',0,2,0,'2025-09-23 13:55:20','2025-09-23 13:55:28'),
+  (8,'\"Teste testes\" Bilhete','Muitos testes para a melhor do utilizador final',0.00,3,0.00,'https://ucarecdn.com/482019d9-765b-49fd-976c-39bd49abc328/','ticket','merchandise',0,3,0,'2025-09-23 13:55:20','2025-09-23 13:55:28'),
+  (9,'Thai Noodles','Fresco e ricoc',25000.00,NULL,10.00,'https://ucarecdn.com/07bbb254-0fce-4870-892c-4232f0b74d29/','main','vegetable',0,NULL,0,'2025-09-23 13:55:20','2025-10-07 16:35:12');
 /*!40000 ALTER TABLE `Products` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -97,6 +97,7 @@ export const createProduct = async (
         price: number,
         restaurant_id?: number,
         discount?: number,
+        product_composition: $Enums.Products_product_composition,
         product_type: $Enums.Products_product_type,
         prep_time_minutes: number,
         thumbnail?: string
@@ -109,6 +110,7 @@ export const createProduct = async (
         price,
         restaurant_id,
         discount,
+        product_composition,
         product_type,
         prep_time_minutes,
         thumbnail
@@ -139,6 +141,7 @@ export const createProduct = async (
                 restaurant_id,
                 thumbnail,
                 prep_time_minutes,
+                product_composition,
                 product_type,
                 delisted: false,
                 price,
@@ -296,6 +299,7 @@ export const getAllProducts = async (
         const skip = (page - 1) * limit;
 
         const where = {
+            product_composition: req.query.product_composition as $Enums.Products_product_composition || undefined,
             product_type: (group)
                 ? {
                     in: (() => {
@@ -389,6 +393,7 @@ export const getDelistedProducts = async (
         const skip = (page - 1) * limit;
 
         const where = {
+            product_composition: req.query.product_composition as $Enums.Products_product_composition || undefined,
             product_type: (group)
                 ? {
                     in: (() => {
@@ -674,7 +679,6 @@ export const updateProduct = async (
             thumbnail: string, 
             prep_time_minutes: number, 
             restaurant_id: number
-
         }>
     >,
     res: Response<API$Types.response<Partial<productType> | undefined>>

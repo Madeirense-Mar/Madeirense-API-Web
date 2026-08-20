@@ -32,5 +32,6 @@ export type productPayloadType = {
     prep_time_minutes?: number,
     discount?: number,
     thumbnail?: string,
-    product_type: $Enums.Products_product_type
+    product_composition: $Enums.Products_product_composition,
+    product_type: $Enums.Products_product_type,
 };

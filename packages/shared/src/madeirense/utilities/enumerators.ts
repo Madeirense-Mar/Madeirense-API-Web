@@ -65,6 +65,7 @@ export namespace Madeirense$Enumerators {
         "month" = "month",
         "order_id" = "order_id",
         "product_id" = "product_id",
+        "product_composition" = "product_composition",
         "product_type" = "product_type",
         "quantity" = "quantity",
         "rating" = "rating",

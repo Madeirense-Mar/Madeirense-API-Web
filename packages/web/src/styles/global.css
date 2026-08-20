@@ -202,7 +202,27 @@ fieldset {
 
 fieldset legend {
     @apply font-bold w-full;
-    border-bottom: 1px dashed white;
+    border-bottom: 1px dashed color-mix(in srgb, var(--neutral-light), transparent 80%);
+}
+
+input {
+    padding: 0 10px;
+}
+
+input,
+select {
+    --h: 30px;
+    
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+}
+
+[data-theme*="dark"] input,
+[data-theme*="dark"] select,
+[data-theme*="dark"] textarea {
+    border-bottom: 1px solid var(--neutral-light);
+    background-color: var(--background-color);
 }
 /*#endregion*/
 

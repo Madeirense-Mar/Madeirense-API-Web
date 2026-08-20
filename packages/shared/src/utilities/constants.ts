@@ -128,6 +128,17 @@ export const MENU_PRODUCT_TYPES = [
     "starter"
 ] as ReadonlyArray<$Enums.Products_product_type>;
 
+export const MENU_PRODUCT_COMPOSITIONS = [
+    "alcoholic",
+    "fish",
+    "meat",
+    "merchandise",
+    "mixed",
+    "non_alcoholic",
+    "vegan",
+    "wheat"
+] as ReadonlyArray<$Enums.Products_product_composition>;
+
 export const ORDERS_FINISHED_STATUS = [
     "cancelled",
     "delivered"

@@ -11,6 +11,7 @@ import {
 } from "@uploadcare/react-uploader";
 
 import {
+    MENU_PRODUCT_COMPOSITIONS,
     MENU_PRODUCT_TYPES,
     getLabel,
     formatUUID_UC_CDN_URL,
@@ -26,7 +27,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import RestaurantsSelector from "components/forms/elements/selects/restaurants";
 
-import type { 
+import type {
     $Enums
 } from "@Madeirense/database/browser";
 
@@ -108,6 +109,7 @@ const AddProductForm = ({
                     prep_time_minutes: parseInt((elements.namedItem("prep_time_minutes") as HTMLInputElement).value as string),
                     restaurant_id: !data?.pickRestaurant ? undefined : parseInt((elements.namedItem("restaurant_id") as HTMLSelectElement).value as string),
                     discount: 0,
+                    product_composition: (elements.namedItem("product_composition") as HTMLInputElement).value as $Enums.Products_product_composition,
                     product_type: (elements.namedItem("product_type") as HTMLInputElement).value as $Enums.Products_product_type,
                     thumbnail: data?.uploadedThumbnailURL,
                 }
@@ -160,7 +162,7 @@ const AddProductForm = ({
     };
 
     return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4" {...props}>
-        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-3 p-2 rounded-md">
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-6 p-2 rounded-md">
             <legend>Sobre</legend>
 
             <header className="w-full flex flex-row justify-between items-center">
@@ -189,9 +191,19 @@ const AddProductForm = ({
                     {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
                 </div>}
 
-            <div className="w-full flex flex-row justify-between items-center gap-1">
-                <label htmlFor="name" className="w-full text-left">
-                    <input id="name" className="w-full" name="name" title="Nome do prato" data-element="h3" type="text" placeholder="Nome do produto" required />
+            <label htmlFor="name" className="w-full text-left">
+                <input id="name" className="w-full" name="name" title="Nome do prato" data-element="h3" type="text" placeholder="Nome do produto" required />
+            </label>
+
+            <div className="w-full flex flex-row justify-between items-center gap-5">
+                <label htmlFor="product_composition" className="w-full text-left">
+                    <select title="Composição do produto" id="product_composition" name="product_composition" data-element="h3" defaultValue={""} className="w-full" required>
+                        <option hidden value="">Composição do produto</option>
+
+                        {MENU_PRODUCT_COMPOSITIONS.map(t => <option key={t} value={t}>
+                            {getLabel(t)}
+                        </option>)}
+                    </select>
                 </label>
 
                 <label htmlFor="product_type" className="w-full text-left">
@@ -229,7 +241,7 @@ const AddProductForm = ({
         <fieldset className="w-full flex flex-col justify-start items-start gap-2 p-2 border rounded-md">
             <legend>Outros</legend>
 
-            <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-betw items-center gap-2 border p-2 rounded-lg">
+            <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-between items-center gap-2 p-2">
                 <Icon name="Time" />
 
                 <span className="mr-auto">Tempo de preparo (em minutos)</span>
@@ -237,7 +249,7 @@ const AddProductForm = ({
                 <input title="Tempo de preparo (em minutos)" id="prep_time_minutes" name="prep_time_minutes" defaultValue={3} min={3} type="number" required />
             </label>
 
-            <label className="flex flex-row justify-start items-center gap-1 w-full border p-2 rounded-lg">
+            <label className="flex flex-row justify-start items-center gap-1 w-full p-2">
                 <input type="checkbox" placeholder="Aonde será servido o produto" defaultChecked={!data?.pickRestaurant} onChange={handleRestaurantToggle} />
 
                 <span>Produto será servido por todos os restaurantes</span>
@@ -248,7 +260,7 @@ const AddProductForm = ({
 
                 <br />
 
-                <RestaurantsSelector title="Restaurante" id="restaurant_id" data-element="h1" name="restaurant_id" defaultOptionLabel="Local do evento" defaultValue={""} withoutDefaultOption />
+                <RestaurantsSelector className="w-full" title="Restaurante" id="restaurant_id" data-element="h1" name="restaurant_id" defaultOptionLabel="Local do evento" defaultValue={""} withoutDefaultOption />
             </label>}
         </fieldset>
 

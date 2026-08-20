@@ -244,25 +244,26 @@ model Payments {
 }
 
 model Products {
-  product_id        Int                    @id @default(autoincrement())
-  name              String                 @db.VarChar(255)
-  description       String                 @db.Text
-  price             Decimal                @db.Decimal(10, 2)
-  restaurant_id     Int?
-  discount          Decimal                @default(0.00) @db.Decimal(5, 2)
-  thumbnail         String?                @db.VarChar(255)
-  product_type      Products_product_type?
-  prep_time_minutes Int                    @default(0)
-  event_id          Int?
-  delisted          Boolean?               @default(false)
-  created_at        DateTime?              @default(now()) @db.Timestamp(0)
-  updated_at        DateTime?              @default(now()) @db.Timestamp(0)
-  Cart              Cart[]
-  Favorites         Favorites[]
-  Order_Items       Order_Items[]
-  Restaurants       Restaurants?           @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_1")
-  Restaurant_Events Restaurant_Events?     @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_2")
-  User_Comments     User_Comments[]
+  product_id          Int                           @id @default(autoincrement())
+  name                String                        @db.VarChar(255)
+  description         String                        @db.Text
+  price               Decimal                       @db.Decimal(10, 2)
+  restaurant_id       Int?
+  discount            Decimal                       @default(0.00) @db.Decimal(5, 2)
+  thumbnail           String?                       @db.VarChar(255)
+  product_type        Products_product_type?
+  prep_time_minutes   Int                           @default(0)
+  event_id            Int?
+  delisted            Boolean?                      @default(false)
+  created_at          DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?                     @default(now()) @db.Timestamp(0)
+  product_composition Products_product_composition?
+  Cart                Cart[]
+  Favorites           Favorites[]
+  Order_Items         Order_Items[]
+  Restaurants         Restaurants?                  @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_1")
+  Restaurant_Events   Restaurant_Events?            @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_2")
+  User_Comments       User_Comments[]
 
   @@index([event_id], map: "event_id")
   @@index([restaurant_id], map: "restaurant_id")
@@ -760,4 +761,15 @@ enum Resort_Booking_History_status {
 enum Resort_Rooms_Media_media_type {
   Thumbnail
   Video
+}
+
+enum Products_product_composition {
+  meat
+  fish
+  wheat
+  vegan
+  alcoholic
+  non_alcoholic @map("non-alcoholic")
+  mixed
+  merchandise
 }
