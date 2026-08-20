@@ -26,7 +26,7 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 const ThemeProvider = ({ children }: any) => {
-    const [currentTheme, setCurrentTheme] = useState<Application$Types.Themes.types>("sea-dark");
+    const [currentTheme, setCurrentTheme] = useState<Application$Types.Themes.types>("land-dark");
 
     const switchTheme = () => {
         let theme: Application$Types.Themes.options = (currentTheme.split("-")[0] as Application$Types.Themes.options);

@@ -41,8 +41,8 @@
 }
 
 .primary:hover {
-    --tag-background-color: var(--secondary);
-    --tag-text-color: #fff;
+    --tag-background-color: var(--primary-light);
+    --tag-text-color: var(--primary-dark);
 }
 
 /* TODO: Unimplemented style > secondary */
