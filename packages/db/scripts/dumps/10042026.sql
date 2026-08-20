@@ -541,7 +541,7 @@ CREATE TABLE `Products` (
   `restaurant_id` int(11) DEFAULT NULL,
   `discount` decimal(5,2) NOT NULL DEFAULT 0.00,
   `thumbnail` varchar(255) DEFAULT NULL,
-  `product_type` enum('starter','main','dessert','beverage','ticket') DEFAULT NULL,
+  `product_type` enum('starter','garnish','main','dessert','beverage','ticket') DEFAULT NULL,
   `product_composition` enum('meat','fish','wheat','vegan','alcoholic','non-alcoholic','mixed','merchandise') DEFAULT NULL,
   `prep_time_minutes` int(11) NOT NULL DEFAULT 0,
   `event_id` int(11) DEFAULT NULL,

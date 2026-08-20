@@ -67,6 +67,7 @@ export function getLabel<T>(label: T): string {
 
         //Product types
         case "beverage": return "Bebidas";
+        case "garnish": return "Guarnições";
         case "dessert": return "Sobremesas";
         case "main": return "Principal";
         case "starter": return "Entradas";

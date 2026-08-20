@@ -123,6 +123,7 @@ export const MIN_VIEWPORT_WIDTH: Readonly<number> = 768;
 
 export const MENU_PRODUCT_TYPES = [
     "beverage",
+    "garnish",
     "dessert",
     "main",
     "starter"

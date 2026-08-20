@@ -688,14 +688,6 @@ enum Courier_Reallocation_Requests_status {
   cancelled
 }
 
-enum Products_product_type {
-  starter
-  main
-  dessert
-  beverage
-  ticket
-}
-
 enum Restaurant_Events_status {
   upcoming
   cancelled
@@ -772,4 +764,13 @@ enum Products_product_composition {
   non_alcoholic @map("non-alcoholic")
   mixed
   merchandise
+}
+
+enum Products_product_type {
+  starter
+  garnish
+  main
+  dessert
+  beverage
+  ticket
 }

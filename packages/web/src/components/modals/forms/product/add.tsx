@@ -43,7 +43,8 @@ type assetType = "thumbnail";
 
 type stateType = {
     uploadedThumbnailURL?: string,
-    pickRestaurant?: boolean
+    pickRestaurant?: boolean,
+    pickedProductType?: $Enums.Products_product_type
 };
 
 const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
@@ -61,6 +62,7 @@ const AddProductForm = ({
 
     const [form, updateForm] = useState<IComponentState<stateType, `uploading-${assetType}`>>({
         data: {
+            pickedProductType: undefined,
             pickRestaurant: false,
             uploadedThumbnailURL: "",
         },
@@ -79,6 +81,37 @@ const AddProductForm = ({
             "uploading-thumbnail"
         ].includes(status)
     }
+
+    const _ONLY_APPLICABLE_PRODUCT_COMPOSITIONS = (product_type?: $Enums.Products_product_type) => {
+        if (!product_type) return (comp: $Enums.Products_product_composition) => true;
+
+        return (comp: $Enums.Products_product_composition) => {
+            switch (product_type) {
+                case "beverage":
+                    return ([
+                        "alcoholic",
+                        "non_alcoholic"
+                    ] as $Enums.Products_product_composition[]).includes(comp);
+            
+                default:
+                    return !([
+                        "alcoholic",
+                        "non_alcoholic",
+                        "merchandise"
+                    ] as $Enums.Products_product_composition[]).includes(comp);
+            }
+        }
+    };
+
+    const handleProductTypePick = ({ target }: ChangeEvent<HTMLSelectElement>) => updateForm(p => {
+        return {
+            ...p,
+            data: {
+                ...p.data,
+                pickedProductType: target.value as $Enums.Products_product_type
+            }
+        }
+    });
 
     const handleRestaurantToggle = ({ target }: ChangeEvent<HTMLInputElement>) => updateForm(p => {
         return {
@@ -196,21 +229,21 @@ const AddProductForm = ({
             </label>
 
             <div className="w-full flex flex-row justify-between items-center gap-5">
-                <label htmlFor="product_composition" className="w-full text-left">
-                    <select title="Composição do produto" id="product_composition" name="product_composition" data-element="h3" defaultValue={""} className="w-full" required>
-                        <option hidden value="">Composição do produto</option>
+                <label htmlFor="product_type" className="w-full text-left">
+                    <select onChange={handleProductTypePick} title="Tipo de produto" id="product_type" name="product_type" data-element="h3" defaultValue={""} className="w-full" required>
+                        <option hidden value="">Tipo do produto</option>
 
-                        {MENU_PRODUCT_COMPOSITIONS.map(t => <option key={t} value={t}>
+                        {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
                             {getLabel(t)}
                         </option>)}
                     </select>
                 </label>
 
-                <label htmlFor="product_type" className="w-full text-left">
-                    <select title="Tipo de produto" id="product_type" name="product_type" data-element="h3" defaultValue={""} className="w-full" required>
-                        <option hidden value="">Tipo do produto</option>
+                <label htmlFor="product_composition" className="w-full text-left">
+                    <select disabled={!Boolean(form.data?.pickedProductType)} title="Composição do produto" id="product_composition" name="product_composition" data-element="h3" defaultValue={""} className="w-full" required>
+                        <option hidden value="">Composição do produto</option>
 
-                        {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
+                        {MENU_PRODUCT_COMPOSITIONS.filter(_ONLY_APPLICABLE_PRODUCT_COMPOSITIONS(form.data?.pickedProductType)).map(t => <option key={t} value={t}>
                             {getLabel(t)}
                         </option>)}
                     </select>
