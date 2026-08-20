@@ -108,7 +108,7 @@ export const createProduct = async (
         name,
         description,
         price,
-        restaurant_id,
+        restaurant_id = null,
         discount,
         product_composition,
         product_type,
