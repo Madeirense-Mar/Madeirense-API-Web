@@ -32,10 +32,6 @@
     min-height: var(--size);
 }
 
-.card button:last-of-type {
-    border: var(--border-width) solid var(--card-neutral);
-}
-
 .card span[data-text="quantity"] {
     @apply flex flex-row justify-center items-center;
     min-width: var(--size);

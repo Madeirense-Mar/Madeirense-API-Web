@@ -28,22 +28,25 @@
 
     background-color: var(--button-background-color, transparent);
 
-    color: var(--button-text-color, transparent);
+    color: var(--button-text-color, var(--text-color));
     
     padding: 0 var(--button-padding-x, var(--button-padding-x-left, var(--button-padding))) 0 var(--button-padding-x, var(--button-padding-x-right, var(--button-padding)));
 
     cursor: pointer;
+
+    font-weight: 600;
 }
 
 .button svg {
     display: inline-flex;
-
+    
+    color: inherit;
+    
     transition: rotate 0.5s ease-in-out, scale 0.5s ease-in-out;
 }
 
 .button:hover svg {
     scale: 1.3;
-    rotate: 35deg;
 }
 
 .circle {
@@ -89,6 +92,15 @@
 
 .danger {
     composes: button;
+
+    --button-background-color: var(--accent);
+    --button-text-color: var(--neutral-light);
+}
+
+.danger:hover {
+    --button-background-color: color-mix(in srgb, var(--accent) 80%, black 90%);
+    --button-border-color: color-mix(in srgb, var(--accent) 80%, white 40%);
+    --button-text-color: var(--neutral-light);
 }
 
 .important {
@@ -100,6 +112,12 @@
 
     --button-background-color: var(--neutral-light);
     --button-text-color: var(--neutral-dark);
+}
+
+.primary:hover {
+    --button-background-color: var(--primary);
+    --button-border-color: var(--secondary);
+    --button-text-color: var(--primary-light);
 }
 
 .secondary {
@@ -115,6 +133,14 @@
 
 .success {
     composes: button;
+
+    --button-background-color: var(--success-dark);
+    --button-text-color: var(--neutral-light);
+}
+
+.success:hover {
+    --button-background-color: var(--success);
+    --button-text-color: var(--success-dark);
 }
 
 .tag {
@@ -141,4 +167,15 @@
 
 .warning {
     composes: button;
+
+    --button-background-color: var(--secondary);
+    --button-border-color: var(--secondary-dark);
+    --button-border-style: dotted;
+    --button-text-color: var(--secondary-dark);
+}
+
+.warning:hover {
+    --button-background-color: var(--secondary-dark);
+    --button-border-color: var(--secondary);
+    --button-text-color: var(--secondary);
 }

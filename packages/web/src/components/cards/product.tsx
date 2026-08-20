@@ -124,6 +124,16 @@ function ProductCard(_props: IProductCardProps) {
         "hasNotifications": [delisted].some(Boolean)
     };
 
+    const $additionButtonVariant = ((composition: typeof product_composition): variantType => {
+        switch (composition) {
+            case "meat": return "danger";
+            case "wheat": return "success";
+            case "vegan": return "warning";
+
+            default: return "primary";
+        }
+    })(product_composition);
+
     const $tagVariant = ((composition: typeof product_composition): variantType => {
         switch (composition) {
             case "meat": return "danger";
@@ -296,7 +306,7 @@ function ProductCard(_props: IProductCardProps) {
                 }
 
                 {!disableActions && <>
-                    {(assertions.isProductAvailableToBeCarted) && <Button variant="secondary" onClick={addToCart} className="w-full max-w-[500px]" disabled={assertions.isAddingToCartDisabled}>
+                    {(assertions.isProductAvailableToBeCarted) && <Button variant={$additionButtonVariant} onClick={addToCart} className="w-full max-w-[500px]" disabled={assertions.isAddingToCartDisabled}>
                         {(state === "adding")
                             ? <Icon name="Loading" className="animate-spin" />
 
