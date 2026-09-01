@@ -19,7 +19,7 @@
 }
 
 .panel>section:not([class*="HORIZONTAL_SCROLLTO_SECTION"]) header {
-    padding: 10px 0px;
+    padding: 12px 0px;
     border-bottom: var(--border-width) solid var(--border-color);
 }
 

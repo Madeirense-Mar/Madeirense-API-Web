@@ -14,6 +14,7 @@ import {
 
 import {
     isEmpty,
+    API$Enumerators,
     type API$Types,
     type authenticatedProfileType,
     type authenticationCredentialsType,
@@ -149,7 +150,7 @@ export const login = async (
             success: false
         });
 
-        const platform: platformType = req.headers['platform'] as platformType ?? 'web';
+        const platform: platformType = req.headers[API$Enumerators.Headers.platform] as platformType ?? 'web';
 
         let tokens: Partial<tokenObjectType> = {};
 

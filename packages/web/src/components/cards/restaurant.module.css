@@ -1,12 +1,12 @@
 .card {
-    --default-padding: 10px;
+    --default-padding: 12px;
 
     --card-height: 265px;
 
     composes: card from "./card.module.css";
 
     display: grid;
-    column-gap: var(--card-column-gap, 10px);
+    column-gap: var(--card-column-gap, 12px);
     row-gap: var(--card-row-gap, 5px);
     grid-template-areas:
         "thumbnail title"
@@ -20,7 +20,7 @@
     padding: var(--card-padding, var(--card-padding-y, var(--default-padding))) var(--card-padding, var(--card-padding-x, var(--default-padding)));
 
     border-color: var(--card-border-color,var(--border-color));
-    border-radius: var(--card-border-radius, 10px);
+    border-radius: var(--card-border-radius, 12px);
     border-style: var(--card-border-style, solid);
     border-width: var(--card-border-width, var(--border-width));
 
@@ -41,8 +41,8 @@
     background-position: center center;
     background-size: 100%;
     background-repeat: no-repeat;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 12px;
+    border-radius: 12px;
     height: var(--height);
     max-height: var(--height);
     min-height: var(--height);
@@ -56,7 +56,7 @@
 }
 
 .card div[data-section="thumbnail"] span {
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .card section {

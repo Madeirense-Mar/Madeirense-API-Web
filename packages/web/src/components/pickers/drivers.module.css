@@ -3,7 +3,7 @@
     --items-padding-offset: 5px;
 
     border: var(--border-width) solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow-y: auto;
     max-height: 300px;
     padding-top: calc(2 * var(--header-height) + var(--border-width) + var(--items-padding-offset));
@@ -11,7 +11,7 @@
 }
 
 .picker li {
-    padding: 10px;
+    padding: 12px;
 }
 
 .picker li:nth-child(1),

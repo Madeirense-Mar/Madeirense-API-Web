@@ -277,7 +277,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             {index}
         </span>}
 
-        <div className="max-h-[30px] min-h-[30px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
+        <div className="max-h-[32px] min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
             {!disableLink && <Link to={orderPageLink} data-state={orderPageLink === "" ? "disabled" : "idle"}>
                 <Icon name="Link2" />
 
@@ -351,7 +351,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             animated={assertions.isProgressBarAnimated}
         />
 
-        <div className="max-h-[30px] min-h-[30px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
+        <div className="max-h-[32px] min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
             {mode === "admin" && <Tag>
                 <Icon name="User" />
 

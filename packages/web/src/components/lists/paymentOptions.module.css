@@ -2,14 +2,14 @@
     composes: list from "./list.module.css";
 
     display: grid;
-    grid-template-columns: repeat(2, minmax(10px, 100%));
+    grid-template-columns: repeat(2, minmax(12px, 100%));
     column-gap: 2px;
 }
 
 .list li {
     overflow: hidden;
     border: var(--border-width) solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 15px;
 }
 

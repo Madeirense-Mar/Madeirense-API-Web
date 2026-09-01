@@ -8,9 +8,9 @@ section#kpi-statistics ul li {
     @apply flex flex-col justify-between items-start gap-2;
 
     width: 100%;
-    min-width: 230px;
+    min-width: 232px;
     border: var(--border-width) solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 7px;
 }
 
@@ -20,7 +20,7 @@ section#kpi-statistics ul li span:last-of-type:not(span[data-text], span[data-te
 
 section#order-statistics {
     --container-height: 400px;
-    --gap: 10px;
+    --gap: 12px;
 
     display: grid;
     column-gap: var(--gap);
@@ -54,8 +54,8 @@ section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-
 section#order-statistics div[data-area="dough"],
 section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] {
     border: var(--border-width) solid var(--border-color);
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px;
 }
 
 section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] {
@@ -63,7 +63,7 @@ section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] {
 }
 
 section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-type="container"] {
-    --h: calc(var(--container-height) - var(--base-button-height) - 10px);
+    --h: calc(var(--container-height) - var(--base-button-height) - 12px);
     
     height: var(--h);
     max-height: var(--h);
@@ -170,8 +170,8 @@ section#top-selling-statistics ul li div[data-type="counter"] {
     background-color: var(--base-background);
     position: absolute;
     left: 100%;
-    top: calc(10px + var(--offset));
-    transform: translateX(calc(-100% - var(--offset) - 10px));
+    top: calc(12px + var(--offset));
+    transform: translateX(calc(-100% - var(--offset) - 12px));
     height: var(--size);
     max-height: var(--size);
     min-height: var(--size);
@@ -183,7 +183,7 @@ section#top-selling-statistics ul li div[data-type="counter"] {
 section#top-selling-statistics ul li div[data-type="thumbnail"] {
     --h: 190px;
 
-    border-radius: 10px;
+    border-radius: 12px;
     height: var(--h);
     max-height: var(--h);
     min-height: var(--h);

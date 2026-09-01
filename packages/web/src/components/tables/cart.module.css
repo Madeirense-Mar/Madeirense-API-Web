@@ -60,7 +60,7 @@
 
 .table tr[data-section="summary"] div[data-row="coupon"],
 .table tr[data-section="summary"] div[data-row="discount"] {
-    padding: 0 10px;
+    padding: 0 12px;
 }
 
 .table tr[data-section="summary"] div[data-row="coupon"] *,

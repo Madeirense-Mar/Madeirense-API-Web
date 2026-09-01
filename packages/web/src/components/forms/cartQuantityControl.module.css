@@ -4,7 +4,7 @@
     overflow: hidden;
 
     border: var(--form-border-width, 0) solid var(--form-border-color, var(--neutral-dark));
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: var(--form-background-color, transparent);
 }
 
@@ -14,7 +14,7 @@
 }
 
 .form[data-carting="true"] span {
-    --spacing: 10px;
+    --spacing: 12px;
     
     margin-left: var(--spacing);
     margin-right: var(--spacing);

@@ -1,7 +1,7 @@
 .card {
     composes: card from "../card.module.css";
 
-    --card-padding: 10px;
+    --card-padding: 12px;
     
     --card-button-height: 29.33px;
     --card-tags-height: 35px;

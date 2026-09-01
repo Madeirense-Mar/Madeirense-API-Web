@@ -86,7 +86,7 @@
 .table td[data-section="summary"] div[data-type="thumbnail"] {
     height: 50px;
     width: var(--img-size);
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .table td[data-section="chat"] {}

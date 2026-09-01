@@ -40,7 +40,7 @@
 
     --border-width: 1px;
     
-    --page-margin: 10px;
+    --page-margin: 12px;
     /*#endregion*/
 }
 
@@ -106,6 +106,10 @@ body[data-theme="sea-dark"] {
 
 body[data-theme="sea-light"] {
     --background-color: color-mix(in srgb, var(--primary-light), black 70%);
+}
+
+body * {
+    color: var(--base-text-color);
 }
 
 code {
@@ -205,12 +209,12 @@ fieldset legend {
 }
 
 input {
-    padding: 0 10px;
+    padding: 0 12px;
 }
 
 input,
 select {
-    --h: 30px;
+    --h: 32px;
     
     height: var(--h);
     max-height: var(--h);

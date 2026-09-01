@@ -239,7 +239,7 @@ const ProductPage = () => {
                 <ProductCard {...{ product }} disableLink />
 
                 {(pageError) && <section>
-                    <Icon name="Error" className="mr-10px" />
+                    <Icon name="Error" className="mr-12px" />
 
                     {pageError.message}
                 </section>}

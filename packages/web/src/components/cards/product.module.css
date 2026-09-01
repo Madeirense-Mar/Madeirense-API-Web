@@ -1,6 +1,6 @@
 /*#region Card*/
 .card {
-    --card-border-radius: 10px;
+    --card-border-radius: 12px;
     --padding: 20px;
 
     @apply flex flex-col justify-start items-center gap-2;

@@ -13,7 +13,7 @@ export namespace API$Enumerators {
     }
 
     export enum Headers {
-        "platform" = "platform",
+        "platform" = "X-Platform",
     }
 
     export enum LogEntries {

@@ -30,8 +30,8 @@
 
     @apply w-full flex flex-col justify-start items-start gap-1;
     position: relative;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
+    border-top-right-radius: 12px;
+    border-top-left-radius: 12px;
     padding: var(--padding);
     min-height: var(--height);
     overflow-y: auto;
@@ -79,7 +79,7 @@
     @apply flex flex-col justify-start items-start;
     max-width: 65%;
     min-width: 7%;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 5px;
 }
 

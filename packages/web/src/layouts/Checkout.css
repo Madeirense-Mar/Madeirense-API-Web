@@ -25,7 +25,7 @@ body:has(#root[data-page="checkout"]) {
 }
 
 #root[data-page="checkout"] h1 {
-    --padding: 30px;
+    --padding: 32px;
 
     padding-top: var(--padding);
     padding-bottom: var(--padding);

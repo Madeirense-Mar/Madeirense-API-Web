@@ -1,7 +1,7 @@
 .card {
     composes: card from "./card.module.css";
     
-    --padding: 10px;
+    --padding: 12px;
 
     @apply justify-center items-center;
     

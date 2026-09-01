@@ -30,7 +30,7 @@ const OrderCardLoader = (_props: IOrderCardProps) => {
         className={resolveClassNames(styles.loader, className)}
         {...props}
     >
-        <div className="min-h-[30px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
+        <div className="min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
             <Link to="#" className="pointer-events-none animate-pulse">
                 <Icon name="Link2" />
 
@@ -52,7 +52,7 @@ const OrderCardLoader = (_props: IOrderCardProps) => {
 
         <Progress value={0} className="w-full animate-pulse" data-status="idle" />
 
-        <div className="min-h-[30px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
+        <div className="min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
             {mode === "admin" && <Tag>
                 <Icon name="User" />
 
