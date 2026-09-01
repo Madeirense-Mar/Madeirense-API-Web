@@ -4,6 +4,7 @@
 
 .form {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 12px;
@@ -11,7 +12,6 @@
     padding: 12px 16px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    background-color: #ffffff;
     color: #333333;
     font-size: 16px;
     font-weight: 500;
@@ -21,7 +21,6 @@
 }
 
 .form:hover {
-    background-color: #f5f5f5;
     border-color: #d0d0d0;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

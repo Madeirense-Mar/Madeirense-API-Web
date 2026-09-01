@@ -6,7 +6,6 @@
     --xl-size: 200px;
 
     --button-height: var(--m-size, 40px);
-    --button-width: auto;
 
     --button-padding: 12px;
 
@@ -19,16 +18,12 @@
     min-height: var(--button-height);
     max-height: var(--button-height);
 
-    width: var(--button-width);
-
     border-width: var(--button-border-width, 1px);
     border-radius: var(--button-border-radius, 1px);
     border-style: var(--button-border-style, solid);
     border-color: var(--button-border-color, transparent);
 
     background-color: var(--button-background-color, transparent);
-
-    color: var(--button-text-color, var(--text-color));
     
     padding: 0 var(--button-padding-x, var(--button-padding-x-left, var(--button-padding))) 0 var(--button-padding-x, var(--button-padding-x-right, var(--button-padding)));
 
@@ -53,13 +48,14 @@
     composes: button;
 
     --button-padding: 0px;
+    --size: var(--button-size, var(--button-height));
 
     @apply rounded-full;
 
-    max-height: var(--button-height);
-    min-height: var(--button-height);
-    max-width: var(--button-height);
-    min-width: var(--button-height);
+    max-height: var(--size);
+    min-height: var(--size);
+    max-width: var(--size);
+    min-width: var(--size);
 }
 
 .rect {
@@ -94,13 +90,13 @@
     composes: button;
 
     --button-background-color: var(--accent);
-    --button-text-color: var(--neutral-light);
+    --text-color: var(--neutral-light);
 }
 
 .danger:hover {
     --button-background-color: color-mix(in srgb, var(--accent) 80%, black 90%);
     --button-border-color: color-mix(in srgb, var(--accent) 80%, white 40%);
-    --button-text-color: var(--neutral-light);
+    --text-color: var(--neutral-light);
 }
 
 .important {
@@ -111,36 +107,41 @@
     composes: button;
 
     --button-background-color: var(--neutral-light);
-    --button-text-color: var(--neutral-dark);
+    --text-color: var(--neutral-dark);
 }
 
 .primary:hover {
     --button-background-color: var(--primary);
     --button-border-color: var(--secondary);
-    --button-text-color: var(--primary-light);
+    --text-color: var(--primary-light);
 }
 
 .secondary {
     composes: button;
     
     --button-border-color: var(--neutral-light);
-    --button-text-color: var(--neutral-light);
+    --text-color: var(--neutral-light);
 }
 
 .selected {
     composes: button;
+
+    --button-background-color: var(--primary-dark);
+    --button-border-color: var(--primary-light);
+
+    --text-color: var(--secondary);
 }
 
 .success {
     composes: button;
 
     --button-background-color: var(--success-dark);
-    --button-text-color: var(--neutral-light);
+    --text-color: var(--neutral-light);
 }
 
 .success:hover {
     --button-background-color: var(--success);
-    --button-text-color: var(--success-dark);
+    --text-color: var(--success-dark);
 }
 
 .tag {
@@ -171,11 +172,11 @@
     --button-background-color: var(--secondary);
     --button-border-color: var(--secondary-dark);
     --button-border-style: dotted;
-    --button-text-color: var(--secondary-dark);
+    --text-color: var(--secondary-dark);
 }
 
 .warning:hover {
     --button-background-color: var(--secondary-dark);
     --button-border-color: var(--secondary);
-    --button-text-color: var(--secondary);
+    --text-color: var(--secondary);
 }

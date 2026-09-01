@@ -1,6 +1,7 @@
 .tag {
     @apply flex flex-row justify-center items-center gap-2;
     
+    width: max-content;
     padding: var(--tag-padding-y, 2px) var(--tag-padding-x, 5px);
 
     border-color: var(--tag-border-color, var(--border-color));

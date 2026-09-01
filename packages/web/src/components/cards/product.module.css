@@ -127,7 +127,7 @@
     --card-border-color: var(--primary-light);
     --card-border-style: dashed;
 
-    color: var(--success-dark);
+    --text-color: var(--success-dark);
 }
 
 [data-theme*="dark"] .fish div[data-section="thumbnail"] {
@@ -142,7 +142,7 @@
     --card-background-color: color-mix(in srgb, var(--accent), black 40%);
     --card-border-color: color-mix(in srgb, var(--accent), white 40%);
 
-    color: color-mix(in srgb, var(--accent), white 80%);
+    --text-color: color-mix(in srgb, var(--accent), white 80%);
 }
 
 [data-theme*="dark"] .meat div[data-section="thumbnail"] {
@@ -169,14 +169,14 @@
     --card-border-color: var(--success);
     --card-background-color: color-mix(in srgb, var(--success), var(--success-dark) 45%);
 
-    color: var(--success-dark);
+    --text-color: var(--success-dark);
 }
 
 [data-theme="land-dark"] .vegan {
     --card-border-color: var(--success);
     --card-background-color: color-mix(in srgb, var(--success-dark) 80%, var(--success) 15%);
     
-    color: color-mix(in srgb, var(--success), white 80%);
+    --text-color: color-mix(in srgb, var(--success), white 80%);
 }
 
 .vegan div[data-section="thumbnail"] {
@@ -191,14 +191,14 @@
     --card-border-color: var(--secondary);
     --card-background-color: var(--secondary);
     
-    color: var(--success-dark);
+    --text-color: var(--success-dark);
 }
 
 [data-theme="land-dark"] .wheat {
     --card-border-color: var(--secondary);
     --card-background-color: var(--secondary-light);
     
-    color: var(--secondary-dark);
+    --text-color: var(--secondary-dark);
 }
 
 .wheat div[data-section="thumbnail"] {

@@ -19,7 +19,7 @@
     margin-left: var(--spacing);
     margin-right: var(--spacing);
 
-    color: var(--neutral-light);
+    --text-color: var(--neutral-light);
 }
 
 .action-button {
@@ -30,5 +30,5 @@
     
     background-color: var(--neutral-light);
     
-    color: var(--neutral-dark) !important;
+    --text-color: var(--neutral-dark) !important;
 }

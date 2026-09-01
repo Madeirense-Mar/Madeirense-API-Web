@@ -109,7 +109,7 @@ body[data-theme="sea-light"] {
 }
 
 body * {
-    color: var(--base-text-color);
+    color: var(--text-color, --base-text-color);
 }
 
 code {

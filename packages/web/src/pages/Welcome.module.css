@@ -4,8 +4,9 @@
     height: -webkit-fill-available;
 }
 
-.page form {
+.form {
     @apply flex flex-col justify-center items-center gap-2 w-full;
+    grid-area: form;
     background-color: var(--base-background);
     border: var(--border-width) solid var(--border-color);
     border-radius: 12px;
@@ -13,30 +14,26 @@
     min-height: 100%;
 }
 
-.page form label,
-.page form label span,
-.page form button[data-variant="text"],
-.page form input,
-.page form textarea,
-.page form select {
+.form label,
+.form label span,
+.form button[data-variant="text"],
+.form input,
+.form textarea,
+.form select {
     font-size: 12px;
 }
 
-.page form a,
-.page form ul li {
+.form a,
+.form ul li {
     font-size: 12px;
 }
 
-.page form button:not([data-variant="text"]) {
-    @apply w-full;
-}
-
-.page form header p {
+.form header p {
     @apply my-2;
     opacity: 0.7;
 }
 
-.page form hr {
+.form hr {
     --height: 1px;
     --width: 100%;
 
@@ -48,19 +45,19 @@
     opacity: 0.7;
 }
 
-.page form fieldset {
+.form fieldset {
     @apply flex flex-col justify-center items-start gap-1 w-full;
 }
 
-.page form fieldset *:not(button[data-variant="text"]) {
+.form fieldset *:not(button[data-variant="text"]) {
     @apply w-full;
 }
 
-.page form ul {
+.form ul {
     @apply flex flex-col justify-start items-start gap-1;
 }
 
-.page form ul li {
+.form ul li {
     @apply italic;
     padding: 0px 5px;
     border-radius: 5px;
@@ -83,13 +80,10 @@
 }
 
 .panel {
+    height: -webkit-fill-available;
     grid-area: panel;
     border-radius: 12px;
     background-color: beige;
-}
-
-.form {
-    grid-area: form;
 }
 
 .message {
@@ -97,8 +91,9 @@
     grid-area: message;
 }
 
-.oath {
-    grid-area: oath;
+.oauth {
+    height: -webkit-fill-available;
+    grid-area: oauth;
 }
 
 @media only screen and (min-width: 344px) {}
@@ -106,6 +101,7 @@
 @media only screen and (min-width: 428px) {}
 
 @media only screen and (min-width: 768px) {
+
     .login,
     .signup,
     .forgot {
@@ -122,10 +118,12 @@
 
     .login,
     .signup {
+        align-items: center;
+        justify-content: center;
         grid-template-areas:
             "panel  form"
             "panel  message"
-            "panel  oath"
+            "panel  oauth"
         ;
     }
 }

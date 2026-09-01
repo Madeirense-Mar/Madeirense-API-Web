@@ -15,11 +15,17 @@
 }
 
 @media only screen and (min-width: 768px) {
+    .filter-bar {
+        @apply flex flex-col justify-center items-center;
+    }
+
+    .search-filter {
+        width: 100%;
+    }
+
     .grid {
         grid-template-columns: repeat(3, minmax(300px, 1fr));
     }
 }
 
-@media only screen and (min-width: 1366px) {
-    
-}
+@media only screen and (min-width: 1366px) {}

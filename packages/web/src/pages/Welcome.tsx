@@ -178,12 +178,12 @@ function WelcomePage() {
                             <input id="email" name="login" type="email" placeholder="oteuemail@provedor.com" required />
 
                         </fieldset>
-                        
+
                         {error && <div data-state="error" className="w-full text-center p-1">
                             {error.message}
                         </div>}
 
-                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2">
+                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2 w-full">
                             {(assertions.isLoading)
                                 ? <Icon name="Loading" className="animate-spin" />
                                 : "Entrar"
@@ -245,7 +245,7 @@ function WelcomePage() {
                             {error.message}
                         </div>}
 
-                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2">
+                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2 w-full">
                             {(assertions.isLoading)
                                 ? <Icon name="Loading" className="animate-spin" />
                                 : "Entrar"
@@ -263,9 +263,7 @@ function WelcomePage() {
 
                 <span className={resolveClassNames(styles.message, "text-sm whitespace-nowrap")}>ou faça login com</span>
 
-                <section className={resolveClassNames(styles.oauth, "flex flex-row justify-center items-center flex-nowrap gap-2 w-full")}>
-                    <OAuthForm onFailedAuthentication={handleOAuthError} />
-                </section>
+                <OAuthForm className={resolveClassNames(styles.oauth)} onFailedAuthentication={handleOAuthError} />
             </main>
         }
 
@@ -382,7 +380,7 @@ function WelcomePage() {
                             {error.message}
                         </div>}
 
-                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2">
+                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2 w-full">
                             {(assertions.isLoading)
                                 ? <Icon name="Loading" className="animate-spin" />
                                 : "Inscrever"
@@ -397,9 +395,7 @@ function WelcomePage() {
 
                 <span className={resolveClassNames(styles.message, "text-sm whitespace-nowrap")}>ou registe-se com</span>
 
-                <section className={resolveClassNames(styles.oauth, "flex flex-row justify-center items-center flex-nowrap gap-2 w-full")}>
-                    <OAuthForm onFailedAuthentication={handleOAuthError} />
-                </section>
+                <OAuthForm className={resolveClassNames(styles.oauth)} onFailedAuthentication={handleOAuthError} />
             </main>
         }
     }

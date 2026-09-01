@@ -26,7 +26,6 @@ const OAuthForm = forwardRef<HTMLFormElement, IPropTypes>((_props, ref) => {
     const {
         className,
         onFailedAuthentication,
-        
         ...props
     } = _props;
 

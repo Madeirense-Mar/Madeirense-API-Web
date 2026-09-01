@@ -107,7 +107,7 @@ const SliderPicker = (_props: IPropTypes) => {
                 id={v}
                 key={key}
                 onClick={handlePick}
-                variant={(pv === v) ? "text-selected" : "text"}
+                variant={(pv === v) ? "selected" : "secondary"}
             >
                 {typeof value === "string" ? null : value.icon}
 

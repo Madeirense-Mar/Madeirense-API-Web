@@ -9,7 +9,7 @@ import {
     type KeyboardEvent
 } from "react";
 
-import { 
+import {
     useSearchParams
 } from "react-router-dom";
 
@@ -24,7 +24,7 @@ import {
     type productGroupType,
 } from "@Madeirense/shared";
 
-import { 
+import {
     useInfiniteQuery
 } from "@tanstack/react-query";
 
@@ -34,7 +34,7 @@ import MXP$App from "configurations";
 
 import ApplicationQueries from "configurations/queries";
 
-import { 
+import {
     useApp,
     type App$Types
 } from "contexts/App";
@@ -43,16 +43,17 @@ import ProductCard from "components/cards/product";
 import Icon from "components/icon";
 import Tag from "components/tag";
 
-import { 
+import {
     nextPageTriggerSetup
 } from "components/lists/utilities/functions";
 
 import styles from "./menu.module.css";
 
-import type { 
-    $Enums, 
+import type {
+    $Enums,
     Products
 } from "@Madeirense/database/browser";
+import SearchBar from "components/forms/searchBar";
 
 // ***************************************************************************************************************
 
@@ -105,8 +106,8 @@ function ProductsMenuGrid(_props: IPropTypes) {
         refetch,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetAllProducts", 
-            type, 
+            "App$GetAllProducts",
+            type,
             !group ? undefined : ({ group } as Madeirense$Types.searchQueryRecord)
         ]),
         queryFn: ApplicationQueries.getList<Products>,
@@ -244,13 +245,18 @@ function ProductsMenuGrid(_props: IPropTypes) {
                 ;
 
             return <div {...$divProps}>
-                <SliderPicker {...$sliderPickerProps} />
+                <div className={styles["filter-bar"]}>
+                    <SliderPicker {...$sliderPickerProps} />
 
-                {!disableSearch && <div className="w-full flex flex-row justify-center items-center gap-2 mb-4">
-                    <Icon name="Search" />
-
-                    <input placeholder="Pesquise pelo nome do prato" data-element="h3" onKeyDown={applySearch} onChange={handleSearch} />
-                </div>}
+                    {!disableSearch && <SearchBar
+                        className={styles["search-filter"]}
+                        inputProps={{
+                            placeholder: "Pesquise pelo nome do prato",
+                            onKeyDown: applySearch,
+                            onChange: handleSearch
+                        }}
+                    />}
+                </div>
 
                 {(!list_PRE_FILTER.length) && <div data-empty>
                     Sem produtos registados

@@ -1,0 +1,16 @@
+.form {
+    @apply flex flex-row justify-start items-center;   
+    
+    border-radius: 1px solid var(--form-border-color);
+    padding: 12px;
+    gap: 8px;
+    border-radius: 8px;
+}
+
+[data-theme*="dark"] .form {
+    --form-border-color: var(--neutral-light);
+}
+
+.form input {
+    width: -webkit-fill-available;
+}
