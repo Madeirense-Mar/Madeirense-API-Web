@@ -132,7 +132,7 @@ function WelcomePage() {
     };
 
     const $mainProps = {
-        "className": resolveClassNames(styles.page)
+        "className": resolveClassNames(styles.page, styles[type])
     };
 
     switch (type as formType) {
@@ -156,12 +156,41 @@ function WelcomePage() {
             };
 
             return <main {...$mainProps}>
-                <section className="flex flex-row justify-center items-center">
+                <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
+                </section>
+
+                <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="on">
                         <header>
-                            <h2>forgot</h2>
+                            <h2 className="flex flex-row justify-start items-center gap-5">
+                                <AnchorButton to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`} shape="circle">
+                                    <Icon name="ArrowLeft" />
+                                </AnchorButton>
+
+                                forgot
+                            </h2>
+
+                            <p>Deixe o seu email e faremos o envio das suas credenciais</p>
                         </header>
+
+                        <fieldset data-section={type} data-state={state === "authenticating" ? "disabled" : "idle"}>
+                            <label htmlFor="email">E-mail</label>
+                            <input id="email" name="login" type="email" placeholder="oteuemail@provedor.com" required />
+
+                        </fieldset>
+                        
+                        {error && <div data-state="error" className="w-full text-center p-1">
+                            {error.message}
+                        </div>}
+
+                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2">
+                            {(assertions.isLoading)
+                                ? <Icon name="Loading" className="animate-spin" />
+                                : "Entrar"
+                            }
+                        </Button>
                     </form>
+
                 </section>
             </main>
         }
@@ -186,7 +215,10 @@ function WelcomePage() {
             };
 
             return <main {...$mainProps}>
-                <section className="flex flex-row justify-center items-center">
+                <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
+                </section>
+
+                <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="on">
                         <header>
                             <h2>Bem-vindo/a ao Madeirense</h2>
@@ -229,9 +261,9 @@ function WelcomePage() {
                     </form>
                 </section>
 
-                <span className="text-sm whitespace-nowrap">ou faça login com</span>
+                <span className={resolveClassNames(styles.message, "text-sm whitespace-nowrap")}>ou faça login com</span>
 
-                <section className="flex flex-row justify-center items-center flex-nowrap gap-2 w-full">
+                <section className={resolveClassNames(styles.oauth, "flex flex-row justify-center items-center flex-nowrap gap-2 w-full")}>
                     <OAuthForm onFailedAuthentication={handleOAuthError} />
                 </section>
             </main>
@@ -267,7 +299,10 @@ function WelcomePage() {
             };
 
             return <main {...$mainProps}>
-                <section className="flex flex-row justify-center items-center">
+                <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
+                </section>
+
+                <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="off">
                         <header>
                             <h2>Bem-vindo/a ao Madeirense</h2>
@@ -360,9 +395,9 @@ function WelcomePage() {
                     </form>
                 </section>
 
-                <span className="text-sm whitespace-nowrap">ou registe-se com</span>
+                <span className={resolveClassNames(styles.message, "text-sm whitespace-nowrap")}>ou registe-se com</span>
 
-                <section className="flex flex-row justify-center items-center flex-nowrap gap-2 w-full">
+                <section className={resolveClassNames(styles.oauth, "flex flex-row justify-center items-center flex-nowrap gap-2 w-full")}>
                     <OAuthForm onFailedAuthentication={handleOAuthError} />
                 </section>
             </main>

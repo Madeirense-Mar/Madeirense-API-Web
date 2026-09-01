@@ -1,13 +1,15 @@
 .page {
     @apply m-auto;
+
+    height: -webkit-fill-available;
 }
 
 .page form {
     @apply flex flex-col justify-center items-center gap-2 w-full;
     background-color: var(--base-background);
     border: var(--border-width) solid var(--border-color);
-    border-radius: 10px;
-    padding: 30px;
+    border-radius: 12px;
+    padding: 32px;
     min-height: 100%;
 }
 
@@ -27,15 +29,6 @@
 
 .page form button:not([data-variant="text"]) {
     @apply w-full;
-}
-
-.page form header {
-    @apply w-full;
-}
-
-.page form header * {
-    margin-right: auto;
-    text-align: left;
 }
 
 .page form header p {
@@ -77,16 +70,64 @@
     grid-template-columns: 1.5fr 2fr;
 }
 
-.page {
-    grid-template-rows: 1vh;
-    grid-template-areas:
-        "main"
-    ;
+.login {
+    composoes: page;
 }
 
-@media only screen and (max-width: 1080px) {
+.signup {
+    composoes: page;
 }
 
-@media only screen and (min-width: 1081px) {
-    
+.forgot {
+    composoes: page;
 }
+
+.panel {
+    grid-area: panel;
+    border-radius: 12px;
+    background-color: beige;
+}
+
+.form {
+    grid-area: form;
+}
+
+.message {
+    text-align: center;
+    grid-area: message;
+}
+
+.oath {
+    grid-area: oath;
+}
+
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    .login,
+    .signup,
+    .forgot {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .forgot {
+        grid-template-areas:
+            "panel  form"
+        ;
+    }
+
+    .login,
+    .signup {
+        grid-template-areas:
+            "panel  form"
+            "panel  message"
+            "panel  oath"
+        ;
+    }
+}
+
+@media only screen and (min-width: 1366px) {}
