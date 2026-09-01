@@ -119,15 +119,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
         initialPageParam: 1
     });
 
-    const list = [
-        { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },
-        { key: "Entradas", value: { value: "starter", icon: <Icon name="Circle" /> } },
-        { key: "Guarnições", value: { value: "garnish", icon: <Icon name="Salad" /> } },
-        { key: "Principais", value: { value: "main", icon: <Icon name="Food" /> } },
-        { key: "Sobremesas", value: { value: "dessert", icon: <Icon name="Dessert" /> } },
-        { key: "Bebidas", value: { value: "beverage", icon: <Icon name="Drink" /> } },
-    ] as keyValuePair<string, { value: filterType, icon: any }>[];
-
     const lastElementRef = useCallback(
         nextPageTriggerSetup<HTMLDivElement>({
             fetchNextPage,
@@ -167,13 +158,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
     const $divProps = {
         className: resolveClassNames(className),
         ...props
-    };
-
-    const $sliderPickerProps = {
-        className: "mb-4",
-        defaultValue: listFilter,
-        list: list,
-        onPick: handleTypeChange
     };
 
     useEffect(() => {
@@ -217,16 +201,12 @@ function ProductsMenuGrid(_props: IPropTypes) {
 
     switch (status) {
         case "pending": return <div {...$divProps}>
-            <SliderPicker {...$sliderPickerProps} disabled />
-
             <div className="flex flex-row justify-center items-center w-full h-full">
                 <Icon name="Loading" className="animate-spin mx-auto my-4" />
             </div>
         </div>;
 
         case "error": return <div {...$divProps}>
-            <SliderPicker {...$sliderPickerProps} disabled />
-
             <div className="w-full h-full flex flex-row justify-center items-center">
                 <div data-state="error" className="flex flex-row justify-center items-center gap-2 px-2 rounded-md">
                     <Icon name="ExclamationCircle" />
@@ -237,13 +217,31 @@ function ProductsMenuGrid(_props: IPropTypes) {
         </div>;
 
         default:
-            const list_PRE_FILTER = (data?.pages.flatMap(page => page.data) || []);
-            const list = (list_PRE_FILTER)
+
+            const fullList = (data?.pages.flatMap(page => page.data) || []);
+            const list = fullList
                 .filter(item => search === "" ? true : item?.name.toLowerCase().includes(search.toLowerCase()))
                 .filter(item => listFilter === "all" ? true : item?.product_type === listFilter)
                 .filter(item => (!defaultRestaurant || item?.restaurant_id === null) ? true : item?.restaurant_id === defaultRestaurant)
                 ;
 
+            const $sliderPickerProps = {
+                className: "mb-4",
+                defaultValue: listFilter,
+                list: [
+                    { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },
+                    ...(
+                        [
+                            { key: "Entradas", value: { value: "starter", icon: <Icon name="Circle" /> } },
+                            { key: "Guarnições", value: { value: "garnish", icon: <Icon name="Salad" /> } },
+                            { key: "Principais", value: { value: "main", icon: <Icon name="Food" /> } },
+                            { key: "Sobremesas", value: { value: "dessert", icon: <Icon name="Dessert" /> } },
+                            { key: "Bebidas", value: { value: "beverage", icon: <Icon name="Drink" /> } },
+                        ] as keyValuePair<string, { value: filterType, icon: any }>[]
+                    ).filter(({ value }) => fullList.map(p => p?.product_type).includes(value.value as $Enums.Products_product_type))
+                ],
+                onPick: handleTypeChange
+            };
             return <div {...$divProps}>
                 <div className={styles["filter-bar"]}>
                     <SliderPicker {...$sliderPickerProps} />
@@ -257,36 +255,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
                         }}
                     />}
                 </div>
-
-                {(!list_PRE_FILTER.length) && <div data-empty>
-                    Sem produtos registados
-                </div>}
-
-                {(list_PRE_FILTER.length > 0 && !list.length) && <div data-empty>
-                    Nenhum produto corresponde aos filtros de pesquisa:
-
-                    {Boolean(search) && <Tag>
-                        <Icon name="Search" />
-
-                        {search}
-                    </Tag>}
-
-                    {listFilter !== "all" && <Tag>
-                        {listFilter === "starter" && <Icon name="Circle" />}
-                        {listFilter === "garnish" && <Icon name="Salad" />}
-                        {listFilter === "beverage" && <Icon name="Drink" />}
-                        {listFilter === "dessert" && <Icon name="Dessert" />}
-                        {listFilter === "main" && <Icon name="Food" />}
-
-                        {getLabel(listFilter)}
-                    </Tag>}
-
-                    {defaultRestaurant && <Tag>
-                        <Icon name="Restaurant" />
-
-                        {restaurants.find(r => r?.restaurant_id === defaultRestaurant)?.name}
-                    </Tag>}
-                </div>}
 
                 <div data-grid="ProductCard" className={resolveClassNames(styles.grid, "w-full")}>
                     {list.map((item, idx) => {
