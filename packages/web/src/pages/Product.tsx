@@ -38,6 +38,7 @@ import type { IPageState } from "components/interface";
 import type { workQueueStateType } from "components/types";
 
 import "./Product.css";
+import AnchorButton from "components/buttons/anchor";
 
 // ***************************************************************************************************************
 
@@ -235,6 +236,10 @@ const ProductPage = () => {
                         <Icon name="Loading" className="animate-spin" />
                     </Tag>
                 </header>}
+
+                <AnchorButton to={Madeirense$Enumerators.Pages.App.Layout}>
+                    <Icon name="ArrowLeft" />
+                </AnchorButton>
 
                 <ProductCard {...{ product }} disableLink />
 
