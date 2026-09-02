@@ -188,6 +188,7 @@ export const clearCart = async (
                                 in: [
                                     'beverage',
                                     'dessert',
+                                    'garnish',
                                     'main',
                                     'starter'
                                 ]
@@ -257,6 +258,7 @@ export const clearCart$Dry = async (
                                 in: [
                                     'beverage',
                                     'dessert',
+                                    'garnish',
                                     'main',
                                     'starter'
                                 ]
@@ -447,6 +449,7 @@ export const getCartSummary$Dry = async (
                 : ([
                     'beverage',
                     'dessert',
+                    'garnish',
                     'main',
                     'starter'
                 ] as $Enums.Products_product_type[]).includes(p.Products.product_type)
@@ -527,7 +530,7 @@ export const getCartSummary = async (
 
         switch (req.params.type) {
             case 'delivery':
-                cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
+                cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'garnish', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
                 break;
 
             case 'event':
@@ -685,7 +688,7 @@ export const getUserCart$Dry = async (
 
     switch (cartType) {
         case 'delivery':
-            cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
+            cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'garnish', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
             break;
 
         case 'event':
