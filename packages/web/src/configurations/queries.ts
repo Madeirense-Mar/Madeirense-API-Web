@@ -130,7 +130,7 @@ export class Queries {
                 case "delisted-products":
                     return (await this.businessEndpoints.products.getAllDelisted(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
                 case "events":
-                    return (await this.businessEndpoints.restaurants.getAll(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
+                    return (await this.businessEndpoints["restaurant-events"].getAll(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
                 case "my-bookings":
                     return (await this.businessEndpoints.resorts.getMyBookings(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
                 case "my-orders":

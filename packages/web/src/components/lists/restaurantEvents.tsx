@@ -80,7 +80,7 @@ function RestaurantEventList(_props: IPropTypes) {
         status,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetRestaurantStaff", 
+            "App$GetRestaurantEvents", 
             "events", 
             !defaultRestaurant ? {} : { restaurant_id: `${defaultRestaurant}` }
         ] as Queries$Types.itemQueryKey[]),
@@ -202,7 +202,7 @@ function RestaurantEventList(_props: IPropTypes) {
                         </li>;
 
                         case "viewport": return <li key={item.event_id} {...{ ref }}>
-                            <RestaurantEventCard restaurantEvent={item} />
+                            <RestaurantEventCard className={styles.card} restaurantEvent={item} />
                         </li>;
 
                         default: return null;

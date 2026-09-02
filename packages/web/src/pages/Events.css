@@ -3,6 +3,9 @@ body:has(#root[data-page="events"]) {
 }
 
 body:has(#root[data-page="events"]) main {
+    --main-margin-x: 0px;
+    --main-padding: 0px;
+
     -ms-overflow-style: none;
     /* Hides scrollbar in IE and Edge */
     -moz-overflow-style: none;

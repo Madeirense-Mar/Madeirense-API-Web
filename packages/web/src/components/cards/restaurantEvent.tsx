@@ -145,7 +145,7 @@ function RestaurantEventCard(_props: withVariant<IPropTypes>) {
             className
         )}
         data-state={card.status}
-        onClick={([assertions.isDisabled, mode === "default"].includes(true)) ? onClick : handleClick}
+        onClick={assertions.isDisabled ? onClick : handleClick}
         style={{ backgroundImage: `url(${thumbnail_url})` }}
         {...props}
     >
@@ -173,7 +173,7 @@ function RestaurantEventCard(_props: withVariant<IPropTypes>) {
         </div>
 
         <div data-area="information">
-            <Tag>
+            <Tag variant="secondary">
                 <Icon name="Store" />
 
                 {restaurant?.name}
@@ -181,7 +181,7 @@ function RestaurantEventCard(_props: withVariant<IPropTypes>) {
 
             <Icon name="ChevronRight" />
 
-            <Tag>
+            <Tag variant="secondary">
                 <Icon name="MapMarker" />
 
                 {restaurant?.Delivery_Locations?.address}

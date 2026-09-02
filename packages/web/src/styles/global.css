@@ -191,14 +191,16 @@ main {
 
     height: auto;
 
-    padding-bottom: var(--container-padding);
-    padding-top: var(--container-padding);
+    padding-bottom: var(--main-padding, var(--container-padding));
+    padding-top: var(--main-padding,var(--container-padding));
 
     overflow-x: hidden;
     overflow-y: auto;
     
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: var(--main-margin-x, auto);
+    margin-right: var(--main-margin-x, auto);
+
+    width: var(--main-width, var(--main-base-width));
 }
 /*#endregion*/
 
@@ -246,25 +248,25 @@ textarea {
 /*#region Media*/
 @media only screen and (min-width: 344px) {
     body #root>main {
-        width: 95vw;
+        --main-base-width: 95vw;
     }
 }
 
 @media only screen and (min-width: 428px) {
     body #root>main {
-        width: 70vw;
+        --main-base-width: 70vw;
     }
 }
 
 @media only screen and (min-width: 768px) {
     body #root>main {
-        width: 80vw;
+        --main-base-width: 80vw;
     }
 }
 
 @media only screen and (min-width: 1366px) {
     body #root>main {
-        width: 60vw;
+        --main-base-width: 60vw;
     }
 }
 /*#endregion*/

@@ -152,6 +152,7 @@ const EventsPage = () => {
         className="w-full"
     >
         <RestaurantEventList
+            className="w-full"
             ref={$ulRef}
             selectedEvent={event_id}
             mode="viewport"
