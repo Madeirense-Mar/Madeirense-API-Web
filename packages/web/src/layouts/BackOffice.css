@@ -1,7 +1,7 @@
 #root[data-page="back-office"] {
     display: grid;
     grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: 70px auto;
     grid-template-areas: 
         "aside application-nav"
         "aside application-body";

@@ -4,7 +4,11 @@
 }
 
 #root[data-page] main {
-    height: calc(100% - 70px);
+    height: var(--main-page-height, calc(100% - 70px));
+}
+
+#root[data-page="back-office"] main {
+    --main-page-height: 100%;
 }
 
 #root:not([data-page]) {

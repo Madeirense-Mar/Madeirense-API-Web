@@ -1,85 +1,92 @@
 .menu {
-    @apply flex flex-col justify-start items-center;
+    --menu-max-width: 200px;
+    --menu-min-width: 52px;
+
+    @apply flex flex-col justify-start;
+
+    gap: 24px;
 
     z-index: 999;
     grid-area: aside;
     position: relative;
 
-    max-width: var(--aside-menu-width);
-    min-width: 0px;
-    
-    padding-top: var(--base-padding);
+    border-right: calc(var(--border-width) * 2) solid var(--secondary);
+
+    max-width: var(--menu-max-width);
+    min-width: var(--menu-min-width);
+
+    padding-top: 70px;
     padding-bottom: var(--base-padding);
 
     transition-duration: 0.5s;
 }
 
+[data-theme="land-dark"] .menu {}
+
+[data-theme="land-light"] .menu {}
+
+[data-theme="sea-dark"] .menu {
+    background-color: var(--secondary-dark);
+}
+
+[data-theme="sea-light"] .menu {}
+
+.menu ul li {
+    @apply flex flex-row justify-center items-center;
+}
+
+.menu ul li a {
+    --size: var(--menu-min-width);
+
+    height: var(--size);
+    max-height: var(--size);
+    min-height: var(--size);
+
+    width: var(--size);
+    max-width: var(--size);
+    min-width: var(--size);
+
+    background-color: var(--anchor-background-color, transparent);
+
+    border-left: var(--anchor-border-width, 0px) solid var(--anchor-border-color, transparent);
+}
+
+.menu ul li a:hover {
+    --anchor-background-color: color-mix(in srgb, var(--secondary), black 90%);
+}
+
+.menu ul li a[data-active] {
+    --anchor-border-width: 4px;
+}
+
+[data-theme="land-dark"] .menu ul li a[data-active] {}
+
+[data-theme="land-light"] .menu ul li a[data-active] {}
+
+[data-theme="sea-dark"] .menu ul li a[data-active] {
+    --anchor-background-color: color-mix(in srgb, var(--secondary), black 60%);
+    --anchor-border-color: var(--secondary);
+}
+
+[data-theme="sea-light"] .menu ul li a[data-active] {}
+
 .menu:not([data-toggled]) {
-    padding-left: 0px;
-    padding-right: 0px;
-    border-width: 0px;
-    background-color: transparent;
-    border-color: transparent;
-    width: 0px;
+    @apply items-center;
+}
+
+.menu:not([data-toggled]) ul li span {
+    display: none;
 }
 
 .menu[data-toggled] {
     --px: calc(var(--container-padding) - 8px);
 
-    background-color: var(--secondary-dark);
-    border-right: calc(var(--border-width) * 2) solid var(--secondary);
-    padding-left: var(--px);
-    padding-right: var(--px);
+    @apply items-start;
+
     width: var(--max-width);
-}
-
-.menu ul {
-    overflow: hidden;
-
-    padding-bottom: var(--container-padding);
-    padding-top: var(--container-padding);
-
-    margin-top: var(--base-padding);
-    
-    transition-duration: 0.5s;
-}
-
-.menu #toggler {
-    position: absolute;
-    top: calc(var(--application-nav-bar-height) / 2);
-    left: 100%;
-    transition: transform 2s ease-in-out;
-}
-
-.menu #toggler svg {
-    transition: transform 1s ease-in-out;
-}
-
-.menu:not([data-toggled]) ul {
-    width: 0px;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.menu:not([data-toggled]) #toggler {
-    border-bottom-left-radius: 0px;
-    border-top-left-radius: 0px;
-    transform: translate(-30%, -35%);
-}
-
-.menu:not([data-toggled]) #toggler:hover {
-    transform: translate(-10%, -35%);
 }
 
 .menu[data-toggled] ul {
     opacity: 1;
     width: 100%;
-}
-
-.menu[data-toggled] #toggler {
-    transform: translate(-50%, -35%);
-}
-
-.menu[data-toggled] #toggler:hover {
-    transform: translate(-70%, -35%);
 }
