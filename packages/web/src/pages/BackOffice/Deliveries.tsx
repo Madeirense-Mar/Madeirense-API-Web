@@ -41,7 +41,7 @@ import OrderItemsList from "components/lists/order/items";
 
 import GoogleMapDeliveryTracker from "components/maps/google/deliveryTracker";
 
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import type {
     $Enums

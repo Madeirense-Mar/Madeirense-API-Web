@@ -2,6 +2,8 @@ import {
     type ComponentPropsWithoutRef
 } from "react";
 
+import { Link } from "react-router-dom";
+
 import {
     resolveClassNames
 } from "@Madeirense/shared";
@@ -10,15 +12,15 @@ import styles from "./tag.module.css";
 
 import type {
     variantType
-} from "./types";
+} from "../types";
 
 // ***************************************************************************************************************
 
-interface IPropTypes extends ComponentPropsWithoutRef<"span"> {
+interface IPropTypes extends ComponentPropsWithoutRef<typeof Link> {
     variant?: variantType;
 };
 
-const Tag = (_props: IPropTypes) => {
+const AnchorTag = (_props: IPropTypes) => {
     const {
         children,
         className,
@@ -26,9 +28,9 @@ const Tag = (_props: IPropTypes) => {
         ...props
     } = _props;
 
-    return <span className={resolveClassNames(styles[variant], className)} {...props}>
+    return <Link className={resolveClassNames(styles[variant], className)} {...props}>
         {children}
-    </span>;
+    </Link>;
 };
 
-export default Tag;
+export default AnchorTag;

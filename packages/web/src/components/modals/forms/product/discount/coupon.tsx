@@ -17,7 +17,7 @@ import { useApp } from "contexts/App";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import type {
     Coupons

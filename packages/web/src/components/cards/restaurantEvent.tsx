@@ -27,7 +27,7 @@ import { useProfile } from "contexts/Profile";
 import { DEFAULT_COMPONENT_STATE } from "components/utilities/constants";
 
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import styles from "./restaurantEvent.module.css";
 

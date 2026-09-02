@@ -16,7 +16,7 @@ import {
 } from "@Madeirense/shared";
 
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import type {
     withVariant

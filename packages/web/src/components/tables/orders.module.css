@@ -1,6 +1,6 @@
 .table {
     --img-size: 150px;
-    
+
     --row-height: 50px;
 
     background-color: var(--background-color);
@@ -16,7 +16,7 @@
 
     max-height: calc(100% - var(--application-nav-bar-height) - var(--row-height));
     width: 100%;
-    
+
     -ms-overflow-style: none;
     /* Hides scrollbar in IE and Edge */
     -moz-overflow-style: none;
@@ -51,11 +51,11 @@
 }
 
 .table tfoot tr:first-child {
-    border-top: var(--border-width) solid var(--border-color);
+    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .table tfoot tr:last-child {
-    border-bottom: var(--border-width) solid var(--border-color);
+    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .table tbody tr[data-row="restaurant"] {
@@ -73,7 +73,7 @@
 }
 
 .table tr:has(div[class*="card"]) td:first-child {
-    border-right: var(--border-width) solid var(--border-color);
+    border-right: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .table tfoot td[data-section],
@@ -98,16 +98,19 @@
 }
 
 .order tfoot tr:first-child {
-    border-bottom: var(--border-width) solid var(--border-color);
+    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .order tfoot tr:last-child {
-    border-top: var(--border-width) solid var(--border-color);
+    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
-.summary tr {
-    border-right: var(--border-width) solid var(--border-color);
-    border-left: var(--border-width) solid var(--border-color);
+.summary {
+    --table-row-border-width: 0px;
+}
+
+.summary tbody tr td {
+    @apply pb-4
 }
 
 #root:has(div[class*="Notifications"][data-state="showing"]) .wrapper[data-visible] {

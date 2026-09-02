@@ -59,7 +59,7 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { IPageState } from "components/interface";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 

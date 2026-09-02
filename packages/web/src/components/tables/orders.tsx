@@ -187,7 +187,7 @@ function Orders({
                 <tfoot>
                     <tr>
                         {sections.map(kvp => <td key={kvp.key}>
-                            <Button className="w-full" onClick={() => setSection(kvp.value as any)} variant="text" data-selected={currentSection === kvp.value}>
+                            <Button className="w-full" onClick={() => setSection(kvp.value as any)} variant={`text${(currentSection === kvp.value) ? "-selected" : ""}`}>
                                 {kvp.key}
 
                                 {kvp.icon}
@@ -212,12 +212,6 @@ function Orders({
 
                 <tbody>
                     {TABLE_ERROR_ROW}
-
-                    <tr data-row="restaurant">
-                        <td colSpan={3}>
-                            <span>{selectedOrder.Restaurants.name}</span>
-                        </td>
-                    </tr>
 
                     <tr>
                         <td colSpan={3}>

@@ -1,21 +1,41 @@
 .list {
+    --list-item-border-radius: 8px;
+    --list-item-padding: 4px;
+
     composes: list from "../list.module.css";
-    
+
     --img-size: 150px;
-    
-    border-top: var(--border-width) solid var(--border-color);
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border-bottom: var(--border-width) solid var(--border-color);
+
+    padding: var(--list-item-padding);
+
+    border-radius: var(--list-item-border-radius);
+
+    background-color: var(--base-background-color)
+}
+
+.list li {
+    @apply flex flex-row justify-start items-center gap-3;
+
+    border-radius: inherit;
 }
 
 .list li:last-child {
     @apply font-bold p-3 text-lg;
-    
-    color: var(--base-text-contrast-color);
-    background-color: var(--secondary);
+
+    border: 1px dashed var(--price-tag-border-color, var(--secondary));
+
     justify-content: space-between;
 }
+
+[data-theme="land-dark"] .list li:last-child {}
+
+[data-theme="land-light"] .list li:last-child {}
+
+[data-theme="sea-dark"] .list li:last-child {
+    background-color: var(--primary);
+}
+
+[data-theme="sea-light"] .list li:last-child {}
 
 .list li:last-child * {
     color: var(--base-text-contrast-color);
@@ -24,5 +44,6 @@
 .list li div[data-type="thumbnail"] {
     height: 50px;
     width: var(--img-size);
-    border-radius: 12px;
+    background-size: cover;
+    border-radius: var(--list-item-border-radius);
 }

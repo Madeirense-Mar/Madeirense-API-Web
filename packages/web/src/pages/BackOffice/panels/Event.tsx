@@ -41,7 +41,7 @@ import TicketBuyersList from "components/lists/ticketBuyers";
 import DeletionForm from "components/modals/forms/delete";
 import CancellationForm from "components/modals/forms/cancel";
 
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import env from "env";
 

@@ -4,15 +4,15 @@
     width: max-content;
     padding: var(--tag-padding-y, 2px) var(--tag-padding-x, 5px);
 
-    border-color: var(--tag-border-color, var(--border-color));
+    border-color: var(--tag-border-color, var(--base-border-color));
     border-width: var(--tag-border-width, var(--border-width));
     border-style: var(--tag-border-style, solid);
     border-radius: var(--tag-border-radius, 5px);
 
-    color: var(--tag-text-color, black);
+    color: var(--tag-text-color, var(--text-color));
     
     background-color: var(--tag-background-color, transparent);
-
+  
     font-weight: 600;
 }
 
@@ -36,14 +36,14 @@
 .primary {
     composes: tag;
 
-    --tag-background-color: var(--primary-dark);
-    --tag-border-color: var(--primary-dark);
-    --tag-text-color: var(--neutral-light);
+    --tag-background-color: var(--primary-light);
+    --tag-border-color: var(--primary-light);
+    --tag-text-color: var(--primary-dark);
 }
 
 .primary:hover {
-    --tag-background-color: var(--primary-light);
-    --tag-text-color: var(--primary-dark);
+    --tag-background-color: var(--primary-dark);
+    --tag-text-color: var(--secondary);
 }
 
 /* TODO: Unimplemented style > secondary */

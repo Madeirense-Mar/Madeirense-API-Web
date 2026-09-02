@@ -12,7 +12,7 @@ import {
 
 import ProfilePictureButton from "components/buttons/profile";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import styles from "./profileHeader.module.css";
 

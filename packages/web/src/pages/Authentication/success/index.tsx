@@ -20,7 +20,7 @@ import MXP$App from "configurations";
 import AppSettings from "settings";
 
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import styles from "./index.module.css";
 

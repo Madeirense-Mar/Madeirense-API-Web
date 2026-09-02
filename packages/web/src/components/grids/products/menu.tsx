@@ -41,7 +41,7 @@ import {
 
 import ProductCard from "components/cards/product";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import {
     nextPageTriggerSetup

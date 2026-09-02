@@ -16,7 +16,7 @@
 
     padding: var(--card-padding);
 
-    border-color: var(--card-border-color);
+    border-color: var(--card-border-color, var(--base-border-color));
     border-radius: var(--card-border-radius, 7px);
     border-style: solid;
     border-width: var(--card-border-width, var(--border-width));
@@ -28,14 +28,6 @@
     white-space: nowrap;
 }
 
-.card a {
-    @apply flex flex-row justify-center items-center gap-4;
-    @apply bg-gray-300;
-
-    border: var(--border-width) solid var(--border-color);
-    padding: 2px 5px;
-    border-radius: 5px;
-}
 .card:has(div[class*="progress" i][data-status="cancelled"]) div[class*="progress" i] {
     opacity: 0.4;
 }

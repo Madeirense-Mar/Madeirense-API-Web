@@ -22,7 +22,7 @@ import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import type { IComponentState } from "components/interface";
 

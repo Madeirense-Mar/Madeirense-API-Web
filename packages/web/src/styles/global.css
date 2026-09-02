@@ -91,6 +91,9 @@ body[data-theme*="light"] {
 }
 
 body[data-theme="land-dark"] {
+    --base-border-color: var(--secondary);
+    --base-background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
+
     --background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
 }
 
@@ -99,6 +102,9 @@ body[data-theme="land-light"] {
 }
 
 body[data-theme="sea-dark"] {
+    --base-border-color: var(--primary-light);
+    --base-background-color: var(--primary);
+
     --background-color: var(--primary-dark);
 }
 

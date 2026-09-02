@@ -128,7 +128,7 @@ const OrderPage = () => {
                                 <h1>Pedido #{order_id}</h1>
                             </header>
 
-                            <Orders mode="summary" {...{ order_id }} />
+                            <Orders className="w-full" mode="summary" {...{ order_id }} />
                         </section>
                     </main>
                 }

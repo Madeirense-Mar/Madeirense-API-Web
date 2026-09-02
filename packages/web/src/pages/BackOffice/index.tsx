@@ -50,7 +50,7 @@ import ProfilePictureButton from "components/buttons/profile";
 import DoughnutChart from "components/charts/doughnut";
 import LineChart from "components/charts/line";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import type { IPageState } from "components/interface";
 

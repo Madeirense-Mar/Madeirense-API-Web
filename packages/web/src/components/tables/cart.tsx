@@ -23,7 +23,7 @@ import Icon from "components/icon";
 
 import styles from "./cart.module.css";
 import AnchorButton from "components/buttons/anchor";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 

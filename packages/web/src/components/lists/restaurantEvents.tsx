@@ -28,7 +28,7 @@ import { useApp } from "contexts/App";
 import Button from "components/buttons";
 import RestaurantEventCard from "components/cards/restaurantEvent";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { nextPageTriggerSetup } from "./utilities/functions";
 

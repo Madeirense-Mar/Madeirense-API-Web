@@ -9,7 +9,7 @@ import { resolveClassNames } from "@Madeirense/shared";
 import Button from "components/buttons";
 import Icon from "components/icon";
 import Progress from "components/progressBar";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import styles from "./loader.module.css";
 

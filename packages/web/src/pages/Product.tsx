@@ -25,7 +25,7 @@ import Button from "components/buttons";
 import ProductCard from "components/cards/product";
 import ProductCommentsList from "components/lists/productComments";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { Page$Enumerators } from "pages/enumerators";
 import { Root$Enumerators } from "styles/enumerators";

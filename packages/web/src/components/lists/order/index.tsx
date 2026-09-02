@@ -225,7 +225,7 @@ function OrdersList(_props: IPropTypes) {
                 ;
 
             return <ul {...$ulProps}>
-                <HeaderListItem disabled={list.length === 0} {...$liHeaderProps} />
+                <HeaderListItem {...$liHeaderProps} />
 
                 {list.length === 0 && <li data-empty className="w-full">
                     {(!statusType)

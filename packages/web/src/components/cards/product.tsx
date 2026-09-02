@@ -20,7 +20,7 @@ import {
 
 import Button from "components/buttons";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { useApp } from "contexts/App";
 import { useNotifications } from "contexts/Notifications";

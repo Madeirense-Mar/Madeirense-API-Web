@@ -15,7 +15,7 @@ import {
 } from "@Madeirense/shared";
 
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import MXP$App from "configurations";
 
@@ -112,7 +112,7 @@ const OrderHistoryList = ({
 
                 <span className="italic">{h.notes}</span>
 
-                <span className="ml-auto">{new Date(h.created_at as Date).toLocaleString()}</span>
+                <span className="ml-auto opacity-20 hover:opacity-100">{new Date(h.created_at as Date).toLocaleString()}</span>
             </li>)}
         </ul>);
     };
