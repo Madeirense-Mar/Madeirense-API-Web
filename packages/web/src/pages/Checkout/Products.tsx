@@ -137,6 +137,10 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
         user
     ]);
 
+    const handleLocationUpdate = (address: typeof page.data) => {
+        updatePage(c => { return { ...c, data: address } })
+    };
+
     async function POST(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -168,8 +172,6 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
 
             await waitForCartIdleState();
 
-            if (!page.data) throw new Error("Must select a valid address");
-
             switch (true) {
                 case (elements.namedItem("location_id") !== null):
                     location_id = parseInt((elements.namedItem("location_id") as HTMLSelectElement).value);
@@ -177,6 +179,8 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                     break;
 
                 default:
+                    if (!page.data) throw new Error("Must select a valid address");
+                    
                     const useTempName = !(elements.namedItem("save_dropoff_location") as HTMLInputElement).checked;
 
                     ({ location_id } = (
@@ -292,7 +296,7 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                                 longitude: currentLocation.longitude
                             }
                         }
-                        onLocationSelect={(address) => updatePage(c => { return { ...c, data: address } })}
+                        onLocationSelect={handleLocationUpdate}
                     />
                 </>
 

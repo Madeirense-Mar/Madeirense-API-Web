@@ -350,7 +350,7 @@ function Cart({
                         const price = parseFloat(_p.toString());
                         const whileQuantityIncreases = queue.some(q => q.product_id === product_id && q.type === "adding");
                         const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
-                        const isInQueue = whileQuantityIncreases || whileQuantityDecreases; 
+                        const isInQueue = whileQuantityIncreases || whileQuantityDecreases;
 
                         return <tr key={product_id} data-hasdiscount={discount > 0}>
                             <td>
@@ -375,10 +375,16 @@ function Cart({
                                 </div>
                             </td>
 
-                            <td data-cell="price" className="text-right">
-                                {(discount > 0) && <span data-text="discount">{discount}</span>}
+                            <td data-cell="price">
+                                <div className="flex flex-row justify-end items-center gap-3">
+                                    <span data-text="price">{!price ? "Grátis" : formatNumber(price)}</span>
 
-                                <span data-text="price">{!price ? "Grátis" : formatNumber(price)}</span>
+                                    {(discount > 0) && <Tag variant="success">
+                                        <Icon name="Discount" />
+
+                                        {discount}
+                                    </Tag>}
+                                </div>
                             </td>
                         </tr>
                     })}

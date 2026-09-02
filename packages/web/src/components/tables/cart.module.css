@@ -14,6 +14,7 @@
 .table div[data-type="thumbnail"] {
     height: 100px;
     width: var(--img-size);
+    background-size: cover;
 }
 
 .table tbody tr:first-child,
@@ -89,6 +90,7 @@
 }
 
 .table tr td[data-cell="price"] {
+    
     border-left: var(--border-dotted-width) dotted var(--border-dotted-color);
 }
 
