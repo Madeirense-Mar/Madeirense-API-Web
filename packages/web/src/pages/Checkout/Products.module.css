@@ -1,3 +1,0 @@
-.products {
-    composes: section from "./section.module.css";
-}

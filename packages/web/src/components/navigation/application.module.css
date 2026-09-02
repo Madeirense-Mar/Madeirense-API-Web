@@ -1,18 +1,23 @@
 .nav {
+    --h: 70px;
+    --text-color: var(--neutral-dark);
+
     @apply flex flex-row items-center;
 
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+    
     grid-area: application-nav;
+    pointer-events: var(--nav-pointer-events, all);
 
     position: relative;
     z-index: 11;
-
+    
     gap: 12px;
-    padding: var(--base-padding);
 
     background-color: var(--nav-background-color, var(--secondary));
 
-    pointer-events: var(--nav-pointer-events, all);
-    
     opacity: var(--nav-opacity, 1);
 }
 

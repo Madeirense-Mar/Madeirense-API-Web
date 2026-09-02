@@ -40,8 +40,6 @@ import PaymentTypesList from "components/lists/paymentOptions";
 
 import Cart from "components/tables/cart";
 
-import styles from "./Resort.module.css";
-
 import type {
     $Enums
 } from "@Madeirense/database/browser";
@@ -99,7 +97,7 @@ const ResortCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
     };
 
     const $sectionProps = {
-        "className": resolveClassNames(styles.events, className),
+        "className": resolveClassNames(className),
         ...props
     };
 
@@ -130,9 +128,9 @@ const ResortCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                 };
 
                 default: {
-                    return <section {...$sectionProps}>
+                    return <>
                         resort
-                    </section>
+                    </>
                 }
             };
         }

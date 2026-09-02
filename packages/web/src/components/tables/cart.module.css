@@ -204,9 +204,25 @@
     composes: table;
 }
 
+[data-theme="sea-dark"] .order {
+    --input-element-border-color: var(--secondary);
+    --table-row-border-color: var(--secondary);
+}
+
 .order tbody tr td:first-child div>form>div>button {
     --button-border-radius: 0 9999px 9999px 0;
 }
+
+.order tbody tr[data-section="instructions"] td {
+    --table-cell-padding-x: 0px;
+}
+
+.order tfoot tr[data-section="summary"] {
+    --text-color: var(--neutral-dark);
+
+    background-color: var(--secondary);
+}
+
 
 @media only screen and (min-width: 344px) {}
 

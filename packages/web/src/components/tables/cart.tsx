@@ -348,6 +348,9 @@ function Cart({
                     {cart.map(({ product_id, name, discount: _d, price: _p, thumbnail, quantity }) => {
                         const discount = parseFloat(_d.toString());
                         const price = parseFloat(_p.toString());
+                        const whileQuantityIncreases = queue.some(q => q.product_id === product_id && q.type === "adding");
+                        const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
+                        const isInQueue = whileQuantityIncreases || whileQuantityDecreases; 
 
                         return <tr key={product_id} data-hasdiscount={discount > 0}>
                             <td>
@@ -359,7 +362,17 @@ function Cart({
                             </td>
 
                             <td>
-                                <span data-text="quantity" className="font-bold italic">{`x${quantity}`}</span>
+                                <div className="w-full flex flex-row items-center justify-end gap-3">
+                                    <Button value={product_id} onClick={removeItem()} shape="circle" variant="secondary" disabled={isInQueue}>
+                                        {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                    </Button>
+
+                                    <span className="w-[50px] text-center">{quantity}</span>
+
+                                    <Button value={product_id} onClick={addItem()} shape="circle" variant="primary" disabled={isInQueue}>
+                                        {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                                    </Button>
+                                </div>
                             </td>
 
                             <td data-cell="price" className="text-right">
@@ -372,7 +385,7 @@ function Cart({
 
                     {!hideTTP && TABLE_ETA_ROW}
 
-                    {!hideInstructions && <tr>
+                    {!hideInstructions && <tr data-section="instructions">
                         <td colSpan={4}>
                             <fieldset className="w-full flex flex-col justify-start items-start gap-2 my-4">
                                 <legend className="flex flex-row justify-start items-center gap-2">

@@ -3,13 +3,23 @@
 
     gap: 48px;
 
-    height: 100%;
+    height: calc(100% - 70px);
 }
 
 .checkout > header {
     @apply flex flex-row justify-between items-center flex-nowrap w-full;
 
     gap: 12px;
+}
+
+.checkout > form > fieldset {
+    @apply flex flex-col justify-start items-start;
+    
+    gap: 24px;
+}
+
+.checkout > form > fieldset > legend {
+    margin-bottom: 12px;
 }
 
 @media only screen and (min-width: 344px) {}

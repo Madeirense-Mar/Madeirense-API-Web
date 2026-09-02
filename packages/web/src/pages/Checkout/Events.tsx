@@ -40,8 +40,6 @@ import PaymentTypesList from "components/lists/paymentOptions";
 
 import Cart from "components/tables/cart";
 
-import styles from "./Events.module.css";
-
 import type {
     $Enums
 } from "@Madeirense/database/browser";
@@ -154,7 +152,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
     };
 
     const $sectionProps = {
-        "className": resolveClassNames(styles.events, className),
+        "className": resolveClassNames(className),
         ...props
     };
 
@@ -185,7 +183,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                 };
 
                 default: {
-                    return <section {...$sectionProps}>
+                    return <>
                         {restaurant && <RestaurantCard {...{ restaurant }} disableLink />}
 
                         {restaurant_event && <>
@@ -305,7 +303,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                                 </Button>
                             </footer>
                         </form>
-                    </section>
+                    </>
                 }
             };
         }

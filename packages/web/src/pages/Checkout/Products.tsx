@@ -19,7 +19,6 @@ import {
     generateRandomNumbers,
     parsePhoneCode,
     parsePhoneNumber,
-    resolveClassNames,
     stringRegularExpressions,
     ILocator,
     type restaurantType,
@@ -54,8 +53,6 @@ import { useProfile } from "contexts/Profile";
 import { useCart } from "contexts/Cart";
 import { useOrders } from "contexts/Orders";
 import { useApp } from "contexts/App";
-
-import styles from "./Products.module.css";
 
 import type {
     $Enums
@@ -238,26 +235,22 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
         return () => { };
     }, [currentLocation, getAppProperties]);
 
-    return <section className={resolveClassNames(styles.products, className)} {...props}>
-        <header>
+    return <>
+        <section className="flex flex-col justify-center items-center py-6 w-full">
             {!restaurant && <Tag variant="danger">
                 Não estamos a aceiter pedidos por agora, tente mais tarde
             </Tag>}
 
             {restaurant && <RestaurantCard className="w-full" {...{ restaurant }} />}
-        </header>
+        </section>
 
-        <Cart mode="order" type="delivery" />
+        <Cart className="w-full" mode="order" type="delivery" />
 
-        <form onSubmit={POST}>
-            <fieldset>
+        <form onSubmit={POST} className="w-full flex flex-col justify-start items-center gap-7">
+            <fieldset className="w-full">
                 <legend>Contacto</legend>
 
-                <label htmlFor="phone">
-                    Nº do telefone
-                </label>
-
-                <div className="flex flex-row justify-start items-center w-full">
+                <div className="flex flex-row justify-start items-center w-full gap-3">
                     <select ref={$selectRef} title="Código do telefone" id="code" name="code" required defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""}>
                         <option hidden value="">Seleciona um código</option>
 
@@ -291,6 +284,7 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                     </Button>}
 
                     <DropOffFieldset
+                        className="w-full"
                         initialLocation={(!currentLocation)
                             ? undefined
                             : {
@@ -302,10 +296,10 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                     />
                 </>
 
-                : <fieldset>
+                : <fieldset className="w-full">
                     <legend>Localização</legend>
 
-                    <div className="w-full flex flex-row justify-start items-center gap-2">
+                    <div className="w-full flex flex-row justify-start items-center gap-3">
                         {user?.Delivery_Locations && <DeliveryLocationsSelector
                             locations={user.Delivery_Locations}
                             defaultLocationId={preferredLocation}
@@ -313,16 +307,14 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                             id="location_id"
                         />}
 
-                        <Button variant="secondary" onClick={() => toggleMap(t => !t)}>
-                            Escolher localização no mapa
-
+                        <Button shape="circle" variant="secondary" onClick={() => toggleMap(t => !t)}>
                             <Icon name="MapMarker" />
                         </Button>
                     </div>
                 </fieldset>
             }
 
-            <fieldset>
+            <fieldset className="w-full">
                 <legend>Pagamento</legend>
 
                 <PaymentTypesList
@@ -334,35 +326,36 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                 />
             </fieldset>
 
+            <Button
+                type={(assertions.hasSuccessfullySubmitted) ? "button" : "submit"}
+                variant={(assertions.hasSuccessfullySubmitted) ? "success" : page.error ? "danger" : "primary"}
+                className="w-full"
+                disabled={assertions.isLoading}
+            >
+                {page.error && <Icon name="ExclamationCircle" />}
+
+                {(assertions.isLoading)
+                    ? <Icon name="Loading" className="animate-spin" />
+                    : (assertions.hasSuccessfullySubmitted)
+                        ? "Pedido feito"
+                        : page.error
+                            ? page.error.message
+                            : `Fazer pedido (${formatNumber(summary.totalPrice)})`
+                }
+
+                {page.error && <Icon name="ExclamationCircle" />}
+            </Button>
+
+            {/* 
+            TODO: Implement bill splitting trigger
             <footer>
-                {/* 
-                TODO: Implement bill splitting trigger
-                <Button className="w-1/4" variant="secondary" onClick={splitBill} disabled={isLoading}>
-                    Dividir conta
-                </Button> */}
-
-                <Button
-                    type={(assertions.hasSuccessfullySubmitted) ? "button" : "submit"}
-                    variant={(assertions.hasSuccessfullySubmitted) ? "success" : page.error ? "danger" : "primary"}
-                    className="w-full"
-                    disabled={assertions.isLoading}
-                >
-                    {page.error && <Icon name="ExclamationCircle" />}
-
-                    {(assertions.isLoading)
-                        ? <Icon name="Loading" className="animate-spin" />
-                        : (assertions.hasSuccessfullySubmitted)
-                            ? "Pedido feito"
-                            : page.error
-                                ? page.error.message
-                                : `Fazer pedido (${formatNumber(summary.totalPrice)})`
-                    }
-
-                    {page.error && <Icon name="ExclamationCircle" />}
-                </Button>
+            <Button className="w-1/4" variant="secondary" onClick={splitBill} disabled={isLoading}>
+                Dividir conta
+            </Button> 
             </footer>
+            */}
         </form>
-    </section>
+    </>
 };
 
 export default ProductsCheckoutPage;

@@ -3,7 +3,7 @@
 
     display: grid;
     grid-template-columns: repeat(2, minmax(12px, 100%));
-    column-gap: 2px;
+    gap: 4px;
 }
 
 .list li {

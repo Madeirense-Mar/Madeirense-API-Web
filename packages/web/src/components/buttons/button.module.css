@@ -10,9 +10,9 @@
     --button-padding: 12px;
 
     --button-border-width: 1px;
-    
+
     @apply flex flex-row justify-center items-center gap-2;
-    
+
     cursor: pointer;
 
     height: var(--button-height);
@@ -27,18 +27,18 @@
     border-color: var(--button-border-color, transparent);
 
     background-color: var(--button-background-color, transparent);
-    
+
     color: var(--text-color);
     font-weight: 600;
 }
 
 .button svg {
     pointer-events: none;
-    
+
     display: inline-flex;
-    
+
     color: inherit;
-    
+
     transition: rotate 0.5s ease-in-out, scale 0.5s ease-in-out;
 }
 
@@ -47,8 +47,6 @@
 }
 
 .circle {
-    composes: button;
-
     --button-padding: 0px;
     --size: var(--button-size, var(--button-height));
 
@@ -60,9 +58,7 @@
     min-width: var(--size);
 }
 
-.rect {
-    composes: button;
-}
+.rect {}
 
 .xs .s .m .l .xl {
     background-size: cover;
@@ -120,7 +116,7 @@
 
 .secondary {
     composes: button;
-    
+
     --button-border-color: var(--neutral-light);
     --text-color: var(--neutral-light);
 }
@@ -158,9 +154,9 @@
     --button-border-radius: 0px;
 
     @apply flex flex-row justify-center items-center gap-2;
-    
+
     font-weight: 700;
-    
+
     white-space: nowrap;
 
     border-top: none;
