@@ -1,0 +1,21 @@
+.checkout {
+    @apply flex flex-col justify-start items-start;
+
+    gap: 48px;
+
+    height: 100%;
+}
+
+.checkout > header {
+    @apply flex flex-row justify-between items-center flex-nowrap w-full;
+
+    gap: 12px;
+}
+
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {}
+
+@media only screen and (min-width: 1366px) {}

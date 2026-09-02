@@ -8,12 +8,16 @@ import {
     useNavigate
 } from "react-router-dom";
 
+import {
+    resolveClassNames
+} from "@Madeirense/shared";
+
 import Button from "components/buttons";
 import Icon from "components/icon";
 
 import { Root$Enumerators } from "styles/enumerators";
 
-import "./Checkout.css";
+import styles from "./Checkout.module.css";
 
 // ***************************************************************************************************************
 
@@ -39,7 +43,7 @@ function CheckoutLayout() {
         }
     }, []);
 
-    return <main>
+    return <main className={resolveClassNames(styles.checkout)}>
         <header>
             <Button shape="circle" variant="secondary" onClick={handleReturn}>
                 <Icon name="ArrowLeft" />
@@ -50,6 +54,7 @@ function CheckoutLayout() {
             <h1 className="ml-auto opacity-30">
                 Evento
                 Entrega
+                Resort
             </h1>
         </header>
 

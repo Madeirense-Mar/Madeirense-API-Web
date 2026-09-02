@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import {
     formatMinutes,
     formatNumber,
+    Madeirense$Enumerators,
     resolveClassNames,
     type cartType
 } from "@Madeirense/shared";
@@ -21,6 +22,8 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 
 import styles from "./cart.module.css";
+import AnchorButton from "components/buttons/anchor";
+import Tag from "components/tag";
 
 // ***************************************************************************************************************
 
@@ -159,7 +162,7 @@ function Cart({
 
     const TABLE_SUMMARY_FOOTER = !Boolean(cart.length) ? null : <tr data-section="summary">
         <td colSpan={4}>
-            <div className="w-full flex flex-col items-start justify-start">
+            <div className="w-full flex flex-col items-start justify-start px-4">
                 {(summary.coupon || Boolean(summary.totalDiscount)) && <div data-row="original" className="mb-2 opacity-40">
                     <span className="font-black text-2xl">Preço</span>
 
@@ -201,103 +204,108 @@ function Cart({
 
     switch (mode) {
         case "cart": {
-            return <table
-                data-state={state}
-                onClick={() => toggle(true)}
-                onMouseLeave={() => toggle(false)}
+            return <div
+                className={styles.wrapper}
+                onClick={show ? undefined : () => toggle(true)}
                 {...{
                     ...(Boolean(cart.length) ? { ["data-visible"]: "" } : {}),
                     ...(show ? { ["data-expanded"]: "" } : {})
                 }}
-                {...$tableProps}
             >
-                <tfoot>
-                    {TABLE_SUMMARY_FOOTER}
+                {!show && <div className="flex flex-row items-center justify-start gap-2 px-4 w-full">
+                    <Icon name="ShoppingCart" />
 
-                    <tr>
-                        <td colSpan={4}>
-                            <div className="w-full flex flex-row items-center justify-end gap-2">
-                                <Button value={type} onClick={handleEmptyingCart} variant="secondary">
-                                    {["discarding"].includes(state)
-                                        ? <Icon name="Loading" className="animate-spin" />
-                                        : <Icon name="Trash" />
-                                    }
+                    <span className="mr-auto">Carrinho</span>
 
-                                    Descartar
-                                </Button>
+                    <span className={`font-black text-2xl ml-auto${!show ? " opacity-100" : " opacity-0"}`}>
+                        {summary.totalPrice === 0 ? "Grátis" : formatNumber(summary.totalPrice)}
+                    </span>
+                </div>}
 
-                                <Link className="Button" data-variant="primary" to={`/checkout/products`}>
-                                    Ir para checkout
-                                </Link>
-                            </div>
-                        </td>
-                    </tr>
-                </tfoot>
+                {show && <table
+                    data-state={state}
+                    {...$tableProps}
+                >
+                    <tfoot>
+                        {TABLE_SUMMARY_FOOTER}
 
-                <tbody>
-                    <tr>
-                        <td colSpan={4}>
-                            <div className="flex flex-row items-center justify-start gap-2 w-full">
-                                <Icon name="ShoppingCart" />
+                        <tr>
+                            <td colSpan={4}>
+                                <div className="w-full flex flex-row items-center justify-between gap-2">
+                                    <Button value={type} onClick={handleEmptyingCart} variant="receipt-secondary">
+                                        {["discarding"].includes(state)
+                                            ? <Icon name="Loading" className="animate-spin" />
+                                            : <Icon name="Trash" />
+                                        }
 
-                                <span className="mr-auto">Carrinho</span>
-
-                                {/* <Button variant="secondary">
-                        <Icon name="ChevronLeft" className={show ? "rotate-90" : "-rotate-90"} onClick={() => toggle(t => !t)} />
-                        </Button> */}
-
-                                <span className={`font-black text-2xl ml-auto${!show ? " opacity-100" : " opacity-0"}`}>
-                                    {summary.totalPrice === 0 ? "Grátis" : formatNumber(summary.totalPrice)}
-                                </span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    {TABLE_ERROR_ROW}
-
-                    {cart.map((product) => {
-                        const { product_id, name, discount: _d, price: _p, thumbnail, quantity } = product;
-
-                        const discount = parseFloat(_d.toString());
-                        const price = parseFloat(_p.toString());
-                        const whileQuantityIncreases = queue.some(q => q.product_id === product_id && q.type === "adding");
-                        const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
-                        const isInQueue = whileQuantityIncreases || whileQuantityDecreases;
-
-                        return <tr key={product_id} data-hasdiscount={discount > 0}>
-                            <td>
-                                <div data-type="thumbnail" style={{ backgroundImage: `url(${thumbnail})` }}></div>
-                            </td>
-
-                            <td>
-                                <span data-text="name" className="font-bold italic">{name}</span>
-                            </td>
-
-                            <td>
-                                <div className="w-full flex flex-row items-center justify-end gap-3">
-                                    <Button value={product_id} onClick={removeItem()} data-shape="round" variant="secondary" disabled={isInQueue}>
-                                        {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                        Descartar
                                     </Button>
 
-                                    <span className="w-[50px] text-center">{quantity}</span>
+                                    <AnchorButton className="Button" variant="receipt-primary" to={Madeirense$Enumerators.Pages.Checkout.Products}>
+                                        Ir para checkout
+                                    </AnchorButton>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
 
-                                    <Button value={product_id} onClick={addItem()} data-shape="round" disabled={isInQueue}>
-                                        {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                    <tbody>
+                        <tr>
+                            <td colSpan={4}>
+                                <div className="flex flex-row items-center justify-start gap-2 w-full">
+                                    <Icon name="ShoppingCart" />
+
+                                    <span className="mr-auto">Carrinho</span>
+
+                                    <Button variant="receipt-secondary" onClick={() => toggle(false)}>
+                                        <Icon name="Close" className={show ? "rotate-90" : "-rotate-90"} />
                                     </Button>
                                 </div>
                             </td>
-
-                            <td data-cell="price" className="text-right">
-                                {(discount > 0) && <span data-text="discount">{discount}</span>}
-
-                                <span data-text="price">{price === 0 ? "Grátis" : formatNumber(price)}</span>
-                            </td>
                         </tr>
-                    })}
 
-                    {!hideTTP && TABLE_ETA_ROW}
-                </tbody>
-            </table>
+                        {TABLE_ERROR_ROW}
+
+                        {cart.map((product) => {
+                            const { product_id, name, discount: _d, price: _p, quantity, product_type } = product;
+
+                            const discount = parseFloat(_d.toString());
+                            const price = parseFloat(_p.toString());
+                            const whileQuantityIncreases = queue.some(q => q.product_id === product_id && q.type === "adding");
+                            const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
+                            const isInQueue = whileQuantityIncreases || whileQuantityDecreases;
+
+                            return <tr key={product_id} data-hasdiscount={discount > 0}>
+                                <td>
+                                    <span data-text="name" className="font-bold italic">{name}</span>
+                                </td>
+
+                                <td>
+                                    <div className="w-full flex flex-row items-center justify-end gap-3">
+                                        <Button value={product_id} onClick={removeItem()} shape="circle" variant="receipt-secondary" disabled={isInQueue}>
+                                            {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                        </Button>
+
+                                        <span className="w-[50px] text-center">{quantity}</span>
+
+                                        <Button value={product_id} onClick={addItem()} shape="circle" variant="receipt-primary" disabled={isInQueue}>
+                                            {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                                        </Button>
+                                    </div>
+                                </td>
+
+                                <td data-cell="price" className="text-right">
+                                    {(discount > 0) && <span data-text="discount">{discount}</span>}
+
+                                    <span data-text="price">{price === 0 ? "Grátis" : formatNumber(price)}</span>
+                                </td>
+                            </tr>
+                        })}
+
+                        {!hideTTP && TABLE_ETA_ROW}
+                    </tbody>
+                </table>}
+            </div>
         }
 
         case "order": {

@@ -1,38 +1,3 @@
 .products {
-    --img-size: 250px;
-    
-    --row-height: var(--cart-height-offset);
-
-    background-color: var(--background-color);
-    display: grid;
-    padding: var(--padding-y) var(--padding-x);
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:
-        "header"
-        "cart"
-        "form"
-    ;
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: 100%;
-}
-
-.products footer {
-    --w: 100%;
-
-    width: var(--w);
-    max-width: var(--w);
-    min-width: var(--w);
-}
-
-.products header {
-    --h: auto;
-
-    grid-area: header;
-    flex-direction: column;
-    height: var(--h);
-    min-height: var(--h);
-    max-height: var(--h);
-    border-bottom: var(--border-width) solid var(--border-color);
+    composes: section from "./section.module.css";
 }

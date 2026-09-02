@@ -10,25 +10,25 @@
     --button-padding: 12px;
 
     --button-border-width: 1px;
-    --button-border-radius: 99999px;
     
     @apply flex flex-row justify-center items-center gap-2;
+    
+    cursor: pointer;
 
     height: var(--button-height);
     min-height: var(--button-height);
     max-height: var(--button-height);
 
+    padding: 0 var(--button-padding-x, var(--button-padding-x-left, var(--button-padding))) 0 var(--button-padding-x, var(--button-padding-x-right, var(--button-padding)));
+
     border-width: var(--button-border-width, 1px);
-    border-radius: var(--button-border-radius, 1px);
+    border-radius: var(--button-border-radius, 99999px);
     border-style: var(--button-border-style, solid);
     border-color: var(--button-border-color, transparent);
 
     background-color: var(--button-background-color, transparent);
     
-    padding: 0 var(--button-padding-x, var(--button-padding-x-left, var(--button-padding))) 0 var(--button-padding-x, var(--button-padding-x-right, var(--button-padding)));
-
-    cursor: pointer;
-
+    color: var(--text-color);
     font-weight: 600;
 }
 
@@ -179,4 +179,26 @@
     --button-background-color: var(--secondary-dark);
     --button-border-color: var(--secondary);
     --text-color: var(--secondary);
+}
+
+.receipt-primary {
+    composes: button;
+
+    --button-background-color: var(--primary);
+    --text-color: var(--neutral-light);
+}
+
+.receipt-primary:hover {
+    --button-background-color: color-mix(in srgb, var(--primary), black 50%);
+}
+
+.receipt-secondary {
+    composes: button;
+
+    --button-background-color: var(--neutral-dark);
+    --text-color: var(--neutral-light);
+}
+
+.receipt-secondary:hover {
+    --button-background-color: color-mix(in srgb, var(--neutral-dark), white 20%);
 }

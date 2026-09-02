@@ -76,10 +76,9 @@ body {
 
 body[data-theme*="dark"] {
     --base-text-color: var(--neutral-light);
-
-    --border-color: var(--neutral-light);
     
-    --text-color: var(--neutral-light);
+    --border-color: var(--neutral-light);
+
     --text-contrast-color: var(--neutral-light);
 }
 
@@ -88,7 +87,6 @@ body[data-theme*="light"] {
 
     --border-color: var(--neutral-dark);
     
-    --text-color: var(--neutral-dark);
     --text-contrast-color: var(--neutral-dark);
 }
 
@@ -214,7 +212,7 @@ input {
 
 input,
 select {
-    --h: 32px;
+    --h: 40px;
     
     height: var(--h);
     max-height: var(--h);

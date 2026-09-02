@@ -226,7 +226,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
                 ;
 
             const $sliderPickerProps = {
-                className: "mb-4",
                 defaultValue: listFilter,
                 list: [
                     { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },

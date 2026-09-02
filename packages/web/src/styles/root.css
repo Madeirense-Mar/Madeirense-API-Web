@@ -8,6 +8,15 @@
     flex-direction: column;
 }
 
+#root[data-hascart] {
+    padding-bottom: 60px;
+}
+
+#root[data-hascart]:has(table[data-visible][data-expanded]) nav {
+    --nav-opacity: 0;
+    --nav-pointer-events: none;
+}
+
 @media only screen and (min-width: 344px) {
     
 }

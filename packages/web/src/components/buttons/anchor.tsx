@@ -24,6 +24,8 @@ interface IPropTypes extends ComponentPropsWithoutRef<typeof Link> {
         | variantType
         | "tag"
         | "text"
+        | "text-selected"
+        | `receipt-${"primary" | "secondary"}`
     )
 };
 

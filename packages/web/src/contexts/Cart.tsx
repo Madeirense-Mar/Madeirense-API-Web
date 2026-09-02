@@ -20,6 +20,7 @@ import {
     DEFAULT_SUMMARY,
     API$Enumerators,
     Madeirense$Types,
+    type cartType,
     type appPreferencesType,
     type cartedProductType,
     type cartSummaryType,
@@ -59,8 +60,6 @@ type cartPropertiesType = {
     eventCart: cartedProductType[],
     eventSummary: cartSummaryType
 };
-
-type cartType = "delivery" | "event";
 
 type contextStatusType = statusType<(
     | "adding"
@@ -226,7 +225,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         };
     }, []);
 
-    const clear = useCallback(async (type: "all" | "delivery" | "event" = "all") => {
+    const clear = useCallback(async (type: "all" | cartType = "all") => {
         dispatch({ type: "SET_STATUS", payload: "discarding" });
 
         try {

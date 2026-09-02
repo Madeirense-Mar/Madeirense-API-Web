@@ -143,11 +143,10 @@ function AppNav() {
         </ul>
 
         {(state === "guest")
-            ? <div className="flex flex-row items-center justify-center">
+            ? <div className="flex flex-row items-center justify-center gap-3">
                 <AnchorButton
                     id="sign-up"
                     to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.signup}`}
-                    variant="primary"
                 >
                     <Icon name="UserRegistration" />
 
@@ -157,7 +156,6 @@ function AppNav() {
                 <AnchorButton
                     id="login"
                     to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`}
-                    variant="primary"
                 >
                     <Icon name="Login" />
 

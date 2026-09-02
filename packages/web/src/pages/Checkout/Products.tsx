@@ -62,6 +62,7 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { IPageState } from "components/interface";
+import Tag from "components/tag";
 
 // ***************************************************************************************************************
 
@@ -237,21 +238,11 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
         return () => { };
     }, [currentLocation, getAppProperties]);
 
-    return <section
-        className={resolveClassNames(styles.products, className)}
-        {...props}
-        {...{
-            ...(!restaurant) ? {} : { "data-hasrestaurant": "" }
-        }}
-    >
+    return <section className={resolveClassNames(styles.products, className)} {...props}>
         <header>
-            {!restaurant && <span data-text="tag" data-variant="danger" className="mx-auto">
-                <Icon name="ExclamationCircle" />
-
+            {!restaurant && <Tag variant="danger">
                 Não estamos a aceiter pedidos por agora, tente mais tarde
-
-                <Icon name="ExclamationCircle" />
-            </span>}
+            </Tag>}
 
             {restaurant && <RestaurantCard className="w-full" {...{ restaurant }} />}
         </header>

@@ -18,6 +18,7 @@ type MutatedInterface = (Omit<IButtonPropTypes, ("variant")> & {
         | "tag"
         | "text"
         | "text-selected"
+        | `receipt-${"primary" | "secondary"}`
     )
 });
 
