@@ -1,5 +1,5 @@
 .picker {
-    --header-height: 50px;
+    --header-height: 52px;
     --items-padding-offset: 5px;
 
     border: var(--border-width) solid var(--border-color);

@@ -27,7 +27,7 @@ import OrderSummaryView from "components/views/orders/summary";
 
 import styles from "./orders.module.css";
 
-import type { 
+import type {
     $Enums
 } from "@Madeirense/database/browser";
 
@@ -131,13 +131,17 @@ function Orders({
         case "order": {
             return <div
                 className={styles.wrapper}
-                onClick={() => toggle(true)}
+                onClick={show ? undefined : () => toggle(true)}
                 onMouseLeave={() => toggle(false)}
                 {...{
                     ...(Boolean(ordersByRestaurants.length) ? { ["data-visible"]: "" } : {}),
                     ...(show ? { ["data-expanded"]: "" } : {})
                 }}
             >
+                {show && <Button shape="circle" onClick={() => toggle(false)}>
+                    <Icon name="Close" />
+                </Button>}
+
                 <table
                     data-state={state}
                     {...$tableProps}

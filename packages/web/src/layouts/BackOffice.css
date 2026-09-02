@@ -35,7 +35,7 @@
 
 @media only screen and (min-width: 768px) {
     #root:has(aside[data-type="menu"][data-toggled="true"]) main {
-        --px: 50px;
+        --px: 52px;
     }
 }
 

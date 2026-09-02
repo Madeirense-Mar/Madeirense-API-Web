@@ -3,7 +3,7 @@
     --width: 100vw;
 
     position: fixed;
-    background-color: var(--base-background);
+    background-color: var(--base-background-color);
     top: 0px;
     left: 0px;
     height: var(--height);
@@ -57,7 +57,7 @@
 
 .flasher h1 {
     font-size: 4rem;
-    margin: 50px;
+    margin: 52px;
 }
 
 .flasher #eject {

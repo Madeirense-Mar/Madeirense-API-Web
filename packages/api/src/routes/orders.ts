@@ -69,7 +69,7 @@ v1.get(
 v1.post(
 	'/',
 	[
-		...cartTypeValidation,
+		body('cartType').notEmpty().isIn(['all', ...Object.values(Carts)]).withMessage(`Only ${['all', ...Object.values(Carts)].join(', ')} cart types are accepted`),
 		body('restaurant_id').isInt({ min: API_MIN_ID_NUMBER }).withMessage('Restaurant ID is required'),
 		body('event_id').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER }).withMessage('An event ID is a positive integer'),
 		body('payment_method').isIn(ACCEPTED_PAYMENT_TYPES).withMessage(`The payment method must be one of the types: ${ACCEPTED_PAYMENT_TYPES.join(', ')}`),

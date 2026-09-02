@@ -95,7 +95,7 @@ table#staff-table tbody td[data-loadingrow] {
 }
 
 table#staff-table tbody td[data-singlerow]>div {
-    padding: 50px;
+    padding: 52px;
 }
 
 table#staff-table thead tr th form {

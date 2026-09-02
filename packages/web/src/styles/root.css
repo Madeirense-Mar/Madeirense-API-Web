@@ -16,6 +16,10 @@
     padding-bottom: 60px;
 }
 
+#root[data-hasorders] main {
+    margin-top: 52px;
+}
+
 #root[data-hascart]:has(table[data-visible][data-expanded]) nav {
     --nav-opacity: 0;
     --nav-pointer-events: none;

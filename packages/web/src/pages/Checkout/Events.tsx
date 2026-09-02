@@ -232,7 +232,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                                             {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
                                         </Button>
 
-                                        <span className="w-[50px] text-center">{quantity}</span>
+                                        <span className="w-[52px] text-center">{quantity}</span>
 
                                         <Button value={t.product_id} onClick={addItem} data-shape="round" disabled={isInQueue}>
                                             {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}

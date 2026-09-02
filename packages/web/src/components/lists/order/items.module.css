@@ -4,7 +4,7 @@
 
     composes: list from "../list.module.css";
 
-    --img-size: 150px;
+    --img-size: 152px;
 
     padding: var(--list-item-padding);
 
@@ -42,7 +42,7 @@
 }
 
 .list li div[data-type="thumbnail"] {
-    height: 50px;
+    height: 52px;
     width: var(--img-size);
     background-size: cover;
     border-radius: var(--list-item-border-radius);

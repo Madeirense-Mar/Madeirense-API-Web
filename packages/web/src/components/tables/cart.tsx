@@ -286,7 +286,7 @@ function Cart({
                                             {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
                                         </Button>
 
-                                        <span className="w-[50px] text-center">{quantity}</span>
+                                        <span className="w-[52px] text-center">{quantity}</span>
 
                                         <Button value={product_id} onClick={addItem()} shape="circle" variant="receipt-primary" disabled={isInQueue}>
                                             {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
@@ -367,7 +367,7 @@ function Cart({
                                         {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
                                     </Button>
 
-                                    <span className="w-[50px] text-center">{quantity}</span>
+                                    <span className="w-[52px] text-center">{quantity}</span>
 
                                     <Button value={product_id} onClick={addItem()} shape="circle" variant="primary" disabled={isInQueue}>
                                         {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}

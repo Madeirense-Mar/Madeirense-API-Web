@@ -228,7 +228,13 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
     useEffect(() => {
         const restaurants = getAppProperties("Restaurants");
 
-        if (!currentLocation || !restaurants) return;
+        if (!restaurants) return;
+        
+        if (!currentLocation) {
+            setRestaurant(restaurants[0]);
+
+            return;
+        }
 
         function getNearestRestaurant(location: ILocator, restaurants: restaurantType[]) {
             return findNearestRestaurant(location, restaurants);
@@ -240,8 +246,8 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
     }, [currentLocation, getAppProperties]);
 
     return <>
-        <section className="flex flex-col justify-center items-center py-6 w-full">
-            {!restaurant && <Tag variant="danger">
+        <section>
+            {!restaurant && <Tag variant="danger" className="m-auto">
                 Não estamos a aceiter pedidos por agora, tente mais tarde
             </Tag>}
 

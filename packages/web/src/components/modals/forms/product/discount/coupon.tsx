@@ -185,7 +185,7 @@ const CouponForm = ({
                     <span className="italic opacity-30 ml-1 text-sm">(exe. MADEIRENSE-CÓDIGO-CUPON)</span>
                 </span>
 
-                <input title="Código de cupon" id="code" name="code" className="ml-auto w-[250px] text-center" placeholder="Código de cupon" type="text" data-element="h3" required />
+                <input title="Código de cupon" id="code" name="code" className="ml-auto w-[252px] text-center" placeholder="Código de cupon" type="text" data-element="h3" required />
             </label>
 
             <label htmlFor="coupon-discount" className="text-lg w-full flex flex-row justify-start items-center gap-2">
@@ -193,7 +193,7 @@ const CouponForm = ({
 
                 <span>Desconto</span>
 
-                <input title="Desconto" id="coupon-discount" name="coupon-discount" className="ml-auto w-[250px] text-center" placeholder="Percentagem" type="number" data-element="h3" required />
+                <input title="Desconto" id="coupon-discount" name="coupon-discount" className="ml-auto w-[252px] text-center" placeholder="Percentagem" type="number" data-element="h3" required />
             </label>
 
             <label htmlFor="expires_at" className="text-lg w-full flex flex-row justify-start items-center gap-2">
@@ -201,7 +201,7 @@ const CouponForm = ({
 
                 <span>Data de expiração</span>
 
-                <input min={new Date().toISOString().split('T')[0]} title="Nova data de expiração" id="expires_at" name="expires_at" className="ml-auto w-[250px] text-center" placeholder="Data de expiração" type="date" data-element="h3" required />
+                <input min={new Date().toISOString().split('T')[0]} title="Nova data de expiração" id="expires_at" name="expires_at" className="ml-auto w-[252px] text-center" placeholder="Data de expiração" type="date" data-element="h3" required />
             </label>
         </fieldset>}
 

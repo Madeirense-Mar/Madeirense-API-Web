@@ -333,7 +333,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                                 <span className="font-normal opacity-60">Número de pedidos em fila <span className="font-normal italic">(individual para cada restaurante)</span> que serão entregues no tempo esperado, caso os pedidos excedam o limite os clientes serão notificados sobre possíveis atrasos.</span>
                             </div>
 
-                            <div className="flex flex-row justify-center items-center gap-1 min-w-[150px] max-w-[150px] w-[150px]">
+                            <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
                                 {getUpdaterStatusIndicator("order_threshold")}
 
                                 {(appState === "loading")
@@ -370,7 +370,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                                 </span>
                             </div>
 
-                            <div className="flex flex-row justify-center items-center gap-1 min-w-[150px] max-w-[150px] w-[150px]">
+                            <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
                                 {getUpdaterStatusIndicator("auto_assign_driver")}
 
                                 {(appState === "loading")
@@ -418,7 +418,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                                 <span className="font-normal opacity-60">Tempo <span className="font-normal italic">(em minutos)</span> adicional ao preparo de cada pedido pela cozinha.</span>
                             </div>
 
-                            <div className="flex flex-row justify-center items-center gap-1 min-w-[150px] max-w-[150px] w-[150px]">
+                            <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
                                 {getUpdaterStatusIndicator("prep_buffer")}
 
                                 {(appState === "loading")

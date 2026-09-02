@@ -3,7 +3,7 @@
 }
 
 .table {
-    --img-size: 250px;
+    --img-size: 252px;
     --row-height: var(--cart-height-offset);
 }
 
