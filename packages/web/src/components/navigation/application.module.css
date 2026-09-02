@@ -2,7 +2,7 @@
     --h: 70px;
     --text-color: var(--neutral-dark);
 
-    @apply flex flex-row items-center;
+    @apply flex flex-row items-center px-2;
 
     height: var(--h);
     max-height: var(--h);

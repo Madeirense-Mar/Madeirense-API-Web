@@ -81,7 +81,7 @@ type cartActionType = (
     | { type: 'SET_EVENT_SUMMARY'; payload: cartSummaryType }
 );
 
-const DEFAULT_STATE = {
+const DEFAULT_CART_STATE = {
     deliveryCart: [],
     deliverySummary: DEFAULT_SUMMARY,
     eventCart: [],
@@ -99,8 +99,17 @@ function reducer(
         case 'CLEAR_ERRORS':
             return { ...state, errors: [] };
 
+        case 'CLEAR_CART':
+            return { ...state, errors: [], cart: DEFAULT_CART_STATE };
+
+        case 'CLEAR_DELIVERY_CART':
+            return { ...state, errors: [], cart: { ...state.cart, deliveryCart: [] } };
+
+        case 'CLEAR_EVENT_CART':
+            return { ...state, errors: [], cart: { ...state.cart, eventCart: [] } };
+
         case 'RESET':
-            return { status: 'idle', errors: [], cart: DEFAULT_STATE };
+            return { status: 'idle', errors: [], cart: DEFAULT_CART_STATE };
 
         case 'SET_CART':
             return { status: 'idle', errors: [], cart: action.payload };
@@ -145,7 +154,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
     const { state: profileState } = useProfile();
 
     const [state, dispatch] = useReducer(reducer, {
-        cart: DEFAULT_STATE,
+        cart: DEFAULT_CART_STATE,
         errors: [],
         status: "idle",
     });
