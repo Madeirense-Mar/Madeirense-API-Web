@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+#root[data-page] main {
+    height: calc(100% - 70px);
+}
+
 #root:not([data-page]) {
     display: flex;
     flex-direction: column;

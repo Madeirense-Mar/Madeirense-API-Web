@@ -161,7 +161,7 @@ function OrdersList(_props: IPropTypes) {
     };
 
     const $ulProps = {
-        className: resolveClassNames(className),
+        className: resolveClassNames(className, "flex flex-col justify-start items-start gap-3 w-full"),
         ...props
     };
 
@@ -227,7 +227,7 @@ function OrdersList(_props: IPropTypes) {
             return <ul {...$ulProps}>
                 <HeaderListItem disabled={list.length === 0} {...$liHeaderProps} />
 
-                {list.length === 0 && <li data-empty>
+                {list.length === 0 && <li data-empty className="w-full">
                     {(!statusType)
                         ? <>Sem pedidos registados</>
                         : <>
@@ -247,7 +247,7 @@ function OrdersList(_props: IPropTypes) {
                         : undefined
                         ;
 
-                    return <li key={item.order_id} {...{ ref }}>
+                    return <li key={item.order_id} className="w-full" {...{ ref }}>
                         <OrderCard
                             order={item}
                             index={(statusType === "all") ? undefined : (idx + 1)}
@@ -325,7 +325,7 @@ const HeaderListItem = ({
         });
     };
 
-    return <li data-type="filter">
+    return <li data-type="filter" className="w-full flex flex-row justify-start items-center gap-3">
         <Icon name="Filter" />
 
         {headerFilters.map(f => <select
@@ -344,7 +344,7 @@ const HeaderListItem = ({
             </option>)}
         </select>)}
 
-        <Button onClick={clearFilters} variant="secondary">
+        <Button onClick={clearFilters} variant="secondary" className="ml-auto">
             <Icon name="Close" />
         </Button>
     </li>
