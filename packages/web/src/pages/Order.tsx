@@ -90,7 +90,7 @@ const OrderPage = () => {
 
     switch (order_id) {
         case 0: {
-            return <main className="w-full">
+            return <main>
                 <section>
                     <header className="mb-5">
                         <select title="Tipo de pedidos" id="type" data-element="h1" name="type" defaultValue={type} onChange={handleTypePick}>
@@ -110,7 +110,7 @@ const OrderPage = () => {
 
             switch (state) {
                 case "loading": {
-                    return <main className="w-full h-full">
+                    return <main>
                         <div className="w-full h-full flex flex-row justify-center items-center p-10">
                             <Icon name="Loading" className="animate-spin" />
                         </div>
@@ -118,7 +118,7 @@ const OrderPage = () => {
                 }
 
                 default: {
-                    return <main className="w-full">
+                    return <main>
                         <section>
                             <header className="mb-5 flex flex-row justify-start items-center gap-3">
                                 <Link to={"/orders"} className="Button" data-variant="secondary">

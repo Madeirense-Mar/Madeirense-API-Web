@@ -10,8 +10,6 @@ main[data-view="product-table"] {
     flex-direction: column;
     gap: 20px;
     
-    width: 100%;
-    
     overflow: auto;
 }
 
