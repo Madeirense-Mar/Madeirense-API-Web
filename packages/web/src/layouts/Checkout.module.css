@@ -12,14 +12,30 @@
     gap: 12px;
 }
 
-.checkout > form > fieldset {
+.checkout form {
+    @apply flex flex-col justify-start items-start;
+
+    width: 100%;
+
+    gap: 32px;
+}
+
+.checkout form > fieldset {
     @apply flex flex-col justify-start items-start;
     
     gap: 24px;
+
+    width: inherit;
 }
 
-.checkout > form > fieldset > legend {
+.checkout form > fieldset > legend {
     margin-bottom: 12px;
+}
+
+.checkout > section {
+    @apply flex flex-col justify-start items-start;
+
+    width: 100%;
 }
 
 @media only screen and (min-width: 344px) {}

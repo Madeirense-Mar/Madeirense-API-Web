@@ -184,10 +184,8 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
 
                 default: {
                     return <>
-                        {restaurant && <RestaurantCard {...{ restaurant }} disableLink />}
-
-                        {restaurant_event && <>
-                            <RestaurantEventCard restaurantEvent={restaurant_event} mode="default" type="component" disableLink disableVideo />
+                        {restaurant_event && <section>
+                            <RestaurantEventCard className="w-full" restaurantEvent={restaurant_event} mode="default" type="component" disableLink disableVideo />
 
                             <h2 className="mb-3 mt-6">
                                 <Icon name="Notes" className="inline-flex mr-1" />
@@ -196,113 +194,119 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                             </h2>
 
                             <p className="w-full">{restaurant_event.description}</p>
-                        </>}
+                        </section>}
 
-                        <h2 className="mb-3 mt-6">
-                            <Icon name="Ticket" className="inline-flex mr-1" />
+                        <section>
+                            <h2 className="mb-3 mt-6">
+                                <Icon name="Ticket" className="inline-flex mr-1" />
 
-                            Ingressos e outros
-                        </h2>
+                                Ingressos e outros
+                            </h2>
 
-                        <ul className="w-full flex flex-col justify-start items-center rounded-lg border p-2 gap-2">
-                            {tickets.map(t => {
-                                const quantity = cart.find(p => p.product_id === t.product_id)?.quantity ?? 0;
+                            <ul className="w-full flex flex-col justify-start items-center rounded-lg border p-2 gap-2">
+                                {tickets.map(t => {
+                                    const quantity = cart.find(p => p.product_id === t.product_id)?.quantity ?? 0;
 
-                                const whileQuantityDecreases = queue.some(q => q.product_id === t.product_id && q.type === "removing");
-                                const whileQuantityIncreases = queue.some(q => q.product_id === t.product_id && q.type === "adding");
+                                    const whileQuantityDecreases = queue.some(q => q.product_id === t.product_id && q.type === "removing");
+                                    const whileQuantityIncreases = queue.some(q => q.product_id === t.product_id && q.type === "adding");
 
-                                const isInQueue = [
-                                    whileQuantityDecreases,
-                                    whileQuantityIncreases
-                                ].includes(true);
+                                    const isInQueue = [
+                                        whileQuantityDecreases,
+                                        whileQuantityIncreases
+                                    ].includes(true);
 
-                                return <li key={t.product_id} className="w-full flex flex-row justify-start items-center gap-3">
-                                    <span data-text="tag" className="mr-auto">
-                                        <Icon name="Ticket" />
+                                    return <li key={t.product_id} className="w-full flex flex-row justify-start items-center gap-3">
+                                        <span data-text="tag" className="mr-auto inline-flex items-center gap-1">
+                                            <Icon name="Ticket" />
 
-                                        {t.name}
-                                    </span>
+                                            {t.name}
+                                        </span>
 
-                                    <span className="font-extrabold">
-                                        <Icon name="Money" className="inline-flex mr-1" />
+                                        <span className="font-extrabold">
+                                            <Icon name="Money" className="inline-flex mr-1" />
 
-                                        {Boolean(parseInt(t.price.toString())) ? formatNumber(parseFloat(t.price.toString())) : "Grátis"}
-                                    </span>
+                                            {Boolean(parseInt(t.price.toString())) ? formatNumber(parseFloat(t.price.toString())) : "Grátis"}
+                                        </span>
 
-                                    <Button value={t.product_id} onClick={removeItem} data-shape="round" variant="secondary" disabled={isInQueue}>
-                                        {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                        <Button value={t.product_id} onClick={removeItem} data-shape="round" variant="secondary" disabled={isInQueue}>
+                                            {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                        </Button>
+
+                                        <span className="w-[50px] text-center">{quantity}</span>
+
+                                        <Button value={t.product_id} onClick={addItem} data-shape="round" disabled={isInQueue}>
+                                            {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                                        </Button>
+                                    </li>
+                                })}
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h2 className="mb-3 mt-6">
+                                <Icon name="ShoppingCart" className="inline-flex mr-1" />
+
+                                Carrinho
+                            </h2>
+
+                            <Cart className="w-full" type="event" mode="order" hideInstructions hideTTP />
+                        </section>
+
+                        <section>
+                            <h2 className="mt-6">
+                                <Icon name="Phone" className="inline-flex mr-1" />
+
+                                {`Contacto${!summary.totalPrice ? "" : " e pagamento"}`}
+                            </h2>
+
+                            <form onSubmit={POST}>
+                                <fieldset>
+                                    <legend>Contacto</legend>
+
+                                    <label htmlFor="phone">Nº do telefone</label>
+
+                                    <div className="flex flex-row justify-start items-center w-full">
+                                        <select ref={$selectRef} title="Código do telefone" id="code" name="code" required defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""}>
+                                            <option hidden value="">Seleciona um código</option>
+
+                                            {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
+                                                {`(${code}) ${country}`}
+                                            </option>)}
+                                        </select>
+
+                                        <input id="phone" type="tel" name="phone" required onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone com WhatsApp" pattern={stringRegularExpressions.get("PhoneNumber")} defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""} className="w-full" />
+                                    </div>
+                                </fieldset>
+
+                                {(summary.totalPrice > 0) && <fieldset>
+                                    <legend>Pagamento</legend>
+
+                                    <PaymentTypesList
+                                        mode="eligible"
+                                        selectionMode="radio"
+                                        className="w-full"
+                                        required
+                                        selectable
+                                    />
+                                </fieldset>}
+
+                                {!Boolean(cart.length) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                                    <Icon name="Warning" />
+
+                                    <span>Precisa de adicionar pelo menos 1x ingresso no carrinho antes de fazer uma reserva</span>
+                                </div>}
+
+                                <footer className="w-full">
+                                    <Button type="submit" variant={error ? "danger" : "primary"} className="w-full" disabled={isLoading || !Boolean(cart.length)}>
+                                        {error && <Icon name="ExclamationCircle" />}
+
+                                        {isLoading ? <Icon name="Loading" className="animate-spin" /> : error ? error.message : `Reservar ingressos (${!summary.totalPrice ? "Grátis" : formatNumber(summary.totalPrice)})`}
+
+                                        {error && <Icon name="ExclamationCircle" />}
                                     </Button>
-
-                                    <span className="w-[50px] text-center">{quantity}</span>
-
-                                    <Button value={t.product_id} onClick={addItem} data-shape="round" disabled={isInQueue}>
-                                        {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
-                                    </Button>
-                                </li>
-                            })}
-                        </ul>
-
-                        <h2 className="mb-3 mt-6">
-                            <Icon name="ShoppingCart" className="inline-flex mr-1" />
-
-                            Carrinho
-                        </h2>
-
-                        <Cart type="event" mode="order" hideInstructions hideTTP />
-
-                        <h2 className="mt-6">
-                            <Icon name="Phone" className="inline-flex mr-1" />
-
-                            {`Contacto${!summary.totalPrice ? "" : " e pagamento"}`}
-                        </h2>
-
-                        <form onSubmit={POST}>
-                            <fieldset>
-                                <legend>Contacto</legend>
-
-                                <label htmlFor="phone">Nº do telefone</label>
-
-                                <div className="flex flex-row justify-start items-center w-full">
-                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" required defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""}>
-                                        <option hidden value="">Seleciona um código</option>
-
-                                        {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
-                                            {`(${code}) ${country}`}
-                                        </option>)}
-                                    </select>
-
-                                    <input id="phone" type="tel" name="phone" required onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone com WhatsApp" pattern={stringRegularExpressions.get("PhoneNumber")} defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""} className="w-full" />
-                                </div>
-                            </fieldset>
-
-                            {(summary.totalPrice > 0) && <fieldset>
-                                <legend>Pagamento</legend>
-
-                                <PaymentTypesList
-                                    mode="eligible"
-                                    selectionMode="radio"
-                                    className="w-full"
-                                    required
-                                    selectable
-                                />
-                            </fieldset>}
-
-                            {!Boolean(cart.length) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
-                                <Icon name="Warning" />
-
-                                <span>Precisa de adicionar pelo menos 1x ingresso no carrinho antes de fazer uma reserva</span>
-                            </div>}
-
-                            <footer className="w-full">
-                                <Button type="submit" variant={error ? "danger" : "primary"} className="w-full" disabled={isLoading || !Boolean(cart.length)}>
-                                    {error && <Icon name="ExclamationCircle" />}
-
-                                    {isLoading ? <Icon name="Loading" className="animate-spin" /> : error ? error.message : `Reservar ingressos (${!summary.totalPrice ? "Grátis" : formatNumber(summary.totalPrice)})`}
-
-                                    {error && <Icon name="ExclamationCircle" />}
-                                </Button>
-                            </footer>
-                        </form>
+                                </footer>
+                            </form>
+                        </section>
                     </>
                 }
             };
