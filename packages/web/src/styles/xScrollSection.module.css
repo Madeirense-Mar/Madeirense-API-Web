@@ -1,0 +1,13 @@
+.x-scroll-section {}
+
+.x-scroll-section>header {
+    @apply overflow-x-auto flex flex-row justify-start items-center flex-nowrap;
+}
+
+.x-scroll-section>div {
+    @apply flex flex-row justify-start items-start w-full overflow-x-hidden flex-nowrap;
+}
+
+.x-scroll-section>div>section {
+    @apply w-full min-w-full;
+}

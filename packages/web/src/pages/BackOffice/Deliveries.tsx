@@ -43,6 +43,8 @@ import GoogleMapDeliveryTracker from "components/maps/google/deliveryTracker";
 
 import Tag from "components/tags";
 
+import xScrollSectionStyles from "styles/xScrollSection.module.css";
+
 import type {
     $Enums
 } from "@Madeirense/database/browser";
@@ -61,6 +63,7 @@ type sectionType = (
 
 const ScrollSection = (
     {
+        className,
         order,
         isFetching = false,
         ...props
@@ -87,16 +90,16 @@ const ScrollSection = (
         $section.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, [pickedSection]);
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION" {...props}>
-        <header className='overflow-x-auto flex-nowrap'>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], "HORIZONTAL_SCROLLTO_SECTION", className)} {...props}>
+        <header>
+            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                 {(kvp.value === pickedSection && isFetching) ? <Icon name="Loading" className="animate-spin" /> : kvp.icon}
 
                 {kvp.key}
             </Button>)}
         </header>
 
-        <div data-type="container">
+        <div>
             <section id="map" className="gap-2 w-full">
                 <GoogleMapDeliveryTracker {...{ order }} />
             </section>
@@ -249,24 +252,12 @@ function BackOfficeDeliveriesPage(props: ComponentProps<"main">) {
 
         default: {
             return <main {...props}>
-                <section className={resolveClassNames(
-                    "w-full min-h-[300px] flex flex-col justify-center items-center rounded-lg gap-4",
-                    (isFetching && !data) ? "bg-gray-300 animate-pulse" : ""
-                )}>
-                    {(isFetching && !data)
-                        ? null
-                        : (deliveries.length === 0)
-                            ? <>
-                                <Icon name="Delivery" className="text-6xl opacity-45" />
+                <header>
+                    <h1>Entregas</h1>
+                </header>
 
-                                <h2 className="opacity-45">Sem entregas de momento</h2>
-                            </>
-                            : order && <ScrollSection className="w-full" isFetching={isFetching || isFetchingNextPage} {...{ order }} />
-                    }
-                </section>
-
-                <div className="w-full flex flex-row justify-center items-center gap-2 mb-5">
-                    {order && <Button id="prev" onClick={pickOrder} value="prev">
+                <section className="w-full flex flex-row justify-center items-center gap-2 mb-5">
+                    {order && <Button id="prev" variant="secondary" onClick={pickOrder} value="prev">
                         <Icon name="ChevronLeft" />
                     </Button>}
 
@@ -285,10 +276,26 @@ function BackOfficeDeliveriesPage(props: ComponentProps<"main">) {
                         })}
                     </ul>
 
-                    {order && <Button id="next" onClick={pickOrder} value="next">
+                    {order && <Button id="next" variant="secondary" onClick={pickOrder} value="next">
                         <Icon name="ChevronRight" />
                     </Button>}
-                </div>
+                </section>
+                
+                <section className={resolveClassNames(
+                    "w-full min-h-[300px] flex flex-col justify-center items-center rounded-lg gap-4",
+                    (isFetching && !data) ? "bg-gray-300 animate-pulse" : ""
+                )}>
+                    {(isFetching && !data)
+                        ? null
+                        : (deliveries.length === 0)
+                            ? <>
+                                <Icon name="Delivery" className="text-6xl opacity-45" />
+
+                                <h2 className="opacity-45">Sem entregas de momento</h2>
+                            </>
+                            : order && <ScrollSection className="w-full" isFetching={isFetching || isFetchingNextPage} {...{ order }} />
+                    }
+                </section>
 
                 <section>
                     {order && <OrderItemsList items={[...order?.Order_Items]} />}

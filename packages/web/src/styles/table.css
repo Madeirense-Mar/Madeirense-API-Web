@@ -1,4 +1,5 @@
 table {
+    border: 1px solid var(--table-border-color);
     border-collapse: collapse;
     border-spacing: 0;
     border-radius: 12px;
@@ -15,6 +16,7 @@ table td {
 [data-theme="land-light"] table {}
 
 [data-theme="sea-dark"] table {
+    --table-border-color: var(--primary-light);
     --table-cell-border-color: var(--primary-light);
 }
 

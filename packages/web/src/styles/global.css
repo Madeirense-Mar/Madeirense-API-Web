@@ -225,6 +225,11 @@ select {
     min-height: var(--h);
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+    --h: 20px;
+}
+
 textarea {
     padding: 12px;
 }
