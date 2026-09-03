@@ -32,6 +32,11 @@
     font-weight: 600;
 }
 
+.button[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .button svg {
     pointer-events: none;
 
@@ -117,8 +122,15 @@
 .secondary {
     composes: button;
 
-    --button-border-color: var(--neutral-light);
-    --text-color: var(--neutral-light);
+    --button-border-color: var(--primary-light);
+    --text-color: var(--primary-light);
+}
+
+.secondary:hover {
+    --processed-color: color-mix(in srgb, var(--primary-dark), black 30%);
+
+    --button-border-color: var(--processed-color);
+    --button-background-color: var(--processed-color);
 }
 
 .selected {

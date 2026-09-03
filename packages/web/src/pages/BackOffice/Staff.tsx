@@ -24,7 +24,7 @@ import {
 
 import MXP$App from "configurations";
 
-import ApplicationQueries, { 
+import ApplicationQueries, {
     Queries$Types
 } from "configurations/queries";
 
@@ -47,8 +47,6 @@ import type {
 import type {
     IPageState
 } from "components/interface";
-
-import "./Staff.css";
 
 // ***************************************************************************************************************
 
@@ -208,7 +206,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
         switch (data) {
             case "limit":
                 if (value === "") Storage.removeItem("L_APP$BACKOFFICE_STAFF_LIST_LIMIT");
-                
+
                 else Storage.setItem("L_APP$BACKOFFICE_STAFF_LIST_LIMIT", parseInt(value));
 
                 break;
@@ -335,7 +333,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
                     <tbody>
                         {(isFetching)
                             ? <tr>
-                                <td colSpan={colSpan} data-loadingrow>
+                                <td colSpan={colSpan}>
                                     <div className="w-full flex flex-row justify-center items-center">
                                         <Icon name="Loading" className="animate-spin" />
                                     </div>
@@ -343,7 +341,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
                             </tr>
 
                             : (data.length === 0) && <tr>
-                                <td colSpan={colSpan} data-singlerow>
+                                <td colSpan={colSpan}>
                                     <div className="w-full flex flex-row justify-center items-center">
                                         Não existem utilizadores registados
                                     </div>
@@ -361,7 +359,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
 
                                 return MATCHES_STATE;
                             })
-                            .map(w => <tr key={w.workstation_id} onClick={() => navigate(`/back-office/staff/${w.Users.user_id}`)}>
+                            .map(w => <tr className="cursor-pointer" key={w.workstation_id} onClick={() => navigate(`/back-office/staff/${w.Users.user_id}`)}>
                                 {[
                                     { id: "#", data: w.workstation_id },
                                     {
@@ -382,10 +380,16 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
                                             {getLabel(w.Users.user_role)}
                                         </Tag>
                                     },
-                                    { id: "restaurant", data: get("Restaurants")?.find(({ restaurant_id }) => w.restaurant_id === restaurant_id)?.name },
+                                    {
+                                        id: "restaurant", data: <Tag variant="warning">
+                                            <Icon name="Restaurant" />
+
+                                            {get("Restaurants")?.find(({ restaurant_id }) => w.restaurant_id === restaurant_id)?.name}
+                                        </Tag>
+                                    },
                                     { id: "creatd_date", data: new Date(w.created_at as Date).toLocaleString() },
                                     {
-                                        id: "state", data: <Tag>
+                                        id: "state", data: <Tag variant={(GET_USER_STATE(w.Users.Blocked_Users) === "active") ? "success" : "danger"}>
                                             {(GET_USER_STATE(w.Users.Blocked_Users) === "active") && <Icon name="Check" />}
                                             {(GET_USER_STATE(w.Users.Blocked_Users) === "blocked") && <Icon name="Lock" />}
 

@@ -1,63 +1,39 @@
 .panel {
-    @apply flex flex-col justify-start items-start w-full gap-4;
-    position: fixed;
-    top: var(--application-nav-bar-height);
-    height: calc(100vh - var(--application-nav-bar-height));
-    left: 100%;
-    width: 100%;
-    background-color: var(--base-background);
-    padding: calc(var(--container-padding) / 2);
-    transition-duration: 0.5s;
+    @apply flex flex-col justify-start items-start gap-4;
+    
     z-index: 998;
-    padding-left: var(--px);
-    padding-right: var(--px);
+    position: fixed;
     overflow: auto;
+    top: 70px;
+    left: 100%;
+    
+    height: calc(100% - 70px);
+    
+    width: calc(100% - 52px);
+
+    padding: var(--base-padding) 10vw;
+
+    background-color: var(--background-color);
+
+    transition: transform 0.4s ease-in-out;
 }
 
-.panel[data-enabled="true"] {
+.panel[data-enabled] {
     transform: translateX(-100%);
 }
 
-.panel>section:not([class*="HORIZONTAL_SCROLLTO_SECTION"]) header {
-    padding: 12px 0px;
-    border-bottom: var(--border-width) solid var(--border-color);
-}
-
-#root:has(aside[data-type="menu"][data-toggled="true"]) .panel[data-enabled="true"] {
-    width: calc(100% - var(--aside-menu-width) + 4px);
-}
-
-.panel div[class*="OrderCard"] {
-    padding: 0px;
-    border: none;
-}
-
-@media only screen and (min-width: 500px) {}
-
-@media only screen and (max-width: 652px) {}
-
-@media only screen and (min-width: 651px) {}
-
-@media only screen and (max-width: 752px) {
-    .panel {
-        --px: 100px;
-    }
-}
-
-@media only screen and (min-width: 751px) {
-    .panel {
-        --px: 200px;
-    }
+@media only screen and (min-width: 344px) {
     
-    #root:has(aside[data-type="menu"][data-toggled="true"]) .panel[data-enabled="true"] {
-        --px: 100px;
-    }
 }
 
-@media only screen and (max-width: 1080px) {}
+@media only screen and (min-width: 428px) {
+    
+}
 
-@media only screen and (min-width: 1081px) {}
+@media only screen and (min-width: 768px) {
+    
+}
 
-@media only screen and (max-width: 1499px) {}
-
-@media only screen and (min-width: 1500px) {}
+@media only screen and (min-width: 1366px) {
+    
+}

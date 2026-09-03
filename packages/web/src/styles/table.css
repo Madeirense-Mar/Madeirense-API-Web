@@ -1,0 +1,41 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table th,
+table td {
+    @apply px-3
+}
+
+[data-theme="land-dark"] table {}
+
+[data-theme="land-light"] table {}
+
+[data-theme="sea-dark"] table {
+    --table-cell-border-color: var(--primary-light);
+}
+
+[data-theme="sea-dark"] table tbody {
+    background-color: color-mix(in srgb, var(--primary-dark), white 12%);
+}
+
+[data-theme="sea-dark"] table tbody tr:hover {
+    background-color: color-mix(in srgb, var(--primary-dark), white 10%);
+}
+
+[data-theme="sea-dark"] table tbody tr td:hover {
+    background-color: color-mix(in srgb, var(--primary-dark), white 8%);
+}
+
+[data-theme="sea-dark"] table tfoot {
+    background-color: color-mix(in srgb, var(--primary-dark), black 22%);
+}
+
+[data-theme="sea-dark"] table thead {
+    background-color: color-mix(in srgb, var(--primary-dark), black 22%);
+}
+
+[data-theme="sea-light"] table {}

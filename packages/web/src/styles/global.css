@@ -30,11 +30,11 @@
     --base-padding: 24px;
     --container-padding: 32px;
 
-    --gap-xl: 20;
-    --gap-l: 16;
-    --gap-m: 12;
-    --gap-s: 8;
-    --gap-xs: 4;
+    --gap-xl: 20px;
+    --gap-l: 16px;
+    --gap-m: 12px;
+    --gap-s: 8px;
+    --gap-xs: 4px;
 
     --border-width: 1px;
     

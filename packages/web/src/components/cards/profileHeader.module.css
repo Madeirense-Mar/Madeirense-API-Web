@@ -6,7 +6,7 @@
     @apply justify-center items-center;
     
     display: grid;
-    column-gap: var(--card-padding);
+    gap: var(--gap-m);
     grid-template-areas:
         "thumbnail name"
         "thumbnail contact"
