@@ -2,18 +2,34 @@
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: 70px auto;
-    grid-template-areas: 
+    grid-template-areas:
         "aside application-nav"
         "aside application-body";
 }
 
-#root[data-page="back-office"] > main {
+#root[data-page="back-office"]>main {
     padding: var(--base-padding);
     
     transition: padding 1s ease-in-out;
 }
 
-#root[data-page="back-office"] main > section:not(:last-of-type) {
+#root[data-page="back-office"]>main>section {
+    border-radius: 12px;
+
+    padding: var(--base-padding);
+}
+
+[data-theme="land-dark"] #root[data-page="back-office"]>main>section {}
+
+[data-theme="land-light"] #root[data-page="back-office"]>main>section {}
+
+[data-theme="sea-dark"] #root[data-page="back-office"]>main>section {
+    background-color: color-mix(in srgb, var(--primary-dark), black 40%);
+}
+
+[data-theme="sea-light"] #root[data-page="back-office"]>main>section {}
+
+#root[data-page="back-office"] main>section:not(:last-of-type) {
     @apply mb-5;
 }
 
@@ -25,13 +41,9 @@
     background-color: transparent;
 }
 
-@media only screen and (min-width: 344px) {
-    
-}
+@media only screen and (min-width: 344px) {}
 
-@media only screen and (min-width: 428px) {
-    
-}
+@media only screen and (min-width: 428px) {}
 
 @media only screen and (min-width: 768px) {
     #root:has(aside[data-type="menu"][data-toggled="true"]) main {
@@ -39,6 +51,4 @@
     }
 }
 
-@media only screen and (min-width: 1366px) {
-    
-}
+@media only screen and (min-width: 1366px) {}

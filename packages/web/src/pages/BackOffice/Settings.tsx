@@ -300,273 +300,271 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
     }, []);
 
     return <main {...props}>
-        <section className="w-full flex flex-col justify-start items-start gap-6">
-            <header className="w-full flex flex-row justify-between items-center mb-4">
-                <h1>Definições</h1>
+        <header className="w-full flex flex-row justify-between items-center mb-4">
+            <h1>Definições</h1>
+        </header>
+
+        <section className="w-full">
+            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
+                {page.status === "orders" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Order" />}
+
+                <h2>Pedidos</h2>
             </header>
 
-            <section className="w-full">
-                <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
-                    {page.status === "orders" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Order" />}
+            <form id={"orders" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "orders" ? "disabled" : "idle"}>
+                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
+                        <Icon name="Queue" />
 
-                    <h2>Pedidos</h2>
-                </header>
+                        Fila
 
-                <form id={"orders" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "orders" ? "disabled" : "idle"}>
-                    <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                        <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                            <Icon name="Queue" />
+                        <span className="ml-auto font-normal italic">Definições da fila de pedidos</span>
+                    </legend>
 
-                            Fila
+                    <label className="flex flex-row justify-between items-start w-full gap-10">
+                        <div className="flex flex-col justify-start items-start gap-2">
+                            <span className="text-xl">Limite para aviso</span>
 
-                            <span className="ml-auto font-normal italic">Definições da fila de pedidos</span>
-                        </legend>
+                            {(page.error && (page.status === "order_threshold")) && <span data-state="error" className="font-normal px-2 rounded-sm">
+                                {page.error.message}
+                            </span>}
 
-                        <label className="flex flex-row justify-between items-start w-full gap-10">
-                            <div className="flex flex-col justify-start items-start gap-2">
-                                <span className="text-xl">Limite para aviso</span>
+                            <span className="font-normal opacity-60">Número de pedidos em fila <span className="font-normal italic">(individual para cada restaurante)</span> que serão entregues no tempo esperado, caso os pedidos excedam o limite os clientes serão notificados sobre possíveis atrasos.</span>
+                        </div>
 
-                                {(page.error && (page.status === "order_threshold")) && <span data-state="error" className="font-normal px-2 rounded-sm">
-                                    {page.error.message}
-                                </span>}
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
+                            {getUpdaterStatusIndicator("order_threshold")}
 
-                                <span className="font-normal opacity-60">Número de pedidos em fila <span className="font-normal italic">(individual para cada restaurante)</span> que serão entregues no tempo esperado, caso os pedidos excedam o limite os clientes serão notificados sobre possíveis atrasos.</span>
-                            </div>
+                            {(appState === "loading")
+                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
+                                : settings && <input min={1} name="order_threshold" type="number" defaultValue={settings.order_threshold} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                            }
+                        </div>
+                    </label>
+                </fieldset>
 
-                            <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
-                                {getUpdaterStatusIndicator("order_threshold")}
+                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
+                        <Icon name="FlashAuto" />
 
-                                {(appState === "loading")
-                                    ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                    : settings && <input min={1} name="order_threshold" type="number" defaultValue={settings.order_threshold} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                                }
-                            </div>
-                        </label>
-                    </fieldset>
+                        Ações e automação
 
-                    <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                        <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                            <Icon name="FlashAuto" />
+                        <span className="ml-auto font-normal italic">Definição das funcionalidades do aplicativo</span>
+                    </legend>
 
-                            Ações e automação
+                    <label className="flex flex-row justify-between items-start w-full gap-10">
+                        <div className="flex flex-col justify-start items-start gap-2">
+                            <span className="text-xl">Associação automática</span>
 
-                            <span className="ml-auto font-normal italic">Definição das funcionalidades do aplicativo</span>
-                        </legend>
+                            {(page.error && (page.status === "auto_assign_driver")) && <span data-state="error" className="font-normal px-2 rounded-sm">
+                                {page.error.message}
+                            </span>}
 
-                        <label className="flex flex-row justify-between items-start w-full gap-10">
-                            <div className="flex flex-col justify-start items-start gap-2">
-                                <span className="text-xl">Associação automática</span>
+                            <span className="font-normal opacity-60">
+                                Associa todos os pedidos que estiverem no estado
 
-                                {(page.error && (page.status === "auto_assign_driver")) && <span data-state="error" className="font-normal px-2 rounded-sm">
-                                    {page.error.message}
-                                </span>}
+                                <span className="mx-2 italic underline">{getLabel<$Enums.Orders_status>("ready")}</span>
 
-                                <span className="font-normal opacity-60">
-                                    Associa todos os pedidos que estiverem no estado
+                                a um estafeta livre e próximo ao restaurante sem precisar de uma ação manual.
+                            </span>
+                        </div>
 
-                                    <span className="mx-2 italic underline">{getLabel<$Enums.Orders_status>("ready")}</span>
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
+                            {getUpdaterStatusIndicator("auto_assign_driver")}
 
-                                    a um estafeta livre e próximo ao restaurante sem precisar de uma ação manual.
-                                </span>
-                            </div>
+                            {(appState === "loading")
+                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
+                                : settings && <input type="checkbox" name="auto_assign_driver" defaultChecked={settings.auto_assign_driver ?? false} className="w-full text-center" onChange={handleEvent} />
+                            }
+                        </div>
+                    </label>
+                </fieldset>
+            </form>
+        </section>
 
-                            <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
-                                {getUpdaterStatusIndicator("auto_assign_driver")}
+        <section className="w-full">
+            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
+                {page.status === "time" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Time" />}
 
-                                {(appState === "loading")
-                                    ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                    : settings && <input type="checkbox" name="auto_assign_driver" defaultChecked={settings.auto_assign_driver ?? false} className="w-full text-center" onChange={handleEvent} />
-                                }
-                            </div>
-                        </label>
-                    </fieldset>
-                </form>
-            </section>
+                <h2>Tempo</h2>
+            </header>
 
-            <section className="w-full">
-                <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
-                    {page.status === "time" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Time" />}
+            {(page.error && ((["time"] as (typeof page.status)[]).includes(page.status as (typeof page.status)))) && <span
+                data-state="error"
+                className="font-normal px-2 rounded-sm"
+            >
+                {page.error.message}
+            </span>}
 
-                    <h2>Tempo</h2>
-                </header>
+            <form id={"time" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
+                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
+                        <Icon name="KitchenSet" />
 
-                {(page.error && ((["time"] as (typeof page.status)[]).includes(page.status as (typeof page.status)))) && <span
-                    data-state="error"
-                    className="font-normal px-2 rounded-sm"
-                >
-                    {page.error.message}
-                </span>}
+                        Cozinha
 
-                <form id={"time" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
-                    <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                        <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                            <Icon name="KitchenSet" />
+                        <span className="ml-auto font-normal italic">Tempo médio de preparo geral para todos pratos</span>
+                    </legend>
 
-                            Cozinha
+                    <label className="flex flex-row justify-between items-start w-full gap-10">
+                        <div className="flex flex-col justify-start items-start gap-2">
+                            <span className="text-xl">Tempo médio</span>
 
-                            <span className="ml-auto font-normal italic">Tempo médio de preparo geral para todos pratos</span>
-                        </legend>
+                            {(page.error && (page.status === "prep_buffer")) && <span data-state="error" className="font-normal px-2 rounded-sm">
+                                {page.error.message}
+                            </span>}
 
-                        <label className="flex flex-row justify-between items-start w-full gap-10">
-                            <div className="flex flex-col justify-start items-start gap-2">
-                                <span className="text-xl">Tempo médio</span>
+                            <span className="font-normal opacity-60">Tempo <span className="font-normal italic">(em minutos)</span> adicional ao preparo de cada pedido pela cozinha.</span>
+                        </div>
 
-                                {(page.error && (page.status === "prep_buffer")) && <span data-state="error" className="font-normal px-2 rounded-sm">
-                                    {page.error.message}
-                                </span>}
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
+                            {getUpdaterStatusIndicator("prep_buffer")}
 
-                                <span className="font-normal opacity-60">Tempo <span className="font-normal italic">(em minutos)</span> adicional ao preparo de cada pedido pela cozinha.</span>
-                            </div>
+                            {(appState === "loading")
+                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
+                                : settings && <input min={1} name="prep_buffer" type="number" defaultValue={settings.prep_buffer} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                            }
+                        </div>
+                    </label>
+                </fieldset>
 
-                            <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
-                                {getUpdaterStatusIndicator("prep_buffer")}
+                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
+                        <Icon name="Kitchen" />
 
-                                {(appState === "loading")
-                                    ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                    : settings && <input min={1} name="prep_buffer" type="number" defaultValue={settings.prep_buffer} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                                }
-                            </div>
-                        </label>
-                    </fieldset>
+                        Preparo e entrega
 
-                    <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                        <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                            <Icon name="Kitchen" />
+                        <span className="ml-auto font-normal italic">Tempos relevantes à experiência do cliente, informação sobre tempo de espera</span>
+                    </legend>
 
-                            Preparo e entrega
+                    {(page.error && ((["ttd", "ttp"] as (typeof page.status)[]).some(s => (page.status as (typeof page.status)).includes(s)))) && <span
+                        data-state="error"
+                        className="font-normal px-2 rounded-sm"
+                    >
+                        {page.error.message}
+                    </span>}
 
-                            <span className="ml-auto font-normal italic">Tempos relevantes à experiência do cliente, informação sobre tempo de espera</span>
-                        </legend>
+                    <table>
+                        <thead>
+                            <tr className="italic font-semibold border-b border-solid border-black/20 opacity-70">
+                                <td className="w-full p-2">
+                                    <Icon name="Store" className="inline-block mr-2" />
 
-                        {(page.error && ((["ttd", "ttp"] as (typeof page.status)[]).some(s => (page.status as (typeof page.status)).includes(s)))) && <span
-                            data-state="error"
-                            className="font-normal px-2 rounded-sm"
-                        >
-                            {page.error.message}
-                        </span>}
+                                    Restaurante
+                                </td>
 
-                        <table>
-                            <thead>
-                                <tr className="italic font-semibold border-b border-solid border-black/20 opacity-70">
-                                    <td className="w-full p-2">
-                                        <Icon name="Store" className="inline-block mr-2" />
+                                <td className="p-2 whitespace-nowrap border-r border-solid border-black/20">
+                                    <Icon name="HourglassRunning" className="inline-block mr-2" />
 
-                                        Restaurante
-                                    </td>
+                                    Tempo de preparo (minutos)
+                                </td>
 
-                                    <td className="p-2 whitespace-nowrap border-r border-solid border-black/20">
-                                        <Icon name="HourglassRunning" className="inline-block mr-2" />
+                                <td className="p-2 whitespace-nowrap">
+                                    <Icon name="Timer" className="inline-block mr-2" />
 
-                                        Tempo de preparo (minutos)
-                                    </td>
+                                    Tempo de entrega (minutos)
+                                </td>
+                            </tr>
+                        </thead>
 
-                                    <td className="p-2 whitespace-nowrap">
-                                        <Icon name="Timer" className="inline-block mr-2" />
+                        <tfoot className="opacity-60 hover:opacity-100">
+                            <tr className="italic font-semibold border-t border-solid border-black/20 opacity-70">
+                                <td className="w-full p-2 border-r border-solid border-black/20">
+                                    Definir para todos
+                                </td>
 
-                                        Tempo de entrega (minutos)
-                                    </td>
-                                </tr>
-                            </thead>
+                                <td className="p-2 border-r border-solid border-black/20">
+                                    <div className="w-full flex flex-row justify-center items-center gap-1">
+                                        {getUpdaterStatusIndicator(`ttp`)}
 
-                            <tfoot className="opacity-60 hover:opacity-100">
-                                <tr className="italic font-semibold border-t border-solid border-black/20 opacity-70">
-                                    <td className="w-full p-2 border-r border-solid border-black/20">
-                                        Definir para todos
-                                    </td>
+                                        <input min={1} name="ttp" type="number" defaultValue={avgTTP} className="w-full text-center" onKeyDown={pressEnterToSubmit} onChange={handleSubmitOnChange} required />
+                                    </div>
+                                </td>
 
-                                    <td className="p-2 border-r border-solid border-black/20">
-                                        <div className="w-full flex flex-row justify-center items-center gap-1">
-                                            {getUpdaterStatusIndicator(`ttp`)}
+                                <td className="p-2 whitespace-nowrap">
+                                    <div className="w-full flex flex-row justify-center items-center gap-1">
+                                        {getUpdaterStatusIndicator(`ttd`)}
 
-                                            <input min={1} name="ttp" type="number" defaultValue={avgTTP} className="w-full text-center" onKeyDown={pressEnterToSubmit} onChange={handleSubmitOnChange} required />
-                                        </div>
-                                    </td>
+                                        <input min={1} name="ttd" type="number" defaultValue={avgTTD} className="w-full text-center" onKeyDown={pressEnterToSubmit} onChange={handleSubmitOnChange} required />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
 
-                                    <td className="p-2 whitespace-nowrap">
-                                        <div className="w-full flex flex-row justify-center items-center gap-1">
-                                            {getUpdaterStatusIndicator(`ttd`)}
+                        <tbody>
+                            {restaurants.map(r => <tr key={r.restaurant_id} className="hover:bg-gray-300/20">
+                                <td className="px-2 w-full font-semibold italic border-r border-solid border-black/20">
+                                    {r.name}
+                                </td>
 
-                                            <input min={1} name="ttd" type="number" defaultValue={avgTTD} className="w-full text-center" onKeyDown={pressEnterToSubmit} onChange={handleSubmitOnChange} required />
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tfoot>
+                                <td className="p-2 border-r border-solid border-black/20">
+                                    <div className="w-full flex flex-row justify-center items-center gap-1">
+                                        {getUpdaterStatusIndicator(`ttp-${r.restaurant_id}`)}
 
-                            <tbody>
-                                {restaurants.map(r => <tr key={r.restaurant_id} className="hover:bg-gray-300/20">
-                                    <td className="px-2 w-full font-semibold italic border-r border-solid border-black/20">
-                                        {r.name}
-                                    </td>
+                                        {(appState === "loading")
+                                            ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
+                                            : <input min={1} name={`ttp-${r.restaurant_id}`} type="number" defaultValue={r.ttp} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                                        }
+                                    </div>
+                                </td>
 
-                                    <td className="p-2 border-r border-solid border-black/20">
-                                        <div className="w-full flex flex-row justify-center items-center gap-1">
-                                            {getUpdaterStatusIndicator(`ttp-${r.restaurant_id}`)}
+                                <td className="p-2">
+                                    <div className="w-full flex flex-row justify-center items-center gap-1">
+                                        {getUpdaterStatusIndicator(`ttd-${r.restaurant_id}`)}
 
-                                            {(appState === "loading")
-                                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                                : <input min={1} name={`ttp-${r.restaurant_id}`} type="number" defaultValue={r.ttp} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                                            }
-                                        </div>
-                                    </td>
+                                        {(appState === "loading")
+                                            ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
+                                            : <input min={1} name={`ttd-${r.restaurant_id}`} type="number" defaultValue={r.ttd} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                                        }
+                                    </div>
+                                </td>
+                            </tr>)}
+                        </tbody>
+                    </table>
+                </fieldset>
+            </form>
+        </section>
 
-                                    <td className="p-2">
-                                        <div className="w-full flex flex-row justify-center items-center gap-1">
-                                            {getUpdaterStatusIndicator(`ttd-${r.restaurant_id}`)}
+        <section className="w-full">
+            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
+                {page.status === "payments" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Money" />}
 
-                                            {(appState === "loading")
-                                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                                : <input min={1} name={`ttd-${r.restaurant_id}`} type="number" defaultValue={r.ttd} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>)}
-                            </tbody>
-                        </table>
-                    </fieldset>
-                </form>
-            </section>
+                <h2>Pagamentos</h2>
+            </header>
 
-            <section className="w-full">
-                <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
-                    {page.status === "payments" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Money" />}
+            {(page.error && ((["payments"] as (typeof page.status)[]).includes(page.status as (typeof page.status)))) && <span
+                data-state="error"
+                className="font-normal px-2 rounded-sm"
+            >
+                {page.error.message}
+            </span>}
 
-                    <h2>Pagamentos</h2>
-                </header>
+            <form id={"payments" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
+                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
+                        <Icon name="CashRegister" />
 
-                {(page.error && ((["payments"] as (typeof page.status)[]).includes(page.status as (typeof page.status)))) && <span
-                    data-state="error"
-                    className="font-normal px-2 rounded-sm"
-                >
-                    {page.error.message}
-                </span>}
+                        Tipos de pagamento
 
-                <form id={"payments" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
-                    <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                        <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                            <Icon name="CashRegister" />
+                        <span className="ml-auto font-normal italic">Modalidades de pagamentos aceites pelo restaurante. Seleccione os métodos elegíveis.</span>
+                    </legend>
 
-                            Tipos de pagamento
+                    <PaymentTypesList
+                        className="w-full"
+                        mode="default"
+                        hiddenItems={["Offer"]}
+                        selectedItems={(settings?.Global_Settings_Eligible_Payment_Types ?? []).map(({ payment_method }) => payment_method)}
+                        selectionMode="checkbox"
+                        selectable
+                    />
+                </fieldset>
 
-                            <span className="ml-auto font-normal italic">Modalidades de pagamentos aceites pelo restaurante. Seleccione os métodos elegíveis.</span>
-                        </legend>
+                <Button type="submit" disabled={(page.status === "payments")} className="w-full">
+                    <Icon name="Save" />
 
-                        <PaymentTypesList
-                            className="w-full"
-                            mode="default"
-                            hiddenItems={["Offer"]}
-                            selectedItems={(settings?.Global_Settings_Eligible_Payment_Types ?? []).map(({ payment_method }) => payment_method)}
-                            selectionMode="checkbox"
-                            selectable
-                        />
-                    </fieldset>
-
-                    <Button type="submit" disabled={(page.status === "payments")} className="w-full">
-                        <Icon name="Save" />
-
-                        Salvar definição dos pagamentos
-                    </Button>
-                </form>
-            </section>
+                    Salvar definição dos pagamentos
+                </Button>
+            </form>
         </section>
     </main>
 };

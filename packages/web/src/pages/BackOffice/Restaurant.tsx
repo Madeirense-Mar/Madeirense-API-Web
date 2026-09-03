@@ -5,8 +5,15 @@ import {
 } from "react";
 
 import {
+    toDayOfTheWeek,
+    toTimeDecimal,
+    Madeirense$Enumerators,
     type restaurantType
 } from "@Madeirense/shared";
+
+import type {
+    Restaurant_Hours
+} from "@Madeirense/database/browser";
 
 import { useApp } from "contexts/App";
 import { useModal } from "contexts/Modal";
@@ -14,13 +21,14 @@ import { useModal } from "contexts/Modal";
 import Button from "components/buttons";
 import Icon from "components/icon";
 
-import RestaurantCard from "components/cards/restaurant";
 import RestaurantForm from "components/forms/add/restaurant";
 
 import RestaurantEventList from "components/lists/restaurantEvents";
 import AddRestaurantEventForm from "components/modals/forms/add/restaurantEvent";
 
 import type { IPageState } from "components/interface";
+import { useNavigate } from "react-router-dom";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -48,6 +56,8 @@ const defaultRestaurant: restaurantType = {
 };
 
 function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
+    const navigate = useNavigate();
+
     const {
         get,
         state: appState,
@@ -61,7 +71,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
         status: "idle"
     });
 
-    const { 
+    const {
         status: pageStatus
     } = page;
 
@@ -71,18 +81,18 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
         "isLoading": (pageStatus === "loading")
     };
 
-    function openEventCreationModal() {
-        show(<AddRestaurantEventForm />, {
-            title: `Marcar evento`
+    function openRestaurantCreationModal() {
+        show(<RestaurantForm
+            restaurant={defaultRestaurant}
+            onSuccess={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
+        />, {
+            title: `Registar restaurante`
         });
     };
 
-    function toggleAddition(e: MouseEvent<HTMLButtonElement>) {
-        updatePage(p => {
-            return {
-                ...p,
-                pageStatus: (p.status === "adding-restaurant") ? "idle" : "adding-restaurant"
-            }
+    function openEventCreationModal() {
+        show(<AddRestaurantEventForm />, {
+            title: `Marcar evento`
         });
     };
 
@@ -91,30 +101,70 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
             <header className="w-full flex flex-row justify-between items-center">
                 <h1>Restaurantes</h1>
 
-                <Button onClick={toggleAddition} variant={(assertions.isAddingRestaurant) ? "primary" : "secondary"}>
-                    {(assertions.isAddingRestaurant) ? <Icon name="Close" /> : <Icon name="Plus" />}
+                <Button onClick={openRestaurantCreationModal} variant="primary">
+                    <Icon name="Plus" />
                 </Button>
             </header>
 
-            {(assertions.isLoading) && <div className="w-full flex flex-row justify-center items-center gap-2 p-10">
-                <Icon name="Loading" className="animate-spin" />
-            </div>}
+            {(assertions.isLoading)
+                ? <div className="w-full flex flex-row justify-center items-center gap-2 p-10">
+                    <Icon name="Loading" className="animate-spin" />
+                </div>
 
-            {(assertions.isAddingRestaurant) && <RestaurantForm
-                restaurant={defaultRestaurant}
-                onSuccess={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
-            />}
+                : <div className="w-full overflow-auto">
+                    <table id="staff-table" className="w-full">
+                        <thead>
+                            <tr>
+                                <th>Capa</th>
+                                <th>Nome</th>
+                                <th>Localização</th>
+                                <th>Abertura</th>
+                                <th>Fecho</th>
+                            </tr>
+                        </thead>
 
-            <div data-grid="RestaurantCard">
-                {get("Restaurants")?.map(r => <RestaurantCard key={r.restaurant_id} restaurant={r} mode="admin" />)}
-            </div>
+                        <tbody>
+                            {get("Restaurants")?.map(r => {
+                                const { closing_time, day_of_week, opening_time } = ((r.Restaurant_Hours ?? []) as Restaurant_Hours[])[new Date().getDay()];
+                                const cTime = `${toTimeDecimal(new Date(closing_time).getHours())}:${toTimeDecimal(new Date(closing_time).getMinutes())}`;
+                                const oTime = `${toTimeDecimal(new Date(opening_time).getHours())}:${toTimeDecimal(new Date(opening_time).getMinutes())}`;
+
+                                return <tr className="cursor-pointer" key={r.restaurant_id} onClick={() => navigate(`${Madeirense$Enumerators.Pages.BackOffice.Restaurant}/${r.restaurant_id}`)}>
+                                    {[
+                                        { id: "thumbnail", data: <img className="h-[120px] w-full" src={r.thumbnail_url ?? "#"} alt={r.name} /> },
+                                        { id: "name", data: r.name },
+                                        { id: "location", data: r.Delivery_Locations?.address },
+                                        {
+                                            id: "opening", data: <>
+                                                <Tag variant="secondary">{day_of_week}</Tag>
+
+                                                {oTime}
+                                            </>
+                                        },
+                                        {
+                                            id: "closing", data: <>
+                                                <Tag variant="secondary">{day_of_week}</Tag>
+
+                                                {cTime}
+                                            </>
+                                        },
+                                    ].map(dataset => <td key={`${r.restaurant_id}-${dataset.id}`}>
+                                        {dataset.data}
+                                    </td>)}
+                                </tr>
+                            }
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            }
         </section>
 
         <section>
             <header className="w-full flex flex-row justify-between items-center">
                 <h1>Eventos</h1>
 
-                <Button onClick={openEventCreationModal} variant={assertions.isAddingRestaurantEvent ? "primary" : "secondary"}>
+                <Button onClick={openEventCreationModal} variant="primary">
                     <Icon name="Plus" />
                 </Button>
             </header>

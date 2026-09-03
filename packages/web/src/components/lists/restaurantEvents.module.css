@@ -1,5 +1,5 @@
 .list {
-    composes: list from "./list.module.css";
+    @apply flex flex-col justify-start items-start gap-3;
 }
 
 .list li:not([data-type="filter"], [data-empty])  {
