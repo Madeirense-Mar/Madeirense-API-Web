@@ -35,6 +35,7 @@ import {
     type countEntryType,
     type dateIntervalsType,
     type orderRevenueType,
+    resolveClassNames,
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
@@ -51,6 +52,8 @@ import DoughnutChart from "components/charts/doughnut";
 import LineChart from "components/charts/line";
 import Icon from "components/icon";
 import Tag from "components/tags";
+
+import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 import type { IPageState } from "components/interface";
 
@@ -682,6 +685,7 @@ type KPISectionType = (
 
 const KPISection = (
     {
+        className,
         kpi,
         ...props
     }: IKPISectionPropTypes
@@ -715,16 +719,16 @@ const KPISection = (
         $section.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, [pickedSection]);
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION" {...props}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
         <header>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value}>
+            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                 {kvp.icon}
 
                 {kvp.key}
             </Button>)}
         </header>
 
-        <div data-type="container">
+        <div>
             <section id="kpi-orders" className="gap-2">{
                 kpi["orders"].error
                     ? <div data-state="error" className='w-full flex flex-row justify-start items-center gap-2'>
@@ -796,6 +800,7 @@ interface IRevenueSectionPropTypes extends ComponentProps<"section"> {
 
 const RevenueSection = (
     {
+        className,
         array,
         interval,
         error,
@@ -868,9 +873,9 @@ const RevenueSection = (
         onChange: handleChange
     };
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION" {...props}>
-        <header className='overflow-x-auto flex-nowrap'>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value} disabled={isFetching}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
+        <header>
+            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"} disabled={isFetching}>
                 {kvp.icon}
 
                 {kvp.key}
@@ -897,7 +902,7 @@ const RevenueSection = (
             </div>
         </header>
 
-        <div data-type="container">
+        <div>
             {(isFetching || error)
                 ? <section id={pickedSection} className="gap-2">
                     {error && <div data-state="error" className='flex flex-row justify-start items-center gap-2'>

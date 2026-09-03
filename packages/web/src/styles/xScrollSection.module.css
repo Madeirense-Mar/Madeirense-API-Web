@@ -1,7 +1,9 @@
-.x-scroll-section {}
+.x-scroll-section {
+    @apply flex flex-col justify-start items-start flex-nowrap gap-3;
+}
 
 .x-scroll-section>header {
-    @apply overflow-x-auto flex flex-row justify-start items-center flex-nowrap;
+    @apply overflow-x-auto flex flex-row justify-start items-center flex-nowrap w-full;
 }
 
 .x-scroll-section>div {
