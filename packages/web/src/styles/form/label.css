@@ -1,0 +1,17 @@
+label[data-variant="selectable"] {
+    @apply flex flex-row justify-start items-center flex-nowrap gap-3 border;
+
+    border-radius: 12px;
+}
+
+[data-theme="land-dark"] label[data-variant="selectable"]:has(input:checked) {}
+
+[data-theme="land-light"] label[data-variant="selectable"]:has(input:checked) {}
+
+[data-theme="sea-dark"] label[data-variant="selectable"]:has(input:checked) {
+    --text-color: var(--primary-light);
+    
+    background-color: color-mix(in srgb, var(--primary-light), black 70%);
+}
+
+[data-theme="sea-light"] label[data-variant="selectable"]:has(input:checked) {}

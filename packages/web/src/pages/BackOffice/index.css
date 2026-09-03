@@ -9,7 +9,7 @@ section#kpi-statistics ul li {
 
     width: 100%;
     min-width: 232px;
-    border: var(--border-width) solid var(--border-color);
+    border: var(--border-width) solid var(--base-border-color);
     border-radius: 12px;
     padding: 7px;
 }
@@ -47,22 +47,22 @@ section#order-statistics div[data-area="dough"] {
 }
 
 section#order-statistics div[data-area="dough"],
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-type="container"] > section {
+section#order-statistics #os-scroll-section div[data-type="container"] > section {
     position: relative;
 }
 
 section#order-statistics div[data-area="dough"],
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] {
+section#order-statistics #os-scroll-section {
     border: var(--border-width) solid var(--border-color);
     border-radius: 12px;
     padding: 12px;
 }
 
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] {
+section#order-statistics #os-scroll-section {
     padding-top: 0px;
 }
 
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-type="container"] {
+section#order-statistics #os-scroll-section div[data-type="container"] {
     --h: calc(var(--container-height) - var(--base-button-height) - 12px);
     
     height: var(--h);
@@ -70,15 +70,15 @@ section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-
     min-height: var(--h);
 }
 
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-type="container"] * {
+section#order-statistics #os-scroll-section div[data-type="container"] * {
     height: 100%;
 }
 
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] div[data-type="container"] section {
+section#order-statistics #os-scroll-section div[data-type="container"] section {
     justify-content: center;
 }
 
-section#order-statistics section[class*="HORIZONTAL_SCROLLTO_SECTION"] header {
+section#order-statistics #os-scroll-section header {
     margin: 0;
 }
 

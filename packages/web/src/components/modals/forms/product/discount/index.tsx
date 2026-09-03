@@ -4,11 +4,18 @@ import {
     type MouseEvent
 } from "react";
 
+
+import {
+    resolveClassNames
+} from "@Madeirense/shared";
+
 import Button from "components/buttons";
 import Icon from "components/icon";
 
 import DiscountForm from "./discount";
 import CouponForm from "./coupon";
+
+import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 // ***************************************************************************************************************
 
@@ -24,6 +31,7 @@ type scrollSectionType = (
 
 const ScrollToSection = ({ 
     callback, 
+    className,
     ...props
 }: { 
     callback?: () => void
@@ -48,16 +56,16 @@ const ScrollToSection = ({
         setPickedSection(value as any);
     }
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION" {...props}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
         <header>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value}>
+            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                 {kvp.icon}
 
                 {kvp.key}
             </Button>)}
         </header>
 
-        <div data-type="container" className="overflow-auto">
+        <div>
             <section id="section-discounts" data-state={pickedSection === "section-discounts" ? "idle" : "disabled"}>
                 <DiscountForm mode="edit" {...{ callback }} />
             </section>

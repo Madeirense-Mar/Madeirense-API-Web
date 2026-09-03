@@ -195,7 +195,7 @@ const AddProductForm = ({
     };
 
     return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4" {...props}>
-        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-6 p-2 rounded-md">
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-6 rounded-md">
             <legend>Sobre</legend>
 
             <header className="w-full flex flex-row justify-between items-center">
@@ -259,7 +259,7 @@ const AddProductForm = ({
             </label>
         </fieldset>
 
-        <fieldset className="w-full flex flex-row justify-between items-center gap-2 border p-2 rounded-lg">
+        <fieldset className="w-full flex flex-row justify-between items-center gap-2 border rounded-lg">
             <legend>Preço</legend>
 
             <label htmlFor="price" className="text-lg flex flex-row justify-start items-center gap-2">
@@ -271,7 +271,7 @@ const AddProductForm = ({
             <input title="Preço" id="price" name="price" defaultValue={0} min={0} type="number" data-element="h3" required />
         </fieldset>
 
-        <fieldset className="w-full flex flex-col justify-start items-start gap-2 p-2 border rounded-md">
+        <fieldset className="w-full flex flex-col justify-start items-start gap-2 border rounded-md">
             <legend>Outros</legend>
 
             <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-between items-center gap-2 p-2">
@@ -314,7 +314,7 @@ const AddProductForm = ({
                         Submeter e adicionar outro
                     </Button>
 
-                    <Button value="once" type="submit" className="w-full">
+                    <Button value="once" type="submit">
                         Adicionar
                     </Button>
                 </div>

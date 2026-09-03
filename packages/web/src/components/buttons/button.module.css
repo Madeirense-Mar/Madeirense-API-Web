@@ -176,6 +176,10 @@
     border-right: none;
 }
 
+.text:hover {
+    --button-background-color: var(--primary);
+}
+
 .text-selected {
     composes: text;
 }

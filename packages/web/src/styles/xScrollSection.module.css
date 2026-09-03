@@ -4,7 +4,19 @@
 
 .x-scroll-section>header {
     @apply overflow-x-auto flex flex-row justify-start items-center flex-nowrap w-full;
+
+    border-bottom: 1px solid var(--header-border-color);
 }
+
+[data-theme="land-dark"] .x-scroll-section>header {}
+
+[data-theme="land-light"] .x-scroll-section>header {}
+
+[data-theme="sea-dark"] .x-scroll-section>header {
+    --header-border-color: var(--secondary)
+}
+
+[data-theme="sea-light"] .x-scroll-section>header {}
 
 .x-scroll-section>div {
     @apply flex flex-row justify-start items-start w-full overflow-x-hidden flex-nowrap;

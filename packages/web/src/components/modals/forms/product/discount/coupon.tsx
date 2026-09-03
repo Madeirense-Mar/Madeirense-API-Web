@@ -145,10 +145,6 @@ const CouponForm = ({
     };
 
     return <form data-state={(IS_LOADING || status === "loading") ? "disabled" : "idle"} onSubmit={PATCH_POST} className="h-full w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
-        <h2>
-            Cupons de desconto
-        </h2>
-
         {(status === "success") && <div data-state="success" className="w-full flex flex-row justify-center items-center gap-2">
             <Icon name="Check" />
 
@@ -157,23 +153,23 @@ const CouponForm = ({
 
         <div className="w-full flex flex-row justify-between items-center gap-1">
             <label data-variant="selectable" htmlFor="renew" className="w-full border p-2 rounded-lg">
+                <input id="renew" type="radio" name="mode" defaultChecked={mode === "renew"} value="renew" onChange={selectFormMode} className="mr-auto" />
+
                 <Icon name="Update" />
 
                 <span>Atualizar cupons</span>
-
-                <input id="renew" type="radio" name="mode" defaultChecked={mode === "renew"} value="renew" onChange={selectFormMode} className="w-full" />
             </label>
 
             <label data-variant="selectable" htmlFor="add" className="w-full border p-2 rounded-lg">
+                <input id="add" type="radio" name="mode" defaultChecked={mode === "add"} value="add" onChange={selectFormMode} className="mr-auto" />
+
                 <Icon name="Add" />
 
                 <span>Criar cupon</span>
-
-                <input id="add" type="radio" name="mode" defaultChecked={mode === "add"} value="add" onChange={selectFormMode} className="w-full" />
             </label>
         </div>
 
-        {(mode === "add") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+        {(mode === "add") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 rounded-md">
             <legend>Criar cupon</legend>
 
             <label htmlFor="code" className="text-lg w-full flex flex-row justify-start items-center gap-2">
@@ -205,7 +201,7 @@ const CouponForm = ({
             </label>
         </fieldset>}
 
-        {(mode === "renew") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+        {(mode === "renew") && <fieldset className="w-full flex flex-col justify-start items-start gap-11 rounded-md">
             <legend className="flex flex-row justify-start items-center gap-2">
                 Cupons
 
@@ -237,11 +233,11 @@ const CouponForm = ({
 
                         <span className="italic">{c.code}</span>
 
-                        <span data-text="tag" className="ml-auto">
+                        <Tag variant="success" className="ml-auto">
                             <Icon name="Discount" />
 
                             {`${c.discount}%`}
-                        </span>
+                        </Tag>
 
                         <Tag>
                             <Icon name="Calendar1" />
@@ -265,11 +261,11 @@ const CouponForm = ({
 
                         <span className="italic">{c.code}</span>
 
-                        <span data-text="tag" className="ml-auto">
+                        <Tag variant="success" className="ml-auto">
                             <Icon name="Discount" />
 
                             {`${c.discount}%`}
-                        </span>
+                        </Tag>
 
                         <Tag>
                             <Icon name="CalendarExpired" />

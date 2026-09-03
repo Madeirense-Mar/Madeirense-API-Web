@@ -46,13 +46,13 @@ function BackOfficeProductsPage() {
                     <option value="delisted-products">Ocultados</option>
                 </select>
 
-                <Button variant="secondary" onClick={openProductDiscountModal}>
+                <Button variant="warning" onClick={openProductDiscountModal}>
                     <Icon name="Discount" />
 
                     Ver/Atribuir descontos
                 </Button>
 
-                <Button variant="secondary" shape="circle" onClick={openAddProductModal}>
+                <Button shape="circle" onClick={openAddProductModal}>
                     <Icon name="Plus" />
                 </Button>
             </header>

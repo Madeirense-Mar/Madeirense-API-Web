@@ -305,14 +305,14 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
         </header>
 
         <section className="w-full">
-            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
+            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full">
                 {page.status === "orders" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Order" />}
 
                 <h2>Pedidos</h2>
             </header>
 
             <form id={"orders" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "orders" ? "disabled" : "idle"}>
-                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
                     <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
                         <Icon name="Queue" />
 
@@ -343,7 +343,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                     </label>
                 </fieldset>
 
-                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
                     <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
                         <Icon name="FlashAuto" />
 
@@ -383,7 +383,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
         </section>
 
         <section className="w-full">
-            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
+            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full">
                 {page.status === "time" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Time" />}
 
                 <h2>Tempo</h2>
@@ -397,7 +397,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
             </span>}
 
             <form id={"time" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
-                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
                     <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
                         <Icon name="KitchenSet" />
 
@@ -428,7 +428,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                     </label>
                 </fieldset>
 
-                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
                     <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
                         <Icon name="Kitchen" />
 
@@ -526,7 +526,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
         </section>
 
         <section className="w-full">
-            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid border-black w-full">
+            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full">
                 {page.status === "payments" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Money" />}
 
                 <h2>Pagamentos</h2>
@@ -540,7 +540,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
             </span>}
 
             <form id={"payments" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
-                <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
+                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
                     <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
                         <Icon name="CashRegister" />
 

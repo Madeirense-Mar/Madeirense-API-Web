@@ -1,0 +1,19 @@
+fieldset {
+    border: 0;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+[data-theme="land-dark"] fieldset {}
+
+[data-theme="land-light"] fieldset {}
+
+[data-theme="sea-dark"] fieldset {
+    background-color: color-mix(in srgb, var(--primary-dark), black 40%);
+}
+
+[data-theme="sea-light"] fieldset {}
+
+fieldset legend {
+    @apply font-bold;
+}

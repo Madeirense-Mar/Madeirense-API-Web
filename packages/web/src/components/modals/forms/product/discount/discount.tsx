@@ -22,6 +22,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 
 import type { IComponentState } from "components/interface";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -112,13 +113,8 @@ const DiscountForm = ({
         }
     };
 
-    return <form onSubmit={PATCH} className="h-full w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
-        <h2>
-            {mode === "add" && <>Atribuir descontos</>}
-            {mode === "edit" && <>Descontos atribuidos</>}
-        </h2>
-
-        {(mode === "add") && <fieldset className="w-full flex flex-row justify-start items-start gap-3 p-2 border rounded-md border-solid">
+    return <form onSubmit={PATCH} className="h-full w-full flex flex-col justify-start items-start gap-4" {...props}>
+        {(mode === "add") && <fieldset className="w-full flex flex-row justify-start items-start gap-3 rounded-md">
             <legend>Valor</legend>
 
             <label htmlFor="discount" className="text-lg flex flex-row justify-start items-center gap-2 mr-auto">
@@ -130,7 +126,7 @@ const DiscountForm = ({
             <input title="Desconto" id="discount" name="discount" className="text-right" placeholder="Valor do desconto em percentagem" min={mode === "add" ? 1 : 0} type="number" data-element="h3" required />
         </fieldset>}
 
-        <fieldset className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+        <fieldset className="w-full flex flex-col justify-start items-start gap-3 p-3 rounded-md">
             <legend className="flex flex-row justify-start items-center gap-2">
                 Produtos
 
@@ -138,7 +134,6 @@ const DiscountForm = ({
             </legend>
 
             <ul className="w-full flex flex-col justify-start items-start">
-
                 {(IS_EMPTY) && <li className="w-full flex flex-row justify-center items-center italic opacity-40">
                     Sem produtos com desconto
                 </li>}
@@ -176,9 +171,9 @@ const DiscountForm = ({
                 <Icon name="Loading" className="animate-spin" />
             </Button>
 
-            : <div className="w-full flex flex-row justify-start items-center gap-2">
+            : <div className="w-full flex flex-row justify-between items-center gap-2">
                 {mode === "edit" && <>
-                    <Button type="submit" value="remove-selected" variant="danger" className="w-full" disabled={IS_EMPTY}>
+                    <Button type="submit" value="remove-selected" variant="danger" disabled={IS_EMPTY}>
                         <Icon name="Close" />
 
                         Retirar dos seleccionados
@@ -187,7 +182,7 @@ const DiscountForm = ({
                     <Button type="submit" value="remove-all" variant="warning" disabled={IS_EMPTY}>
                         <Icon name="Close" />
 
-                        Limpar todos descontos
+                        Limpar todos
                     </Button>
                 </>}
 
@@ -213,17 +208,17 @@ const ListItem = ({ product: p, disabled = false, ...props }: { product: product
 
             {p.name}
 
-            {(discount > 0) && <span data-text="tag" className="ml-auto line-through">
+            {(discount > 0) && <Tag variant="secondary" className="ml-auto line-through">
                 <Icon name="Money" />
 
                 {!price ? "Grátis" : formatNumber(price)}
-            </span>}
+            </Tag>}
 
-            <span data-text="tag" className={!discount ? "ml-auto" : undefined}>
+            <Tag variant="success" className={!discount ? "ml-auto" : undefined}>
                 {!discount ? <Icon name="Money" /> : <Icon name="Discount" />}
 
                 {`${formatNumber(!discount ? price : discountedPrice)}${!discount ? "" : ` (${discount}%)`}`}
-            </span>
+            </Tag>
         </label>
     </li>
 };

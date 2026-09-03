@@ -461,7 +461,7 @@ const ScrollToSection = ({
         default: {
             return <section className="HORIZONTAL_SCROLLTO_SECTION w-full">
                 <header>
-                    {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value}>
+                    {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                         {kvp.icon}
 
                         {kvp.key}

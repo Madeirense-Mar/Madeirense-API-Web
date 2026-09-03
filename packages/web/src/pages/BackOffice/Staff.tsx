@@ -282,7 +282,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
             <header className="w-full flex flex-row justify-between items-center">
                 <h1>Utilizadores</h1>
 
-                <Button variant="secondary" onClick={openUserCreationModal}>
+                <Button onClick={openUserCreationModal}>
                     <Icon name="Plus" />
                 </Button>
             </header>

@@ -1,0 +1,34 @@
+input {
+    padding: 0 12px;
+}
+
+input,
+select {
+    --h: 40px;
+    
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    --h: 20px;
+}
+
+textarea {
+    padding: 12px;
+}
+
+[data-theme*="dark"] input,
+[data-theme*="dark"] select,
+[data-theme*="dark"] textarea {
+    border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
+    background-color: var(--background-color);
+}
+
+[data-theme="sea-dark"] input,
+[data-theme="sea-dark"] select,
+[data-theme="sea-dark"] textarea {
+    --base-input-element-border-color: var(--primary-light);
+}
