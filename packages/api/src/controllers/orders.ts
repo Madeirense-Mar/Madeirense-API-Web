@@ -8,7 +8,6 @@ import {
     $Enums,
     Prisma,
     type Courier_Positions,
-    type Restaurant_Events,
     type Users
 } from '@Madeirense/database';
 
@@ -248,7 +247,13 @@ export const cancelOrder = async (
             });
         }
 
-        if (['deliver', 'cancelled'].includes(order.status as $Enums.Orders_status)) {
+        // BUG FIX (2026-09-30): was `'deliver'`, not `'delivered'` — the
+        // Orders_status enum (schema.dev.prisma) has no `'deliver'` value,
+        // so this guard against cancelling an already-delivered order was
+        // dead code; `order.status` would never match it, and a delivered
+        // order stayed cancellable regardless. Flagged from
+        // client-mobile's order_detail_screen.dart while building it.
+        if (['delivered', 'cancelled'].includes(order.status as $Enums.Orders_status)) {
             return res.status(400).json({
                 data: undefined,
                 code: 'BAD_REQUEST',
@@ -399,7 +404,20 @@ export const createOrder = async (
 
         const { totalPrice: total_amount } = await getCartSummary$Dry(user_id, cartType, coupon_code);
 
-        const [order, purchasedTickets] = await prisma.$transaction(
+        // PRODUCT DECISION (2026-09-30): this used to also auto-create
+        // Tickets_Purchased rows here for free events (total_amount === 0)
+        // — see client-mobile/CLAUDE.md and controllers/restaurantEvent.ts's
+        // purchaseTicket for the full reasoning. That bundled ticket
+        // issuance into the general product cart/Orders flow, and only
+        // worked for free events: a paid "ticket" bought through checkout
+        // charged the customer but never became a verifiable entity
+        // (Tickets_Purchased existed only as a side effect of an Order,
+        // not as its own first-class purchase). Tickets are now bought
+        // through their own endpoint (`POST /restaurant-events/:id/purchase`)
+        // entirely independent of this one. `event_id` stays on Orders
+        // itself — the cart/Orders flow is still the intended path for
+        // (eventually) event merchandise, just never tickets.
+        const order = await prisma.$transaction(
             async $trx => {
                 try {
                     const { order_id } = await $trx.orders.create({
@@ -440,50 +458,10 @@ export const createOrder = async (
                         }
                     });
 
-                    const _order = await $trx.orders.findUnique({
+                    return $trx.orders.findUnique({
                         where: { order_id },
                         include: Prisma$Utilities.Inclusions.Orders.Data
                     });
-
-                    if (
-                        !event_id ||
-                        (total_amount > 0)
-                    ) return [_order, 0];
-
-                    const system_user = await $trx.users.findFirst({ where: { user_role: 'System' } });
-
-                    const {
-                        event_date,
-                    } = (restaurant_event as Restaurant_Events) ?? {};
-
-                    await $trx.order_History.create({
-                        data: {
-                            order_id,
-                            status: 'pending',
-                            notes: 'Bilhete associado à conta do cliente, espera da validação para o evento.',
-                            user_id,
-                        }
-                    });
-
-                    const { count } = await $trx.tickets_Purchased.createMany({
-                        data: cart_items.filter(({ product_type }) => product_type === 'ticket').map(ticket => {
-                            return {
-                                expired: false,
-                                expiry_date: event_date,
-                                order_id,
-                                price: 0,
-                                purchased_at: new Date(),
-                                quantity: ticket.quantity,
-                                validated_at: new Date(),
-                                validator_id: system_user?.user_id ?? null,
-                                event_id,
-                                restaurant_id,
-                                user_id
-                            }
-                        })
-                    });
-
-                    return [_order, count];
                 } catch (error) {
                     throw new Error(`Unable to create order: ${(error as Error).message}`);
                 }
@@ -502,7 +480,7 @@ export const createOrder = async (
 
         return res.status(201).json({
             data: order,
-            message: `Order created successfully${!purchasedTickets ? '' : '. Tickets were automatically purchased and associated with your account.'}`,
+            message: 'Order created successfully',
             success: true
         });
     } catch (error) {

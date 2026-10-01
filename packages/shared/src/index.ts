@@ -47,5 +47,6 @@ export type * from "./types/resorts.js";
 export type * from "./types/restaurantEvents.js";
 export type * from "./types/restaurants.js";
 export type * from "./types/review.js";
+export type * from "./types/routing.js";
 export type * from "./types/statistics.js";
 export type * from "./types/users.js";

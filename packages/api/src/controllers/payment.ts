@@ -15,11 +15,15 @@ import {
     type orderPaymentType,
 } from '@Madeirense/shared';
 
-import { 
+import {
     handleControllerError
 } from './utilities/handlers';
 
 import { prisma } from '../lib/prisma';
+
+import * as emis from '../services/emis';
+
+import { notifyUser } from './pushNotifications';
 
 import type { IAuthenticatedRequest } from '../interfaces';
 
@@ -115,6 +119,40 @@ export const createPayment = async (
                 }
             }
         });
+
+        // EMIS gateway kickoff (2026-09-30, Robbie's described flow: we
+        // send EMIS a payment request, the user gets a push notification
+        // prompting them to complete it on EMIS's side, and EMIS calls
+        // our /v1/emis/callback once it's resolved — see services/emis.ts
+        // and emisPaymentCallback below).
+        //
+        // Deliberately best-effort: EMIS isn't configured yet anywhere
+        // (services/emis.ts#initiatePayment currently always throws —
+        // see TODO.md), and even once it is, a gateway hiccup here
+        // shouldn't fail payment creation — the Payments row already
+        // exists as `pending` and can be retried/confirmed manually
+        // (PATCH /v1/payments/:id/status) either way.
+        try {
+            const { gatewayReference } = await emis.initiatePayment({
+                paymentId: payment.payment_id,
+                amount: parseFloat(amount)
+            });
+
+            await prisma.payments.update({
+                where: { payment_id: payment.payment_id },
+                data: { gateway_reference: gatewayReference }
+            });
+
+            await notifyUser<{ payment_id: number, order_id: number }, 'PAYMENT_REQUESTED'>(user_id, {
+                notificationId: 'MXP$PAYMENT_REQUESTED',
+                data: {
+                    payment_id: payment.payment_id,
+                    order_id
+                }
+            });
+        } catch (gatewayError) {
+            console.error('EMIS payment initiation failed (payment stays pending):', gatewayError);
+        }
 
         return res.status(201).json({
             success: true,
@@ -411,6 +449,85 @@ export const deletePayment = async (
             data: undefined,
             success: true,
             message: 'Payment deleted successfully'
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+};
+
+/**
+ * `POST /v1/emis/callback` (routes/emis.ts) — the far end of the flow
+ * `createPayment` above kicks off. EMIS calls this once a payment it's
+ * processing resolves; no user JWT is (or can be) presented, since this
+ * is a server-to-server call from EMIS itself — routes/emis.ts guards it
+ * with `emis.verifyCallbackSecret` instead of `validateJWT`.
+ *
+ * UNVERIFIED end-to-end: `emis.parseCallbackPayload`'s field names and
+ * `verifyCallbackSecret`'s whole verification scheme are placeholders
+ * (see services/emis.ts's header comment) — this function is otherwise
+ * complete and real (payment lookup by gateway_reference, status
+ * update, user notification), so only the parsing/verification at the
+ * boundary needs to change once real EMIS docs are in hand, not this
+ * function's shape. Added 2026-09-30.
+ */
+export const emisPaymentCallback = async (
+    req: Request,
+    res: Response<API$Types.response<undefined>>
+) => {
+    try {
+        const parsed = emis.parseCallbackPayload(req.body);
+
+        if (!parsed) {
+            return res.status(400).json({
+                data: undefined,
+                code: 'API_GENERIC_VALIDATION_ERROR',
+                message: 'Unrecognized EMIS callback payload',
+                success: false
+            });
+        }
+
+        const payment = await prisma.payments.findFirst({
+            where: { gateway_reference: parsed.gatewayReference }
+        });
+
+        if (!payment) {
+            // Acknowledge with 200 regardless — returning an error here
+            // would likely make EMIS retry a callback we can never
+            // resolve (there's no Payments row with this reference,
+            // retrying changes nothing), which is worse than just
+            // logging it once.
+            console.error('EMIS callback for unknown gateway_reference:', parsed.gatewayReference);
+
+            return res.status(200).json({
+                data: undefined,
+                message: 'Acknowledged (no matching payment)',
+                success: true
+            });
+        }
+
+        const updatedPayment = await prisma.payments.update({
+            where: { payment_id: payment.payment_id },
+            data: { status: parsed.status }
+        });
+
+        await notifyUser<{ payment_id: number, order_id: number }, 'PAYMENT_COMPLETED' | 'PAYMENT_FAILED'>(
+            updatedPayment.user_id,
+            {
+                notificationId: (parsed.status === 'completed') ? 'MXP$PAYMENT_COMPLETED' : 'MXP$PAYMENT_FAILED',
+                data: {
+                    payment_id: updatedPayment.payment_id,
+                    order_id: updatedPayment.order_id
+                }
+            }
+        ).catch(notifyError => console.error('Post-EMIS-callback notification failed:', notifyError));
+
+        return res.status(200).json({
+            data: undefined,
+            message: 'Payment status updated from EMIS callback',
+            success: true
         });
     } catch (error) {
         return handleControllerError(

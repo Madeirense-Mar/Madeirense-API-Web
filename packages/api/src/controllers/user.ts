@@ -1062,13 +1062,24 @@ export async function updateProfile(
     res: Response<API$Types.response<Partial<Users> | undefined>>
 ) {
     try {
-        const { name, phone, profile_photo, user_role } = req.body;
+        // SECURITY FIX (2026-09-30): this is the self-service `PATCH/PUT
+        // /v1/users/profile` handler — any authenticated user of any role
+        // can call it on themselves (routes/users.ts only gates it behind
+        // validateJWT, not onlyAllowUserRoles). The route's shared
+        // validator (updatePayloadValidation, also used by the
+        // admin-only `PUT /:id` -> update() above) still requires a
+        // `user_role` field in the body, but it must never be *applied*
+        // here — doing so let any logged-in Customer PATCH their own
+        // profile with `user_role: "Admin"` and self-escalate. `user_role`
+        // is deliberately destructured and then dropped rather than
+        // spread into $PARTIAL; admin-driven role changes still go
+        // through update() (PUT /:id), which is role-gated at the route.
+        const { name, phone, profile_photo } = req.body;
 
         const $PARTIAL = {
             ...(name && { name }),
             ...(phone && { phone }),
-            ...(profile_photo && { profile_photo }),
-            ...(user_role && { user_role })
+            ...(profile_photo && { profile_photo })
         };
 
         const updatedUser = await prisma.users.update({

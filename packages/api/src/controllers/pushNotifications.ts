@@ -8,6 +8,8 @@ import webPush from 'web-push';
 
 import env from '../env';
 
+import { sendToDeviceToken } from '../firebase/admin';
+
 import { 
     type Push_Notification_Subscriptions
 } from '@Madeirense/database';
@@ -100,6 +102,57 @@ export async function push<Payload, ExtendedTypes extends (string) = 'HELLO_WORL
 
         return null;
     }
+};
+
+/**
+ * FCM counterpart to `push` above — fans a notification out to every
+ * device (not just one) a user has registered via
+ * controllers/devicePushTokens.ts, since (unlike a browser, which this
+ * codebase only ever keeps one subscription for at a time — see
+ * `subscribe`'s create call below) a user can have several phones/app
+ * installs live at once. Added 2026-09-30 for mobile push.
+ */
+export async function pushToUserDevices<Payload, ExtendedTypes extends (string) = 'HELLO_WORLD'>(user_id: number, payload: Madeirense$Types.pushNotification<Payload, ExtendedTypes>) {
+    const tokens = await prisma.device_Push_Tokens.findMany({
+        where: { user_id }
+    });
+
+    if (tokens.length === 0) return [];
+
+    const STRINGIFIED$payload = {
+        ...payload,
+        data: {
+            ...payload.data,
+            user_id
+        }
+    };
+
+    return Promise.all(tokens.map(async ({ token_id, fcm_token }) => {
+        const result = await sendToDeviceToken(fcm_token, STRINGIFIED$payload);
+
+        if (result.tokenInvalid) {
+            await prisma.device_Push_Tokens.delete({ where: { token_id } }).catch(() => {});
+        }
+
+        return result;
+    }));
+};
+
+/**
+ * Unified send: fans a notification out across every channel a user
+ * has — web push subscription and/or FCM device tokens — swallowing
+ * per-channel failures rather than letting one dead channel block the
+ * other. This is what the rest of the app (e.g. the EMIS payment flow
+ * in controllers/payment.ts) should call instead of reaching for `push`
+ * or `pushToUserDevices` directly. Added 2026-09-30.
+ */
+export async function notifyUser<Payload, ExtendedTypes extends (string) = 'HELLO_WORLD'>(user_id: number, payload: Madeirense$Types.pushNotification<Payload, ExtendedTypes>) {
+    const [webResult, deviceResults] = await Promise.all([
+        push(user_id, payload).catch(() => null),
+        pushToUserDevices(user_id, payload).catch(() => [])
+    ]);
+
+    return { webResult, deviceResults };
 };
 
 export async function subscribe(

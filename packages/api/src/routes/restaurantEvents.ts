@@ -74,6 +74,54 @@ v1.get(
     controller.getBoughtTickets
 );
 
+// ADDED (2026-09-30): getMyTickets/getMyTicketById/validateTicket existed
+// in controllers/restaurantEvent.ts (rebuilt earlier this session) but
+// were never actually wired up here — client-mobile's tickets screen had
+// nothing to call. Placed above the generic `GET /:id`/`PATCH /:id`/etc.
+// routes below, same reason `/bought-tickets` is up here: Express matches
+// routes in registration order, so `/my-tickets` would otherwise be
+// swallowed by `GET /:id` treating "my-tickets" as an id.
+v1.get(
+    '/my-tickets',
+    validatePagination,
+    controller.getMyTickets
+);
+
+v1.get(
+    '/my-tickets/:id',
+    validateId,
+    controller.getMyTicketById
+);
+
+// ADDED (2026-09-30): buys ticket(s) directly, independent of the
+// product cart/Orders flow — see purchaseTicket's own header comment
+// (controllers/restaurantEvent.ts) for the full reasoning. `/:id/purchase`
+// doesn't collide with the generic `GET/PATCH/PUT/DELETE /:id` routes
+// below regardless of registration order (different segment count), but
+// it's grouped here with the other ticket routes for readability.
+v1.post(
+    '/:id/purchase',
+    validateId,
+    [
+        body('quantity').optional({ values: 'falsy' }).isInt({ min: 1 }).withMessage('Quantity must be a positive whole number'),
+        Validate.Handle.error
+    ],
+    controller.purchaseTicket as any
+);
+
+v1.post(
+    '/validate-ticket',
+    onlyAllowUserRoles([
+        'Admin',
+        'Staff'
+    ]) as any,
+    [
+        body('token').notEmpty().withMessage('A ticket token is required'),
+        Validate.Handle.error
+    ],
+    controller.validateTicket as any
+);
+
 v1.post(
     '/',
     onlyAllowUserRoles([

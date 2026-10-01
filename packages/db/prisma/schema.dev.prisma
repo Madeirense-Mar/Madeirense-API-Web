@@ -235,12 +235,24 @@ model Payments {
   amount         Decimal                 @db.Decimal(10, 2)
   payment_method Payments_payment_method
   status         Payments_status?        @default(pending)
+  // Added 2026-09-30 for the EMIS gateway integration (see
+  // ../../api/src/services/emis.ts and
+  // ../../api/src/controllers/payment.ts's emisPaymentCallback): the
+  // reference EMIS hands back when we initiate a payment request against
+  // it. Its callback then echoes this reference so we know which
+  // Payments row it's confirming/failing — there's no other correlation
+  // key, since the callback is server-to-server and carries no user JWT.
+  // Nullable: every payment predating this column, and any created with
+  // a non-gateway method (Cash, Offer, ...), never gets one.
+  // NEEDS A MANUAL MIGRATION — see TODO.md at the repo root.
+  gateway_reference String?              @db.VarChar(255)
   created_at     DateTime?               @default(now()) @db.Timestamp(0)
   Orders         Orders                  @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Payments_ibfk_1")
   Users          Users                   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Payments_ibfk_2")
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
+  @@index([gateway_reference], map: "gateway_reference")
 }
 
 model Products {
@@ -276,6 +288,28 @@ model Push_Notification_Subscriptions {
   p256dh          String? @db.VarChar(255)
   auth            String? @db.VarChar(255)
   Users           Users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Push_Notification_Subscriptions_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+// Added 2026-09-30 for mobile push (FCM) — deliberately a separate model
+// from Push_Notification_Subscriptions above, which is Web Push
+// (VAPID)-only and shaped around browser PushSubscription objects
+// (endpoint/auth/p256dh). An FCM device token is a single opaque string
+// with no such shape, and (unlike a browser endpoint) the same user can
+// hold several live tokens at once — one per installed device. See
+// ../../api/src/firebase/admin.ts and
+// ../../api/src/controllers/devicePushTokens.ts.
+// NEEDS A MANUAL MIGRATION — see TODO.md at the repo root.
+model Device_Push_Tokens {
+  token_id   Int       @id @default(autoincrement())
+  user_id    Int
+  fcm_token  String    @unique(map: "fcm_token") @db.VarChar(255)
+  // 'android' | 'ios' — informational only (e.g. for platform-specific
+  // payload tweaks later); nothing currently branches on it.
+  platform   String?   @db.VarChar(20)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Device_Push_Tokens_ibfk_1")
 
   @@index([user_id], map: "user_id")
 }
@@ -336,11 +370,25 @@ model Restaurants {
   @@index([location], map: "Restaurants_ibfk_1")
 }
 
+// PRODUCT DECISION (2026-09-30): order_id was NOT NULL / required, which
+// meant a ticket could only ever exist as a side effect of an Orders row
+// — it was "registered as fact" but never a standalone, independently
+// verifiable entity (Robbie's own framing). Tickets are now purchased
+// through their own endpoint, entirely independent of the Orders/cart
+// flow (see controllers/restaurantEvent.ts's purchaseTicket and
+// client-mobile/CLAUDE.md) — order_id is nullable so a ticket can exist
+// with no Orders row at all. REQUIRES A MANUAL DB MIGRATION before this
+// is usable — Prisma won't alter an existing column for you without
+// `prisma migrate`/`db push` against the real database, which isn't
+// runnable from this environment:
+//   ALTER TABLE `Tickets_Purchased` MODIFY `order_id` int(11) DEFAULT NULL;
+// (mirrored in MADEIRENSE_TABLES.sql's CREATE TABLE for reference — that
+// file isn't itself re-run against an existing database.)
 model Tickets_Purchased {
   ticket_id                                   Int               @id @default(autoincrement())
   user_id                                     Int
   restaurant_id                               Int
-  order_id                                    Int
+  order_id                                    Int?
   event_id                                    Int
   quantity                                    Int?              @default(1)
   price                                       Decimal           @db.Decimal(10, 2)
@@ -351,7 +399,7 @@ model Tickets_Purchased {
   validator_id                                Int?
   Users_Tickets_Purchased_user_idToUsers      Users             @relation("Tickets_Purchased_user_idToUsers", fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_1")
   Restaurants                                 Restaurants       @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_2")
-  Orders                                      Orders            @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
+  Orders                                      Orders?           @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
   Restaurant_Events                           Restaurant_Events @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_4")
   Users_Tickets_Purchased_validator_idToUsers Users?            @relation("Tickets_Purchased_validator_idToUsers", fields: [validator_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_5")
 
@@ -405,6 +453,7 @@ model Users {
   Courier_Reallocation_Requests_Courier_Reallocation_Requests_courier_idToUsers           Courier_Reallocation_Requests[]   @relation("Courier_Reallocation_Requests_courier_idToUsers")
   Courier_Reallocation_Requests_Courier_Reallocation_Requests_requested_courier_idToUsers Courier_Reallocation_Requests[]   @relation("Courier_Reallocation_Requests_requested_courier_idToUsers")
   Delivery_Locations                                                                      Delivery_Locations[]
+  Device_Push_Tokens                                                                      Device_Push_Tokens[]
   Favorites                                                                               Favorites[]
   Notifications                                                                           Notifications[]
   Order_History                                                                           Order_History[]

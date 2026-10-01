@@ -19,6 +19,22 @@ export type boughtTicketType = (
     }>
 );
 
+/**
+ * A ticket as shown to the customer who bought it (`GET /my-tickets`,
+ * `GET /my-tickets/:id`) — includes the signed `token` the mobile app
+ * renders as a QR code (see generateTicketToken in api/utilities/generators.ts)
+ * and enough of the event/restaurant to display without a second request.
+ */
+export type myTicketType = (
+    Tickets_Purchased &
+    {
+        token: string,
+        Restaurant_Events?: Partial<Restaurant_Events> & {
+            Restaurants?: Partial<Restaurants>
+        }
+    }
+);
+
 export type restaurantEventType = (
     Restaurant_Events &
     {

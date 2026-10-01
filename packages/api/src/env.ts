@@ -60,6 +60,9 @@ const env = {
     PASSWORD_ENCRYPTION_ITERATOR: parseInt(which(process.env.PASSWORD_ENCRYPTION_ITERATOR, API_PASSWORD_ENCRYPTION_ITERATOR.toString()) as string),
 
     // --------------------------: Firebase
+    // These seven are the *client* (web) SDK config used by
+    // firebase/index.ts — unrelated to the Admin SDK credential below,
+    // which is what actually lets this server send FCM pushes.
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY as string,
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID as string,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN as string,
@@ -67,6 +70,30 @@ const env = {
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET as string,
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID as string,
     FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID as string,
+
+    // --------------------------: Firebase Admin (mobile push / FCM)
+    // Added 2026-09-30 — see firebase/admin.ts. A full service-account
+    // JSON (downloaded from Firebase Console → Project Settings →
+    // Service Accounts → Generate new private key), minified to one
+    // line and set as a single env var. NOT the same credential as the
+    // FIREBASE_* block above — see INSTRUCTIONS.md at the repo root for
+    // how to obtain it.
+    FIREBASE_SERVICE_ACCOUNT_KEY: process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string,
+
+    // --------------------------: EMIS payment gateway
+    // Added 2026-09-30 — see services/emis.ts. Placeholder names: swap
+    // for whatever EMIS's actual onboarding paperwork calls these once
+    // that's in hand (see TODO.md at the repo root — this is the single
+    // biggest unknown in the whole integration).
+    EMIS_API_BASE_URL: process.env.EMIS_API_BASE_URL as string,
+    EMIS_API_KEY: process.env.EMIS_API_KEY as string,
+    EMIS_MERCHANT_ID: process.env.EMIS_MERCHANT_ID as string,
+    // Shared secret this server uses to confirm an inbound
+    // `/v1/emis/callback` request genuinely came from EMIS and not from
+    // anyone who found the URL — see routes/emis.ts. Whether EMIS
+    // actually supports a scheme this simple (vs. requiring a signed
+    // payload, mutual TLS, or an IP allowlist instead) is unconfirmed.
+    EMIS_CALLBACK_SECRET: process.env.EMIS_CALLBACK_SECRET as string,
 
     // --------------------------: JWT
     JWT_SECRET: process.env.JWT_SECRET as string,
@@ -98,7 +125,12 @@ const env = {
     UPLOAD_CARE_PUBLIC_KEY: process.env.UPLOAD_CARE_PUBLIC_KEY as string,
     UPLOAD_CARE_SECRET_KEY: process.env.UPLOAD_CARE_SECRET_KEY as string,
 
-    UPLOAD_CARE_PASSWORD_RECOVERY: process.env.UPLOAD_CARE_PASSWORD_RECOVERY as string
+    UPLOAD_CARE_PASSWORD_RECOVERY: process.env.UPLOAD_CARE_PASSWORD_RECOVERY as string,
+
+    // --------------------------: Routing (self-hosted OSRM)
+    // Bound to 127.0.0.1 only on the VPS — never exposed publicly. See
+    // infra/osrm/README.md for the full setup writeup.
+    OSRM_BASE_URL: which(process.env.OSRM_BASE_URL, 'http://127.0.0.1:5000') as string
 };
 
 export default env;

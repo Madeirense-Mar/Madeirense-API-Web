@@ -15,15 +15,30 @@ import {
     type API$Types,
     type restaurantEventType,
     type boughtTicketType,
+    type myTicketType,
 } from '@Madeirense/shared';
+
+import {
+    Messages
+} from './utilities/enumerators';
 
 import {
     handleControllerError
 } from './utilities/handlers';
 
+import {
+    generateTicketToken,
+    verifyTicketToken
+} from '../utilities/generators';
+
+import {
+    convertDecimals
+} from '../utilities/converters';
+
 import { prisma } from '../lib/prisma';
 
 import type { IEventfulRequest } from '../middlewares/events';
+import type { IAuthenticatedRequest } from '../interfaces';
 
 // ***************************************************************************************************************
 
@@ -729,3 +744,367 @@ export async function updateRestaurantEvent(
         req.events?.restaurant_events.emit("restaurant_event.updated", event);
     }
 };
+
+// RECONSTRUCTION NOTE (2026-09-30): getMyTickets, getMyTicketById and
+// validateTicket below were lost with the stolen laptop and never
+// reached GitHub — rebuilt against the Tickets_Purchased schema and the
+// ticket JWT scheme in generateTicketToken/verifyTicketToken (utilities/
+// generators.ts). Correction (2026-09-30, later same day): the route
+// wiring did NOT survive either, despite what this note originally
+// claimed — these three functions had no routes pointing at them at all
+// until routes/restaurantEvents.ts's own "ADDED" note. Paths/middleware
+// there were designed fresh, not recovered.
+
+/**
+ * Customer-facing — the logged-in user's own tickets, each with a signed
+ * `token` for the app to render as a QR code. Scoped to req.user.user_id;
+ * there's no way to list someone else's tickets through this endpoint.
+ */
+export async function getMyTickets(
+    req: IAuthenticatedRequest,
+    res: Response<API$Types.response<myTicketType[] | undefined>>
+) {
+    try {
+        if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
+
+        const page = parseInt((req.query[API$Enumerators.SearchQueries.page] as string) ?? '1');
+        const limit = parseInt((req.query[API$Enumerators.SearchQueries.limit] as string) ?? DEFAULT_API_LIST_LIMIT.toString());
+
+        const skip = (page - 1) * limit;
+
+        const where = { user_id: req.user.user_id };
+
+        const [rawTickets, total] = await Promise.all([
+            prisma.tickets_Purchased.findMany({
+                where,
+                skip,
+                take: limit,
+                include: {
+                    Restaurant_Events: {
+                        include: {
+                            Restaurants: {
+                                select: {
+                                    restaurant_id: true,
+                                    name: true,
+                                    location: true
+                                }
+                            }
+                        }
+                    }
+                },
+                orderBy: {
+                    purchased_at: 'desc'
+                }
+            }),
+            prisma.tickets_Purchased.count({ where })
+        ]);
+
+        const tickets: myTicketType[] = rawTickets.map(ticket => ({
+            ...convertDecimals(ticket),
+            token: generateTicketToken(ticket)
+        }));
+
+        const totalPages = Math.ceil(total / limit);
+
+        return res.status(!tickets.length ? 404 : 200).json({
+            code: !tickets.length ? 'API_GENERIC_NOT_FOUND_ERROR' : undefined,
+            data: tickets,
+            message: !tickets.length ? 'You have no tickets yet' : 'Your tickets retrieved successfully',
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrevious: page > 1
+            },
+            success: (tickets.length > 0),
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+}
+
+/**
+ * Customer-facing — a single ticket by id, still scoped to the caller.
+ * Returns a plain 404 (not 403) when the ticket belongs to someone else,
+ * same "don't confirm another user's ticket id exists" reasoning used
+ * elsewhere in this API.
+ */
+export async function getMyTicketById(
+    req: IAuthenticatedRequest<{ id: string }>,
+    res: Response<API$Types.response<myTicketType | undefined>>
+) {
+    try {
+        if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
+
+        const ticket_id = parseInt(req.params.id, 10);
+
+        const ticket = await prisma.tickets_Purchased.findUnique({
+            where: { ticket_id },
+            include: {
+                Restaurant_Events: {
+                    include: {
+                        Restaurants: {
+                            select: {
+                                restaurant_id: true,
+                                name: true,
+                                location: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!ticket || ticket.user_id !== req.user.user_id) return res.status(404).json({
+            data: undefined,
+            code: 'API_GENERIC_NOT_FOUND_ERROR',
+            message: 'Unable to find a ticket with this id for your account',
+            success: false
+        });
+
+        return res.json({
+            data: {
+                ...convertDecimals(ticket),
+                token: generateTicketToken(ticket)
+            },
+            message: 'Ticket retrieved successfully',
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+}
+
+/**
+ * Customer-facing — buys ticket(s) for an event directly.
+ *
+ * PRODUCT DECISION (2026-09-30, Robbie): tickets used to only come into
+ * existence as a side effect of `createOrder` (controllers/orders.ts),
+ * and only for free events — a paid "ticket" bought through the normal
+ * cart/checkout flow charged the customer but never became a verifiable
+ * `Tickets_Purchased` entity. Tickets are now bought through this
+ * endpoint instead, entirely independent of the product cart/Orders
+ * flow — no `Orders` or `Payments` row is created here at all (`order_id`
+ * on `Tickets_Purchased` is now nullable — see schema.dev.prisma's own
+ * comment on that model, and it REQUIRES a manual DB migration before
+ * this works, spelled out there). The cart/Orders flow stays reserved
+ * for food delivery and, eventually, event merchandise — never tickets.
+ *
+ * No real payment integration exists anywhere in this codebase yet
+ * (checkout is still a placeholder flow client-side too), so this
+ * doesn't regress anything by not charging a card — when real payment
+ * gets wired in, it belongs here, gating the `Tickets_Purchased.create`
+ * call below.
+ */
+export async function purchaseTicket(
+    req: IAuthenticatedRequest<{ id: string }, { quantity?: number }>,
+    res: Response<API$Types.response<myTicketType | undefined>>
+) {
+    try {
+        if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
+
+        const event_id = parseInt(req.params.id, 10);
+
+        const quantityInput = req.body?.quantity;
+        const quantity = (typeof quantityInput === 'number' && quantityInput > 0)
+            ? Math.floor(quantityInput)
+            : 1;
+
+        const event = await prisma.restaurant_Events.findUnique({
+            where: { event_id }
+        });
+
+        if (!event) return res.status(404).json({
+            data: undefined,
+            code: 'API_GENERIC_NOT_FOUND_ERROR',
+            message: 'Restaurant event not found',
+            success: false
+        });
+
+        if (event.status === 'cancelled' || event.status === 'expired') return res.status(400).json({
+            data: undefined,
+            code: 'BAD_REQUEST',
+            message: 'This event is no longer accepting ticket purchases',
+            success: false
+        });
+
+        let ticket;
+
+        try {
+            ticket = await prisma.$transaction(async $trx => {
+                // Spots are capacity, not a row count — a single purchase
+                // can cover more than one seat (quantity), so this sums
+                // quantity rather than counting Tickets_Purchased rows.
+                // `expired` tickets (see restaurantEvent$Cron / the
+                // expiry sweep referenced elsewhere) don't hold a spot.
+                if (event.spots !== null) {
+                    const { _sum } = await $trx.tickets_Purchased.aggregate({
+                        where: { event_id, expired: false },
+                        _sum: { quantity: true }
+                    });
+
+                    const sold = _sum.quantity ?? 0;
+
+                    if (sold + quantity > event.spots) {
+                        throw new Error('NOT_ENOUGH_SPOTS');
+                    }
+                }
+
+                const unitPrice = parseFloat(event.price.toString());
+
+                return $trx.tickets_Purchased.create({
+                    data: {
+                        user_id: req.user!.user_id,
+                        restaurant_id: event.restaurant_id,
+                        event_id,
+                        order_id: null,
+                        quantity,
+                        price: unitPrice * quantity,
+                        expiry_date: event.end_time,
+                        purchased_at: new Date()
+                    },
+                    include: {
+                        Restaurant_Events: {
+                            include: {
+                                Restaurants: {
+                                    select: {
+                                        restaurant_id: true,
+                                        name: true,
+                                        location: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        } catch (error) {
+            if ((error as Error).message === 'NOT_ENOUGH_SPOTS') {
+                return res.status(400).json({
+                    data: undefined,
+                    code: 'BAD_REQUEST',
+                    message: 'Not enough spots left for this event',
+                    success: false
+                });
+            }
+
+            throw error;
+        }
+
+        return res.status(201).json({
+            data: {
+                ...convertDecimals(ticket),
+                token: generateTicketToken(ticket)
+            },
+            message: 'Ticket purchased successfully',
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+}
+
+/**
+ * Staff/Admin-only — scans a ticket's QR token at the door. Validates the
+ * token's signature first (a malformed/foreign token never reaches the
+ * DB lookup), then checks the ticket's own DB state
+ * (validated_at/expired/expiry_date) rather than trusting anything
+ * encoded in the token itself — the token is only ever a tamper-proof
+ * pointer to a ticket_id, see generateTicketToken's own comment.
+ */
+export async function validateTicket(
+    req: IAuthenticatedRequest<{}, { token: string }>,
+    res: Response<API$Types.response<boughtTicketType | undefined>>
+) {
+    try {
+        if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
+
+        const { token } = req.body;
+
+        let ticketId: number;
+
+        try {
+            ({ ticketId } = verifyTicketToken(token));
+        } catch {
+            return res.status(400).json({
+                data: undefined,
+                code: 'API_INVALID_TICKET_TOKEN',
+                message: 'This QR code isn\'t a valid ticket — it may be corrupted or from a different event',
+                success: false
+            });
+        }
+
+        const ticket = await prisma.tickets_Purchased.findUnique({
+            where: { ticket_id: ticketId },
+            include: {
+                Users_Tickets_Purchased_user_idToUsers: {
+                    select: {
+                        name: true,
+                        email: true,
+                        profile_photo: true
+                    }
+                }
+            }
+        });
+
+        if (!ticket) return res.status(404).json({
+            data: undefined,
+            code: 'API_GENERIC_NOT_FOUND_ERROR',
+            message: 'This ticket no longer exists',
+            success: false
+        });
+
+        if (ticket.validated_at) return res.status(409).json({
+            data: convertDecimals(ticket),
+            code: 'API_TICKET_ALREADY_VALIDATED',
+            message: `This ticket was already validated at ${ticket.validated_at.toISOString()}`,
+            success: false
+        });
+
+        if (ticket.expired || (ticket.expiry_date && ticket.expiry_date < new Date())) return res.status(409).json({
+            data: convertDecimals(ticket),
+            code: 'API_TICKET_EXPIRED',
+            message: 'This ticket has expired',
+            success: false
+        });
+
+        const validatedTicket = await prisma.tickets_Purchased.update({
+            where: { ticket_id: ticketId },
+            data: {
+                validated_at: new Date(),
+                validator_id: req.user.user_id
+            },
+            include: {
+                Users_Tickets_Purchased_user_idToUsers: {
+                    select: {
+                        name: true,
+                        email: true,
+                        profile_photo: true
+                    }
+                }
+            }
+        });
+
+        return res.json({
+            data: convertDecimals(validatedTicket),
+            message: 'Ticket validated successfully',
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+}

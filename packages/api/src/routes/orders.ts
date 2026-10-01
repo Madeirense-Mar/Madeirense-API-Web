@@ -39,8 +39,17 @@ import * as controller from '../controllers/orders';
 
 // ***************************************************************************************************************
 
+// FIX (2026-09-30): was `param('cartType')` — this router has no `:cartType`
+// path segment on the route this validates (`POST /v1/orders`, path `'/'`),
+// so `req.params.cartType` was always undefined. Unlike `.optional()`
+// validations elsewhere in this file that suffer the same
+// param-vs-actual-location mismatch harmlessly, this one is `.notEmpty()`
+// (required) — meaning every order-creation request was failing validation
+// before `controller.createOrder` (which reads `cartType` from `req.body`,
+// matching `orderPayloadType` in shared/src/types/orders.ts) ever ran.
+// Found while grounding client-mobile's checkout screen in this endpoint.
 const cartTypeValidation = [
-	param('cartType').notEmpty().isIn(['all', ...Object.values(Carts)]).withMessage(`Only ${['all', ...Object.values(Carts)].join(', ')} cart types are accepted`)
+	body('cartType').notEmpty().isIn(['all', ...Object.values(Carts)]).withMessage(`Only ${['all', ...Object.values(Carts)].join(', ')} cart types are accepted`)
 ];
 
 const orderTypes = [

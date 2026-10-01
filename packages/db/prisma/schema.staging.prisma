@@ -144,12 +144,17 @@ model Payments {
   amount         Decimal                 @db.Decimal(10, 2)
   payment_method Payments_payment_method
   status         Payments_status?        @default(pending)
+  // Added 2026-09-30 for the EMIS gateway integration — see the matching
+  // comment in schema.dev.prisma for the full reasoning.
+  // NEEDS A MANUAL MIGRATION — see TODO.md at the repo root.
+  gateway_reference String?              @db.VarChar(255)
   created_at     DateTime?               @default(now()) @db.Timestamp(0)
   Orders         Orders                  @relation(fields: [order_id], references: [order_id], onUpdate: Restrict, map: "Payments_ibfk_1")
   Users          Users                   @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "Payments_ibfk_2")
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
+  @@index([gateway_reference], map: "gateway_reference")
 }
 
 model Products {
@@ -262,6 +267,7 @@ model Users {
   Courier_Reallocation_Requests_Courier_Reallocation_Requests_courier_idToUsers           Courier_Reallocation_Requests[]   @relation("Courier_Reallocation_Requests_courier_idToUsers")
   Courier_Reallocation_Requests_Courier_Reallocation_Requests_requested_courier_idToUsers Courier_Reallocation_Requests[]   @relation("Courier_Reallocation_Requests_requested_courier_idToUsers")
   Delivery_Locations                                                                      Delivery_Locations[]
+  Device_Push_Tokens                                                                      Device_Push_Tokens[]
   Favorites                                                                               Favorites[]
   Notifications                                                                           Notifications[]
   Order_History                                                                           Order_History[]
@@ -361,11 +367,18 @@ model Courier_Reallocation_Requests {
   @@index([requested_courier_id], map: "requested_courier_id")
 }
 
+// PRODUCT DECISION (2026-09-30): see the matching model in
+// schema.dev.prisma for the full reasoning — order_id is now nullable so
+// a ticket can be its own standalone entity, purchased through
+// controllers/restaurantEvent.ts's purchaseTicket, independent of the
+// Orders/cart flow. REQUIRES A MANUAL DB MIGRATION on the staging
+// database before this is usable:
+//   ALTER TABLE `Tickets_Purchased` MODIFY `order_id` int(11) DEFAULT NULL;
 model Tickets_Purchased {
   ticket_id                                   Int               @id @default(autoincrement())
   user_id                                     Int
   restaurant_id                               Int
-  order_id                                    Int
+  order_id                                    Int?
   event_id                                    Int
   quantity                                    Int?              @default(1)
   price                                       Decimal           @db.Decimal(10, 2)
@@ -376,7 +389,7 @@ model Tickets_Purchased {
   validator_id                                Int?
   Users_Tickets_Purchased_user_idToUsers      Users             @relation("Tickets_Purchased_user_idToUsers", fields: [user_id], references: [user_id], onUpdate: Restrict, map: "Tickets_Purchased_ibfk_1")
   Restaurants                                 Restaurants       @relation(fields: [restaurant_id], references: [restaurant_id], onUpdate: Restrict, map: "Tickets_Purchased_ibfk_2")
-  Orders                                      Orders            @relation(fields: [order_id], references: [order_id], onUpdate: Restrict, map: "Tickets_Purchased_ibfk_3")
+  Orders                                      Orders?           @relation(fields: [order_id], references: [order_id], onUpdate: Restrict, map: "Tickets_Purchased_ibfk_3")
   Restaurant_Events                           Restaurant_Events @relation(fields: [event_id], references: [event_id], onUpdate: Restrict, map: "Tickets_Purchased_ibfk_4")
   Users_Tickets_Purchased_validator_idToUsers Users?            @relation("Tickets_Purchased_validator_idToUsers", fields: [validator_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Tickets_Purchased_ibfk_5")
 
@@ -417,6 +430,20 @@ model Push_Notification_Subscriptions {
   p256dh          String? @db.VarChar(255)
   auth            String? @db.VarChar(255)
   Users           Users   @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "Push_Notification_Subscriptions_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+// Added 2026-09-30 for mobile push (FCM) — see the matching comment in
+// schema.dev.prisma for the full reasoning.
+// NEEDS A MANUAL MIGRATION — see TODO.md at the repo root.
+model Device_Push_Tokens {
+  token_id   Int       @id @default(autoincrement())
+  user_id    Int
+  fcm_token  String    @unique(map: "fcm_token") @db.VarChar(255)
+  platform   String?   @db.VarChar(20)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  Users      Users     @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "Device_Push_Tokens_ibfk_1")
 
   @@index([user_id], map: "user_id")
 }

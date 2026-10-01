@@ -141,6 +141,22 @@ CREATE TABLE `Push_Notification_Subscriptions` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `Push_Notification_Subscriptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Added 2026-09-30 for mobile push (FCM) — see schema.dev.prisma's
+-- comment on this model. NOT YET APPLIED to the live dev/staging
+-- databases — see TODO.md at the repo root for the CREATE TABLE
+-- statement to run.
+CREATE TABLE `Device_Push_Tokens` (
+  `token_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `fcm_token` varchar(255) NOT NULL,
+  `platform` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`token_id`),
+  UNIQUE KEY `fcm_token` (`fcm_token`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `Device_Push_Tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /** ----------------------------------------------------------------------------------------- */
 
 
@@ -355,11 +371,17 @@ CREATE TABLE `Restaurant_Events` (
   CONSTRAINT `Restaurant_Events_ibfk_1` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`restaurant_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- PRODUCT DECISION (2026-09-30): order_id is nullable (was NOT NULL) —
+-- see schema.dev.prisma's matching model for the full reasoning. This
+-- file documents the intended shape of a fresh database; it is NOT
+-- re-run against an existing one, so an existing dev/staging database
+-- needs this applied by hand:
+--   ALTER TABLE `Tickets_Purchased` MODIFY `order_id` int(11) DEFAULT NULL;
 CREATE TABLE `Tickets_Purchased` (
   `ticket_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `restaurant_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
+  `order_id` int(11) DEFAULT NULL,
   `event_id` int(11) NOT NULL,
   `quantity` int(11) DEFAULT 1,
   `price` decimal(10,2) NOT NULL,
@@ -457,6 +479,10 @@ CREATE TABLE `Order_History` (
   CONSTRAINT `Order_History_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- `gateway_reference` added 2026-09-30 for the EMIS gateway integration —
+-- see schema.dev.prisma's comment on the Payments model. NOT YET APPLIED
+-- to the live dev/staging databases — see TODO.md at the repo root for
+-- the ALTER TABLE statement to run.
 CREATE TABLE `Payments` (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
@@ -464,10 +490,12 @@ CREATE TABLE `Payments` (
   `amount` decimal(10,2) NOT NULL,
   `payment_method` enum('Credit Card','Debit Card','PayPal','Cash','Bank Transfer','Payment Reference','Multicaixa Express','Offer') NOT NULL,
   `status` enum('pending','completed','failed','refunded') DEFAULT 'pending',
+  `gateway_reference` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`payment_id`),
   KEY `order_id` (`order_id`),
   KEY `user_id` (`user_id`),
+  KEY `gateway_reference` (`gateway_reference`),
   CONSTRAINT `Payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `Orders` (`order_id`) ON DELETE CASCADE,
   CONSTRAINT `Payments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

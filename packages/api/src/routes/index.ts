@@ -8,6 +8,8 @@ import commentRoutes from './comments.js';
 import couponRoutes from './coupons.js';
 import courierPositionsRoutes from './courierPositions.js';
 import deliveryLocationRoutes from './deliveryLocations.js';
+import devicePushTokenRoutes from './devicePushTokens.js';
+import emisRoutes from './emis.js';
 import globalSettingsRoutes from './globalSettings.js';
 import orderRoutes from './orders.js';
 import paymentRoutes from './payments.js';
@@ -17,6 +19,7 @@ import resortRoutes from './resorts.js';
 import restaurantEventRoutes from './restaurantEvents.js';
 import restaurantRoutes from './restaurants.js';
 import reviewRoutes from './reviews.js';
+import routingRoutes from './routing.js';
 import userRoutes from './users.js';
 import statisticsRoutes from './statistics.js';
 
@@ -101,6 +104,8 @@ const routes = {
         'coupons': couponRoutes.v1,
         'courier-positions': courierPositionsRoutes.v1,
         'delivery-locations': deliveryLocationRoutes.v1,
+        'device-tokens': devicePushTokenRoutes.v1,
+        'emis': emisRoutes.v1,
         'global-settings': globalSettingsRoutes.v1,
         'orders': orderRoutes.v1,
         'payments': paymentRoutes.v1,
@@ -110,6 +115,7 @@ const routes = {
         'restaurant-events': restaurantEventRoutes.v1,
         'restaurants': restaurantRoutes.v1,
         'reviews': reviewRoutes.v1,
+        'routing': routingRoutes.v1,
         'statistics': statisticsRoutes.v1,
         'users': userRoutes.v1
     },

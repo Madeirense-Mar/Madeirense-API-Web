@@ -54,12 +54,29 @@ v1.get(
 
 v1.patch(
     '/:id/status',
+    // Was Admin-only; expanded 2026-09-30 to match Robbie's own
+    // description of the intended design ("the back-end allows the
+    // admin/staff/driver member to confirm payment") — this is the
+    // manual-confirmation path (e.g. a driver marking a Cash payment
+    // collected on delivery), distinct from the automated EMIS callback
+    // (routes/emis.ts), which updates status without going through any
+    // user role at all. Flagged in TODO.md to confirm this is actually
+    // what was meant.
     onlyAllowUserRoles([
-        'Admin'
+        'Admin',
+        'Staff',
+        'Driver'
     ]) as any,
     validateId,
     [
-        body('status').isIn(['pending', 'COMPLETED', 'FAILED', 'REFUNDED']).withMessage('Valid payment status is required'),
+        // BUG FIX (2026-09-30): was checking uppercase values
+        // ('COMPLETED'/'FAILED'/'REFUNDED') against what is actually an
+        // all-lowercase Prisma enum (Payments_status: pending/completed/
+        // failed/refunded) — every status transition except the no-op
+        // 'pending' was rejected by this validator before ever reaching
+        // Prisma. Now validated directly against the real enum values,
+        // same pattern the payment_method validator above already uses.
+        body('status').isIn(Object.values($Enums.Payments_status)).withMessage(`Valid payment status is required (one of: ${Object.values($Enums.Payments_status).join(', ')})`),
         Validate.Handle.error
     ],
     controller.updatePaymentStatus as any
