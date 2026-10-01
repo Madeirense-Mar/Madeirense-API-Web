@@ -8,6 +8,28 @@ datasource db {
   url      = env("DEV_DATABASE_URL")
 }
 
+// Added 2026-10-01: every model below got an explicit `@@map("lowercase")`
+// after discovering this local MySQL server has `lower_case_table_names=1`
+// (`SHOW VARIABLES LIKE 'lower_case_table_names';` confirmed it — the
+// Windows default, since NTFS is case-insensitive). That setting folds
+// TABLE names to lowercase in storage no matter how the CREATE TABLE/DDL
+// text is cased or which client runs it — it was never actually a DBeaver
+// bug, DBeaver's schema browser just displayed the real (already
+// lowercase) stored names, while raw `mysql` CLI queries kept "working"
+// against the mixed-case spelling only because name comparison is
+// case-insensitive under this setting too. `MADEIRENSE_TABLES.sql` still
+// uses the real, intended mixed-case names (`Tickets_Purchased`, etc., and
+// that's also what staging/production presumably store for real, since
+// nothing here suggests they share this Windows-only quirk) — `@@map`
+// just tells Prisma to query the lowercase physical table while still
+// exposing the PascalCase model name, so `prisma.device_Push_Tokens` etc.
+// (first-letter-lowercased model name — the convention every controller
+// in this codebase already relies on) keeps working unchanged. Column
+// names are NOT affected by `lower_case_table_names` — only table/database
+// identifiers are folded — so no `@map` was needed on individual fields.
+// schema.staging.prisma intentionally does NOT have this — it targets a
+// different server, and should only get the same treatment if that
+// server is ever confirmed to fold case the same way.
 model Blocked_Users {
   block_id        Int                           @id @default(autoincrement())
   blocked_user_id Int
@@ -19,6 +41,7 @@ model Blocked_Users {
   Users           Users                         @relation(fields: [blocked_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Blocked_Users_ibfk_1")
 
   @@index([blocked_user_id], map: "blocked_user_id")
+  @@map("blocked_users")
 }
 
 model Cart {
@@ -32,6 +55,7 @@ model Cart {
 
   @@index([product_id], map: "product_id")
   @@index([user_id], map: "user_id")
+  @@map("cart")
 }
 
 model Chat_Messages {
@@ -49,6 +73,7 @@ model Chat_Messages {
   @@index([sender_id], map: "fk_sender")
   @@index([order_id], map: "order_id")
   @@index([restaurant_id], map: "restaurant_id")
+  @@map("chat_messages")
 }
 
 model Coupons {
@@ -59,6 +84,8 @@ model Coupons {
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   Orders     Orders[]
+
+  @@map("coupons")
 }
 
 model Courier_Positions {
@@ -71,6 +98,7 @@ model Courier_Positions {
   Users       Users    @relation(fields: [courier_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Courier_Positions_ibfk_1")
 
   @@index([courier_id], map: "courier_id")
+  @@map("courier_positions")
 }
 
 model Courier_Reallocation_Requests {
@@ -90,6 +118,7 @@ model Courier_Reallocation_Requests {
   @@index([courier_id], map: "courier_id")
   @@index([order_id], map: "order_id")
   @@index([requested_courier_id], map: "requested_courier_id")
+  @@map("courier_reallocation_requests")
 }
 
 model Credentials {
@@ -97,6 +126,8 @@ model Credentials {
   email         String    @unique(map: "email") @db.VarChar(255)
   hash          String    @db.VarChar(255)
   created_at    DateTime? @default(now()) @db.Timestamp(0)
+
+  @@map("credentials")
 }
 
 model Delivery_Locations {
@@ -123,6 +154,7 @@ model Delivery_Locations {
   Restaurants          Restaurants[]
 
   @@index([user_id], map: "user_id")
+  @@map("delivery_locations")
 }
 
 model Favorites {
@@ -133,6 +165,7 @@ model Favorites {
 
   @@id([user_id, product_id])
   @@index([product_id], map: "product_id")
+  @@map("favorites")
 }
 
 model Global_Settings {
@@ -144,6 +177,8 @@ model Global_Settings {
   auto_assign_driver                     Boolean?                                 @default(false)
   change_version                         String                                   @default(dbgenerated("(uuid())")) @db.Char(36)
   Global_Settings_Eligible_Payment_Types Global_Settings_Eligible_Payment_Types[]
+
+  @@map("global_settings")
 }
 
 model Global_Settings_Eligible_Payment_Types {
@@ -152,6 +187,7 @@ model Global_Settings_Eligible_Payment_Types {
   Global_Settings Global_Settings                                       @relation(fields: [setting_id], references: [setting_id], onDelete: NoAction, onUpdate: NoAction, map: "Global_Settings_Eligible_Payment_Types_ibfk_1")
 
   @@id([setting_id, payment_method])
+  @@map("global_settings_eligible_payment_types")
 }
 
 model Notifications {
@@ -163,6 +199,7 @@ model Notifications {
   Users           Users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Notifications_ibfk_1")
 
   @@index([user_id], map: "user_id")
+  @@map("notifications")
 }
 
 model Order_History {
@@ -177,6 +214,7 @@ model Order_History {
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
+  @@map("order_history")
 }
 
 model Order_Items {
@@ -189,6 +227,7 @@ model Order_Items {
 
   @@index([order_id], map: "order_id")
   @@index([product_id], map: "product_id")
+  @@map("order_items")
 }
 
 model Orders {
@@ -226,6 +265,7 @@ model Orders {
   @@index([courier_id], map: "fk_courier")
   @@index([restaurant_id], map: "restaurant_id")
   @@index([user_id], map: "user_id")
+  @@map("orders")
 }
 
 model Payments {
@@ -253,6 +293,7 @@ model Payments {
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
   @@index([gateway_reference], map: "gateway_reference")
+  @@map("payments")
 }
 
 model Products {
@@ -279,6 +320,7 @@ model Products {
 
   @@index([event_id], map: "event_id")
   @@index([restaurant_id], map: "restaurant_id")
+  @@map("products")
 }
 
 model Push_Notification_Subscriptions {
@@ -291,6 +333,7 @@ model Push_Notification_Subscriptions {
   Users           Users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Push_Notification_Subscriptions_ibfk_1")
 
   @@index([user_id], map: "user_id")
+  @@map("push_notification_subscriptions")
 }
 
 // Added 2026-09-30 for mobile push (FCM) — deliberately a separate model
@@ -313,6 +356,7 @@ model Device_Push_Tokens {
   Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Device_Push_Tokens_ibfk_1")
 
   @@index([user_id], map: "user_id")
+  @@map("device_push_tokens")
 }
 
 model Restaurant_Events {
@@ -336,6 +380,7 @@ model Restaurant_Events {
   Tickets_Purchased Tickets_Purchased[]
 
   @@index([restaurant_id], map: "restaurant_id")
+  @@map("restaurant_events")
 }
 
 model Restaurant_Hours {
@@ -348,6 +393,7 @@ model Restaurant_Hours {
   Restaurants   Restaurants                  @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Restaurant_Hours_ibfk_1")
 
   @@unique([restaurant_id, day_of_week], map: "restaurant_id")
+  @@map("restaurant_hours")
 }
 
 model Restaurants {
@@ -370,6 +416,7 @@ model Restaurants {
   Workstations       Workstations[]
 
   @@index([location], map: "Restaurants_ibfk_1")
+  @@map("restaurants")
 }
 
 // PRODUCT DECISION (2026-09-30): order_id was NOT NULL / required, which
@@ -411,6 +458,7 @@ model Tickets_Purchased {
   @@index([restaurant_id], map: "restaurant_id")
   @@index([user_id], map: "user_id")
   @@index([validator_id], map: "validator_id")
+  @@map("tickets_purchased")
 }
 
 model User_Comments {
@@ -424,6 +472,7 @@ model User_Comments {
 
   @@index([product_id], map: "product_id")
   @@index([user_id], map: "user_id")
+  @@map("user_comments")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -439,6 +488,7 @@ model User_Reviews {
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
+  @@map("user_reviews")
 }
 
 model Users {
@@ -472,6 +522,8 @@ model Users {
   User_Comments                                                                           User_Comments[]
   User_Reviews                                                                            User_Reviews[]
   Workstations                                                                            Workstations[]
+
+  @@map("users")
 }
 
 model Workstations {
@@ -484,17 +536,22 @@ model Workstations {
 
   @@unique([user_id, restaurant_id], map: "user_id")
   @@index([restaurant_id], map: "restaurant_id")
+  @@map("workstations")
 }
 
 model Resort_Amenities {
   amenity_id            Int                     @id @default(autoincrement())
   name                  String                  @db.VarChar(100)
   Resort_Room_Amenities Resort_Room_Amenities[]
+
+  @@map("resort_amenities")
 }
 
 model Resort_Booking_Cancellation_Policies {
   policy_id   Int    @id @default(autoincrement())
   description String @db.VarChar(255)
+
+  @@map("resort_booking_cancellation_policies")
 }
 
 model Resort_Booking_Payments {
@@ -509,6 +566,7 @@ model Resort_Booking_Payments {
   Resort_Bookings Resort_Bookings[]
 
   @@index([user_id], map: "user_id")
+  @@map("resort_booking_payments")
 }
 
 model Resort_Bookings {
@@ -535,6 +593,7 @@ model Resort_Bookings {
   @@index([user_id], map: "user_id")
   @@index([resort_id], map: "Resort_Bookings_ibfk_3")
   @@index([payment_id], map: "Resort_Bookings_ibfk_4")
+  @@map("resort_bookings")
 }
 
 model Resort_Room_Amenities {
@@ -546,6 +605,7 @@ model Resort_Room_Amenities {
   @@id([room_id, amenity_id])
   @@index([room_id], map: "Resort_Room_Amenities_ibfk_1")
   @@index([amenity_id], map: "Resort_Room_Amenities_ibfk_2")
+  @@map("resort_room_amenities")
 }
 
 model Resort_Rooms {
@@ -564,6 +624,7 @@ model Resort_Rooms {
   Resort_Rooms_Media      Resort_Rooms_Media[]
 
   @@index([resort_id], map: "Resort_Rooms_ibfk_1")
+  @@map("resort_rooms")
 }
 
 model Resorts {
@@ -578,6 +639,7 @@ model Resorts {
   Delivery_Locations Delivery_Locations? @relation(fields: [location], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "Resorts_ibfk_1")
 
   @@index([location], map: "Resorts_ibfk_1")
+  @@map("resorts")
 }
 
 model Resort_Room_Bed_Options {
@@ -589,6 +651,7 @@ model Resort_Room_Bed_Options {
 
   @@id([room_id, bed_type_id])
   @@index([bed_type_id], map: "bed_type_id")
+  @@map("resort_room_bed_options")
 }
 
 model Resort_Bed_Types {
@@ -596,12 +659,16 @@ model Resort_Bed_Types {
   name                    String                    @unique(map: "name") @db.VarChar(50)
   sleeps                  Int
   Resort_Room_Bed_Options Resort_Room_Bed_Options[]
+
+  @@map("resort_bed_types")
 }
 
 model Resort_Booking_Cancellations {
   booking_id      Int                                      @id
   reason_code     Resort_Booking_Cancellations_reason_code
   Resort_Bookings Resort_Bookings                          @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_booking_cancellations_ibfk_1")
+
+  @@map("resort_booking_cancellations")
 }
 
 model Resort_Chat_Messages {
@@ -616,6 +683,7 @@ model Resort_Chat_Messages {
 
   @@index([booking_id], map: "booking_id")
   @@index([sender_id], map: "fk_sender")
+  @@map("resort_chat_messages")
 }
 
 model Resort_Booking_History {
@@ -630,6 +698,7 @@ model Resort_Booking_History {
 
   @@index([booking_id], map: "booking_id")
   @@index([user_id], map: "user_id")
+  @@map("resort_booking_history")
 }
 
 model Resort_Rooms_Media {
@@ -642,6 +711,7 @@ model Resort_Rooms_Media {
   Resort_Rooms Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Rooms_Media_ibfk_1")
 
   @@index([room_id], map: "Resort_Rooms_Media_ibfk_1")
+  @@map("resort_rooms_media")
 }
 
 model Application_Theme {
@@ -651,6 +721,7 @@ model Application_Theme {
 
   @@id([restaurant_id, theme])
   @@index([restaurant_id], map: "restaurant_id")
+  @@map("application_theme")
 }
 
 enum Global_Settings_Eligible_Payment_Types_payment_method {

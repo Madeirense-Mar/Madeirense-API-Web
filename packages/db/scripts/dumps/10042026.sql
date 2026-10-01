@@ -870,6 +870,24 @@ INSERT INTO `Workstations` VALUES (1,8,3,'2025-06-23 15:31:48'),(2,9,3,'2025-06-
 /*!40000 ALTER TABLE `Workstations` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+CREATE TABLE `Application_Theme` (
+  `restaurant_id` int(11) NOT NULL,
+  `theme` ENUM(
+    'LAND',
+    'SEA'
+  ) NOT NULL,
+  PRIMARY KEY (`restaurant_id`, `theme`),
+  KEY `restaurant_id` (`restaurant_id`),
+  CONSTRAINT `Application_Theme_ibfk_1` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`restaurant_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+LOCK TABLES `Application_Theme` WRITE;
+/*!40000 ALTER TABLE `Workstations` DISABLE KEYS */;
+INSERT INTO `Application_Theme` VALUES (3,'LAND'),(3,'SEA'),(4,'LAND'),(4,'SEA');
+/*!40000 ALTER TABLE `Workstations` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Dumping routines for database 'u322092759_PACIFICO'
 --
