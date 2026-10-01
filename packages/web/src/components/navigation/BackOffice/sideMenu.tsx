@@ -24,6 +24,8 @@ import styles from "./sideMenu.module.css";
 import type {
     $Enums
 } from "@Madeirense/database/browser";
+import { Root$Enumerators } from "styles/enumerators";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -104,34 +106,24 @@ function SideMenu({ className, ...props }: ComponentProps<"aside">) {
         user
     } = useProfile();
 
-    const [toggled, toggle] = useState<boolean>(false);
-
-    return <aside
-        className={resolveClassNames(styles.menu, className)}
-        {...{
-            ...((toggled) ? { "data-toggled": "" } : {})
-        }}
-        {...props}
-    >
-        <Button id="toggler" title="Abrir/Fechar" onClick={() => toggle(t => !t)}>
-            <Icon name="ChevronRight" className={toggled ? "rotate-180" : ""} />
-        </Button>
-
-        <ul className="flex flex-col justify-start items-start gap-6 w-full">
+    return <aside className={resolveClassNames(styles.menu, className)} {...props}>
+        <ul className="flex flex-col justify-start items-start w-full">
             {linkList.map((link, index) => {
                 if (!(link.role).includes(user?.user_role ?? "Ghost"))
                     return null;
 
                 return <li key={link.to} className="w-full">
                     <Link
-                        className="flex flex-row justify-start items-center gap-2"
+                        className="flex flex-row justify-center items-center gap-2 w-full"
                         key={index}
                         to={link.to}
                         {...{ ...(location.pathname === link.to) ? { "data-active": "" } : {} }}
                     >
                         {link.icon}
 
-                        {link.label}
+                        <span>
+                            {link.label}
+                        </span>
                     </Link>
                 </li>;
             })}

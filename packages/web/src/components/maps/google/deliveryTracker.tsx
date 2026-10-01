@@ -32,7 +32,7 @@ import env from "env";
 import MXP$App from "configurations";
 
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { GOOGLE_MARKERS } from "./constants";
 

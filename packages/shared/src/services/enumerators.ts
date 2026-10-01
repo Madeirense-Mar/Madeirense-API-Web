@@ -13,7 +13,8 @@ export namespace API$Enumerators {
     }
 
     export enum Headers {
-        "platform" = "platform",
+        "locale" = "x-locale",
+        "platform" = "x-platform"
     }
 
     export enum LogEntries {
@@ -21,6 +22,11 @@ export namespace API$Enumerators {
         "request" = "request",
         "response" = "response",
         "url" = "url"
+    }
+
+    export enum Platforms {
+        "mobile" = "mobile",
+        "web" = "web"
     }
 
     export enum SearchQueries {

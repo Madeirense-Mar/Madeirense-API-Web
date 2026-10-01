@@ -3,11 +3,13 @@ import {
 } from 'express';
 
 import {
-    body
+    body,
+    param
 } from 'express-validator';
 
 import {
-    type Global_Settings
+    type Global_Settings,
+    type Restaurants
 } from '@Madeirense/database';
 
 import {
@@ -37,6 +39,20 @@ const v1 = Router();
 v1.get(
     '/',
     controller.getGlobalSettings as any
+);
+
+v1.get(
+    '/restaurant-theme/:restaurant_id',
+    [
+        param(("restaurant_id") as keyof Restaurants).isInt({ min: API_MIN_ID_NUMBER }).withMessage('ID parameter is required and should be positive integer'),
+        Validate.Handle.error
+    ],
+    controller.getRestaurantTheme as any
+);
+
+v1.get(
+    '/version',
+    controller.getGlobalSettingsVersion as any
 );
 
 v1.get(

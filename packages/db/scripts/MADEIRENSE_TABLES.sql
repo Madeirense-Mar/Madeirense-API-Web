@@ -21,7 +21,8 @@ CREATE TABLE `Products` (
   `restaurant_id` int(11) DEFAULT NULL,
   `discount` decimal(5,2) NOT NULL DEFAULT 0.00,
   `thumbnail` varchar(255) DEFAULT NULL,
-  `product_type` enum('starter','main','dessert','beverage','ticket') DEFAULT NULL,
+  `product_type` enum('starter','garnish','main','dessert','beverage','ticket') DEFAULT NULL,
+  `product_composition` enum('meat','fish','vegetable','liquid','mixed') DEFAULT NULL,
   `prep_time_minutes` int(11) NOT NULL DEFAULT 0,
   `event_id` int(11) DEFAULT NULL,
   `delisted` tinyint(1) DEFAULT 0,
@@ -193,6 +194,7 @@ CREATE TABLE `Resort_Rooms` (
   `updated_at` timestamp NULL DEFAULT current_timestamp(),
   `price_per_night` decimal(10,2) NOT NULL,
   `availability` ENUM('Available','Limited','Sold Out') DEFAULT 'Available',
+  `quantity` int(11) DEFAULT 1,
   `resort_id` int(11) NOT NULL,
   PRIMARY KEY (`room_id`),
   KEY `Resort_Rooms_ibfk_1` (`resort_id`),
@@ -312,6 +314,17 @@ CREATE TABLE `Resort_Chat_Messages` (
   CONSTRAINT `Resort_Chat_Messages_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `Resort_Bookings` (`booking_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_resort_sender` FOREIGN KEY (`sender_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `Application_Theme` (
+  `restaurant_id` int(11) NOT NULL,
+  `theme` ENUM(
+    'LAND',
+    'SEA'
+  ) NOT NULL,
+  PRIMARY KEY (`restaurant_id`, `theme`),
+  KEY `restaurant_id` (`restaurant_id`),
+  CONSTRAINT `Application_Theme_ibfk_1` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`restaurant_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `Restaurants` (
   `restaurant_id` int(11) NOT NULL AUTO_INCREMENT,

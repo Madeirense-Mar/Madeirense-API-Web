@@ -123,10 +123,22 @@ export const MIN_VIEWPORT_WIDTH: Readonly<number> = 768;
 
 export const MENU_PRODUCT_TYPES = [
     "beverage",
+    "garnish",
     "dessert",
     "main",
     "starter"
 ] as ReadonlyArray<$Enums.Products_product_type>;
+
+export const MENU_PRODUCT_COMPOSITIONS = [
+    "alcoholic",
+    "fish",
+    "meat",
+    "merchandise",
+    "mixed",
+    "non_alcoholic",
+    "vegan",
+    "wheat"
+] as ReadonlyArray<$Enums.Products_product_composition>;
 
 export const ORDERS_FINISHED_STATUS = [
     "cancelled",

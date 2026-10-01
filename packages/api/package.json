@@ -1,5 +1,5 @@
 {
-    "name": "express-madeirense-backend",
+    "name": "api",
     "description": "Backend API for Madeirense food delivery platform",
     "author": "Roberto de Carvalho @ DANCE&SPKTR, Madeirense, lda.",
     "license": "MIT",
@@ -16,7 +16,7 @@
         "typescript"
     ],
     "scripts": {
-        "build": "tsc",
+        "build": "tsup",
         "build:all": "npm run prisma && npm run generate:swagger-schemas && npm run build",
         "clean": "rm -rf ./node_modules ./dist",
         "dev": "nodemon --config nodemon.development.json",
@@ -70,6 +70,7 @@
         "@typescript-eslint/parser": "^6.15.0",
         "eslint": "^8.56.0",
         "nodemon": "^3.1.11",
+        "tsup": "^8.5.1",
         "tsx": "^4.6.2",
         "typescript": "^5.3.3",
         "typescript-json-schema": "^0.67.1"

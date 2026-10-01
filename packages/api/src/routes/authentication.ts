@@ -135,6 +135,18 @@ v1.post(
     controller.who as any
 );
 
+v1.post(
+    '/refresh',
+    [
+        // Was `token` here but the controller reads `req.body.refreshToken`
+        // — mismatched field name meant this could never pass validation
+        // with the field the controller actually needed. Fixed 2026-09-08.
+        body('refreshToken').isJWT().withMessage('Valid refresh token is required'),
+        Validate.Handle.error
+    ],
+    controller.refresh as any
+);
+
 const authenticationRoutes = {
     v1
 };

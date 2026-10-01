@@ -1,0 +1,46 @@
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+#root[data-page] main {
+    height: var(--main-page-height, calc(100% - 70px));
+}
+
+#root[data-page="back-office"] main {
+    --main-page-height: 100%;
+}
+
+#root:not([data-page]) {
+    display: flex;
+    flex-direction: column;
+}
+
+#root[data-hascart] {
+    padding-bottom: 60px;
+}
+
+#root[data-hasorders] main {
+    margin-top: 52px;
+}
+
+#root[data-hascart]:has(table[data-visible][data-expanded]) nav {
+    --nav-opacity: 0;
+    --nav-pointer-events: none;
+}
+
+@media only screen and (min-width: 344px) {
+    
+}
+
+@media only screen and (min-width: 428px) {
+    
+}
+
+@media only screen and (min-width: 768px) {
+    
+}
+
+@media only screen and (min-width: 1366px) {
+    
+}

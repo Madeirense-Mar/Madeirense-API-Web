@@ -27,7 +27,7 @@ export namespace Madeirense$Enumerators {
             "Products" = "/back-office/products",
             "Resort" = "/back-office/resorts",
             "Restaurant" = "/back-office/restaurants",
-            "RestaurantEvent" = "/back-office/restaurants/party",
+            "RestaurantEvent" = "/back-office/events",
             "Requests" = "/back-office/requests",
             "Settings" = "/back-office/settings",
             "Staff" = "/back-office/staff"
@@ -65,6 +65,7 @@ export namespace Madeirense$Enumerators {
         "month" = "month",
         "order_id" = "order_id",
         "product_id" = "product_id",
+        "product_composition" = "product_composition",
         "product_type" = "product_type",
         "quantity" = "quantity",
         "rating" = "rating",

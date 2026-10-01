@@ -14,7 +14,7 @@ import {
     Resort_Booking_Payments_payment_method,
     Resort_Booking_Payments_status,
     Resort_Bookings_status,
-    Resort_Room_Media_media_type
+    Resort_Rooms_Media_media_type
 } from '@Madeirense/database';
 
 import {
@@ -505,7 +505,7 @@ v1.patch(
     [
         body('adding').optional({ values: 'falsy' }).isArray({ min: 1 }).withMessage('Bed type specification is required'),
         body('adding.*').isObject({ strict: true }).withMessage('Bed type must be a valid object'),
-        body('adding.*.media_type').isIn(Object.values(Resort_Room_Media_media_type)).withMessage(`Only media of type: ${Object.values(Resort_Room_Media_media_type).join(', ')} is accepted`),
+        body('adding.*.media_type').isIn(Object.values(Resort_Rooms_Media_media_type)).withMessage(`Only media of type: ${Object.values(Resort_Rooms_Media_media_type).join(', ')} is accepted`),
         body('adding.*.media_url').isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
         body('removing').optional({ values: 'falsy' }).isArray({ min: 1 }).withMessage('Bed type specification is required'),
         body('removing.*').isInt({ min: API_MIN_ID_NUMBER }).withMessage('Number must be a positive integer with 1 as the minimum value'),

@@ -1,22 +1,23 @@
 .table {
-    --img-size: 150px;
-    
-    --row-height: 50px;
+    --img-size: 152px;
+
+    --row-height: 52px;
 
     background-color: var(--background-color);
-    width: 100%;
 }
 
 .wrapper {
+    --row-height: 52px;
+
     position: fixed;
-    z-index: 10;
+    z-index: var(--wrapper-z-index, 10);
     top: 0px;
 
     transform: var(--wrapper-offsets, -100%);
 
-    max-height: calc(100% - var(--application-nav-bar-height) - var(--row-height));
+    max-height: var(--wrapper-max-height);
     width: 100%;
-    
+
     -ms-overflow-style: none;
     /* Hides scrollbar in IE and Edge */
     -moz-overflow-style: none;
@@ -30,11 +31,28 @@
 }
 
 .wrapper[data-visible] {
-    --wrapper-offsets: translateY(calc(-100% + var(--application-nav-bar-height) + var(--row-height)));
+    --wrapper-offsets: translateY(calc(-100% + 70px + var(--row-height)));
+    --wrapper-max-height: calc(100% - var(--row-height));
+}
+
+.wrapper[data-visible] table {
+    width: var(--table-width, 100%);
 }
 
 .wrapper[data-expanded][data-visible] {
-    --wrapper-offsets: translateY(var(--application-nav-bar-height));
+    --h: 100%;
+
+    --wrapper-max-height: var(--h);
+    --wrapper-offsets: translateY(0px);
+    --wrapper-z-index: 13;
+
+    @apply flex flex-col justify-center items-center;
+
+    gap: 32px; 
+
+    height: var(--h);
+
+    background-color: var(--background-color);
 }
 
 .table div[class*="card"] {
@@ -51,11 +69,11 @@
 }
 
 .table tfoot tr:first-child {
-    border-top: var(--border-width) solid var(--border-color);
+    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .table tfoot tr:last-child {
-    border-bottom: var(--border-width) solid var(--border-color);
+    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .table tbody tr[data-row="restaurant"] {
@@ -73,7 +91,7 @@
 }
 
 .table tr:has(div[class*="card"]) td:first-child {
-    border-right: var(--border-width) solid var(--border-color);
+    border-right: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .table tfoot td[data-section],
@@ -84,9 +102,9 @@
 .table td[data-section="summary"] {}
 
 .table td[data-section="summary"] div[data-type="thumbnail"] {
-    height: 50px;
+    height: 52px;
     width: var(--img-size);
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .table td[data-section="chat"] {}
@@ -98,22 +116,29 @@
 }
 
 .order tfoot tr:first-child {
-    border-bottom: var(--border-width) solid var(--border-color);
+    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
 .order tfoot tr:last-child {
-    border-top: var(--border-width) solid var(--border-color);
+    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
-.summary tr {
-    border-right: var(--border-width) solid var(--border-color);
-    border-left: var(--border-width) solid var(--border-color);
+.summary {
+    --table-row-border-width: 0px;
 }
 
-#root:has(div[class*="Notifications"][data-state="showing"]) .wrapper[data-visible] {
-    --wrapper-offsets: translateY(calc(-100% + var(--application-nav-bar-height) + var(--row-height)));
+.summary tbody tr td {
+    @apply pb-4
 }
 
-#root:has(div[class*="Notifications"][data-state="showing"]) .wrapper[data-expanded][data-visible] {
-    --wrapper-offsets: translateY(calc(var(--application-nav-bar-height)));
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    .wrapper[data-expanded][data-visible] table {
+        --table-width: 70%;
+    }
 }
+
+@media only screen and (min-width: 1366px) {}

@@ -41,6 +41,7 @@ import {
 import type {
     IAuthenticatedRequest
 } from '../interfaces';
+import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -150,10 +151,10 @@ export const addToCart = async (
         return res.status(201).json({
             success: true,
             message: 'Item added to cart successfully',
-            data: {
+            data: convertDecimals({
                 ...cartItem,
                 Products
-            }
+            })
         });
     } catch (error) {
         return handleControllerError(
@@ -188,6 +189,7 @@ export const clearCart = async (
                                 in: [
                                     'beverage',
                                     'dessert',
+                                    'garnish',
                                     'main',
                                     'starter'
                                 ]
@@ -257,6 +259,7 @@ export const clearCart$Dry = async (
                                 in: [
                                     'beverage',
                                     'dessert',
+                                    'garnish',
                                     'main',
                                     'starter'
                                 ]
@@ -447,6 +450,7 @@ export const getCartSummary$Dry = async (
                 : ([
                     'beverage',
                     'dessert',
+                    'garnish',
                     'main',
                     'starter'
                 ] as $Enums.Products_product_type[]).includes(p.Products.product_type)
@@ -527,7 +531,7 @@ export const getCartSummary = async (
 
         switch (req.params.type) {
             case 'delivery':
-                cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
+                cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'garnish', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
                 break;
 
             case 'event':
@@ -629,7 +633,7 @@ export const getUserCart = async (
 
         return res.json({
             data: (cartItems.map(({ Products, quantity }) => {
-                return { ...Products, quantity }
+                return convertDecimals({ ...Products, quantity })
             })),
             success: true,
             message: 'Cart items retrieved successfully',
@@ -685,7 +689,7 @@ export const getUserCart$Dry = async (
 
     switch (cartType) {
         case 'delivery':
-            cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
+            cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['beverage', 'garnish', 'dessert', 'main', 'starter'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
             break;
 
         case 'event':
@@ -697,10 +701,10 @@ export const getUserCart$Dry = async (
     };
 
     return (cartItems.map(({ Products, quantity }) => {
-        return {
+        return convertDecimals({
             ...Products,
             quantity
-        }
+        })
     })) as cartedProductType[];
 };
 
@@ -779,20 +783,23 @@ export const removeFromCartByProduct = async (
             success: false,
         });
 
+        console.log(req.query, cartItem);
+
         switch (true) {
-            case (cartItem.quantity > 1):
-                await prisma.cart.update({
-                    where: { cart_id: cartItem.cart_id },
-                    data: {
-                        quantity: { decrement: parseInt(quantity as string) }
-                    }
+            case (cartItem.quantity <= 1):
+            case (cartItem.quantity === parseInt(quantity as string)):
+                await prisma.cart.delete({
+                    where: { cart_id: cartItem.cart_id }
                 });
 
                 break;
 
             default:
-                await prisma.cart.delete({
-                    where: { cart_id: cartItem.cart_id }
+                await prisma.cart.update({
+                    where: { cart_id: cartItem.cart_id },
+                    data: {
+                        quantity: { decrement: parseInt(quantity as string) }
+                    }
                 });
 
                 break;

@@ -265,17 +265,13 @@ function UserPanel({ id }: { id: number }) {
         </section>
 
         {user?.Users.user_role === "Driver" && <section className="w-full">
-            <header>
-                <h4>Entregas</h4>
-            </header>
-
             {(assertions.isLoading)
                 ? <div className="w-full flex flex-col justify-center items-center p-6">
                     <Icon name="Loading" className="animate-spin" />
                 </div>
                 : <>
                     {currentDelivery && <>
-                        <h5>A decorrer</h5>
+                        <h5>Entrega a decorrer</h5>
 
                         <div className="w-full flex flex-col justify-start items-start">
                             <OrderCard order={currentDelivery} className="w-full" />
@@ -284,18 +280,16 @@ function UserPanel({ id }: { id: number }) {
                         </div>
                     </>}
 
-                    {Boolean(orders.length)
-                        ? <div data-grid="OrderCard" className="w-full">
+                    {Boolean(orders.length) && <>
+                        <h5>Histórico de entregas</h5>
+
+                        <div data-grid="OrderCard" className="w-full">
                             {orders
                                 .filter(o => o.order_id !== (currentDelivery?.order_id ?? -1))
                                 .map(o => <OrderCard key={o.order_id} order={o} disableLink />)
                             }
                         </div>
-
-                        : <div data-state="empty">
-                            Sem pedidos entregues
-                        </div>
-                    }
+                    </>}
                 </>}
         </section>}
     </>

@@ -25,6 +25,8 @@ import AnchorButton from "components/buttons/anchor";
 
 import { Welcome$Enumerators } from "pages/Welcome";
 
+import styles from "./application.module.css";
+
 import type {
     $Enums
 } from "@Madeirense/database/browser";
@@ -116,12 +118,12 @@ function AppNav() {
         )
     };
 
-    return <nav>
-        <h1 data-text="title">
+    return <nav className={styles.nav}>
+        <p data-element="header">
             O MADEIRENSE
-        </h1>
+        </p>
 
-        <ul className="flex flex-row justify-start items-center gap-8 ml-2">
+        <ul className="flex flex-row justify-start items-center gap-8 ml-2 mr-auto">
             {linkList.map((link, index) => {
                 if (!(link.role ?? [user?.user_role]).includes(user?.user_role as $Enums.Users_user_role)) return null;
 
@@ -141,11 +143,10 @@ function AppNav() {
         </ul>
 
         {(state === "guest")
-            ? <div className="flex flex-row items-center justify-center">
+            ? <div className="flex flex-row items-center justify-center gap-3">
                 <AnchorButton
                     id="sign-up"
                     to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.signup}`}
-                    variant="primary"
                 >
                     <Icon name="UserRegistration" />
 
@@ -155,7 +156,6 @@ function AppNav() {
                 <AnchorButton
                     id="login"
                     to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`}
-                    variant="primary"
                 >
                     <Icon name="Login" />
 

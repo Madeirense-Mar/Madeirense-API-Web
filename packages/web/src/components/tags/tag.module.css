@@ -1,0 +1,80 @@
+.tag {
+    @apply flex flex-row justify-center items-center gap-2;
+    
+    width: max-content;
+    padding: var(--tag-padding-y, 2px) var(--tag-padding-x, 5px);
+
+    border-color: var(--tag-border-color, var(--base-border-color));
+    border-width: var(--tag-border-width, var(--border-width));
+    border-style: var(--tag-border-style, solid);
+    border-radius: var(--tag-border-radius, 5px);
+
+    color: var(--tag-text-color, var(--text-color));
+    
+    background-color: var(--tag-background-color, transparent);
+  
+    font-weight: 600;
+}
+
+.tag * {
+    color: inherit;
+}
+
+.danger {
+    composes: tag;
+
+    --tag-background-color: #fee2e2;
+    --tag-border-color: #f87171;
+    --tag-text-color: #7f1d1d;
+}
+
+/* TODO: Unimplemented style > important */
+.important {
+    composes: tag;
+}
+
+.primary {
+    composes: tag;
+
+    --tag-background-color: var(--primary-light);
+    --tag-border-color: var(--primary-light);
+    --tag-text-color: var(--primary-dark);
+}
+
+.primary:hover {
+    --tag-background-color: var(--primary-dark);
+    --tag-text-color: var(--secondary);
+}
+
+/* TODO: Unimplemented style > secondary */
+.secondary {
+    composes: tag;
+}
+
+/* TODO: Unimplemented style > selected */
+.selected {
+    composes: tag;
+}
+
+.success {
+    composes: tag;
+}
+
+/* TODO: Unimplemented style > success */
+[data-theme*="DARK"] .success {
+    --tag-background-color: var(--success-dark);
+    --tag-border-color: var(--success);
+    --tag-text-color: var(--success);
+}
+
+/* TODO: Unimplemented style > warning */
+.warning {
+    composes: tag;
+}
+
+[data-theme*="DARK"] .warning {
+    --tag-background-color: var(--secondary);
+    --tag-border-style: dotted;
+    --tag-border-color: var(--secondary-dark);
+    --tag-text-color: var(--secondary-dark);
+}

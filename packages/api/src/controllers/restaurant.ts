@@ -92,7 +92,7 @@ export const createRestaurant = async (
         });
 
         return res.status(201).json({
-            data: restaurant,
+            data: convertDecimals(restaurant),
             message: 'Restaurant created successfully',
             success: true
         });

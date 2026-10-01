@@ -28,7 +28,7 @@ import { useApp } from "contexts/App";
 import Button from "components/buttons";
 import ProfilePictureButton from "components/buttons/profile";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { nextPageTriggerSetup } from "./utilities/functions";
 

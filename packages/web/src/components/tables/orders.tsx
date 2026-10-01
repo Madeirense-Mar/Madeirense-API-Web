@@ -27,7 +27,7 @@ import OrderSummaryView from "components/views/orders/summary";
 
 import styles from "./orders.module.css";
 
-import type { 
+import type {
     $Enums
 } from "@Madeirense/database/browser";
 
@@ -131,13 +131,17 @@ function Orders({
         case "order": {
             return <div
                 className={styles.wrapper}
-                onClick={() => toggle(true)}
+                onClick={show ? undefined : () => toggle(true)}
                 onMouseLeave={() => toggle(false)}
                 {...{
                     ...(Boolean(ordersByRestaurants.length) ? { ["data-visible"]: "" } : {}),
                     ...(show ? { ["data-expanded"]: "" } : {})
                 }}
             >
+                {show && <Button shape="circle" onClick={() => toggle(false)}>
+                    <Icon name="Close" />
+                </Button>}
+
                 <table
                     data-state={state}
                     {...$tableProps}
@@ -187,7 +191,7 @@ function Orders({
                 <tfoot>
                     <tr>
                         {sections.map(kvp => <td key={kvp.key}>
-                            <Button className="w-full" onClick={() => setSection(kvp.value as any)} variant="text" data-selected={currentSection === kvp.value}>
+                            <Button className="w-full" onClick={() => setSection(kvp.value as any)} variant={`text${(currentSection === kvp.value) ? "-selected" : ""}`}>
                                 {kvp.key}
 
                                 {kvp.icon}
@@ -212,12 +216,6 @@ function Orders({
 
                 <tbody>
                     {TABLE_ERROR_ROW}
-
-                    <tr data-row="restaurant">
-                        <td colSpan={3}>
-                            <span>{selectedOrder.Restaurants.name}</span>
-                        </td>
-                    </tr>
 
                     <tr>
                         <td colSpan={3}>

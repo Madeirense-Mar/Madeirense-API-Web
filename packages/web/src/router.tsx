@@ -25,6 +25,7 @@ import NotFoundPage from "pages/404";
 import HomePage from "pages/Home";
 import AuthenticationSuccessPage from "pages/Authentication/success";
 import EventsPage from "pages/Events";
+import OrderPage from "pages/Order";
 import ProductPage from "pages/Product";
 import ResortPage from "pages/Resort";
 import SetCredentialsPage from "pages/SetCredentials";
@@ -174,6 +175,12 @@ export const appRoutesTree: ReadonlyArray<IAppRoute> = [
 				element: <EventsPage />,
 			},
 			{
+				id: "orders",
+				path: `${Madeirense$Enumerators.Pages.App.Order}/:order_id?`,
+				label: "my-order",
+				element: <OrderPage />,
+			},
+			{
 				id: "product",
 				path: `${Madeirense$Enumerators.Pages.App.Product}/:product_id`,
 				label: "menu",
@@ -272,7 +279,7 @@ export const appRoutesTree: ReadonlyArray<IAppRoute> = [
 					},
 					{
 						id: "back-office-restaurant-events",
-						path: `${Madeirense$Enumerators.Pages.BackOffice.RestaurantEvent}/:id`,
+						path: `${Madeirense$Enumerators.Pages.BackOffice.RestaurantEvent}/:id?`,
 						label: "events",
 						element: <BackOfficeRestaurantPage />,
 						userRoles: [

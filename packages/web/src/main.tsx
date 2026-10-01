@@ -1,7 +1,21 @@
 import "@uploadcare/react-uploader/core.css";
 
+//#region Styles
 import "styles/tailwind.css";
 import "styles/global.css";
+import "styles/table.css";
+import "styles/root.css";
+import "styles/form/inputs.css";
+import "styles/form/fieldset.css";
+import "styles/form/label.css";
+
+//#region Components default styles
+import "styles/card.css";
+//#endregion
+
+//#region Grouped components default styles
+//#endregion
+//#endregion
 
 // ***************************************************************************************************************
 
@@ -26,6 +40,7 @@ import { FlasherProvider } from "contexts/Flasher";
 import { NotificationsProvider } from "contexts/Notifications";
 import { OrdersProvider } from "contexts/Orders";
 import { ProfileProvider } from "contexts/Profile";
+import { ThemeProvider } from "contexts/Theme";
 
 import AppRouter from "router";
 
@@ -38,6 +53,7 @@ const root = ReactDOM.createRoot(
 const queryClient = new QueryClient(MXP$App.configurations.dependencies['@tanstack/react-query']);
 
 const providers = [
+    ThemeProvider,
     NotificationsProvider,
     AppProvider,
     ProfileProvider,

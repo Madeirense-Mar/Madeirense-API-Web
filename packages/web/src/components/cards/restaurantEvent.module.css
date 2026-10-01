@@ -19,15 +19,15 @@
     composes: card;
 
     align-content: flex-end;
-    column-gap: var(--card-column-gap, var(--card-gap, 10px));
+    column-gap: var(--card-column-gap, var(--card-gap, 12px));
     row-gap: var(--card-row-gap, var(--card-gap, 5px));
-    grid-template-rows: 36px 30px;
+    grid-template-rows: 36px 32px;
 
     height: var(--card-height);
     max-height: var(--card-height);
     min-height: var(--card-height);
 
-    padding: var(--card-padding, 10px);
+    padding: var(--card-padding, 12px);
 
     background-color: var(--card-background-color, #000);
     background-position: center center;
@@ -35,7 +35,7 @@
     background-size: 100%;
 
     border-color: var(--card-border-color, none);
-    border-radius: var(--card-border-radius, 10px);
+    border-radius: var(--card-border-radius, 12px);
     border-style: solid;
     border-width: var(--border-width);
 }
@@ -136,5 +136,5 @@
 
 .page {
     row-gap: 5px;
-    column-gap: 10px;
+    column-gap: 12px;
 }

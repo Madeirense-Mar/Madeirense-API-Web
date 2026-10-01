@@ -1,3 +1,3 @@
 #root[data-page="welcome"] {
-    @apply mx-auto;
+    @apply flex flex-col justify-center items-center;
 }

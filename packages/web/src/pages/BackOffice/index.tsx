@@ -35,6 +35,7 @@ import {
     type countEntryType,
     type dateIntervalsType,
     type orderRevenueType,
+    resolveClassNames,
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
@@ -50,7 +51,9 @@ import ProfilePictureButton from "components/buttons/profile";
 import DoughnutChart from "components/charts/doughnut";
 import LineChart from "components/charts/line";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
+
+import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 import type { IPageState } from "components/interface";
 
@@ -382,6 +385,7 @@ function BackOfficeDashboardPage() {
 
         <section id="order-statistics" className='w-full'>
             <RevenueSection
+                id="os-scroll-section"
                 data-area="line"
                 array={data2 ?? []}
                 error={error2}
@@ -395,11 +399,11 @@ function BackOfficeDashboardPage() {
             <div data-area="dough" data-state={error1 ? "error" : "idle"}>
                 {(error1 || isFetching1)
                     ? <>
-                        {error1 && <span data-text="tag" className="m-auto">
+                        {error1 && <Tag className="m-auto">
                             <Icon name="ExclamationCircle" />
 
                             {error1.message}
-                        </span>}
+                        </Tag>}
 
                         {isFetching1 && <Icon name="Loading" className="animate-spin m-auto" />}
                     </>
@@ -445,19 +449,19 @@ function BackOfficeDashboardPage() {
                             </li>}
 
                             {isFetching6 && <>{Array.from(Array(defaultLoadShadowNumber), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
-                                <span data-text="tag" className='bg-gray-100/20 animate-pulse'>
+                                <Tag className='bg-gray-100/20 animate-pulse'>
                                     <span className='opacity-0'>#{num}</span>
 
                                     <Icon name="MapMarker" />
-                                </span>
+                                </Tag>
 
                                 <p className='opacity-0'>loading</p>
 
-                                <span data-text="tag" className='bg-gray-100/20 animate-pulse ml-auto'>
+                                <Tag className='bg-gray-100/20 animate-pulse ml-auto'>
                                     <Icon name="Order" />
 
                                     <span className='opacity-0'>0</span>
-                                </span>
+                                </Tag>
                             </li>)}</>}
                         </>
 
@@ -467,21 +471,21 @@ function BackOfficeDashboardPage() {
                             </li>
 
                             : (data6 ?? []).map(({ orders, ...delivery_location }, idx) => <li key={delivery_location.location_id}>
-                                <span data-text="tag" data-type="counter">
+                                <Tag data-type="counter">
                                     <span className='font-black'>{`#${idx + 1}`}</span>
 
                                     <Icon name="MapMarker" />
-                                </span>
+                                </Tag>
 
                                 <p className='font-bold italic'>
                                     {Boolean(delivery_location.neighborhood) ? delivery_location.neighborhood : "Diversas"}
                                 </p>
 
-                                <span data-text="tag" className='ml-auto'>
+                                <Tag className='ml-auto'>
                                     <Icon name="Order" />
 
                                     {orders}
-                                </span>
+                                </Tag>
                             </li>)
                     }</ul>
                 </section>
@@ -504,19 +508,19 @@ function BackOfficeDashboardPage() {
                             </li>}
 
                             {isFetching7 && <>{Array.from(Array(defaultLoadShadowNumber), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
-                                <span data-text="tag" className='bg-gray-100/20 animate-pulse'>
+                                <Tag className='bg-gray-100/20 animate-pulse'>
                                     <span className='opacity-0'>#{num}</span>
 
                                     <Icon name="MapMarker" />
-                                </span>
+                                </Tag>
 
                                 <p className='opacity-0'>loading</p>
 
-                                <span data-text="tag" className='bg-gray-100/20 animate-pulse ml-auto'>
+                                <Tag className='bg-gray-100/20 animate-pulse ml-auto'>
                                     <Icon name="Order" />
 
                                     <span className='opacity-0'>0</span>
-                                </span>
+                                </Tag>
                             </li>)}</>}
                         </>
 
@@ -536,11 +540,11 @@ function BackOfficeDashboardPage() {
                                     </span>
                                 </p>
 
-                                <span data-text="tag" className='ml-auto'>
+                                <Tag className='ml-auto'>
                                     <Icon name="Order" />
 
                                     {orders}
-                                </span>
+                                </Tag>
                             </li>)
                     }</ul>
                 </section>
@@ -561,19 +565,19 @@ function BackOfficeDashboardPage() {
                             </li>}
 
                             {isFetching8 && <>{Array.from(Array(defaultLoadShadowNumber), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
-                                <span data-text="tag" className='bg-gray-100/20 animate-pulse'>
+                                <Tag className='bg-gray-100/20 animate-pulse'>
                                     <span className='opacity-0'>#{num}</span>
 
                                     <Icon name="MapMarker" />
-                                </span>
+                                </Tag>
 
                                 <p className='opacity-0'>loading</p>
 
-                                <span data-text="tag" className='bg-gray-100/20 animate-pulse ml-auto'>
+                                <Tag className='bg-gray-100/20 animate-pulse ml-auto'>
                                     <Icon name="Order" />
 
                                     <span className='opacity-0'>0</span>
-                                </span>
+                                </Tag>
                             </li>)}</>}
                         </>
 
@@ -583,9 +587,9 @@ function BackOfficeDashboardPage() {
                             </li>
 
                             : (data8 ?? []).map(({ orders, ...coupon }, idx) => <li key={coupon.coupon_id}>
-                                <span data-text="tag" data-type="counter">
+                                <Tag data-type="counter">
                                     <span className='font-black'>{`#${idx + 1}`}</span>
-                                </span>
+                                </Tag>
 
                                 <Tag>
                                     <Icon name="Coupon" />
@@ -599,11 +603,11 @@ function BackOfficeDashboardPage() {
                                     {`${coupon.discount}%`}
                                 </Tag>
 
-                                <span data-text="tag" className='ml-auto'>
+                                <Tag className='ml-auto'>
                                     <Icon name="Order" />
 
                                     {orders}
-                                </span>
+                                </Tag>
                             </li>)
                     }</ul>
                 </section>
@@ -645,7 +649,7 @@ function BackOfficeDashboardPage() {
 
                             <p className='font-bold italic'>{product.name}</p>
 
-                            <span data-text="tag" className='w-full'>
+                            <Tag className='w-full'>
                                 <Icon name="Order" />
 
                                 {orders}
@@ -656,7 +660,7 @@ function BackOfficeDashboardPage() {
                                         : "Grátis"
                                     }
                                 </span>
-                            </span>
+                            </Tag>
                         </li>)
                 }</ul>
             </section>
@@ -682,6 +686,7 @@ type KPISectionType = (
 
 const KPISection = (
     {
+        className,
         kpi,
         ...props
     }: IKPISectionPropTypes
@@ -700,9 +705,9 @@ const KPISection = (
     };
 
     const LIST_ITEM_LOADER = () => Array.from(Array(3), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
-        <span data-text="tag" className='w-full bg-gray-100/20 animate-pulse'>
+        <Tag className='w-full bg-gray-100/20 animate-pulse'>
             <span className='opacity-0'>loading</span>
-        </span>
+        </Tag>
 
         <span className='opacity-0'>loading</span>
     </li>);
@@ -715,16 +720,16 @@ const KPISection = (
         $section.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, [pickedSection]);
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION" {...props}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
         <header>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value}>
+            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                 {kvp.icon}
 
                 {kvp.key}
             </Button>)}
         </header>
 
-        <div data-type="container">
+        <div>
             <section id="kpi-orders" className="gap-2">{
                 kpi["orders"].error
                     ? <div data-state="error" className='w-full flex flex-row justify-start items-center gap-2'>
@@ -737,12 +742,12 @@ const KPISection = (
                         kpi["orders"].isFetching
                             ? <LIST_ITEM_LOADER />
 
-                            : kpi["orders"].data.map(({ data, id }) => <li key={id}>
-                                <span data-text="tag" className='w-full'>
+                            : kpi["orders"].data.map(({ data, id }) => <li className="border" key={id}>
+                                <Tag className='w-full'>
                                     {getLabelIcon(id as $Enums.Orders_status)}
 
                                     {getLabel(id as $Enums.Orders_status)}
-                                </span>
+                                </Tag>
 
                                 <span>{data}</span>
                             </li>)
@@ -763,11 +768,11 @@ const KPISection = (
                             ? <LIST_ITEM_LOADER />
 
                             : kpi["products"].data.map(({ data, id }) => <li key={id}>
-                                <span data-text="tag" className='w-full'>
+                                <Tag className='w-full'>
                                     {getLabelIcon(id as $Enums.Orders_status)}
 
                                     {getLabel(id as $Enums.Products_product_type)}
-                                </span>
+                                </Tag>
 
                                 <span>{data}</span>
                             </li>)
@@ -796,6 +801,7 @@ interface IRevenueSectionPropTypes extends ComponentProps<"section"> {
 
 const RevenueSection = (
     {
+        className,
         array,
         interval,
         error,
@@ -868,9 +874,9 @@ const RevenueSection = (
         onChange: handleChange
     };
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION" {...props}>
-        <header className='overflow-x-auto flex-nowrap'>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant="text" data-selected={pickedSection === kvp.value} disabled={isFetching}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
+        <header>
+            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"} disabled={isFetching}>
                 {kvp.icon}
 
                 {kvp.key}

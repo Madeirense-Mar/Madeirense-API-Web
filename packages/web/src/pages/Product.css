@@ -1,29 +1,16 @@
-main[data-view="product-table"] {
-    display: grid;
-    position: relative;
-    overflow: auto;
-    gap: 0px;
-    width: 100%;
-    height: auto;
-    min-height: 100%;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-        "card"
-        "table"
-    ;
+#root[data-page="product"] {
+    display: flex;
+    flex-direction: column;
 }
 
-main[data-view="product-table"] div[class*="ProductCard"] {
-    --h: 410px;
-
-    height: var(--h);
-    max-height: var(--h);
-    min-height: var(--h);
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-bottom: none;
-    grid-area: card;
+main[data-view="product-table"] {
+    position: relative;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+    overflow: auto;
 }
 
 main[data-view="product-table"] > header {
@@ -60,7 +47,7 @@ main[data-view="product-table"] table tbody[data-section] {
 
 main[data-view="product-table"] table tbody tr td > div {
     @apply flex flex-col justify-start items-start;
-    padding: 10px;
+    padding: 12px;
 }
 
 main[data-view="product-table"] table tbody tr td {
@@ -86,7 +73,7 @@ main[data-view="product-table"] table tbody td form {
 main[data-view="product-table"] table tbody td form input {
     min-height: var(--base-button-height);
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border-width: var(--border-width);
     border-style: solid;
     border-radius: 5px;

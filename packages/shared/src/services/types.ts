@@ -18,7 +18,7 @@ export type dependencyType = {
     status: API$Types.status
 };
 
-export type platformType = "mobile" | "web";
+export type platformType = keyof typeof API$Enumerators.Platforms;
 
 export type serviceConstructorOptionsType<CustomOptions> = {
     defaultHeaders?: Record<string, string>,

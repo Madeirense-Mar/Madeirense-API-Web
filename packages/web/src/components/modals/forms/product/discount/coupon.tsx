@@ -17,7 +17,7 @@ import { useApp } from "contexts/App";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import type {
     Coupons
@@ -145,10 +145,6 @@ const CouponForm = ({
     };
 
     return <form data-state={(IS_LOADING || status === "loading") ? "disabled" : "idle"} onSubmit={PATCH_POST} className="h-full w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
-        <h2>
-            Cupons de desconto
-        </h2>
-
         {(status === "success") && <div data-state="success" className="w-full flex flex-row justify-center items-center gap-2">
             <Icon name="Check" />
 
@@ -157,23 +153,23 @@ const CouponForm = ({
 
         <div className="w-full flex flex-row justify-between items-center gap-1">
             <label data-variant="selectable" htmlFor="renew" className="w-full border p-2 rounded-lg">
+                <input id="renew" type="radio" name="mode" defaultChecked={mode === "renew"} value="renew" onChange={selectFormMode} className="mr-auto" />
+
                 <Icon name="Update" />
 
                 <span>Atualizar cupons</span>
-
-                <input id="renew" type="radio" name="mode" defaultChecked={mode === "renew"} value="renew" onChange={selectFormMode} className="w-full" />
             </label>
 
             <label data-variant="selectable" htmlFor="add" className="w-full border p-2 rounded-lg">
+                <input id="add" type="radio" name="mode" defaultChecked={mode === "add"} value="add" onChange={selectFormMode} className="mr-auto" />
+
                 <Icon name="Add" />
 
                 <span>Criar cupon</span>
-
-                <input id="add" type="radio" name="mode" defaultChecked={mode === "add"} value="add" onChange={selectFormMode} className="w-full" />
             </label>
         </div>
 
-        {(mode === "add") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+        {(mode === "add") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 rounded-md">
             <legend>Criar cupon</legend>
 
             <label htmlFor="code" className="text-lg w-full flex flex-row justify-start items-center gap-2">
@@ -185,7 +181,7 @@ const CouponForm = ({
                     <span className="italic opacity-30 ml-1 text-sm">(exe. MADEIRENSE-CÓDIGO-CUPON)</span>
                 </span>
 
-                <input title="Código de cupon" id="code" name="code" className="ml-auto w-[250px] text-center" placeholder="Código de cupon" type="text" data-element="h3" required />
+                <input title="Código de cupon" id="code" name="code" className="ml-auto w-[252px] text-center" placeholder="Código de cupon" type="text" data-element="h3" required />
             </label>
 
             <label htmlFor="coupon-discount" className="text-lg w-full flex flex-row justify-start items-center gap-2">
@@ -193,7 +189,7 @@ const CouponForm = ({
 
                 <span>Desconto</span>
 
-                <input title="Desconto" id="coupon-discount" name="coupon-discount" className="ml-auto w-[250px] text-center" placeholder="Percentagem" type="number" data-element="h3" required />
+                <input title="Desconto" id="coupon-discount" name="coupon-discount" className="ml-auto w-[252px] text-center" placeholder="Percentagem" type="number" data-element="h3" required />
             </label>
 
             <label htmlFor="expires_at" className="text-lg w-full flex flex-row justify-start items-center gap-2">
@@ -201,11 +197,11 @@ const CouponForm = ({
 
                 <span>Data de expiração</span>
 
-                <input min={new Date().toISOString().split('T')[0]} title="Nova data de expiração" id="expires_at" name="expires_at" className="ml-auto w-[250px] text-center" placeholder="Data de expiração" type="date" data-element="h3" required />
+                <input min={new Date().toISOString().split('T')[0]} title="Nova data de expiração" id="expires_at" name="expires_at" className="ml-auto w-[252px] text-center" placeholder="Data de expiração" type="date" data-element="h3" required />
             </label>
         </fieldset>}
 
-        {(mode === "renew") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+        {(mode === "renew") && <fieldset className="w-full flex flex-col justify-start items-start gap-11 rounded-md">
             <legend className="flex flex-row justify-start items-center gap-2">
                 Cupons
 
@@ -237,11 +233,11 @@ const CouponForm = ({
 
                         <span className="italic">{c.code}</span>
 
-                        <span data-text="tag" className="ml-auto">
+                        <Tag variant="success" className="ml-auto">
                             <Icon name="Discount" />
 
                             {`${c.discount}%`}
-                        </span>
+                        </Tag>
 
                         <Tag>
                             <Icon name="Calendar1" />
@@ -265,11 +261,11 @@ const CouponForm = ({
 
                         <span className="italic">{c.code}</span>
 
-                        <span data-text="tag" className="ml-auto">
+                        <Tag variant="success" className="ml-auto">
                             <Icon name="Discount" />
 
                             {`${c.discount}%`}
-                        </span>
+                        </Tag>
 
                         <Tag>
                             <Icon name="CalendarExpired" />

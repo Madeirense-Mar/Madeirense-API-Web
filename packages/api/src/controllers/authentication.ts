@@ -14,6 +14,7 @@ import {
 
 import {
     isEmpty,
+    API$Enumerators,
     type API$Types,
     type authenticatedProfileType,
     type authenticationCredentialsType,
@@ -49,7 +50,8 @@ import {
 } from '../utilities/ORM';
 
 import {
-    parseJWTTokensFromHeaderCookies
+    parseJWTTokensFromHeaderCookies,
+    parseTokensFromRequest
 } from '../utilities/parsers';
 
 import { 
@@ -149,7 +151,7 @@ export const login = async (
             success: false
         });
 
-        const platform: platformType = req.headers['platform'] as platformType ?? 'web';
+        const platform: platformType = req.headers[API$Enumerators.Headers.platform] as platformType ?? 'web';
 
         let tokens: Partial<tokenObjectType> = {};
 
@@ -181,7 +183,7 @@ export const login = async (
             data: convertDecimals(profile),
             httpStatus: 200,
             message: 'Welcome!',
-            ...tokens,
+            tokens: tokens as tokenObjectType,
             success: true,
         });
     } catch (error) {
@@ -283,7 +285,7 @@ export const me = async (
 };
 
 export const who = async (
-    req: IAuthenticatedRequest<tokenObjectType>,
+    req: IAuthenticatedRequest<any, tokenObjectType>,
     res: Response<API$Types.response<Users>>
 ) => {
     if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
@@ -296,8 +298,32 @@ export const who = async (
     });
 };
 
+export const refresh = async (
+    req: IAuthenticatedRequest<any, { refreshToken: string }>,
+    res: Response<API$Types.response<Users>>
+) => {
+    if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
+
+    // Deliberately NOT spreading parseTokensFromRequest(req) here — that
+    // would carry the (expired) sessionToken through, and renewTokens()
+    // only actually mints fresh tokens when sessionToken is exactly '';
+    // otherwise it just echoes the same dead token back. sessionToken: ''
+    // forces the "mint fresh from refreshToken" branch. Fixed 2026-09-08.
+    const newTokens = renewTokens({
+        sessionToken: '',
+        refreshToken: req.body.refreshToken
+    });
+
+    return res.json({
+        success: true,
+        message: 'User retrieved successfully',
+        data: convertDecimals(req.user),
+        tokens: newTokens
+    });
+};
+
 export const setCredentials = async (
-    req: IAuthenticatedRequest<authenticationCredentialsType>,
+    req: IAuthenticatedRequest<any, authenticationCredentialsType>,
     res: Response<API$Types.response<undefined>>
 ) => {
     try {

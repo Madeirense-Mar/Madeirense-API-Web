@@ -10,6 +10,7 @@ import {
 } from '@Madeirense/database';
 
 import {
+    API$Enumerators,
     type API$Types,
     type authenticatedProfileType
 } from '@Madeirense/shared';
@@ -81,6 +82,8 @@ export const validateJWT = async (
     res: Response<API$Types.response<undefined, 'Error'>>,
     next: NextFunction
 ) => {
+    const headers = req.headers;
+
     try {
         const {
             refreshToken,
@@ -105,11 +108,44 @@ export const validateJWT = async (
 
             payload = jwt.verify(sessionToken as string, env.JWT_SESSION_SECRET!) as JWTPayloadType;
         } catch (error) {
-            switch (true) {
-                case ((error as Error).message.includes('expired')):
-                    payload = jwt.verify(refreshToken as string, env.JWT_REFRESH_SECRET!) as JWTPayloadType;
+            switch (headers[API$Enumerators.Headers.platform] as keyof typeof API$Enumerators.Platforms) {
+                case 'web':
+                    switch (true) {
+                        case (error as Error).message.includes('expired'):
+                            payload = jwt.verify(refreshToken as string, env.JWT_REFRESH_SECRET!) as JWTPayloadType;
 
-                    hasSessionExpired = true;
+                            hasSessionExpired = true;
+                            
+                            break;
+                        
+                        default: throw (error as Error).message;
+                    }
+
+                    break;
+
+                // Added 2026-09-08. Mobile never sends a refresh token as a
+                // header (see parseTokensFromRequest — it's hardcoded to ''
+                // for mobile), so unlike web there's nothing in `refreshToken`
+                // here to fall back to. It only shows up in the POST body of
+                // the dedicated /v1/auth/refresh call, which is exactly the
+                // request this expired-session branch needs to let through.
+                case 'mobile':
+                    switch (true) {
+                        case (error as Error).message.includes('expired'): {
+                            const mobileRefreshToken = (req.body as { refreshToken?: string } | undefined)?.refreshToken;
+
+                            if (!mobileRefreshToken) throw (error as Error).message;
+
+                            payload = jwt.verify(mobileRefreshToken, env.JWT_REFRESH_SECRET!) as JWTPayloadType;
+
+                            hasSessionExpired = true;
+
+                            break;
+                        }
+
+                        default: throw (error as Error).message;
+                    }
+
                     break;
 
                 default: throw (error as Error).message;

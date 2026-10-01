@@ -23,8 +23,10 @@ export const parseTokensFromRequest = (req: Request): tokenObjectType => {
 
     switch (platform) {
         case 'mobile':
-            refreshToken = req.body.refreshToken;
-            sessionToken = req.body.sessionToken;
+            refreshToken = "";
+
+            const token = req.headers["authorization"];
+            sessionToken = !token ? "" : (token.split(" ")[1] as string);
 
             break;
 

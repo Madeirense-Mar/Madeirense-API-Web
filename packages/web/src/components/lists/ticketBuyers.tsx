@@ -24,7 +24,7 @@ import { useApp } from "contexts/App";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { nextPageTriggerSetup } from "./utilities/functions";
 
@@ -146,7 +146,7 @@ function TicketBuyersList(_props: IPropTypes) {
 
                     const ref = idx === list.length - 1 ? lastElementRef : undefined;
 
-                    return <li key={item.ticket_id} {...{ ref }}>
+                    return <li className="w-full flex flex-row gap-2" key={item.ticket_id} {...{ ref }}>
                         <Tag className="mr-auto">
                             <Icon name="User" className="inline-block mr-1" />
 
@@ -159,7 +159,7 @@ function TicketBuyersList(_props: IPropTypes) {
                             {formatNumber(parseFloat(`${item.Orders?.total_amount}`))}
                         </Tag>}
 
-                        <Tag>
+                        <Tag variant="success">
                             <Icon name="CashRegister" className="inline-block mr-1" />
 
                             {getLabel(item.Orders?.Payments[0].payment_method)}
@@ -171,7 +171,7 @@ function TicketBuyersList(_props: IPropTypes) {
                             </>}
                         </Tag>
 
-                        <Tag>
+                        <Tag variant="secondary">
                             {(item.validator_id)
                                 ? mode === "default" ? "Validado" : <>Validador <Icon name="ArrowRight" /> {item.Users_Tickets_Purchased_validator_idToUsers?.name}</>
                                 : "Por validar"
@@ -240,7 +240,7 @@ const HeaderListItem = ({
         });
     }
 
-    return <li data-type="filter">
+    return <li className="w-full flex flex-row justify-start items-center gap-4" data-type="filter">
         <Icon name="Filter" />
 
         {filters.map(f => <select
@@ -256,7 +256,7 @@ const HeaderListItem = ({
             </option>)}
         </select>)}
 
-        <Button onClick={clearFilters} variant="secondary">
+        <Button onClick={clearFilters} variant="secondary" className="ml-auto">
             <Icon name="Close" />
         </Button>
     </li>;

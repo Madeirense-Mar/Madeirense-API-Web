@@ -7,3 +7,757 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Blocked_Users {
+  block_id        Int                           @id @default(autoincrement())
+  blocked_user_id Int
+  blocked_by_type Blocked_Users_blocked_by_type
+  blocked_by_id   Int
+  reason          String?                       @db.Text
+  blocked_at      DateTime                      @default(now()) @db.DateTime(0)
+  expires_at      DateTime?                     @db.DateTime(0)
+  Users           Users                         @relation(fields: [blocked_user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Blocked_Users_ibfk_1")
+
+  @@index([blocked_user_id], map: "blocked_user_id")
+}
+
+model Cart {
+  cart_id    Int       @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  added_at   DateTime? @default(now()) @db.Timestamp(0)
+  quantity   Int       @default(1)
+  Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Cart_ibfk_1")
+  Products   Products  @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction, map: "Cart_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Chat_Messages {
+  message_id    Int                       @id @default(autoincrement())
+  order_id      Int
+  restaurant_id Int
+  sender_type   Chat_Messages_sender_type
+  sender_id     Int
+  message_text  String                    @db.Text
+  sent_at       DateTime?                 @default(now()) @db.DateTime(0)
+  Orders        Orders                    @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "Chat_Messages_ibfk_1")
+  Restaurants   Restaurants               @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Chat_Messages_ibfk_2")
+  Users         Users                     @relation(fields: [sender_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sender")
+
+  @@index([sender_id], map: "fk_sender")
+  @@index([order_id], map: "order_id")
+  @@index([restaurant_id], map: "restaurant_id")
+}
+
+model Coupons {
+  coupon_id  Int       @id @default(autoincrement())
+  code       String    @unique(map: "code") @db.VarChar(50)
+  discount   Decimal   @db.Decimal(5, 2)
+  expires_at DateTime  @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  Orders     Orders[]
+}
+
+model Courier_Positions {
+  position_id Int      @id @default(autoincrement())
+  courier_id  Int
+  latitude    Decimal  @db.Decimal(10, 7)
+  longitude   Decimal  @db.Decimal(10, 7)
+  recorded_at DateTime @default(now()) @db.DateTime(0)
+  speed_kph   Decimal? @db.Decimal(5, 2)
+  Users       Users    @relation(fields: [courier_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Courier_Positions_ibfk_1")
+
+  @@index([courier_id], map: "courier_id")
+}
+
+model Courier_Reallocation_Requests {
+  request_id                                                      Int                                   @id @default(autoincrement())
+  order_id                                                        Int
+  courier_id                                                      Int
+  requested_courier_id                                            Int?
+  motive                                                          Courier_Reallocation_Requests_motive
+  reason                                                          String?                               @db.Text
+  status                                                          Courier_Reallocation_Requests_status? @default(pending)
+  created_at                                                      DateTime?                             @default(now()) @db.DateTime(0)
+  updated_at                                                      DateTime?                             @db.DateTime(0)
+  Orders                                                          Orders                                @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "Courier_Reallocation_Requests_ibfk_1")
+  Users_Courier_Reallocation_Requests_courier_idToUsers           Users                                 @relation("Courier_Reallocation_Requests_courier_idToUsers", fields: [courier_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Courier_Reallocation_Requests_ibfk_2")
+  Users_Courier_Reallocation_Requests_requested_courier_idToUsers Users?                                @relation("Courier_Reallocation_Requests_requested_courier_idToUsers", fields: [requested_courier_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Courier_Reallocation_Requests_ibfk_3")
+
+  @@index([courier_id], map: "courier_id")
+  @@index([order_id], map: "order_id")
+  @@index([requested_courier_id], map: "requested_courier_id")
+}
+
+model Credentials {
+  credential_id Int       @id @default(autoincrement())
+  email         String    @unique(map: "email") @db.VarChar(255)
+  hash          String    @db.VarChar(255)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model Delivery_Locations {
+  location_id          Int           @id @default(autoincrement())
+  user_id              Int
+  address              String        @db.VarChar(255)
+  city                 String        @db.VarChar(100)
+  postal_code          String        @db.VarChar(20)
+  latitude             Decimal       @db.Decimal(9, 6)
+  longitude            Decimal       @db.Decimal(9, 6)
+  created_at           DateTime?     @default(now()) @db.Timestamp(0)
+  special_instructions String?       @db.Text
+  name                 String        @db.VarChar(100)
+  street_number        String?       @db.VarChar(50)
+  street_name          String?       @db.VarChar(255)
+  neighborhood         String?       @db.VarChar(100)
+  state                String?       @db.VarChar(100)
+  country              String        @db.VarChar(100)
+  preferred            Boolean?      @default(false)
+  updated_at           DateTime?     @default(now()) @db.Timestamp(0)
+  Users                Users         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Delivery_Locations_ibfk_1")
+  Orders               Orders[]
+  Resorts              Resorts[]
+  Restaurants          Restaurants[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model Favorites {
+  user_id    Int
+  product_id Int
+  Users      Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Favorites_ibfk_1")
+  Products   Products @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction, map: "Favorites_ibfk_2")
+
+  @@id([user_id, product_id])
+  @@index([product_id], map: "product_id")
+}
+
+model Global_Settings {
+  setting_id                             Int                                      @id @default(autoincrement())
+  order_threshold                        Int                                      @default(0)
+  avg_ttp                                Int                                      @default(20)
+  avg_ttd                                Int                                      @default(20)
+  prep_buffer                            Int                                      @default(20)
+  auto_assign_driver                     Boolean?                                 @default(false)
+  change_version                         String                                   @db.Char(36)
+  Global_Settings_Eligible_Payment_Types Global_Settings_Eligible_Payment_Types[]
+}
+
+model Global_Settings_Eligible_Payment_Types {
+  setting_id      Int
+  payment_method  Global_Settings_Eligible_Payment_Types_payment_method
+  Global_Settings Global_Settings                                       @relation(fields: [setting_id], references: [setting_id], onDelete: Cascade, onUpdate: NoAction, map: "Global_Settings_Eligible_Payment_Types_ibfk_1")
+
+  @@id([setting_id, payment_method])
+}
+
+model Notifications {
+  notification_id Int       @id @default(autoincrement())
+  user_id         Int
+  message         String    @db.Text
+  sent_at         DateTime? @default(now()) @db.Timestamp(0)
+  seen            Boolean?  @default(false)
+  Users           Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Notifications_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model Order_History {
+  history_id Int                  @id @default(autoincrement())
+  order_id   Int
+  user_id    Int
+  status     Order_History_status
+  created_at DateTime?            @default(now()) @db.Timestamp(0)
+  notes      String?              @db.Text
+  Orders     Orders               @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "Order_History_ibfk_1")
+  Users      Users                @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Order_History_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Order_Items {
+  item_id    Int      @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  quantity   Int
+  Orders     Orders   @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "Order_Items_ibfk_1")
+  Products   Products @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction, map: "Order_Items_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([product_id], map: "product_id")
+}
+
+model Orders {
+  order_id                       Int                             @id @default(autoincrement())
+  user_id                        Int
+  restaurant_id                  Int
+  status                         Orders_status?                  @default(pending)
+  created_at                     DateTime?                       @default(now()) @db.Timestamp(0)
+  total_amount                   Decimal                         @db.Decimal(10, 2)
+  delivery_address               Int
+  contact_phone                  String                          @db.VarChar(20)
+  special_instructions           String?                         @db.Text
+  coupon_id                      Int?
+  courier_id                     Int?
+  event_id                       Int?
+  delivered_at                   DateTime?                       @db.Timestamp(0)
+  updated_at                     DateTime?                       @default(now()) @db.Timestamp(0)
+  Chat_Messages                  Chat_Messages[]
+  Courier_Reallocation_Requests  Courier_Reallocation_Requests[]
+  Order_History                  Order_History[]
+  Order_Items                    Order_Items[]
+  Users_Orders_user_idToUsers    Users                           @relation("Orders_user_idToUsers", fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Orders_ibfk_1")
+  Restaurants                    Restaurants                     @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Orders_ibfk_2")
+  Delivery_Locations             Delivery_Locations              @relation(fields: [delivery_address], references: [location_id], onDelete: Cascade, onUpdate: NoAction, map: "Orders_ibfk_3")
+  Restaurant_Events              Restaurant_Events?              @relation(fields: [event_id], references: [event_id], onDelete: Cascade, onUpdate: NoAction, map: "Orders_ibfk_4")
+  Coupons                        Coupons?                        @relation(fields: [coupon_id], references: [coupon_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_coupon")
+  Users_Orders_courier_idToUsers Users?                          @relation("Orders_courier_idToUsers", fields: [courier_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_courier")
+  Payments                       Payments[]
+  Tickets_Purchased              Tickets_Purchased[]
+  User_Reviews                   User_Reviews[]
+
+  @@index([delivery_address], map: "Orders_ibfk_3")
+  @@index([event_id], map: "event_id")
+  @@index([coupon_id], map: "fk_coupon")
+  @@index([courier_id], map: "fk_courier")
+  @@index([restaurant_id], map: "restaurant_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Payments {
+  payment_id     Int                     @id @default(autoincrement())
+  order_id       Int
+  user_id        Int
+  amount         Decimal                 @db.Decimal(10, 2)
+  payment_method Payments_payment_method
+  status         Payments_status?        @default(pending)
+  created_at     DateTime?               @default(now()) @db.Timestamp(0)
+  Orders         Orders                  @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "Payments_ibfk_1")
+  Users          Users                   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Payments_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Products {
+  product_id        Int                    @id @default(autoincrement())
+  name              String                 @db.VarChar(255)
+  description       String                 @db.Text
+  price             Decimal                @db.Decimal(10, 2)
+  restaurant_id     Int?
+  discount          Decimal                @default(0.00) @db.Decimal(5, 2)
+  thumbnail         String?                @db.VarChar(255)
+  product_type      Products_product_type?
+  prep_time_minutes Int                    @default(0)
+  event_id          Int?
+  delisted          Boolean?               @default(false)
+  created_at        DateTime?              @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?              @default(now()) @db.Timestamp(0)
+  Cart              Cart[]
+  Favorites         Favorites[]
+  Order_Items       Order_Items[]
+  Restaurants       Restaurants?           @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Products_ibfk_1")
+  Restaurant_Events Restaurant_Events?     @relation(fields: [event_id], references: [event_id], onDelete: Cascade, onUpdate: NoAction, map: "Products_ibfk_2")
+  User_Comments     User_Comments[]
+
+  @@index([event_id], map: "event_id")
+  @@index([restaurant_id], map: "restaurant_id")
+}
+
+model Push_Notification_Subscriptions {
+  subscription_id Int     @id @default(autoincrement())
+  user_id         Int
+  target_endpoint String  @db.VarChar(2048)
+  expiration_time Int
+  p256dh          String? @db.VarChar(255)
+  auth            String? @db.VarChar(255)
+  Users           Users   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Push_Notification_Subscriptions_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model Resort_Amenities {
+  amenity_id            Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(100)
+  Resort_Room_Amenities Resort_Room_Amenities[]
+}
+
+model Resort_Bed_Types {
+  bed_type_id             Int                       @id @default(autoincrement())
+  name                    String                    @unique(map: "name") @db.VarChar(50)
+  sleeps                  Int
+  Resort_Room_Bed_Options Resort_Room_Bed_Options[]
+}
+
+model Resort_Booking_Cancellation_Policies {
+  policy_id   Int    @id @default(autoincrement())
+  description String @db.VarChar(255)
+}
+
+model Resort_Booking_Cancellations {
+  booking_id      Int                                      @id
+  reason_code     Resort_Booking_Cancellations_reason_code
+  Resort_Bookings Resort_Bookings                          @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_Cancellations_ibfk_1")
+}
+
+model Resort_Booking_History {
+  history_id      Int                            @id @default(autoincrement())
+  booking_id      Int
+  user_id         Int
+  status          Resort_Booking_History_status? @default(pending)
+  created_at      DateTime?                      @default(now()) @db.Timestamp(0)
+  notes           String?                        @db.Text
+  Resort_Bookings Resort_Bookings                @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_History_ibfk_1")
+  Users           Users                          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_History_ibfk_2")
+
+  @@index([booking_id], map: "booking_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Resort_Booking_Payments {
+  payment_id      Int                                    @id @default(autoincrement())
+  user_id         Int
+  amount          Decimal                                @db.Decimal(10, 2)
+  payment_method  Resort_Booking_Payments_payment_method
+  status          Resort_Booking_Payments_status?        @default(pending)
+  created_at      DateTime?                              @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?                              @default(now()) @db.Timestamp(0)
+  Users           Users                                  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_Payments_ibfk_2")
+  Resort_Bookings Resort_Bookings[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model Resort_Bookings {
+  booking_id                   Int                           @id @default(autoincrement())
+  user_id                      Int
+  room_id                      Int
+  resort_id                    Int
+  payment_id                   Int
+  check_in                     DateTime                      @db.Date
+  check_out                    DateTime                      @db.Date
+  guests                       Int                           @default(1)
+  status                       Resort_Bookings_status?       @default(pending)
+  created_at                   DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at                   DateTime?                     @default(now()) @db.Timestamp(0)
+  Resort_Booking_Cancellations Resort_Booking_Cancellations?
+  Resort_Booking_History       Resort_Booking_History[]
+  Users                        Users                         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_1")
+  Resort_Rooms                 Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_2")
+  Resorts                      Resorts                       @relation(fields: [resort_id], references: [resort_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_3")
+  Resort_Booking_Payments      Resort_Booking_Payments       @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_4")
+  Resort_Chat_Messages         Resort_Chat_Messages[]
+
+  @@index([payment_id], map: "Resort_Bookings_ibfk_4")
+  @@index([resort_id], map: "resort_id")
+  @@index([room_id], map: "room_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Resort_Chat_Messages {
+  message_id      Int                              @id @default(autoincrement())
+  booking_id      Int
+  sender_type     Resort_Chat_Messages_sender_type
+  sender_id       Int
+  message_text    String                           @db.Text
+  sent_at         DateTime?                        @default(now()) @db.DateTime(0)
+  Resort_Bookings Resort_Bookings                  @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Chat_Messages_ibfk_1")
+  Users           Users                            @relation(fields: [sender_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_resort_sender")
+
+  @@index([booking_id], map: "booking_id")
+  @@index([sender_id], map: "fk_sender")
+}
+
+model Resort_Room_Amenities {
+  room_id          Int
+  amenity_id       Int
+  Resort_Rooms     Resort_Rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Amenities_ibfk_1")
+  Resort_Amenities Resort_Amenities @relation(fields: [amenity_id], references: [amenity_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Amenities_ibfk_2")
+
+  @@id([room_id, amenity_id])
+  @@index([room_id], map: "Resort_Room_Amenities_ibfk_1")
+  @@index([amenity_id], map: "Resort_Room_Amenities_ibfk_2")
+}
+
+model Resort_Room_Bed_Options {
+  room_id          Int
+  bed_type_id      Int
+  quantity         Int              @default(1)
+  Resort_Rooms     Resort_Rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Bed_Options_ibfk_1")
+  Resort_Bed_Types Resort_Bed_Types @relation(fields: [bed_type_id], references: [bed_type_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Bed_Options_ibfk_2")
+
+  @@id([room_id, bed_type_id])
+  @@index([bed_type_id], map: "bed_type_id")
+}
+
+model Resort_Rooms {
+  room_id                 Int                        @id @default(autoincrement())
+  name                    String                     @db.VarChar(255)
+  created_at              DateTime?                  @default(now()) @db.Timestamp(0)
+  updated_at              DateTime?                  @default(now()) @db.Timestamp(0)
+  price_per_night         Decimal                    @db.Decimal(10, 2)
+  availability            Resort_Rooms_availability? @default(Available)
+  resort_id               Int
+  quantity                Int?                       @default(1)
+  Resort_Bookings         Resort_Bookings[]
+  Resort_Room_Amenities   Resort_Room_Amenities[]
+  Resort_Room_Bed_Options Resort_Room_Bed_Options[]
+  Resorts                 Resorts                    @relation(fields: [resort_id], references: [resort_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Rooms_ibfk_1")
+  Resort_Rooms_Media      Resort_Rooms_Media[]
+
+  @@index([resort_id], map: "Resort_Rooms_ibfk_1")
+}
+
+model Resort_Rooms_Media {
+  media_id     Int                           @id @default(autoincrement())
+  room_id      Int
+  created_at   DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?                     @default(now()) @db.Timestamp(0)
+  media_url    String?                       @db.VarChar(255)
+  media_type   Resort_Rooms_Media_media_type
+  Resort_Rooms Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Rooms_Media_ibfk_1")
+
+  @@index([room_id], map: "Resort_Rooms_Media_ibfk_1")
+}
+
+model Resorts {
+  resort_id          Int                 @id @default(autoincrement())
+  name               String              @db.VarChar(255)
+  location           Int?
+  created_at         DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
+  thumbnail_url      String?             @db.VarChar(255)
+  video_url          String?             @db.VarChar(255)
+  Resort_Bookings    Resort_Bookings[]
+  Resort_Rooms       Resort_Rooms[]
+  Delivery_Locations Delivery_Locations? @relation(fields: [location], references: [location_id], onDelete: Cascade, onUpdate: NoAction, map: "DeliveryLocations_ibfk_1")
+
+  @@index([location], map: "Restaurants_ibfk_1")
+}
+
+model Restaurant_Events {
+  event_id          Int                      @id @default(autoincrement())
+  restaurant_id     Int
+  name              String                   @db.VarChar(255)
+  description       String?                  @db.Text
+  event_date        DateTime                 @db.Date
+  start_time        DateTime                 @db.Time(0)
+  end_time          DateTime                 @db.Time(0)
+  price             Decimal                  @default(0.00) @db.Decimal(10, 2)
+  thumbnail_url     String?                  @db.VarChar(255)
+  video_url         String?                  @db.VarChar(255)
+  created_at        DateTime?                @default(now()) @db.Timestamp(0)
+  spots             Int?
+  status            Restaurant_Events_status
+  updated_at        DateTime?                @default(now()) @db.Timestamp(0)
+  Orders            Orders[]
+  Products          Products[]
+  Restaurants       Restaurants              @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Restaurant_Events_ibfk_1")
+  Tickets_Purchased Tickets_Purchased[]
+
+  @@index([restaurant_id], map: "restaurant_id")
+}
+
+model Restaurant_Hours {
+  hours_id      Int                          @id @default(autoincrement())
+  restaurant_id Int
+  day_of_week   Restaurant_Hours_day_of_week
+  opening_time  DateTime                     @db.Time(0)
+  closing_time  DateTime                     @db.Time(0)
+  is_closed     Boolean?                     @default(false)
+  Restaurants   Restaurants                  @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Restaurant_Hours_ibfk_1")
+
+  @@unique([restaurant_id, day_of_week], map: "restaurant_id")
+}
+
+model Restaurants {
+  restaurant_id      Int                 @id @default(autoincrement())
+  name               String              @db.VarChar(255)
+  location           Int?
+  created_at         DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
+  thumbnail_url      String?             @db.VarChar(255)
+  ttp                Int
+  ttd                Int
+  Chat_Messages      Chat_Messages[]
+  Orders             Orders[]
+  Products           Products[]
+  Restaurant_Events  Restaurant_Events[]
+  Restaurant_Hours   Restaurant_Hours[]
+  Delivery_Locations Delivery_Locations? @relation(fields: [location], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "Restaurants_ibfk_1")
+  Tickets_Purchased  Tickets_Purchased[]
+  Workstations       Workstations[]
+
+  @@index([location], map: "Restaurants_ibfk_1")
+}
+
+model Tickets_Purchased {
+  ticket_id                                   Int               @id @default(autoincrement())
+  user_id                                     Int
+  restaurant_id                               Int
+  order_id                                    Int
+  event_id                                    Int
+  quantity                                    Int?              @default(1)
+  price                                       Decimal           @db.Decimal(10, 2)
+  purchased_at                                DateTime?         @default(now()) @db.DateTime(0)
+  expiry_date                                 DateTime          @db.DateTime(0)
+  expired                                     Boolean?          @default(false)
+  validated_at                                DateTime?         @db.DateTime(0)
+  validator_id                                Int?
+  Users_Tickets_Purchased_user_idToUsers      Users             @relation("Tickets_Purchased_user_idToUsers", fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_1")
+  Restaurants                                 Restaurants       @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_2")
+  Orders                                      Orders            @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
+  Restaurant_Events                           Restaurant_Events @relation(fields: [event_id], references: [event_id], onDelete: Cascade, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_4")
+  Users_Tickets_Purchased_validator_idToUsers Users?            @relation("Tickets_Purchased_validator_idToUsers", fields: [validator_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_5")
+
+  @@index([event_id, expired], map: "idx_event_expired")
+  @@index([expired], map: "idx_expired")
+  @@index([order_id], map: "order_id")
+  @@index([restaurant_id], map: "restaurant_id")
+  @@index([user_id], map: "user_id")
+  @@index([validator_id], map: "validator_id")
+}
+
+model User_Comments {
+  comment_id Int       @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  comment    String    @db.Text
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "User_Comments_ibfk_1")
+  Products   Products  @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction, map: "User_Comments_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model User_Reviews {
+  review_id  Int       @id @default(autoincrement())
+  user_id    Int
+  order_id   Int
+  rating     Int?
+  comment    String?   @db.Text
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "User_Reviews_ibfk_1")
+  Orders     Orders    @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction, map: "User_Reviews_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Users {
+  user_id                                                                                 Int                               @id @default(autoincrement())
+  name                                                                                    String                            @db.VarChar(255)
+  email                                                                                   String                            @unique(map: "email") @db.VarChar(255)
+  phone                                                                                   String                            @db.VarChar(20)
+  profile_photo                                                                           String?                           @db.VarChar(255)
+  user_role                                                                               Users_user_role
+  Blocked_Users                                                                           Blocked_Users[]
+  Cart                                                                                    Cart[]
+  Chat_Messages                                                                           Chat_Messages[]
+  Courier_Positions                                                                       Courier_Positions[]
+  Courier_Reallocation_Requests_Courier_Reallocation_Requests_courier_idToUsers           Courier_Reallocation_Requests[]   @relation("Courier_Reallocation_Requests_courier_idToUsers")
+  Courier_Reallocation_Requests_Courier_Reallocation_Requests_requested_courier_idToUsers Courier_Reallocation_Requests[]   @relation("Courier_Reallocation_Requests_requested_courier_idToUsers")
+  Delivery_Locations                                                                      Delivery_Locations[]
+  Favorites                                                                               Favorites[]
+  Notifications                                                                           Notifications[]
+  Order_History                                                                           Order_History[]
+  Orders_Orders_user_idToUsers                                                            Orders[]                          @relation("Orders_user_idToUsers")
+  Orders_Orders_courier_idToUsers                                                         Orders[]                          @relation("Orders_courier_idToUsers")
+  Payments                                                                                Payments[]
+  Push_Notification_Subscriptions                                                         Push_Notification_Subscriptions[]
+  Resort_Booking_History                                                                  Resort_Booking_History[]
+  Resort_Booking_Payments                                                                 Resort_Booking_Payments[]
+  Resort_Bookings                                                                         Resort_Bookings[]
+  Resort_Chat_Messages                                                                    Resort_Chat_Messages[]
+  Tickets_Purchased_Tickets_Purchased_user_idToUsers                                      Tickets_Purchased[]               @relation("Tickets_Purchased_user_idToUsers")
+  Tickets_Purchased_Tickets_Purchased_validator_idToUsers                                 Tickets_Purchased[]               @relation("Tickets_Purchased_validator_idToUsers")
+  User_Comments                                                                           User_Comments[]
+  User_Reviews                                                                            User_Reviews[]
+  Workstations                                                                            Workstations[]
+}
+
+model Workstations {
+  workstation_id Int         @id @default(autoincrement())
+  user_id        Int
+  restaurant_id  Int
+  created_at     DateTime?   @default(now()) @db.DateTime(0)
+  Users          Users       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Workstations_ibfk_1")
+  Restaurants    Restaurants @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: Cascade, onUpdate: NoAction, map: "Workstations_ibfk_2")
+
+  @@unique([user_id, restaurant_id], map: "user_id")
+  @@index([restaurant_id], map: "restaurant_id")
+}
+
+enum Global_Settings_Eligible_Payment_Types_payment_method {
+  Credit_Card        @map("Credit Card")
+  Debit_Card         @map("Debit Card")
+  PayPal
+  Cash
+  Bank_Transfer      @map("Bank Transfer")
+  Payment_Reference  @map("Payment Reference")
+  Multicaixa_Express @map("Multicaixa Express")
+  Offer
+}
+
+enum Resort_Booking_Cancellations_reason_code {
+  GUEST_NO_SHOW
+  BAD_WEATHER
+  PAYMENT_ISSUE
+  DOUBLE_BOOKING
+  PERSONAL_EMERGENCY
+  TRAVEL_RESTRICTIONS
+  PROPERTY_MAINTENANCE
+  OWNER_CANCELLATION
+}
+
+enum Blocked_Users_blocked_by_type {
+  restaurant
+  admin
+  user
+}
+
+enum Resort_Chat_Messages_sender_type {
+  user
+  resort
+}
+
+enum Restaurant_Hours_day_of_week {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+}
+
+enum Chat_Messages_sender_type {
+  user
+  restaurant
+}
+
+enum Order_History_status {
+  pending
+  confirmed
+  preparing
+  ready
+  assigned
+  delivered
+  cancelled
+}
+
+enum Orders_status {
+  pending
+  confirmed
+  preparing
+  ready
+  assigned
+  delivered
+  cancelled
+}
+
+enum Resort_Booking_History_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum Resort_Booking_Payments_payment_method {
+  Credit_Card        @map("Credit Card")
+  Debit_Card         @map("Debit Card")
+  PayPal
+  Cash
+  Bank_Transfer      @map("Bank Transfer")
+  Payment_Reference  @map("Payment Reference")
+  Multicaixa_Express @map("Multicaixa Express")
+  Offer
+}
+
+enum Courier_Reallocation_Requests_motive {
+  VEHICLE_ISSUE  @map("VEHICLE-ISSUE")
+  UNAVAILABLE
+  DRIVER_IS_FAR  @map("DRIVER-IS-FAR")
+  TARDINESS
+  BAD_ALLOCATION @map("BAD-ALLOCATION")
+}
+
+enum Payments_payment_method {
+  Credit_Card        @map("Credit Card")
+  Debit_Card         @map("Debit Card")
+  PayPal
+  Cash
+  Bank_Transfer      @map("Bank Transfer")
+  Payment_Reference  @map("Payment Reference")
+  Multicaixa_Express @map("Multicaixa Express")
+  Offer
+}
+
+enum Resort_Booking_Payments_status {
+  pending
+  completed
+  failed
+  refunded
+}
+
+enum Payments_status {
+  pending
+  completed
+  failed
+  refunded
+}
+
+enum Resort_Rooms_availability {
+  Available
+  Limited
+  Sold_Out  @map("Sold Out")
+}
+
+enum Resort_Rooms_Media_media_type {
+  Thumbnail
+  Video
+}
+
+enum Users_user_role {
+  Customer
+  Staff
+  Admin
+  Driver
+  System
+  Ghost
+}
+
+enum Courier_Reallocation_Requests_status {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+enum Products_product_type {
+  starter
+  main
+  dessert
+  beverage
+  ticket
+}
+
+enum Resort_Bookings_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum Restaurant_Events_status {
+  upcoming
+  cancelled
+  ongoing
+  expired
+}

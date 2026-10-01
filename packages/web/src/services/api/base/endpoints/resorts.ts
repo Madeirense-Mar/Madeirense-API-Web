@@ -20,7 +20,7 @@ import {
 import type {
     Resort_Booking_Cancellations_reason_code,
     Resort_Bookings_status,
-    Resort_Room_Media_media_type,
+    Resort_Rooms_Media_media_type,
     Resorts,
     Resort_Amenities,
     Resort_Booking_Cancellation_Policies,
@@ -229,7 +229,7 @@ class ResortsEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
-    async updateRoomMediaFiles(id: number, payload: API$Types.listUpdateType<{ media_url: string, media_type: Resort_Room_Media_media_type }>) {
+    async updateRoomMediaFiles(id: number, payload: API$Types.listUpdateType<{ media_url: string, media_type: Resort_Rooms_Media_media_type }>) {
         const response = await this.client.patch<typeof payload, resortRoomType>(`/resorts/rooms/${id}/media`, payload);
 
         return response.data;

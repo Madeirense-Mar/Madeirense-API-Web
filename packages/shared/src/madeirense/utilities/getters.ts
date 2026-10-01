@@ -5,6 +5,7 @@ import type { $Enums } from "@Madeirense/database/browser";
 type labelType = (
     | $Enums.Payments_payment_method
     | $Enums.Payments_status
+    | $Enums.Products_product_composition
     | $Enums.Products_product_type
     | $Enums.Orders_status
     | $Enums.Users_user_role
@@ -54,8 +55,19 @@ export function getLabel<T>(label: T): string {
         case "Payment_Reference": return "Pagamento por referência";
         case "Offer": return "Oferta (Grátis)";
 
+        //Product compositions
+        case "alcoholic": return "Bebidas alcóolicas";
+        case "fish": return "Peixe";
+        case "meat": return "Carne";
+        case "merchandise": return "Merchandise";
+        case "mixed": return "Mistura";
+        case "non_alcoholic": return "Bebidas";
+        case "vegan": return "Vegetariano";
+        case "wheat": return "Farináceos";
+
         //Product types
         case "beverage": return "Bebidas";
+        case "garnish": return "Guarnições";
         case "dessert": return "Sobremesas";
         case "main": return "Principal";
         case "starter": return "Entradas";

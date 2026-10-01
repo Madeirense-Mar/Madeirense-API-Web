@@ -42,6 +42,7 @@ import {
 import type {
     IAuthenticatedRequest
 } from '../interfaces';
+import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -382,6 +383,40 @@ export const createOrder = async (
             success: false
         });
 
+        const restaurant_hours = await prisma.restaurant_Hours.findMany({ where: { restaurant_id } });
+
+        if (restaurant_hours.length === 0) return res.status(404).json({
+            data: undefined,
+            code: 'API_GENERIC_NOT_FOUND_ERROR',
+            message: 'Restaurant doesn\'t have a working schedule',
+            success: false
+        });
+
+        const DAY_NAMES: ReadonlyArray<$Enums.Restaurant_Hours_day_of_week> = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const now = new Date();
+        const currentSchedule = restaurant_hours.find(h => h.day_of_week === DAY_NAMES[now.getDay()]);
+
+        const isOpen = (() => {
+            if (!currentSchedule || currentSchedule.is_closed) return false;
+
+            const nowMinutes = now.getHours() * 60 + now.getMinutes();
+            const open = new Date(currentSchedule.opening_time);
+            const close = new Date(currentSchedule.closing_time);
+            const openMinutes = open.getHours() * 60 + open.getMinutes();
+            const closeMinutes = close.getHours() * 60 + close.getMinutes();
+
+            return closeMinutes > openMinutes
+                ? nowMinutes >= openMinutes && nowMinutes < closeMinutes
+                : nowMinutes >= openMinutes || nowMinutes < closeMinutes; // overnight window
+        })();
+
+        if (!isOpen) return res.status(500).json({
+            data: undefined,
+            code: 'API_GENERIC_ERROR',
+            message: 'Restaurant is currently closed',
+            success: false
+        });
+
         const restaurant_event = !event_id ? null : await prisma.restaurant_Events.findUnique({ where: { event_id } });
 
         if (event_id && !restaurant_event) return res.status(404).json({
@@ -479,8 +514,8 @@ export const createOrder = async (
         req.events?.orders.SILENT$emit('order.created');
 
         return res.status(201).json({
-            data: order,
-            message: 'Order created successfully',
+            data: convertDecimals(order),
+            message: `Order created successfully${!purchasedTickets ? '' : '. Tickets were automatically purchased and associated with your account.'}`,
             success: true
         });
     } catch (error) {
@@ -733,7 +768,7 @@ export const getMyOrders = async (
         const totalPages = Math.ceil(total / limit);
 
         return res.json({
-            data: orders,
+            data: convertDecimals(orders),
             message: 'User orders retrieved successfully',
             pagination: {
                 page,
@@ -798,7 +833,7 @@ export const getAllOrders = async (
         const totalPages = Math.ceil(total / limit);
 
         return res.json({
-            data: orders,
+            data: convertDecimals(orders),
             message: 'Orders retrieved successfully',
             pagination: {
                 page,
@@ -856,7 +891,7 @@ export const getOrderById = async (
         return res.json({
             success: true,
             message: 'Order retrieved successfully',
-            data: order
+            data: convertDecimals(order)
         });
     } catch (error) {
         return handleControllerError(

@@ -1,25 +1,23 @@
 .form fieldset {
     display: grid;
-    grid-template-columns: 1fr var(--base-button-height);
+    grid-template-columns: 1fr auto;
     grid-template-areas:
         "chat   chat"
         "input  button"
     ;
 }
 
-.form fieldset input,
-.form fieldset button[type="submit"] {
+.form fieldset input {
     border-top-right-radius: 0px !important;
     border-top-left-radius: 0px !important;
 }
 
 .form fieldset button[type="submit"] {
-    border-bottom-left-radius: 0px !important;
+    border-radius: 0px !important;
     grid-area: button;
 }
 
 .form fieldset input {
-    border-bottom-right-radius: 0px !important;
     grid-area: input;
 }
 

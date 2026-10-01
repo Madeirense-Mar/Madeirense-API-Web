@@ -256,25 +256,26 @@ model Payments {
 }
 
 model Products {
-  product_id        Int                    @id @default(autoincrement())
-  name              String                 @db.VarChar(255)
-  description       String                 @db.Text
-  price             Decimal                @db.Decimal(10, 2)
-  restaurant_id     Int?
-  discount          Decimal                @default(0.00) @db.Decimal(5, 2)
-  thumbnail         String?                @db.VarChar(255)
-  product_type      Products_product_type?
-  prep_time_minutes Int                    @default(0)
-  event_id          Int?
-  delisted          Boolean?               @default(false)
-  created_at        DateTime?              @default(now()) @db.Timestamp(0)
-  updated_at        DateTime?              @default(now()) @db.Timestamp(0)
-  Cart              Cart[]
-  Favorites         Favorites[]
-  Order_Items       Order_Items[]
-  Restaurants       Restaurants?           @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_1")
-  Restaurant_Events Restaurant_Events?     @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_2")
-  User_Comments     User_Comments[]
+  product_id          Int                           @id @default(autoincrement())
+  name                String                        @db.VarChar(255)
+  description         String                        @db.Text
+  price               Decimal                       @db.Decimal(10, 2)
+  restaurant_id       Int?
+  discount            Decimal                       @default(0.00) @db.Decimal(5, 2)
+  thumbnail           String?                       @db.VarChar(255)
+  product_type        Products_product_type?
+  prep_time_minutes   Int                           @default(0)
+  event_id            Int?
+  delisted            Boolean?                      @default(false)
+  created_at          DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?                     @default(now()) @db.Timestamp(0)
+  product_composition Products_product_composition?
+  Cart                Cart[]
+  Favorites           Favorites[]
+  Order_Items         Order_Items[]
+  Restaurants         Restaurants?                  @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_1")
+  Restaurant_Events   Restaurant_Events?            @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Products_ibfk_2")
+  User_Comments       User_Comments[]
 
   @@index([event_id], map: "event_id")
   @@index([restaurant_id], map: "restaurant_id")
@@ -358,6 +359,7 @@ model Restaurants {
   thumbnail_url      String?             @db.VarChar(255)
   ttp                Int
   ttd                Int
+  Application_Theme  Application_Theme[]
   Chat_Messages      Chat_Messages[]
   Orders             Orders[]
   Products           Products[]
@@ -546,18 +548,6 @@ model Resort_Room_Amenities {
   @@index([amenity_id], map: "Resort_Room_Amenities_ibfk_2")
 }
 
-model Resort_Room_Media {
-  media_id     Int                          @id @default(autoincrement())
-  room_id      Int
-  created_at   DateTime?                    @default(now()) @db.Timestamp(0)
-  updated_at   DateTime?                    @default(now()) @db.Timestamp(0)
-  media_url    String?                      @db.VarChar(255)
-  media_type   Resort_Room_Media_media_type
-  Resort_Rooms Resort_Rooms                 @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Rooms_Media_ibfk_1")
-
-  @@index([room_id], map: "Resort_Rooms_Media_ibfk_1")
-}
-
 model Resort_Rooms {
   room_id                 Int                        @id @default(autoincrement())
   name                    String                     @db.VarChar(255)
@@ -570,8 +560,8 @@ model Resort_Rooms {
   Resort_Bookings         Resort_Bookings[]
   Resort_Room_Amenities   Resort_Room_Amenities[]
   Resort_Room_Bed_Options Resort_Room_Bed_Options[]
-  Resort_Room_Media       Resort_Room_Media[]
   Resorts                 Resorts                    @relation(fields: [resort_id], references: [resort_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Rooms_ibfk_1")
+  Resort_Rooms_Media      Resort_Rooms_Media[]
 
   @@index([resort_id], map: "Resort_Rooms_ibfk_1")
 }
@@ -640,6 +630,27 @@ model Resort_Booking_History {
 
   @@index([booking_id], map: "booking_id")
   @@index([user_id], map: "user_id")
+}
+
+model Resort_Rooms_Media {
+  media_id     Int                           @id @default(autoincrement())
+  room_id      Int
+  created_at   DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?                     @default(now()) @db.Timestamp(0)
+  media_url    String?                       @db.VarChar(255)
+  media_type   Resort_Rooms_Media_media_type
+  Resort_Rooms Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Rooms_Media_ibfk_1")
+
+  @@index([room_id], map: "Resort_Rooms_Media_ibfk_1")
+}
+
+model Application_Theme {
+  restaurant_id Int
+  theme         Application_Theme_theme
+  Restaurants   Restaurants             @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Application_Theme_ibfk_1")
+
+  @@id([restaurant_id, theme])
+  @@index([restaurant_id], map: "restaurant_id")
 }
 
 enum Global_Settings_Eligible_Payment_Types_payment_method {
@@ -736,14 +747,6 @@ enum Courier_Reallocation_Requests_status {
   cancelled
 }
 
-enum Products_product_type {
-  starter
-  main
-  dessert
-  beverage
-  ticket
-}
-
 enum Restaurant_Events_status {
   upcoming
   cancelled
@@ -767,11 +770,6 @@ enum Resort_Booking_Payments_status {
   completed
   failed
   refunded
-}
-
-enum Resort_Room_Media_media_type {
-  Thumbnail
-  Video
 }
 
 enum Resort_Bookings_status {
@@ -809,4 +807,34 @@ enum Resort_Booking_History_status {
   confirmed
   cancelled
   completed
+}
+
+enum Resort_Rooms_Media_media_type {
+  Thumbnail
+  Video
+}
+
+enum Products_product_composition {
+  meat
+  fish
+  wheat
+  vegan
+  alcoholic
+  non_alcoholic @map("non-alcoholic")
+  mixed
+  merchandise
+}
+
+enum Products_product_type {
+  starter
+  garnish
+  main
+  dessert
+  beverage
+  ticket
+}
+
+enum Application_Theme_theme {
+  LAND
+  SEA
 }

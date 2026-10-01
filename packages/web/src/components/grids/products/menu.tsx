@@ -9,7 +9,7 @@ import {
     type KeyboardEvent
 } from "react";
 
-import { 
+import {
     useSearchParams
 } from "react-router-dom";
 
@@ -24,7 +24,7 @@ import {
     type productGroupType,
 } from "@Madeirense/shared";
 
-import { 
+import {
     useInfiniteQuery
 } from "@tanstack/react-query";
 
@@ -34,23 +34,26 @@ import MXP$App from "configurations";
 
 import ApplicationQueries from "configurations/queries";
 
-import { 
+import {
     useApp,
     type App$Types
 } from "contexts/App";
 
 import ProductCard from "components/cards/product";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
-import { 
+import {
     nextPageTriggerSetup
 } from "components/lists/utilities/functions";
 
-import type { 
-    $Enums, 
+import styles from "./menu.module.css";
+
+import type {
+    $Enums,
     Products
 } from "@Madeirense/database/browser";
+import SearchBar from "components/forms/searchBar";
 
 // ***************************************************************************************************************
 
@@ -103,8 +106,8 @@ function ProductsMenuGrid(_props: IPropTypes) {
         refetch,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetAllProducts", 
-            type, 
+            "App$GetAllProducts",
+            type,
             !group ? undefined : ({ group } as Madeirense$Types.searchQueryRecord)
         ]),
         queryFn: ApplicationQueries.getList<Products>,
@@ -115,14 +118,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
         },
         initialPageParam: 1
     });
-
-    const list = [
-        { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },
-        { key: "Entradas", value: { value: "starter", icon: <Icon name="Circle" /> } },
-        { key: "Principais", value: { value: "main", icon: <Icon name="Food" /> } },
-        { key: "Sobremesas", value: { value: "dessert", icon: <Icon name="Dessert" /> } },
-        { key: "Bebidas", value: { value: "beverage", icon: <Icon name="Drink" /> } },
-    ] as keyValuePair<string, { value: filterType, icon: any }>[];
 
     const lastElementRef = useCallback(
         nextPageTriggerSetup<HTMLDivElement>({
@@ -163,13 +158,6 @@ function ProductsMenuGrid(_props: IPropTypes) {
     const $divProps = {
         className: resolveClassNames(className),
         ...props
-    };
-
-    const $sliderPickerProps = {
-        className: "mb-4",
-        defaultValue: listFilter,
-        list: list,
-        onPick: handleTypeChange
     };
 
     useEffect(() => {
@@ -213,16 +201,12 @@ function ProductsMenuGrid(_props: IPropTypes) {
 
     switch (status) {
         case "pending": return <div {...$divProps}>
-            <SliderPicker {...$sliderPickerProps} disabled />
-
             <div className="flex flex-row justify-center items-center w-full h-full">
                 <Icon name="Loading" className="animate-spin mx-auto my-4" />
             </div>
         </div>;
 
         case "error": return <div {...$divProps}>
-            <SliderPicker {...$sliderPickerProps} disabled />
-
             <div className="w-full h-full flex flex-row justify-center items-center">
                 <div data-state="error" className="flex flex-row justify-center items-center gap-2 px-2 rounded-md">
                     <Icon name="ExclamationCircle" />
@@ -233,52 +217,45 @@ function ProductsMenuGrid(_props: IPropTypes) {
         </div>;
 
         default:
-            const list_PRE_FILTER = (data?.pages.flatMap(page => page.data) || []);
-            const list = (list_PRE_FILTER)
+
+            const fullList = (data?.pages.flatMap(page => page.data) || []);
+            const list = fullList
                 .filter(item => search === "" ? true : item?.name.toLowerCase().includes(search.toLowerCase()))
                 .filter(item => listFilter === "all" ? true : item?.product_type === listFilter)
                 .filter(item => (!defaultRestaurant || item?.restaurant_id === null) ? true : item?.restaurant_id === defaultRestaurant)
                 ;
 
+            const $sliderPickerProps = {
+                defaultValue: listFilter,
+                list: [
+                    { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },
+                    ...(
+                        [
+                            { key: "Entradas", value: { value: "starter", icon: <Icon name="Circle" /> } },
+                            { key: "Guarnições", value: { value: "garnish", icon: <Icon name="Salad" /> } },
+                            { key: "Principais", value: { value: "main", icon: <Icon name="Food" /> } },
+                            { key: "Sobremesas", value: { value: "dessert", icon: <Icon name="Dessert" /> } },
+                            { key: "Bebidas", value: { value: "beverage", icon: <Icon name="Drink" /> } },
+                        ] as keyValuePair<string, { value: filterType, icon: any }>[]
+                    ).filter(({ value }) => fullList.map(p => p?.product_type).includes(value.value as $Enums.Products_product_type))
+                ],
+                onPick: handleTypeChange
+            };
             return <div {...$divProps}>
-                <SliderPicker {...$sliderPickerProps} />
+                <div className={styles["filter-bar"]}>
+                    <SliderPicker {...$sliderPickerProps} />
 
-                {!disableSearch && <div className="w-full flex flex-row justify-center items-center gap-2 mb-4">
-                    <Icon name="Search" />
+                    {!disableSearch && <SearchBar
+                        className={styles["search-filter"]}
+                        inputProps={{
+                            placeholder: "Pesquise pelo nome do prato",
+                            onKeyDown: applySearch,
+                            onChange: handleSearch
+                        }}
+                    />}
+                </div>
 
-                    <input placeholder="Pesquise pelo nome do prato" data-element="h3" onKeyDown={applySearch} onChange={handleSearch} />
-                </div>}
-
-                {(!list_PRE_FILTER.length) && <div data-empty>
-                    Sem produtos registados
-                </div>}
-
-                {(list_PRE_FILTER.length > 0 && !list.length) && <div data-empty>
-                    Nenhum produto corresponde aos filtros de pesquisa:
-
-                    {Boolean(search) && <Tag>
-                        <Icon name="Search" />
-
-                        {search}
-                    </Tag>}
-
-                    {listFilter !== "all" && <Tag>
-                        {listFilter === "starter" && <Icon name="Circle" />}
-                        {listFilter === "beverage" && <Icon name="Drink" />}
-                        {listFilter === "dessert" && <Icon name="Dessert" />}
-                        {listFilter === "main" && <Icon name="Food" />}
-
-                        {getLabel(listFilter)}
-                    </Tag>}
-
-                    {defaultRestaurant && <Tag>
-                        <Icon name="Restaurant" />
-
-                        {restaurants.find(r => r?.restaurant_id === defaultRestaurant)?.name}
-                    </Tag>}
-                </div>}
-
-                <div data-grid="ProductCard" className="w-full">
+                <div data-grid="ProductCard" className={resolveClassNames(styles.grid, "w-full")}>
                     {list.map((item, idx) => {
                         if (!item) return null;
 

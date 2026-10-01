@@ -11,6 +11,7 @@ import {
 } from "@uploadcare/react-uploader";
 
 import {
+    MENU_PRODUCT_COMPOSITIONS,
     MENU_PRODUCT_TYPES,
     getLabel,
     formatUUID_UC_CDN_URL,
@@ -26,7 +27,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import RestaurantsSelector from "components/forms/elements/selects/restaurants";
 
-import type { 
+import type {
     $Enums
 } from "@Madeirense/database/browser";
 
@@ -42,7 +43,8 @@ type assetType = "thumbnail";
 
 type stateType = {
     uploadedThumbnailURL?: string,
-    pickRestaurant?: boolean
+    pickRestaurant?: boolean,
+    pickedProductType?: $Enums.Products_product_type
 };
 
 const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
@@ -60,6 +62,7 @@ const AddProductForm = ({
 
     const [form, updateForm] = useState<IComponentState<stateType, `uploading-${assetType}`>>({
         data: {
+            pickedProductType: undefined,
             pickRestaurant: false,
             uploadedThumbnailURL: "",
         },
@@ -78,6 +81,37 @@ const AddProductForm = ({
             "uploading-thumbnail"
         ].includes(status)
     }
+
+    const _ONLY_APPLICABLE_PRODUCT_COMPOSITIONS = (product_type?: $Enums.Products_product_type) => {
+        if (!product_type) return (comp: $Enums.Products_product_composition) => true;
+
+        return (comp: $Enums.Products_product_composition) => {
+            switch (product_type) {
+                case "beverage":
+                    return ([
+                        "alcoholic",
+                        "non_alcoholic"
+                    ] as $Enums.Products_product_composition[]).includes(comp);
+            
+                default:
+                    return !([
+                        "alcoholic",
+                        "non_alcoholic",
+                        "merchandise"
+                    ] as $Enums.Products_product_composition[]).includes(comp);
+            }
+        }
+    };
+
+    const handleProductTypePick = ({ target }: ChangeEvent<HTMLSelectElement>) => updateForm(p => {
+        return {
+            ...p,
+            data: {
+                ...p.data,
+                pickedProductType: target.value as $Enums.Products_product_type
+            }
+        }
+    });
 
     const handleRestaurantToggle = ({ target }: ChangeEvent<HTMLInputElement>) => updateForm(p => {
         return {
@@ -108,6 +142,7 @@ const AddProductForm = ({
                     prep_time_minutes: parseInt((elements.namedItem("prep_time_minutes") as HTMLInputElement).value as string),
                     restaurant_id: !data?.pickRestaurant ? undefined : parseInt((elements.namedItem("restaurant_id") as HTMLSelectElement).value as string),
                     discount: 0,
+                    product_composition: (elements.namedItem("product_composition") as HTMLInputElement).value as $Enums.Products_product_composition,
                     product_type: (elements.namedItem("product_type") as HTMLInputElement).value as $Enums.Products_product_type,
                     thumbnail: data?.uploadedThumbnailURL,
                 }
@@ -159,8 +194,8 @@ const AddProductForm = ({
         }
     };
 
-    return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
-        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-3 p-2 border rounded-md border-solid">
+    return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4" {...props}>
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-6 rounded-md">
             <legend>Sobre</legend>
 
             <header className="w-full flex flex-row justify-between items-center">
@@ -185,20 +220,30 @@ const AddProductForm = ({
             {[
                 status === "uploading-thumbnail",
                 data?.uploadedThumbnailURL !== ""
-            ].includes(true) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
+            ].includes(true) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px]">
                     {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
                 </div>}
 
-            <div className="w-full flex flex-row justify-between items-center gap-1">
-                <label htmlFor="name" className="w-full text-left">
-                    <input id="name" className="w-full" name="name" title="Nome do prato" data-element="h3" type="text" placeholder="Nome do produto" required />
-                </label>
+            <label htmlFor="name" className="w-full text-left">
+                <input id="name" className="w-full" name="name" title="Nome do prato" data-element="h3" type="text" placeholder="Nome do produto" required />
+            </label>
 
+            <div className="w-full flex flex-row justify-between items-center gap-5">
                 <label htmlFor="product_type" className="w-full text-left">
-                    <select title="Tipo de produto" id="product_type" name="product_type" data-element="h3" defaultValue={""} className="w-full" required>
+                    <select onChange={handleProductTypePick} title="Tipo de produto" id="product_type" name="product_type" data-element="h3" defaultValue={""} className="w-full" required>
                         <option hidden value="">Tipo do produto</option>
 
                         {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
+                            {getLabel(t)}
+                        </option>)}
+                    </select>
+                </label>
+
+                <label htmlFor="product_composition" className="w-full text-left">
+                    <select disabled={!Boolean(form.data?.pickedProductType)} title="Composição do produto" id="product_composition" name="product_composition" data-element="h3" defaultValue={""} className="w-full" required>
+                        <option hidden value="">Composição do produto</option>
+
+                        {MENU_PRODUCT_COMPOSITIONS.filter(_ONLY_APPLICABLE_PRODUCT_COMPOSITIONS(form.data?.pickedProductType)).map(t => <option key={t} value={t}>
                             {getLabel(t)}
                         </option>)}
                     </select>
@@ -214,7 +259,7 @@ const AddProductForm = ({
             </label>
         </fieldset>
 
-        <fieldset className="w-full flex flex-row justify-between items-center gap-2 border p-2 rounded-lg">
+        <fieldset className="w-full flex flex-row justify-between items-center gap-2 border rounded-lg">
             <legend>Preço</legend>
 
             <label htmlFor="price" className="text-lg flex flex-row justify-start items-center gap-2">
@@ -226,10 +271,10 @@ const AddProductForm = ({
             <input title="Preço" id="price" name="price" defaultValue={0} min={0} type="number" data-element="h3" required />
         </fieldset>
 
-        <fieldset className="w-full flex flex-col justify-start items-start gap-2 p-2 border rounded-md">
+        <fieldset className="w-full flex flex-col justify-start items-start gap-2 border rounded-md">
             <legend>Outros</legend>
 
-            <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-betw items-center gap-2 border p-2 rounded-lg">
+            <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-between items-center gap-2 p-2">
                 <Icon name="Time" />
 
                 <span className="mr-auto">Tempo de preparo (em minutos)</span>
@@ -237,7 +282,7 @@ const AddProductForm = ({
                 <input title="Tempo de preparo (em minutos)" id="prep_time_minutes" name="prep_time_minutes" defaultValue={3} min={3} type="number" required />
             </label>
 
-            <label className="flex flex-row justify-start items-center gap-1 w-full border p-2 rounded-lg">
+            <label className="flex flex-row justify-start items-center gap-1 w-full p-2">
                 <input type="checkbox" placeholder="Aonde será servido o produto" defaultChecked={!data?.pickRestaurant} onChange={handleRestaurantToggle} />
 
                 <span>Produto será servido por todos os restaurantes</span>
@@ -248,7 +293,7 @@ const AddProductForm = ({
 
                 <br />
 
-                <RestaurantsSelector title="Restaurante" id="restaurant_id" data-element="h1" name="restaurant_id" defaultOptionLabel="Local do evento" defaultValue={""} withoutDefaultOption />
+                <RestaurantsSelector className="w-full" title="Restaurante" id="restaurant_id" data-element="h1" name="restaurant_id" defaultOptionLabel="Local do evento" defaultValue={""} withoutDefaultOption />
             </label>}
         </fieldset>
 
@@ -264,13 +309,13 @@ const AddProductForm = ({
                     <Icon name="Loading" className="animate-spin" />
                 </Button>
 
-                : <div className="w-full flex flex-row justify-start items-center gap-2">
-                    <Button value="once" type="submit" className="w-full">
-                        Adicionar
-                    </Button>
-
+                : <div className="w-full flex flex-row justify-between items-center gap-2">
                     <Button value="another" type="submit" variant="secondary">
                         Submeter e adicionar outro
+                    </Button>
+
+                    <Button value="once" type="submit">
+                        Adicionar
                     </Button>
                 </div>
             }

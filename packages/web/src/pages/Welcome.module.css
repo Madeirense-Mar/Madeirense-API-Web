@@ -1,49 +1,39 @@
 .page {
     @apply m-auto;
+
+    height: -webkit-fill-available;
 }
 
-.page form {
+.form {
     @apply flex flex-col justify-center items-center gap-2 w-full;
+    grid-area: form;
     background-color: var(--base-background);
     border: var(--border-width) solid var(--border-color);
-    border-radius: 10px;
-    padding: 30px;
+    border-radius: 12px;
+    padding: 32px;
     min-height: 100%;
 }
 
-.page form label,
-.page form label span,
-.page form button[data-variant="text"],
-.page form input,
-.page form textarea,
-.page form select {
+.form label,
+.form label span,
+.form button[data-variant="text"],
+.form input,
+.form textarea,
+.form select {
     font-size: 12px;
 }
 
-.page form a,
-.page form ul li {
+.form a,
+.form ul li {
     font-size: 12px;
 }
 
-.page form button:not([data-variant="text"]) {
-    @apply w-full;
-}
-
-.page form header {
-    @apply w-full;
-}
-
-.page form header * {
-    margin-right: auto;
-    text-align: left;
-}
-
-.page form header p {
+.form header p {
     @apply my-2;
     opacity: 0.7;
 }
 
-.page form hr {
+.form hr {
     --height: 1px;
     --width: 100%;
 
@@ -55,19 +45,19 @@
     opacity: 0.7;
 }
 
-.page form fieldset {
+.form fieldset {
     @apply flex flex-col justify-center items-start gap-1 w-full;
 }
 
-.page form fieldset *:not(button[data-variant="text"]) {
+.form fieldset *:not(button[data-variant="text"]) {
     @apply w-full;
 }
 
-.page form ul {
+.form ul {
     @apply flex flex-col justify-start items-start gap-1;
 }
 
-.page form ul li {
+.form ul li {
     @apply italic;
     padding: 0px 5px;
     border-radius: 5px;
@@ -77,16 +67,65 @@
     grid-template-columns: 1.5fr 2fr;
 }
 
-.page {
-    grid-template-rows: 1vh;
-    grid-template-areas:
-        "main"
-    ;
+.login {
+    composoes: page;
 }
 
-@media only screen and (max-width: 1080px) {
+.signup {
+    composoes: page;
 }
 
-@media only screen and (min-width: 1081px) {
-    
+.forgot {
+    composoes: page;
 }
+
+.panel {
+    height: -webkit-fill-available;
+    grid-area: panel;
+    border-radius: 12px;
+    background-color: beige;
+}
+
+.message {
+    text-align: center;
+    grid-area: message;
+}
+
+.oauth {
+    height: -webkit-fill-available;
+    grid-area: oauth;
+}
+
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+
+    .login,
+    .signup,
+    .forgot {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .forgot {
+        grid-template-areas:
+            "panel  form"
+        ;
+    }
+
+    .login,
+    .signup {
+        align-items: center;
+        justify-content: center;
+        grid-template-areas:
+            "panel  form"
+            "panel  message"
+            "panel  oauth"
+        ;
+    }
+}
+
+@media only screen and (min-width: 1366px) {}

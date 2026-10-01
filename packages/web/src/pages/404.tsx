@@ -9,7 +9,7 @@ import {
 import { useOrders } from "contexts/Orders";
 
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import styles from "./404.module.css";
 

@@ -24,6 +24,7 @@ import {
 import {
     type IEventfulRequest
 } from '../middlewares/events';
+import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -331,12 +332,12 @@ export const validateCoupon = async (
         return res.status(200).json({
             success: true,
             message: 'Coupon is valid',
-            data: {
+            data: convertDecimals({
                 coupon_id: coupon.coupon_id,
                 code: coupon.code,
                 discount: coupon.discount,
                 expires_at: coupon.expires_at
-            }
+            })
         });
     } catch (error) {
         return handleControllerError(

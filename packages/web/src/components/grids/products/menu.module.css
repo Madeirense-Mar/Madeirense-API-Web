@@ -1,3 +1,31 @@
 .grid {
     composes: grid from "../grid.module.css";
 }
+
+@media only screen and (min-width: 344px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+}
+
+@media only screen and (min-width: 428px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(252px, 1fr));
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .filter-bar {
+        @apply flex flex-col justify-center items-center;
+    }
+
+    .search-filter {
+        width: 100%;
+    }
+
+    .grid {
+        grid-template-columns: repeat(3, minmax(300px, 1fr));
+    }
+}
+
+@media only screen and (min-width: 1366px) {}

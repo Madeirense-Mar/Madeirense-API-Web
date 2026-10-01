@@ -1,12 +1,13 @@
 .card {
-    --default-padding: 10px;
+    --default-padding: 12px;
 
     --card-height: 265px;
 
     composes: card from "./card.module.css";
 
     display: grid;
-    column-gap: var(--card-column-gap, 10px);
+    align-items: center;
+    column-gap: var(--card-column-gap, 12px);
     row-gap: var(--card-row-gap, 5px);
     grid-template-areas:
         "thumbnail title"
@@ -17,10 +18,8 @@
     max-height: var(--card-height);
     min-height: var(--card-height);
 
-    padding: var(--card-padding, var(--card-padding-y, var(--default-padding))) var(--card-padding, var(--card-padding-x, var(--default-padding)));
-
-    border-color: var(--card-border-color,var(--border-color));
-    border-radius: var(--card-border-radius, 10px);
+    border-color: var(--card-border-color, var(--base-border-color));
+    border-radius: var(--card-border-radius, 12px);
     border-style: var(--card-border-style, solid);
     border-width: var(--card-border-width, var(--border-width));
 
@@ -30,7 +29,7 @@
 .card a,
 .card h4 {
     @apply font-bold;
-    
+
     grid-area: title;
     font-size: 1.5em;
 }
@@ -38,11 +37,15 @@
 .card div[data-section="thumbnail"] {
     @apply flex flex-col justify-center items-center w-full h-full gap-2;
     grid-area: thumbnail;
+
     background-position: center center;
     background-size: 100%;
     background-repeat: no-repeat;
-    padding: 10px;
-    border-radius: 10px;
+
+    padding: 12px;
+    border-right: var(--card-border-width, var(--border-width)) solid var(--base-border-color);
+    border-radius: 12px 0 0 12px;
+
     height: var(--height);
     max-height: var(--height);
     min-height: var(--height);
@@ -56,7 +59,7 @@
 }
 
 .card div[data-section="thumbnail"] span {
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .card section {
@@ -114,7 +117,7 @@
     composes: card;
 }
 
-@media only screen and (max-width: 650px) {}
+@media only screen and (max-width: 652px) {}
 
 @media only screen and (max-width: 1239px) {
     .card {

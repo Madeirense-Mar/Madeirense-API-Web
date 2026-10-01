@@ -20,9 +20,11 @@ import {
     DEFAULT_SUMMARY,
     API$Enumerators,
     Madeirense$Types,
+    type cartType,
     type appPreferencesType,
     type cartedProductType,
     type cartSummaryType,
+    MENU_PRODUCT_TYPES,
 } from "@Madeirense/shared";
 
 import type {
@@ -42,7 +44,7 @@ interface IContext {
     clear: (type: "all" | cartType) => Promise<boolean>,
     clear$Dry: (type: "all" | cartType) => void
     errors: Error[];
-    remove: (product_id: number) => Promise<boolean>,
+    remove: (product_id: number, quantity?: number) => Promise<boolean>,
     state: contextStatusType;
 };
 
@@ -58,8 +60,6 @@ type cartPropertiesType = {
     eventCart: cartedProductType[],
     eventSummary: cartSummaryType
 };
-
-type cartType = "delivery" | "event";
 
 type contextStatusType = statusType<(
     | "adding"
@@ -81,7 +81,7 @@ type cartActionType = (
     | { type: 'SET_EVENT_SUMMARY'; payload: cartSummaryType }
 );
 
-const DEFAULT_STATE = {
+const DEFAULT_CART_STATE = {
     deliveryCart: [],
     deliverySummary: DEFAULT_SUMMARY,
     eventCart: [],
@@ -99,8 +99,17 @@ function reducer(
         case 'CLEAR_ERRORS':
             return { ...state, errors: [] };
 
+        case 'CLEAR_CART':
+            return { ...state, errors: [], cart: DEFAULT_CART_STATE };
+
+        case 'CLEAR_DELIVERY_CART':
+            return { ...state, errors: [], cart: { ...state.cart, deliveryCart: [] } };
+
+        case 'CLEAR_EVENT_CART':
+            return { ...state, errors: [], cart: { ...state.cart, eventCart: [] } };
+
         case 'RESET':
-            return { status: 'idle', errors: [], cart: DEFAULT_STATE };
+            return { status: 'idle', errors: [], cart: DEFAULT_CART_STATE };
 
         case 'SET_CART':
             return { status: 'idle', errors: [], cart: action.payload };
@@ -145,7 +154,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
     const { state: profileState } = useProfile();
 
     const [state, dispatch] = useReducer(reducer, {
-        cart: DEFAULT_STATE,
+        cart: DEFAULT_CART_STATE,
         errors: [],
         status: "idle",
     });
@@ -167,20 +176,15 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             const { Products: product } = (await clients.carts.addItem(product_id)) ?? {};
 
             switch (product?.product_type) {
-                case "beverage":
-                case "main":
-                case "dessert":
-                case "starter":
-                    array = [...state.cart.deliveryCart];
-                    type = "delivery";
-                    break;
-
                 case "ticket":
                     array = [...state.cart.eventCart];
                     type = "event";
                     break;
 
-                default: throw new Error(`Invalid product type: ${product?.product_type}`);
+                default:
+                    array = [...state.cart.deliveryCart];
+                    type = "delivery";
+                    break;
             };
 
             const index = array.findIndex(pr => pr.product_id === product?.product_id);
@@ -230,7 +234,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         };
     }, []);
 
-    const clear = useCallback(async (type: "all" | "delivery" | "event" = "all") => {
+    const clear = useCallback(async (type: "all" | cartType = "all") => {
         dispatch({ type: "SET_STATUS", payload: "discarding" });
 
         try {
@@ -280,7 +284,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         try {
             const cart = (await clients.carts.getMyCart()) ?? [];
 
-            const deliveryCart = cart.filter(p => !p.product_type ? false : (["beverage", "dessert", "main", "starter"] as $Enums.Products_product_type[]).includes(p.product_type));
+            const deliveryCart = cart.filter(p => !p.product_type ? false : (MENU_PRODUCT_TYPES).includes(p.product_type));
             const deliverySummary = (await clients.carts.getSummary("delivery")) ?? DEFAULT_SUMMARY;
 
             const eventCart = cart.filter(p => !p.product_type ? false : (["ticket"] as $Enums.Products_product_type[]).includes(p.product_type));
@@ -299,7 +303,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         }
     }, [clients.carts, handleError]);
 
-    const remove = useCallback(async (product_id: number) => {
+    const remove = useCallback(async (product_id: number, quantity: number = 1) => {
         const product = [
             ...state.cart.deliveryCart,
             ...state.cart.eventCart
@@ -310,31 +314,26 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         dispatch({ type: "SET_STATUS", payload: "loading" });
 
         try {
-            await clients.carts.removeItem(product_id);
+            await clients.carts.removeItem(product_id, quantity);
 
             let array = [] as cartedProductType[];
             let type: cartType;
 
             switch (product.product_type) {
-                case "beverage":
-                case "main":
-                case "dessert":
-                case "starter":
-                    array = [...state.cart.deliveryCart];
-                    type = "delivery";
-                    break;
-
                 case "ticket":
                     array = [...state.cart.eventCart];
                     type = "event";
                     break;
 
-                default: throw new Error(`Invalid product type: ${product.product_type}`);
+                default:
+                    array = [...state.cart.deliveryCart];
+                    type = "delivery";
+                    break;
             };
 
             const index = array.findIndex(pr => pr.product_id === product_id);
 
-            array[index].quantity -= 1;
+            array[index].quantity -= quantity;
 
             if (array[index].quantity === 0) array = array.filter((_, idx) => idx !== index);
 

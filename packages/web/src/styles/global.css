@@ -1,49 +1,114 @@
 :root {
-    --danger: #ff0000;
-    --neutral: #b9804a;
-    --primary: #ffd700;
-    --secondary: #002f6c;
-    --success: #389b50;
-    --warning: #f0b639;
+    /*  Follows the tokens defined in the PenPot file:
+            - https://design.penpot.app/#/workspace?team-id=9529fedc-e097-80ce-8008-648354c60462&file-id=9529fedc-e097-80ce-8008-6483893adb97&page-id=9529fedc-e097-80ce-8008-6483893adb98&board-id=8f2f5877-217e-8035-8008-6d98d44c3027&layout=tokens
+    */
 
-    --background-color: color-mix(in srgb, var(--neutral), black 70%);
+    /*#region Colors*/
+    --accent: #9b0808;
 
-    --border-color: #dadada;
+    --primary: #0b5196;
+    --primary-light: #61a7ec;
+    --primary-dark: #05223d;
+
+    --secondary: #fbe200;
+    --secondary-light: #fff388;
+    --secondary-dark: #3f3900;
+
+    --neutral: #a2a2a2;
+    --neutral-dark: #1a1a1a;
+    --neutral-light: #fff;
+
+    --success: #8dd751;
+    --success-dark: #1a3404;
+    /*#endregion*/
+    
+    /*#region Base element sizes*/
+    --base-notification-height: 70px;
+    /*#endregion*/
+
+    /*#region Spacing*/
+    --base-padding: 24px;
+    --container-padding: 32px;
+
+    --gap-xl: 20px;
+    --gap-l: 16px;
+    --gap-m: 12px;
+    --gap-s: 8px;
+    --gap-xs: 4px;
+
     --border-width: 1px;
-
-    --text-color: #dadada;
-    --text-contrast-color: #dadada;
-
-    --page-margin: 10px;
+    
+    --page-margin: 12px;
+    /*#endregion*/
 }
 
-*:not(div:has(.uc-visual-drop-area) *) {
+/* *:not(div:has(.uc-visual-drop-area) *) { */
+* {
     z-index: 0;
-    color: var(--text-color);
     box-sizing: border-box;
     transition: all 0.1s ease-in-out;
 }
 
 body {
     --h: 100vh;
+    --w: 100vw;
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 
     height: var(--h);
+    width: var(--w);
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
 
     margin: 0;
 
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-family: "Albert Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
 
     background-color: var(--background-color);
+}
+
+body[data-theme*="DARK"] {
+    --base-text-color: var(--neutral-light);
+
+    --text-contrast-color: var(--neutral-light);
+}
+
+body[data-theme*="LIGHT"] {
+    --base-text-color: var(--neutral-dark);
+    
+    --text-contrast-color: var(--neutral-dark);
+}
+
+body[data-theme="LAND-DARK"] {
+    --base-border-color: var(--secondary);
+    --base-background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
+
+    --background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
+}
+
+body[data-theme="LAND-LIGHT"] {
+    --background-color: color-mix(in srgb, var(--secondary-light), white 70%);
+}
+
+body[data-theme="SEA-DARK"] {
+    --base-border-color: var(--primary-light);
+    --base-background-color: var(--primary);
+
+    --background-color: var(--primary-dark);
+}
+
+body[data-theme="SEA-LIGHT"] {
+    --background-color: color-mix(in srgb, var(--primary-light), black 70%);
+}
+
+body * {
+    color: var(--text-color, var(--base-text-color));
+    border-color: var(--border-color, var(--base-border-color));
 }
 
 code {
@@ -51,6 +116,107 @@ code {
         monospace;
 }
 
-dialog * {
-    color: var(--base-text-color);
+h2,
+h3 {
+    @apply font-black;
 }
+
+h4,
+h5,
+h6 {
+    @apply font-bold;
+}
+
+h1,
+[data-element="header"] {
+    font-family: "Climate Crisis", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+        "YEAR" 1979;
+}
+
+h1 {
+    font-size: 1.44rem;
+}
+
+h2 {
+    font-size: 1.36rem;
+}
+
+h3 {
+    font-size: 1.12rem;
+}
+
+h4 {
+    font-size: 1.8rem;
+}
+
+h5 {
+    font-size: 1.4rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
+p {
+    font-size: 1rem;
+}
+
+a[data-active="true"] {
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:visited:hover {
+    text-decoration: dotted;
+}
+
+/*#region Containers*/
+main {
+    grid-area: application-body;
+
+    height: auto;
+
+    padding-bottom: var(--main-padding, var(--container-padding));
+    padding-top: var(--main-padding,var(--container-padding));
+
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+    margin-left: var(--main-margin-x, auto);
+    margin-right: var(--main-margin-x, auto);
+
+    width: var(--main-width, var(--main-base-width));
+}
+/*#endregion*/
+
+/*#region Media*/
+@media only screen and (min-width: 344px) {
+    body #root>main {
+        --main-base-width: 95vw;
+    }
+}
+
+@media only screen and (min-width: 428px) {
+    body #root>main {
+        --main-base-width: 70vw;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    body #root>main {
+        --main-base-width: 80vw;
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+    body #root>main {
+        --main-base-width: 60vw;
+    }
+}
+/*#endregion*/

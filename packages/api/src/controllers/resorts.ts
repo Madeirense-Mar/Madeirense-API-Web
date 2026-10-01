@@ -8,7 +8,7 @@ import {
     Prisma,
     Resort_Booking_Cancellations_reason_code,
     Resort_Bookings_status,
-    Resort_Room_Media_media_type,
+    Resort_Rooms_Media_media_type,
     type Resort_Amenities,
     type Resort_Bed_Types,
     type Resort_Booking_Cancellation_Policies,
@@ -315,12 +315,12 @@ export namespace rooms {
                             }))
                         }
                     },
-                    Resort_Room_Media: {
+                    Resort_Rooms_Media: {
                         createMany: {
                             data: ([
                                 ...(thumbnail_url_collection ?? []).map(url => ({ url, type: 'Thumbnail' })),
                                 ...(video_url_collection ?? []).map(url => ({ url, type: 'Video' })),
-                            ] as ({ url: string, type: Resort_Room_Media_media_type })[]).map(({ url: media_url, type: media_type }) => ({
+                            ] as ({ url: string, type: Resort_Rooms_Media_media_type })[]).map(({ url: media_url, type: media_type }) => ({
                                 media_type,
                                 media_url,
                                 created_at: new Date().toISOString(),
@@ -333,7 +333,7 @@ export namespace rooms {
             });
 
             return res.status(201).json({
-                data: room,
+                data: room as resortRoomType,
                 message: 'Room added successfully',
                 success: true,
             });
@@ -627,7 +627,7 @@ export namespace rooms {
     }
 
     type updateRoomMediaBodyType = API$Types.listUpdateType<
-        { media_url: string, media_type: Resort_Room_Media_media_type }
+        { media_url: string, media_type: Resort_Rooms_Media_media_type }
     >
 
     type updateRoomMediaPayloadType = {};
@@ -650,7 +650,7 @@ export namespace rooms {
                 removing
             } = req.body;
 
-            if (adding) await prisma.resort_Room_Media.createMany({
+            if (adding) await prisma.resort_Rooms_Media.createMany({
                 data: adding.map(({ media_type, media_url }) => ({
                     media_type,
                     media_url,
@@ -658,7 +658,7 @@ export namespace rooms {
                 }))
             });
 
-            if (removing) await prisma.resort_Room_Media.deleteMany({
+            if (removing) await prisma.resort_Rooms_Media.deleteMany({
                 where: {
                     room_id: parseInt(req.params.id),
                     AND: [

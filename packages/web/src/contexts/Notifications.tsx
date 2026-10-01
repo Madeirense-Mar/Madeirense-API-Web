@@ -189,6 +189,7 @@ const NotificationsProvider = ({ children }: any) => {
 
     return <NotificationsContext.Provider value={{ push, pop }}>
         <div
+            id="notification-tray"
             className={resolveClassNames(
                 styles[(showing === -1) ? "warning" : notifications[showing]?.options?.variant ?? "warning"]
             )}
@@ -204,6 +205,7 @@ const NotificationsProvider = ({ children }: any) => {
             </Button>
 
             <ul>{notifications.map((n, idx) => <ListItem
+                className="flex flex-row justify-start items-start gap-3"
                 key={n.ref}
                 id={n.ref}
                 notification={n}

@@ -15,7 +15,7 @@ import {
     type applicationSettingsType
 } from '@Madeirense/shared';
 
-import { 
+import {
     handleControllerError
 } from './utilities/handlers';
 
@@ -26,6 +26,36 @@ import type {
 } from '../interfaces';
 
 // ***************************************************************************************************************
+
+export const getRestaurantTheme = async (
+    req: Request,
+    res: Response<API$Types.response<$Enums.Application_Theme_theme | undefined>>
+) => {
+    try {
+        const application_Theme = await prisma.application_Theme.findFirst({
+            where: {
+                restaurant_id: parseInt(req.params["restaurant_id"] as string) as number
+            }
+        });
+
+        if (!application_Theme) return res.status(404).json({
+            data: undefined,
+            message: `There are no saved theme settings for this restaurant`,
+            success: false
+        });
+
+        return res.status(200).json({
+            data: application_Theme.theme,
+            message: `Fetched application theme`,
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+}
 
 export const getGlobalSettings = async (
     req: Request,
@@ -51,6 +81,32 @@ export const getGlobalSettings = async (
         return res.status(200).json({
             data: global_settings,
             message: `Fetched settings`,
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+};
+
+export const getGlobalSettingsVersion = async (
+    req: Request,
+    res: Response<API$Types.response<string | undefined>>
+) => {
+    try {
+        const global_settings = await prisma.global_Settings.findFirst();
+
+        if (!global_settings) return res.status(404).json({
+            data: undefined,
+            message: `There are no saved settings`,
+            success: false
+        });
+
+        return res.status(200).json({
+            data: global_settings.change_version,
+            message: `Fetched settings version`,
             success: true
         });
     } catch (error) {
@@ -96,7 +152,7 @@ export const getGlobalEligiblePayments = async (
 };
 
 export const updateGlobalSettings = async (
-    req: IAuthenticatedRequest<any, Omit<Global_Settings, 'setting_id'>>, 
+    req: IAuthenticatedRequest<any, Omit<Global_Settings, 'setting_id'>>,
     res: Response<API$Types.response<Global_Settings | undefined>>
 ) => {
     const payload = {

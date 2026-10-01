@@ -25,7 +25,7 @@ import Button from "components/buttons";
 import ProductCard from "components/cards/product";
 import ProductCommentsList from "components/lists/productComments";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { Page$Enumerators } from "pages/enumerators";
 import { Root$Enumerators } from "styles/enumerators";
@@ -38,6 +38,7 @@ import type { IPageState } from "components/interface";
 import type { workQueueStateType } from "components/types";
 
 import "./Product.css";
+import AnchorButton from "components/buttons/anchor";
 
 // ***************************************************************************************************************
 
@@ -236,70 +237,58 @@ const ProductPage = () => {
                     </Tag>
                 </header>}
 
+                <AnchorButton to={Madeirense$Enumerators.Pages.App.Layout}>
+                    <Icon name="ArrowLeft" />
+                </AnchorButton>
+
                 <ProductCard {...{ product }} disableLink />
 
-                <table>
-                    {pageError && <thead data-section="error">
-                        <tr>
-                            <th>
-                                <Icon name="Error" className="mr-10px" />
+                {(pageError) && <section>
+                    <Icon name="Error" className="mr-12px" />
 
-                                {pageError.message}
-                            </th>
-                        </tr>
-                    </thead>}
+                    {pageError.message}
+                </section>}
 
-                    <tbody data-section={tableSection}>
-                        <tr>
-                            <td>
-                                <section className="flex flex-col justify-start items-start gap-2">
-                                    <section className="flex flex-col justify-start items-start gap-2">
-                                        <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
-                                            <Icon name="Notes" />
+                <section className="flex flex-col justify-start items-start gap-2">
+                    <section className="flex flex-col justify-start items-start gap-2">
+                        <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
+                            <Icon name="Notes" />
 
-                                            <h2>Prato em detalhe</h2>
-                                        </header>
+                            <h2>Prato em detalhe</h2>
+                        </header>
 
-                                        <p>{product.description}</p>
-                                    </section>
+                        <p>{product.description}</p>
+                    </section>
 
-                                    <section className="flex flex-col justify-start items-start gap-2">
-                                        <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
-                                            <h2>Factos</h2>
-                                        </header>
-                                    </section>
-                                </section>
-                            </td>
-                        </tr>
+                    {/* <section className="flex flex-col justify-start items-start gap-2">
+                        <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
+                            <h2>Factos</h2>
+                        </header>
+                    </section> */}
+                </section>
 
-                        <tr>
-                            <td>
-                                <section className="flex flex-col justify-start items-start gap-2">
-                                    <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
-                                        <Icon name="Comments" />
+                {/* <section className="flex flex-col justify-start items-start gap-2">
+                    <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
+                        <Icon name="Comments" />
 
-                                        <h2>Conversa</h2>
-                                    </header>
+                        <h2>Conversa</h2>
+                    </header>
 
-                                    <form onSubmit={!user ? undefined : POST} data-state={!user ? "disabled" : "idle"}>
-                                        {!user
-                                            ? <input value={LoginToCommentOnThisProduct} name="comment" title="Campo para comentário" type="text" readOnly />
-                                            : <input placeholder="Mensagem" name="comment" title="Campo para comentário" type="text" required />
-                                        }
+                    <form onSubmit={!user ? undefined : POST} data-state={!user ? "disabled" : "idle"}>
+                        {!user
+                            ? <input value={LoginToCommentOnThisProduct} name="comment" title="Campo para comentário" type="text" readOnly />
+                            : <input placeholder="Mensagem" name="comment" title="Campo para comentário" type="text" required />
+                        }
 
-                                        <Button value={tableSection} data-shape="round" type="submit" disabled={!user} >
-                                            <Icon name="Send" />
-                                        </Button>
-                                    </form>
+                        <Button value={tableSection} data-shape="round" type="submit" disabled={!user} >
+                            <Icon name="Send" />
+                        </Button>
+                    </form>
 
-                                    <hr />
+                    <hr />
 
-                                    <ProductCommentsList product_id={id} localList={localComments} className="max-h-[416px] overflow-y-auto w-full" trackAppUpdates />
-                                </section>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <ProductCommentsList product_id={id} localList={localComments} className="max-h-[416px] overflow-y-auto w-full" trackAppUpdates />
+                </section> */}
             </main>
         }
     };

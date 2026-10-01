@@ -1,7 +1,7 @@
 .notification {
-    --h: var(--button-height);
+    --h: 70px;
 
-    @apply flex flex-row justify-start items-center w-full;
+    @apply flex flex-row justify-between items-center w-full px-2;
 
     position: absolute;
 
@@ -16,8 +16,6 @@
     border-color: var(--notifications-border-color, transparent);
 
     background-color: var(--notifications-background-color, transparent);
-
-    color: var(--notifications-text-color, black);
 }
 
 .notification[data-state] {
@@ -90,9 +88,10 @@
 }
 
 .warning {
-    --notifications-background-color: transparent;
+
+    --notifications-background-color: var(--secondary-dark);
     --notifications-border-color: transparent;
-    --notifications-text-color: black;
+    --text-color: white;
 
     composes: notification;
 }

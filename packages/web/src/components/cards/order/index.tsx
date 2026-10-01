@@ -33,7 +33,7 @@ import { useOrders } from "contexts/Orders";
 import Button from "components/buttons";
 import Icon from "components/icon";
 import Progress from "components/progressBar";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import MODAL_DRIVER_ASSIGNATION_FORM from "components/modals/forms/drivers/assignation";
 
@@ -51,6 +51,7 @@ import type {
     variantType,
     withVariant
 } from "components/types";
+import AnchorTag from "components/tags/anchor";
 
 // ***************************************************************************************************************
 
@@ -277,14 +278,14 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             {index}
         </span>}
 
-        <div className="max-h-[30px] min-h-[30px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
-            {!disableLink && <Link to={orderPageLink} data-state={orderPageLink === "" ? "disabled" : "idle"}>
+        <div className="max-h-[32px] min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
+            {!disableLink && <AnchorTag to={orderPageLink} variant={orderPageLink === "" ? "secondary" : "primary"}>
                 <Icon name="Link2" />
 
                 {`Referência do pedido #${order?.order_id}`}
-            </Link>}
+            </AnchorTag>}
 
-            {(type === "ticket") && <Tag>
+            {(type === "ticket") && <Tag variant="secondary">
                 <Icon name="Party" />
 
                 {order?.Order_Items.find(({ Products }) => Products.product_type === "ticket")?.Products.name}
@@ -294,7 +295,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
                 </span>
             </Tag>}
 
-            <Tag data-variantType={$tagVariant}>
+            <Tag variant={$tagVariant}>
                 {localOrderStatus === "pending" && type === "delivery" ? <Icon name="Loading" className="animate-spin" /> : null}
                 {localOrderStatus === "cancelled" && <Icon name="Close" />}
                 {localOrderStatus === "assigned" && <Icon name="Running" />}
@@ -351,18 +352,18 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             animated={assertions.isProgressBarAnimated}
         />
 
-        <div className="max-h-[30px] min-h-[30px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
+        <div className="max-h-[32px] min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
             {mode === "admin" && <Tag>
                 <Icon name="User" />
 
-                {order?.Users?.name}
+                {order?.Users_Orders_user_idToUsers?.name}
 
-                {(order?.Users?.phone !== "") && <span className="italic opacity-45">
-                    {order?.Users?.phone}
+                {(order?.Users_Orders_user_idToUsers?.phone !== "") && <span className="italic opacity-45">
+                    {order?.Users_Orders_user_idToUsers?.phone}
                 </span>}
             </Tag>}
 
-            <Tag data-variantType={$paymentTagVariant}>
+            <Tag variant={$paymentTagVariant}>
                 <Icon name="CashRegister" />
 
                 <span className="italic">
@@ -378,7 +379,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
                 </>}
             </Tag>
 
-            <Tag className="ml-auto">
+            <Tag className="ml-auto" variant="secondary">
                 <Icon name="Store" />
 
                 {order?.Restaurants.name}

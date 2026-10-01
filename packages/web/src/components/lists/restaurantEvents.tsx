@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 
 import {
     formatNumber,
+    Madeirense$Enumerators,
     resolveClassNames,
     type restaurantEventType,
     type withEmptyString,
@@ -28,7 +29,7 @@ import { useApp } from "contexts/App";
 import Button from "components/buttons";
 import RestaurantEventCard from "components/cards/restaurantEvent";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import { nextPageTriggerSetup } from "./utilities/functions";
 
@@ -80,7 +81,7 @@ function RestaurantEventList(_props: IPropTypes) {
         status,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetRestaurantStaff", 
+            "App$GetRestaurantEvents", 
             "events", 
             !defaultRestaurant ? {} : { restaurant_id: `${defaultRestaurant}` }
         ] as Queries$Types.itemQueryKey[]),
@@ -110,7 +111,7 @@ function RestaurantEventList(_props: IPropTypes) {
     };
 
     const $ulProps = {
-        className: resolveClassNames(styles.list, styles[mode], className),
+        className: resolveClassNames(styles[mode], className),
         ...props
     };
 
@@ -173,22 +174,22 @@ function RestaurantEventList(_props: IPropTypes) {
                             {(disableLink)
                                 ? <span className="font-extrabold">{item.name}</span>
 
-                                : <Link className="font-extrabold" to={`/back-office/restaurants/party/${item.event_id}`}>{item.name}</Link>
+                                : <Link className="font-extrabold" to={`${Madeirense$Enumerators.Pages.BackOffice.RestaurantEvent}/${item.event_id}`}>{item.name}</Link>
                             }
 
-                            <Tag className="italic">
+                            <Tag variant="secondary" className="italic">
                                 <Icon name="Store" />
 
                                 {item.Restaurants?.name}
                             </Tag>
 
-                            <Tag>
+                            <Tag variant="warning">
                                 <Icon name="Money" />
 
                                 {Boolean(parseInt(`${item.price}`)) ? formatNumber(parseFloat(`${item.price}`)) : "Grátis"}
                             </Tag>
 
-                            <Tag className="ml-auto">
+                            <Tag variant="success" className="ml-auto">
                                 <Icon name="Calendar1" />
 
                                 {new Date(item.event_date).toLocaleDateString()}
@@ -202,7 +203,7 @@ function RestaurantEventList(_props: IPropTypes) {
                         </li>;
 
                         case "viewport": return <li key={item.event_id} {...{ ref }}>
-                            <RestaurantEventCard restaurantEvent={item} />
+                            <RestaurantEventCard className={styles.card} restaurantEvent={item} />
                         </li>;
 
                         default: return null;
@@ -257,7 +258,7 @@ const HeaderListItem = ({
         });
     };
 
-    return <li data-type="filter">
+    return <li className="w-full flex flex-row justify-start items-center gap-2" data-type="filter">
         <Icon name="Filter" />
 
         {filters.map(f => <select
@@ -276,7 +277,7 @@ const HeaderListItem = ({
             </option>)}
         </select>)}
 
-        <Button onClick={clearFilters} variant="secondary">
+        <Button onClick={clearFilters} className="ml-auto" variant="secondary">
             <Icon name="Close" />
         </Button>
     </li>

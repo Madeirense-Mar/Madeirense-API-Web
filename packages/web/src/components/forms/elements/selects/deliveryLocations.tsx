@@ -24,7 +24,6 @@ function DeliveryLocationsSelect(_props: IPropTypes) {
 
     return <select
         defaultValue={defaultLocationId?.toString() || ""}
-        className="w-full p-2 border rounded"
         {...props}
     >
         <option value="" hidden>

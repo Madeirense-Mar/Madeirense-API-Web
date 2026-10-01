@@ -1,0 +1,7 @@
+[data-theme*="DARK"] [class*="card"] {
+    --card-neutral: var(--neutral-light);
+}
+
+[data-theme*="LIGHT"] [class*="card"] {
+    --card-neutral: var(--neutral-dark);
+}

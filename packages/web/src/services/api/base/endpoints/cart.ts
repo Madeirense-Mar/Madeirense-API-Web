@@ -3,7 +3,8 @@ import BaseAPIAbstractEndpoint from "./abstract";
 import type { 
     cartSummaryType,
     cartWithProductsType,
-    cartedProductType
+    cartedProductType,
+    cartType
 } from "@Madeirense/shared";
 
 // ***************************************************************************************************************
@@ -15,13 +16,13 @@ class CartEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
-    async getSummary(type: "all" | "delivery" | "event", params: { coupon_code?: string } = {}) {
+    async getSummary(type: "all" | cartType, params: { coupon_code?: string } = {}) {
         const response = await this.client.get<cartSummaryType>(`/cart/mine/${type}/summary`, params);
         
         return response.data;
     }
 
-    async clear(type: "all" | "delivery" | "event" = "all") {
+    async clear(type: "all" | cartType = "all") {
         const response = await this.client.delete<undefined>(`/cart/clear/${type}`);
 
         return response;

@@ -27,7 +27,7 @@ import { useProfile } from "contexts/Profile";
 import Button from "components/buttons";
 import ProfilePictureButton from "components/buttons/profile";
 import Icon from "components/icon";
-import Tag from "components/tag";
+import Tag from "components/tags";
 
 import styles from "./chat.module.css";
 
@@ -246,7 +246,7 @@ function OrderChatForm(_props: IPropTypes) {
 
             <input type="text" name="message_text" title="Mensagem de envio" placeholder="Escreve aqui uma pergunta, reclamação ou agradecimento..." required disabled={disabled || status === "posting"} />
 
-            <Button type={disabled ? "button" : "submit"} disabled={disabled || status === "posting"}>
+            <Button shape="circle" type={disabled ? "button" : "submit"} disabled={disabled || status === "posting"}>
                 {status === "posting"
                     ? <Icon name="Loading" className="animate-spin" />
                     : <Icon name="Send" />

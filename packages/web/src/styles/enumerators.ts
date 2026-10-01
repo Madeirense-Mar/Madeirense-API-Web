@@ -4,6 +4,10 @@ export namespace Root$Enumerators {
     }
 
     export namespace Attributes {
+        export enum Display {
+            "grid" = "data-grid",
+        }
+
         export enum Context {
             "page" = "data-page",
         }
@@ -23,7 +27,12 @@ export namespace Root$Enumerators {
         export enum States {
             "has-cart" = "data-hascart",
             "has-orders" = "data-hasorders",
-            "has-pattern" = "data-haspattern"
+            "has-pattern" = "data-haspattern",
+            "toggled" = "data-toggled"
+        }
+
+        export enum Styles {
+            "theme" = "data-theme"
         }
     }
 };

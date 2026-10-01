@@ -23,6 +23,7 @@ import {
 import type {
     IAuthenticatedRequest
 } from '../interfaces';
+import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -68,7 +69,7 @@ export const getAll = async (
         return res.json({
             success: true,
             message: 'All delivery locations retrieved successfully',
-            data: locations,
+            data: locations.map(convertDecimals),
             pagination: {
                 page,
                 limit,
@@ -111,7 +112,7 @@ export const getUserDeliveryLocations = async (
         const totalPages = Math.ceil(total / limit);
 
         return res.json({
-            data: locations,
+            data: locations.map(convertDecimals),
             message: 'Delivery locations retrieved successfully',
             pagination: {
                 page,
@@ -176,7 +177,7 @@ export const createDeliveryLocation = async (
         return res.status(201).json({
             success: true,
             message: 'Delivery location created successfully',
-            data: location
+            data: convertDecimals(location)
         });
     } catch (error) {
         return handleControllerError(
@@ -223,7 +224,7 @@ export const getDeliveryLocationById = async (
             default: return res.json({
                 success: true,
                 message: 'Delivery location retrieved successfully',
-                data: location
+                data: convertDecimals(location)
             });
         };
 
@@ -274,7 +275,7 @@ export const updateDeliveryLocation = async (
             });
         }
 
-        const data = await prisma.$transaction(async $trx => {
+        const data = convertDecimals(await prisma.$transaction(async $trx => {
             try {
                 if (delivery_location.preferred) await $trx.delivery_Locations.updateMany({
                     where: { user_id },
@@ -291,7 +292,7 @@ export const updateDeliveryLocation = async (
             } catch (error) {
                 throw new Error((error as Error).message);
             }
-        });
+        }));
 
         return res.json({
             data,
