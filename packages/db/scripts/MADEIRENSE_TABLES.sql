@@ -21,8 +21,8 @@ CREATE TABLE `Products` (
   `restaurant_id` int(11) DEFAULT NULL,
   `discount` decimal(5,2) NOT NULL DEFAULT 0.00,
   `thumbnail` varchar(255) DEFAULT NULL,
-  `product_type` enum('starter','garnish','main','dessert','beverage','ticket') DEFAULT NULL,
-  `product_composition` enum('meat','fish','vegetable','liquid','mixed') DEFAULT NULL,
+  `product_composition` enum('alcoholic','fish','meat','merchandise','mixed','non_alcoholic','vegan','wheat') DEFAULT NULL,
+  `product_type` enum('starter','main','dessert','beverage','ticket') DEFAULT NULL,
   `prep_time_minutes` int(11) NOT NULL DEFAULT 0,
   `event_id` int(11) DEFAULT NULL,
   `delisted` tinyint(1) DEFAULT 0,
@@ -194,7 +194,6 @@ CREATE TABLE `Resort_Rooms` (
   `updated_at` timestamp NULL DEFAULT current_timestamp(),
   `price_per_night` decimal(10,2) NOT NULL,
   `availability` ENUM('Available','Limited','Sold Out') DEFAULT 'Available',
-  `quantity` int(11) DEFAULT 1,
   `resort_id` int(11) NOT NULL,
   PRIMARY KEY (`room_id`),
   KEY `Resort_Rooms_ibfk_1` (`resort_id`),
@@ -314,17 +313,6 @@ CREATE TABLE `Resort_Chat_Messages` (
   CONSTRAINT `Resort_Chat_Messages_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `Resort_Bookings` (`booking_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_resort_sender` FOREIGN KEY (`sender_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `Application_Theme` (
-  `restaurant_id` int(11) NOT NULL,
-  `theme` ENUM(
-    'LAND',
-    'SEA'
-  ) NOT NULL,
-  PRIMARY KEY (`restaurant_id`, `theme`),
-  KEY `restaurant_id` (`restaurant_id`),
-  CONSTRAINT `Application_Theme_ibfk_1` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`restaurant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `Restaurants` (
   `restaurant_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -496,9 +484,18 @@ CREATE TABLE `Order_History` (
 -- see schema.dev.prisma's comment on the Payments model. NOT YET APPLIED
 -- to the live dev/staging databases — see TODO.md at the repo root for
 -- the ALTER TABLE statement to run.
+-- `order_id` made nullable and `ticket_id` added 2026-10-01 — Robbie's
+-- product decision: "all payments must route through [the gateway]...
+-- people either pay for the ticket online or get it at the door" —
+-- ticket purchases now create a Payments row too (see
+-- controllers/restaurantEvent.ts's purchaseTicket), and a ticket
+-- purchase has no Orders row. Exactly one of order_id/ticket_id should
+-- be non-NULL on any given row (convention, not DB-enforced). NOT YET
+-- APPLIED to the live dev/staging databases — see TODO.md.
 CREATE TABLE `Payments` (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `ticket_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `payment_method` enum('Credit Card','Debit Card','PayPal','Cash','Bank Transfer','Payment Reference','Multicaixa Express','Offer') NOT NULL,
@@ -509,8 +506,10 @@ CREATE TABLE `Payments` (
   KEY `order_id` (`order_id`),
   KEY `user_id` (`user_id`),
   KEY `gateway_reference` (`gateway_reference`),
+  KEY `ticket_id` (`ticket_id`),
   CONSTRAINT `Payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `Orders` (`order_id`) ON DELETE CASCADE,
-  CONSTRAINT `Payments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
+  CONSTRAINT `Payments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `Payments_ibfk_3` FOREIGN KEY (`ticket_id`) REFERENCES `Tickets_Purchased` (`ticket_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `Courier_Positions` (
@@ -587,6 +586,17 @@ CREATE TABLE `Global_Settings_Eligible_Payment_Types` (
   PRIMARY KEY (`setting_id`,`payment_method`),
   CONSTRAINT `Global_Settings_Eligible_Payment_Types_ibfk_1` FOREIGN KEY (`setting_id`) REFERENCES `Global_Settings` (`setting_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `Application_Theme` (
+  `restaurant_id` int(11) NOT NULL,
+  `theme` ENUM(
+    'LAND',
+    'SEA'
+  ) NOT NULL,
+  PRIMARY KEY (`restaurant_id`, `theme`),
+  KEY `restaurant_id` (`restaurant_id`),
+  CONSTRAINT `Application_Theme_ibfk_1` FOREIGN KEY (`restaurant_id`) REFERENCES `Restaurants` (`restaurant_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /** ----------------------------------------------------------------------------------------- */
 
 /** -------------------------------------------------------------------------------------------------------------------------- */
