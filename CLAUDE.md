@@ -16,6 +16,16 @@ Yarn workspaces monorepo (`madeirense-cross-platform`). Packages:
 - `yarn workspace web dev` — vite dev server
 - No test script exists yet (`packages/api` `"test"` is a stub that exits 1) — don't assume any automated coverage.
 
+## Standing convention: full language best practices
+
+Robbie, 2026-10-02 (see client-mobile/CLAUDE.md and Projecto.md's
+"Convenções" section for the full text): follow full language best
+practices going forward, project-wide — `tsc --noEmit`/ESLint clean (not
+just free of hard errors), don't reach for a local workaround when a
+shared package already has the right type/utility, match the
+framework's own contracts exactly. Prefer the idiomatic/verbose
+approach over a shortcut that accumulates technical debt.
+
 ## Schema changes (adding/altering a table) — three files, by hand, not `db pull`
 
 This project doesn't use `prisma migrate` — schema changes are hand-written
@@ -109,43 +119,3 @@ Only `getMyOrders` was actually missing it; fixed, and `getAllOrders`
 (admin/staff listing, same bug, same file) fixed alongside it even though
 nothing flagged it — same contract violation, same fix. Mobile's
 `flutter analyze`/build/pub get all clean after the client-side rollback.
-
-## Schema changes (adding/altering a table) — three files, by hand, not `db pull`
-
-This project doesn't use `prisma migrate` — schema changes are hand-written
-across three places that all have to move together, then applied to each
-real database by running SQL directly:
-
-1. **`packages/db/scripts/MADEIRENSE_TABLES.sql`** — the actual reference
-   DDL (mixed-case, backtick-quoted `CREATE TABLE`/`ALTER TABLE`
-   statements). Source of truth for what a table should look like; not
-   itself auto-run anywhere.
-2. **`packages/db/prisma/schema.dev.prisma`** — hand-add the matching
-   `model X { ... }` block. **Local dev only: also add
-   `@@map("lowercase_table_name")`** — see that file's own header comment
-   (added 2026-10-01). This local MySQL install has
-   `lower_case_table_names=1` (Windows default), which folds every table
-   name to lowercase in storage no matter how the DDL is cased or which
-   client runs it. `@@map` keeps the model/client-property name PascalCase
-   (`prisma.device_Push_Tokens`, matching every controller's existing
-   convention) while correctly querying the real lowercase table. Column
-   names are unaffected by that setting, so fields never need `@map`.
-3. **`packages/db/prisma/schema.staging.prisma`** — same new `model`
-   block, **no `@@map`** — nothing suggests the staging server shares the
-   Windows-only case-folding quirk. Revisit this assumption only if
-   staging ever shows the same symptom.
-4. Run the real DDL against each live database (dev locally, staging
-   separately) via the **`mysql` CLI directly, not DBeaver** — add it to
-   INSTRUCTIONS.md's migration list the way every change this session has
-   been tracked.
-
-**Then regenerate the Prisma client — but do NOT run `db pull` against
-local dev.** `yarn workspace @Madeirense/database prisma:dev` (and
-anything that chains through it, like `build-shared-code:dev`/
-`build:dev-web`) runs `prisma db pull` *before* `generate` — against this
-server that re-introspects the folded-lowercase table names and
-overwrites `schema.dev.prisma` wholesale, stripping the `@@map` lines
-*and* every hand-written comment in that file. Use
-`yarn workspace @Madeirense/database generate:dev` instead (added
-2026-10-01) — it only runs `generate`, which is all that's needed once
-the schema file already matches the DB by hand.
