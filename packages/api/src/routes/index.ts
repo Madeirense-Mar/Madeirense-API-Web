@@ -11,6 +11,7 @@ import deliveryLocationRoutes from './deliveryLocations.js';
 import devicePushTokenRoutes from './devicePushTokens.js';
 import emisRoutes from './emis.js';
 import globalSettingsRoutes from './globalSettings.js';
+import legalRoutes from './legal.js';
 import orderRoutes from './orders.js';
 import paymentRoutes from './payments.js';
 import productRoutes from './products.js';
@@ -107,6 +108,7 @@ const routes = {
         'device-tokens': devicePushTokenRoutes.v1,
         'emis': emisRoutes.v1,
         'global-settings': globalSettingsRoutes.v1,
+        'legal': legalRoutes.v1,
         'orders': orderRoutes.v1,
         'payments': paymentRoutes.v1,
         'products': productRoutes.v1,

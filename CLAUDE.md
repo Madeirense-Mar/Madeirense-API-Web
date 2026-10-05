@@ -89,6 +89,7 @@ Keep these stable/back-compatible while mobile is mid-rework:
 - `GET /api/v1/products?group=menu` — paginated (mobile doesn't yet handle >1 page)
 - `GET /api/v1/restaurants`, `GET /api/v1/restaurant-events`
 - Cart: `POST /v1/cart/add`, `GET /v1/cart/mine`, `GET /v1/cart/mine/:type/summary`, `DELETE /v1/cart/clear/:type`, `PATCH /v1/cart/product/remove-items`, `DELETE /v1/cart/product/:id` — cart is server-authoritative, shared between web and mobile
+- `GET /api/v1/legal/terms`, `GET /api/v1/legal/privacy` (added 2026-10-02) → `{ content: string (markdown), updated: string (date) }` — public, no auth. See "Terms/Privacy plumbing" below for the full design; **web and mobile must both render this through the same markdown content**, never a hardcoded copy, or the whole point of this endpoint (one source of truth for legal text) is defeated.
 
 ## MVP note (Sept 2026)
 This surface is already deployed and comparatively stable. Current priority is the mobile app — treat this repo mostly as "keep stable, fix what mobile needs" rather than a source of new scope this month, unless Robbie says otherwise.
@@ -105,6 +106,24 @@ Needed for mobile's silent session-refresh (see mobile/CLAUDE.md). This auth flo
 3. **`controllers/authentication.ts`** (`refresh()`) — even once reachable, the old (expired) session token was being spread through into `renewTokens()`, which only actually mints fresh tokens when `sessionToken` is exactly `''`; otherwise it echoes the same tokens back unchanged. So a "successful" refresh would have silently handed back the same dead session token. Fixed by passing `sessionToken: ''` explicitly.
 
 Checked with `tsc --noEmit` on the api package — no new errors from these three files beyond this repo's pre-existing `@Madeirense/database`/`@Madeirense/shared` module-resolution noise (those packages need `yarn build-shared-code` run first; unrelated to this change). **Not exercised against a running server** — no way to do that from this sandbox. Worth a real login → wait for expiry (or fake it) → confirm refresh works pass before this ships, given it touches every authenticated request.
+
+## Terms/Privacy plumbing (2026-10-02, Robbie: "build the plumbing for now")
+Design: markdown is the single source of truth, so web and mobile can never drift apart showing different legal text. `content/legal/terms.md` and `privacy.md` (sibling to `src/`, not inside it — see below for why) hold the actual text, each with a YAML frontmatter `updated:` date. `GET /v1/legal/terms` / `/privacy` (`controllers/legal.ts`, `routes/legal.ts`) read and parse those with `gray-matter` (new dependency — run `yarn install`/`npm install` to pick it up) and return `{ content, updated }`; `content` is still raw markdown — **rendering it is each client's job**, this endpoint doesn't convert it to HTML.
+
+**Placeholder content on purpose** — per Robbie's explicit scope for this pass ("just build the plumbing for now"): both files are lorem ipsum, clearly marked as such in their own body text. Dropping in the real Terms/Privacy copy later is a content-only change (edit the two `.md` files, keep the `updated:` field current) — no code changes needed on the API or either client once that happens.
+
+**Why `content/` lives next to `src/`, not inside it**: this package builds with `tsup` (`entry: ['src/server.ts']`, bundles to `dist/server.js`) — it has no asset-copying step, so anything placed inside `src/` as a non-`.ts` file would never make it into `dist/`. `content/` sits at the package root instead, and the controller resolves it via `path.resolve(process.cwd(), 'content', 'legal', ...)` — the same `process.cwd()`-relative pattern `env.ts` already uses for `.env` files — which works because both `nodemon` (dev) and PM2 (`ecosystem.config.js`'s `cwd: '/var/www/madeirense/packages/api'`, prod) always run this process from the package root. `content/` is plain source under git, so a normal deploy (`git pull` + `yarn build:api`, no extra step) already puts it on the server right where the controller expects it.
+
+**Not built yet, flagged rather than silently skipped**: neither `client-mobile` nor `packages/web` has a markdown-rendering library yet (checked both `package.json`/`pubspec.yaml` — genuinely nothing there). Mobile's side (new screen + `flutter_markdown_plus` dependency) is next. The web side has no owner/timeline yet in this pass — Robbie's "does that make sense?" scoped the plumbing, not a web UI; raise it with him before building a web Terms/Privacy page off this same endpoint.
+
+## Route registration bug fixed 2026-10-02 — three endpoints were completely unreachable
+Found while adding the Terms/Privacy plumbing (below) and cross-checking how routers actually get mounted. `routes/index.ts` builds `routes.v1` with keys for every route file, including `device-tokens`, `emis`, and `routing` — but `server.ts`'s `configureRouters()` only ever called `this.app.use(...)` for a subset of those keys. It never had a line for those three. Net effect: **`/api/v1/device-tokens/*`, `/api/v1/emis/*`, and `/api/v1/routing/*` all 404'd against the real server**, despite their controllers/routes files existing, being fully implemented, and being referenced as working elsewhere in this repo's own docs:
+
+- `device-tokens` — `DevicePushTokenRepository` (core-kit) calls this for push-notification registration/unregistration (see `profile_tab.dart`'s logout flow and `push_notification_service.dart`). The "EMIS payment gateway + mobile push, from scratch" entry in the "Fixed this session" list further down predates this discovery and should be read with this caveat: the push half was never actually reachable until now.
+- `emis` — `POST /v1/emis/callback`, the payment-gateway webhook `services/emis.ts` depends on. Online ticket/order payments could not have completed end-to-end.
+- `routing` — `POST /v1/routing/route`, backing `route_preview_screen.dart`'s staff routing POC in client-mobile.
+
+Fixed by adding the three missing `this.app.use('/api/v1/<path>', routes.v1[...])` lines in `configureRouters()`. **Not verified against a running server** (no way to do that from this sandbox) — worth confirming all three respond once this is deployed, given how long they appear to have been silently dead.
 
 ## Response contract with mobile — API owns data correctness (rule set 2026-09-07)
 See `AGREEMENT.md`'s "How we work together". Mobile does not defensively

@@ -125,7 +125,10 @@ class Server {
         this.app.use('/api/v1/coupons', routes.v1.coupons);
         this.app.use('/api/v1/courier-positions', routes.v1['courier-positions']);
         this.app.use('/api/v1/delivery-locations', routes.v1['delivery-locations']);
+        this.app.use('/api/v1/device-tokens', routes.v1['device-tokens']);
+        this.app.use('/api/v1/emis', routes.v1.emis);
         this.app.use('/api/v1/global-settings', routes.v1['global-settings']);
+        this.app.use('/api/v1/legal', routes.v1.legal);
         this.app.use('/api/v1/orders', routes.v1.orders);
         this.app.use('/api/v1/payments', routes.v1.payments);
         this.app.use('/api/v1/products', routes.v1.products);
@@ -134,6 +137,7 @@ class Server {
         this.app.use('/api/v1/restaurant-events', routes.v1['restaurant-events']);
         this.app.use('/api/v1/restaurants', routes.v1.restaurants);
         this.app.use('/api/v1/reviews', routes.v1.reviews);
+        this.app.use('/api/v1/routing', routes.v1.routing);
         this.app.use('/api/v1/statistics', routes.v1.statistics);
         this.app.use('/api/v1/users', routes.v1.users);
 
