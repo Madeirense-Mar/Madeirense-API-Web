@@ -62,7 +62,7 @@ export function getLabel<T>(label: T): string {
         case "merchandise": return "Merchandise";
         case "mixed": return "Mistura";
         case "non_alcoholic": return "Bebidas";
-        case "vegan": return "Vegetariano";
+        case "vegetable": return "Vegetariano";
         case "wheat": return "Farináceos";
 
         //Product types
