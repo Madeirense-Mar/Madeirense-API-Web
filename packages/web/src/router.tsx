@@ -144,7 +144,7 @@ function toNavigationLink(this: IAppRoute, userRole?: keyof typeof $Enums.Users_
  * - Each `route` can render {@link toNavigationLinks | its own array of links} containing paths for every immediate descendant.
  * 
 */
-export const appRoutesTree: ReadonlyArray<IAppRoute> = [
+const appRoutesTree: ReadonlyArray<IAppRoute> = [
 	{
 		id: "main",
 		path: Madeirense$Enumerators.Pages.App.Layout,
