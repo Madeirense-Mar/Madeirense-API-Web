@@ -61,11 +61,13 @@
 }
 
 .section fieldset {
-    @apply flex flex-col justify-center items-start gap-4 w-full;
+    @apply flex justify-center items-start gap-4 w-full;
+
+    flex-direction: var(--fieldset-flex-direction, column);
 }
 
-.section fieldset *:not(button[data-variant="text"]) {
-    @apply w-full;
+.section fieldset * {
+    width: var(--width, 100%);
 }
 
 .section ul {
@@ -77,6 +79,7 @@
     padding: 0px 5px;
     border-radius: 5px;
 }
+
 /*#endregion*/
 
 .panel {
@@ -144,6 +147,12 @@
             "message"
             "oauth"
         ;
+    }
+
+    .signup .section form fieldset:first-of-type {
+        --fieldset-flex-direction: row;
+        
+        @apply flex-nowrap;
     }
 }
 
