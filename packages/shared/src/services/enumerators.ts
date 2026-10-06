@@ -26,7 +26,9 @@ export namespace API$Enumerators {
 
     export enum Platforms {
         "mobile" = "mobile",
-        "web" = "web"
+        "web" = "web",
+        /**Meant to be for API calls sent via service scripts ran on the machine.*/
+        "service" = "service",
     }
 
     export enum SearchQueries {
