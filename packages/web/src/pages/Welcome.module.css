@@ -105,6 +105,10 @@
     .forgot {
         display: grid;
         gap: 32px;
+    }
+
+    .login,
+    .forgot {
         grid-template-columns: 1fr 1fr;
     }
 
@@ -121,10 +125,22 @@
         align-items: start;
         justify-content: center;
         grid-template-rows: repeat(3, min-content);
+    }
+
+    .login {
         grid-template-areas:
             "panel  form"
             "panel  message"
             "panel  oauth"
+        ;
+    }
+
+    .signup {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "form"
+            "message"
+            "oauth"
         ;
     }
 }

@@ -297,9 +297,6 @@ function WelcomePage() {
             };
 
             return <main {...$mainProps}>
-                <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
-                </section>
-
                 <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="off">
                         <header>
@@ -387,7 +384,7 @@ function WelcomePage() {
                             }
                         </Button>
 
-                        <Link to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`}>
+                        <Link className="mx-auto" to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`}>
                             Já tenho conta, quero entrar
                         </Link>
                     </form>
