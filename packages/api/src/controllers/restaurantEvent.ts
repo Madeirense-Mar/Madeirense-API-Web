@@ -37,8 +37,6 @@ import {
 
 import { prisma } from '../lib/prisma';
 
-import { convertDecimals } from 'utilities/converters';
-
 import type { IEventfulRequest } from '../middlewares/events';
 import type { IAuthenticatedRequest } from '../interfaces';
 
@@ -426,7 +424,7 @@ export async function getBoughtTickets(
 
         return res.status(!tickets.length ? 404 : 200).json({
             code: !tickets.length ? 'API_GENERIC_NOT_FOUND_ERROR' : undefined,
-            data: tickets,
+            data: tickets.map(convertDecimals) as boughtTicketType[],
             message: !tickets.length ? 'No tickets have been bought until now' : 'Bought tickets retrieved successfully',
             pagination: {
                 page,
@@ -1028,6 +1026,12 @@ export async function purchaseTicket(
     }
 }
 
+type ticketErrorCodes = (
+    'API_INVALID_TICKET_TOKEN' |
+    'API_TICKET_ALREADY_VALIDATED' |
+    'API_TICKET_EXPIRED'
+);
+
 /**
  * Staff/Admin-only — scans a ticket's QR token at the door. Validates the
  * token's signature first (a malformed/foreign token never reaches the
@@ -1038,7 +1042,7 @@ export async function purchaseTicket(
  */
 export async function validateTicket(
     req: IAuthenticatedRequest<{}, { token: string }>,
-    res: Response<API$Types.response<boughtTicketType | undefined>>
+    res: Response<API$Types.response<boughtTicketType | undefined, ticketErrorCodes>>
 ) {
     try {
         if (!req.user) throw new Error(Messages.INACTIVE_SESSION);
