@@ -305,7 +305,7 @@ function WelcomePage() {
                             <p>Não se vai arrepender</p>
                         </header>
 
-                        <fieldset data-section={`${type}-name`} className="w-full flex flex-row justify-start items-start gap-2" data-state={state === "authenticating" ? "disabled" : "idle"}>
+                        <fieldset data-section={`${type}-name`} className="w-full flex justify-start items-start gap-2" data-state={state === "authenticating" ? "disabled" : "idle"}>
                             <label htmlFor="fname">
                                 <span>Primeiro nome</span>
 
