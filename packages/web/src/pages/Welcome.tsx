@@ -252,7 +252,7 @@ function WelcomePage() {
                             }
                         </Button>
 
-                        <Link to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.signup}`}>
+                        <Link className="mx-auto" to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.signup}`}>
                             Não tenho conta,
 
                             <span className="font-bold italic">quero inscrever-me</span>
