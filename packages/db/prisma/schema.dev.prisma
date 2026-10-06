@@ -8,28 +8,15 @@ datasource db {
   url      = env("DEV_DATABASE_URL")
 }
 
-// Added 2026-10-01: every model below got an explicit `@@map("lowercase")`
-// after discovering this local MySQL server has `lower_case_table_names=1`
-// (`SHOW VARIABLES LIKE 'lower_case_table_names';` confirmed it — the
-// Windows default, since NTFS is case-insensitive). That setting folds
-// TABLE names to lowercase in storage no matter how the CREATE TABLE/DDL
-// text is cased or which client runs it — it was never actually a DBeaver
-// bug, DBeaver's schema browser just displayed the real (already
-// lowercase) stored names, while raw `mysql` CLI queries kept "working"
-// against the mixed-case spelling only because name comparison is
-// case-insensitive under this setting too. `MADEIRENSE_TABLES.sql` still
-// uses the real, intended mixed-case names (`Tickets_Purchased`, etc., and
-// that's also what staging/production presumably store for real, since
-// nothing here suggests they share this Windows-only quirk) — `@@map`
-// just tells Prisma to query the lowercase physical table while still
-// exposing the PascalCase model name, so `prisma.device_Push_Tokens` etc.
-// (first-letter-lowercased model name — the convention every controller
-// in this codebase already relies on) keeps working unchanged. Column
-// names are NOT affected by `lower_case_table_names` — only table/database
-// identifiers are folded — so no `@map` was needed on individual fields.
-// schema.staging.prisma intentionally does NOT have this — it targets a
-// different server, and should only get the same treatment if that
-// server is ever confirmed to fold case the same way.
+model Application_Theme {
+  restaurant_id Int
+  theme         Application_Theme_theme
+  Restaurants   Restaurants             @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Application_Theme_ibfk_1")
+
+  @@id([restaurant_id, theme])
+  @@index([restaurant_id], map: "restaurant_id")
+}
+
 model Blocked_Users {
   block_id        Int                           @id @default(autoincrement())
   blocked_user_id Int
@@ -41,7 +28,6 @@ model Blocked_Users {
   Users           Users                         @relation(fields: [blocked_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Blocked_Users_ibfk_1")
 
   @@index([blocked_user_id], map: "blocked_user_id")
-  @@map("blocked_users")
 }
 
 model Cart {
@@ -55,7 +41,6 @@ model Cart {
 
   @@index([product_id], map: "product_id")
   @@index([user_id], map: "user_id")
-  @@map("cart")
 }
 
 model Chat_Messages {
@@ -73,7 +58,6 @@ model Chat_Messages {
   @@index([sender_id], map: "fk_sender")
   @@index([order_id], map: "order_id")
   @@index([restaurant_id], map: "restaurant_id")
-  @@map("chat_messages")
 }
 
 model Coupons {
@@ -84,8 +68,6 @@ model Coupons {
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   Orders     Orders[]
-
-  @@map("coupons")
 }
 
 model Courier_Positions {
@@ -98,7 +80,6 @@ model Courier_Positions {
   Users       Users    @relation(fields: [courier_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Courier_Positions_ibfk_1")
 
   @@index([courier_id], map: "courier_id")
-  @@map("courier_positions")
 }
 
 model Courier_Reallocation_Requests {
@@ -118,7 +99,6 @@ model Courier_Reallocation_Requests {
   @@index([courier_id], map: "courier_id")
   @@index([order_id], map: "order_id")
   @@index([requested_courier_id], map: "requested_courier_id")
-  @@map("courier_reallocation_requests")
 }
 
 model Credentials {
@@ -126,8 +106,6 @@ model Credentials {
   email         String    @unique(map: "email") @db.VarChar(255)
   hash          String    @db.VarChar(255)
   created_at    DateTime? @default(now()) @db.Timestamp(0)
-
-  @@map("credentials")
 }
 
 model Delivery_Locations {
@@ -154,7 +132,17 @@ model Delivery_Locations {
   Restaurants          Restaurants[]
 
   @@index([user_id], map: "user_id")
-  @@map("delivery_locations")
+}
+
+model Device_Push_Tokens {
+  token_id   Int       @id @default(autoincrement())
+  user_id    Int
+  fcm_token  String    @unique(map: "fcm_token") @db.VarChar(255)
+  platform   String?   @db.VarChar(20)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Device_Push_Tokens_ibfk_1")
+
+  @@index([user_id], map: "user_id")
 }
 
 model Favorites {
@@ -165,7 +153,6 @@ model Favorites {
 
   @@id([user_id, product_id])
   @@index([product_id], map: "product_id")
-  @@map("favorites")
 }
 
 model Global_Settings {
@@ -175,10 +162,8 @@ model Global_Settings {
   avg_ttd                                Int                                      @default(20)
   prep_buffer                            Int                                      @default(20)
   auto_assign_driver                     Boolean?                                 @default(false)
-  change_version                         String                                   @default(dbgenerated("(uuid())")) @db.Char(36)
+  change_version                         String                                   @db.Char(36)
   Global_Settings_Eligible_Payment_Types Global_Settings_Eligible_Payment_Types[]
-
-  @@map("global_settings")
 }
 
 model Global_Settings_Eligible_Payment_Types {
@@ -187,7 +172,6 @@ model Global_Settings_Eligible_Payment_Types {
   Global_Settings Global_Settings                                       @relation(fields: [setting_id], references: [setting_id], onDelete: NoAction, onUpdate: NoAction, map: "Global_Settings_Eligible_Payment_Types_ibfk_1")
 
   @@id([setting_id, payment_method])
-  @@map("global_settings_eligible_payment_types")
 }
 
 model Notifications {
@@ -199,7 +183,6 @@ model Notifications {
   Users           Users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Notifications_ibfk_1")
 
   @@index([user_id], map: "user_id")
-  @@map("notifications")
 }
 
 model Order_History {
@@ -214,7 +197,6 @@ model Order_History {
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
-  @@map("order_history")
 }
 
 model Order_Items {
@@ -227,7 +209,6 @@ model Order_Items {
 
   @@index([order_id], map: "order_id")
   @@index([product_id], map: "product_id")
-  @@map("order_items")
 }
 
 model Orders {
@@ -265,7 +246,6 @@ model Orders {
   @@index([courier_id], map: "fk_courier")
   @@index([restaurant_id], map: "restaurant_id")
   @@index([user_id], map: "user_id")
-  @@map("orders")
 }
 
 model Payments {
@@ -275,25 +255,12 @@ model Payments {
   amount         Decimal                 @db.Decimal(10, 2)
   payment_method Payments_payment_method
   status         Payments_status?        @default(pending)
-  // Added 2026-09-30 for the EMIS gateway integration (see
-  // ../../api/src/services/emis.ts and
-  // ../../api/src/controllers/payment.ts's emisPaymentCallback): the
-  // reference EMIS hands back when we initiate a payment request against
-  // it. Its callback then echoes this reference so we know which
-  // Payments row it's confirming/failing — there's no other correlation
-  // key, since the callback is server-to-server and carries no user JWT.
-  // Nullable: every payment predating this column, and any created with
-  // a non-gateway method (Cash, Offer, ...), never gets one.
-  // NEEDS A MANUAL MIGRATION — see TODO.md at the repo root.
-  gateway_reference String?              @db.VarChar(255)
   created_at     DateTime?               @default(now()) @db.Timestamp(0)
   Orders         Orders                  @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Payments_ibfk_1")
   Users          Users                   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Payments_ibfk_2")
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
-  @@index([gateway_reference], map: "gateway_reference")
-  @@map("payments")
 }
 
 model Products {
@@ -305,12 +272,12 @@ model Products {
   discount            Decimal                       @default(0.00) @db.Decimal(5, 2)
   thumbnail           String?                       @db.VarChar(255)
   product_type        Products_product_type?
+  product_composition Products_product_composition?
   prep_time_minutes   Int                           @default(0)
   event_id            Int?
   delisted            Boolean?                      @default(false)
   created_at          DateTime?                     @default(now()) @db.Timestamp(0)
   updated_at          DateTime?                     @default(now()) @db.Timestamp(0)
-  product_composition Products_product_composition?
   Cart                Cart[]
   Favorites           Favorites[]
   Order_Items         Order_Items[]
@@ -320,7 +287,6 @@ model Products {
 
   @@index([event_id], map: "event_id")
   @@index([restaurant_id], map: "restaurant_id")
-  @@map("products")
 }
 
 model Push_Notification_Subscriptions {
@@ -333,30 +299,164 @@ model Push_Notification_Subscriptions {
   Users           Users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Push_Notification_Subscriptions_ibfk_1")
 
   @@index([user_id], map: "user_id")
-  @@map("push_notification_subscriptions")
 }
 
-// Added 2026-09-30 for mobile push (FCM) — deliberately a separate model
-// from Push_Notification_Subscriptions above, which is Web Push
-// (VAPID)-only and shaped around browser PushSubscription objects
-// (endpoint/auth/p256dh). An FCM device token is a single opaque string
-// with no such shape, and (unlike a browser endpoint) the same user can
-// hold several live tokens at once — one per installed device. See
-// ../../api/src/firebase/admin.ts and
-// ../../api/src/controllers/devicePushTokens.ts.
-// NEEDS A MANUAL MIGRATION — see TODO.md at the repo root.
-model Device_Push_Tokens {
-  token_id   Int       @id @default(autoincrement())
-  user_id    Int
-  fcm_token  String    @unique(map: "fcm_token") @db.VarChar(255)
-  // 'android' | 'ios' — informational only (e.g. for platform-specific
-  // payload tweaks later); nothing currently branches on it.
-  platform   String?   @db.VarChar(20)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  Users      Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Device_Push_Tokens_ibfk_1")
+model Resort_Amenities {
+  amenity_id            Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(100)
+  Resort_Room_Amenities Resort_Room_Amenities[]
+}
+
+model Resort_Bed_Types {
+  bed_type_id             Int                       @id @default(autoincrement())
+  name                    String                    @unique(map: "name") @db.VarChar(50)
+  sleeps                  Int
+  Resort_Room_Bed_Options Resort_Room_Bed_Options[]
+}
+
+model Resort_Booking_Cancellation_Policies {
+  policy_id   Int    @id @default(autoincrement())
+  description String @db.VarChar(255)
+}
+
+model Resort_Booking_Cancellations {
+  booking_id      Int                                      @id
+  reason_code     Resort_Booking_Cancellations_reason_code
+  Resort_Bookings Resort_Bookings                          @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_booking_cancellations_ibfk_1")
+}
+
+model Resort_Booking_History {
+  history_id      Int                            @id @default(autoincrement())
+  booking_id      Int
+  user_id         Int
+  status          Resort_Booking_History_status? @default(pending)
+  created_at      DateTime?                      @default(now()) @db.Timestamp(0)
+  notes           String?                        @db.Text
+  Resort_Bookings Resort_Bookings                @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_History_ibfk_1")
+  Users           Users                          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_History_ibfk_2")
+
+  @@index([booking_id], map: "booking_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Resort_Booking_Payments {
+  payment_id      Int                                    @id @default(autoincrement())
+  user_id         Int
+  amount          Decimal                                @db.Decimal(10, 2)
+  payment_method  Resort_Booking_Payments_payment_method
+  status          Resort_Booking_Payments_status?        @default(pending)
+  created_at      DateTime?                              @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?                              @default(now()) @db.Timestamp(0)
+  Users           Users                                  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_Payments_ibfk_2")
+  Resort_Bookings Resort_Bookings[]
 
   @@index([user_id], map: "user_id")
-  @@map("device_push_tokens")
+}
+
+model Resort_Bookings {
+  booking_id                   Int                           @id @default(autoincrement())
+  user_id                      Int
+  room_id                      Int
+  resort_id                    Int
+  payment_id                   Int
+  check_in                     DateTime                      @db.Date
+  check_out                    DateTime                      @db.Date
+  guests                       Int                           @default(1)
+  status                       Resort_Bookings_status?       @default(pending)
+  created_at                   DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at                   DateTime?                     @default(now()) @db.Timestamp(0)
+  Resort_Booking_Cancellations Resort_Booking_Cancellations?
+  Resort_Booking_History       Resort_Booking_History[]
+  Users                        Users                         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_1")
+  Resort_Rooms                 Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_2")
+  Resorts                      Resorts                       @relation(fields: [resort_id], references: [resort_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_3")
+  Resort_Booking_Payments      Resort_Booking_Payments       @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_4")
+  Resort_Chat_Messages         Resort_Chat_Messages[]
+
+  @@index([payment_id], map: "Resort_Bookings_ibfk_4")
+  @@index([resort_id], map: "resort_id")
+  @@index([room_id], map: "room_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Resort_Chat_Messages {
+  message_id      Int                              @id @default(autoincrement())
+  booking_id      Int
+  sender_type     Resort_Chat_Messages_sender_type
+  sender_id       Int
+  message_text    String                           @db.Text
+  sent_at         DateTime?                        @default(now()) @db.DateTime(0)
+  Resort_Bookings Resort_Bookings                  @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Chat_Messages_ibfk_1")
+  Users           Users                            @relation(fields: [sender_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_resort_sender")
+
+  @@index([booking_id], map: "booking_id")
+  @@index([sender_id], map: "fk_sender")
+}
+
+model Resort_Room_Amenities {
+  room_id          Int
+  amenity_id       Int
+  Resort_Rooms     Resort_Rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Amenities_ibfk_1")
+  Resort_Amenities Resort_Amenities @relation(fields: [amenity_id], references: [amenity_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Amenities_ibfk_2")
+
+  @@id([room_id, amenity_id])
+  @@index([room_id], map: "Resort_Room_Amenities_ibfk_1")
+  @@index([amenity_id], map: "Resort_Room_Amenities_ibfk_2")
+}
+
+model Resort_Room_Bed_Options {
+  room_id          Int
+  bed_type_id      Int
+  quantity         Int              @default(1)
+  Resort_Rooms     Resort_Rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_room_bed_options_ibfk_1")
+  Resort_Bed_Types Resort_Bed_Types @relation(fields: [bed_type_id], references: [bed_type_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_room_bed_options_ibfk_2")
+
+  @@id([room_id, bed_type_id])
+  @@index([bed_type_id], map: "bed_type_id")
+}
+
+model Resort_Rooms {
+  room_id                 Int                        @id @default(autoincrement())
+  name                    String                     @db.VarChar(255)
+  created_at              DateTime?                  @default(now()) @db.Timestamp(0)
+  updated_at              DateTime?                  @default(now()) @db.Timestamp(0)
+  price_per_night         Decimal                    @db.Decimal(10, 2)
+  availability            Resort_Rooms_availability? @default(Available)
+  resort_id               Int
+  Resort_Bookings         Resort_Bookings[]
+  Resort_Room_Amenities   Resort_Room_Amenities[]
+  Resort_Room_Bed_Options Resort_Room_Bed_Options[]
+  Resorts                 Resorts                    @relation(fields: [resort_id], references: [resort_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Rooms_ibfk_1")
+  Resort_Rooms_Media      Resort_Rooms_Media[]
+
+  @@index([resort_id], map: "Resort_Rooms_ibfk_1")
+}
+
+model Resort_Rooms_Media {
+  media_id     Int                           @id @default(autoincrement())
+  room_id      Int
+  created_at   DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?                     @default(now()) @db.Timestamp(0)
+  media_url    String?                       @db.VarChar(255)
+  media_type   Resort_Rooms_Media_media_type
+  Resort_Rooms Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Rooms_Media_ibfk_1")
+
+  @@index([room_id], map: "Resort_Rooms_Media_ibfk_1")
+}
+
+model Resorts {
+  resort_id          Int                 @id @default(autoincrement())
+  name               String              @db.VarChar(255)
+  location           Int?
+  created_at         DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
+  thumbnail_url      String?             @db.VarChar(255)
+  video_url          String?             @db.VarChar(255)
+  Resort_Bookings    Resort_Bookings[]
+  Resort_Rooms       Resort_Rooms[]
+  Delivery_Locations Delivery_Locations? @relation(fields: [location], references: [location_id], onDelete: Cascade, onUpdate: NoAction, map: "DeliveryLocations_ibfk_1")
+
+  @@index([location], map: "Restaurants_ibfk_1")
 }
 
 model Restaurant_Events {
@@ -380,7 +480,6 @@ model Restaurant_Events {
   Tickets_Purchased Tickets_Purchased[]
 
   @@index([restaurant_id], map: "restaurant_id")
-  @@map("restaurant_events")
 }
 
 model Restaurant_Hours {
@@ -393,7 +492,6 @@ model Restaurant_Hours {
   Restaurants   Restaurants                  @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Restaurant_Hours_ibfk_1")
 
   @@unique([restaurant_id, day_of_week], map: "restaurant_id")
-  @@map("restaurant_hours")
 }
 
 model Restaurants {
@@ -416,28 +514,13 @@ model Restaurants {
   Workstations       Workstations[]
 
   @@index([location], map: "Restaurants_ibfk_1")
-  @@map("restaurants")
 }
 
-// PRODUCT DECISION (2026-09-30): order_id was NOT NULL / required, which
-// meant a ticket could only ever exist as a side effect of an Orders row
-// — it was "registered as fact" but never a standalone, independently
-// verifiable entity (Robbie's own framing). Tickets are now purchased
-// through their own endpoint, entirely independent of the Orders/cart
-// flow (see controllers/restaurantEvent.ts's purchaseTicket and
-// client-mobile/CLAUDE.md) — order_id is nullable so a ticket can exist
-// with no Orders row at all. REQUIRES A MANUAL DB MIGRATION before this
-// is usable — Prisma won't alter an existing column for you without
-// `prisma migrate`/`db push` against the real database, which isn't
-// runnable from this environment:
-//   ALTER TABLE `Tickets_Purchased` MODIFY `order_id` int(11) DEFAULT NULL;
-// (mirrored in MADEIRENSE_TABLES.sql's CREATE TABLE for reference — that
-// file isn't itself re-run against an existing database.)
 model Tickets_Purchased {
   ticket_id                                   Int               @id @default(autoincrement())
   user_id                                     Int
   restaurant_id                               Int
-  order_id                                    Int?
+  order_id                                    Int
   event_id                                    Int
   quantity                                    Int?              @default(1)
   price                                       Decimal           @db.Decimal(10, 2)
@@ -448,7 +531,7 @@ model Tickets_Purchased {
   validator_id                                Int?
   Users_Tickets_Purchased_user_idToUsers      Users             @relation("Tickets_Purchased_user_idToUsers", fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_1")
   Restaurants                                 Restaurants       @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_2")
-  Orders                                      Orders?           @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
+  Orders                                      Orders            @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
   Restaurant_Events                           Restaurant_Events @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_4")
   Users_Tickets_Purchased_validator_idToUsers Users?            @relation("Tickets_Purchased_validator_idToUsers", fields: [validator_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_5")
 
@@ -458,7 +541,6 @@ model Tickets_Purchased {
   @@index([restaurant_id], map: "restaurant_id")
   @@index([user_id], map: "user_id")
   @@index([validator_id], map: "validator_id")
-  @@map("tickets_purchased")
 }
 
 model User_Comments {
@@ -472,7 +554,6 @@ model User_Comments {
 
   @@index([product_id], map: "product_id")
   @@index([user_id], map: "user_id")
-  @@map("user_comments")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -488,7 +569,6 @@ model User_Reviews {
 
   @@index([order_id], map: "order_id")
   @@index([user_id], map: "user_id")
-  @@map("user_reviews")
 }
 
 model Users {
@@ -522,8 +602,6 @@ model Users {
   User_Comments                                                                           User_Comments[]
   User_Reviews                                                                            User_Reviews[]
   Workstations                                                                            Workstations[]
-
-  @@map("users")
 }
 
 model Workstations {
@@ -536,192 +614,11 @@ model Workstations {
 
   @@unique([user_id, restaurant_id], map: "user_id")
   @@index([restaurant_id], map: "restaurant_id")
-  @@map("workstations")
 }
 
-model Resort_Amenities {
-  amenity_id            Int                     @id @default(autoincrement())
-  name                  String                  @db.VarChar(100)
-  Resort_Room_Amenities Resort_Room_Amenities[]
-
-  @@map("resort_amenities")
-}
-
-model Resort_Booking_Cancellation_Policies {
-  policy_id   Int    @id @default(autoincrement())
-  description String @db.VarChar(255)
-
-  @@map("resort_booking_cancellation_policies")
-}
-
-model Resort_Booking_Payments {
-  payment_id      Int                                    @id @default(autoincrement())
-  user_id         Int
-  amount          Decimal                                @db.Decimal(10, 2)
-  payment_method  Resort_Booking_Payments_payment_method
-  status          Resort_Booking_Payments_status?        @default(pending)
-  created_at      DateTime?                              @default(now()) @db.Timestamp(0)
-  updated_at      DateTime?                              @default(now()) @db.Timestamp(0)
-  Users           Users                                  @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Booking_Payments_ibfk_2")
-  Resort_Bookings Resort_Bookings[]
-
-  @@index([user_id], map: "user_id")
-  @@map("resort_booking_payments")
-}
-
-model Resort_Bookings {
-  booking_id                   Int                           @id @default(autoincrement())
-  user_id                      Int
-  room_id                      Int
-  check_in                     DateTime                      @db.Date
-  check_out                    DateTime                      @db.Date
-  guests                       Int                           @default(1)
-  status                       Resort_Bookings_status?       @default(pending)
-  created_at                   DateTime?                     @default(now()) @db.Timestamp(0)
-  updated_at                   DateTime?                     @default(now()) @db.Timestamp(0)
-  resort_id                    Int
-  payment_id                   Int
-  Resort_Booking_Cancellations Resort_Booking_Cancellations?
-  Resort_Booking_History       Resort_Booking_History[]
-  Users                        Users                         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_1")
-  Resort_Rooms                 Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "Bookings_ibfk_2")
-  Resorts                      Resorts                       @relation(fields: [resort_id], references: [resort_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Bookings_ibfk_3")
-  Resort_Booking_Payments      Resort_Booking_Payments       @relation(fields: [payment_id], references: [payment_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Bookings_ibfk_4")
-  Resort_Chat_Messages         Resort_Chat_Messages[]
-
-  @@index([room_id], map: "room_id")
-  @@index([user_id], map: "user_id")
-  @@index([resort_id], map: "Resort_Bookings_ibfk_3")
-  @@index([payment_id], map: "Resort_Bookings_ibfk_4")
-  @@map("resort_bookings")
-}
-
-model Resort_Room_Amenities {
-  room_id          Int
-  amenity_id       Int
-  Resort_Rooms     Resort_Rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Amenities_ibfk_1")
-  Resort_Amenities Resort_Amenities @relation(fields: [amenity_id], references: [amenity_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Room_Amenities_ibfk_2")
-
-  @@id([room_id, amenity_id])
-  @@index([room_id], map: "Resort_Room_Amenities_ibfk_1")
-  @@index([amenity_id], map: "Resort_Room_Amenities_ibfk_2")
-  @@map("resort_room_amenities")
-}
-
-model Resort_Rooms {
-  room_id                 Int                        @id @default(autoincrement())
-  name                    String                     @db.VarChar(255)
-  created_at              DateTime?                  @default(now()) @db.Timestamp(0)
-  updated_at              DateTime?                  @default(now()) @db.Timestamp(0)
-  price_per_night         Decimal                    @db.Decimal(10, 2)
-  availability            Resort_Rooms_availability? @default(Available)
-  resort_id               Int
-  quantity                Int?                       @default(1)
-  Resort_Bookings         Resort_Bookings[]
-  Resort_Room_Amenities   Resort_Room_Amenities[]
-  Resort_Room_Bed_Options Resort_Room_Bed_Options[]
-  Resorts                 Resorts                    @relation(fields: [resort_id], references: [resort_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Rooms_ibfk_1")
-  Resort_Rooms_Media      Resort_Rooms_Media[]
-
-  @@index([resort_id], map: "Resort_Rooms_ibfk_1")
-  @@map("resort_rooms")
-}
-
-model Resorts {
-  resort_id          Int                 @id @default(autoincrement())
-  name               String              @db.VarChar(255)
-  location           Int?
-  created_at         DateTime?           @default(now()) @db.Timestamp(0)
-  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
-  thumbnail_url      String?             @db.VarChar(255)
-  Resort_Bookings    Resort_Bookings[]
-  Resort_Rooms       Resort_Rooms[]
-  Delivery_Locations Delivery_Locations? @relation(fields: [location], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "Resorts_ibfk_1")
-
-  @@index([location], map: "Resorts_ibfk_1")
-  @@map("resorts")
-}
-
-model Resort_Room_Bed_Options {
-  room_id               Int
-  bed_type_id           Int
-  quantity              Int              @default(1)
-  Resort_Rooms          Resort_Rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_room_bed_options_ibfk_1")
-  Resort_Room_Bed_Types Resort_Bed_Types @relation(fields: [bed_type_id], references: [bed_type_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_room_bed_options_ibfk_2")
-
-  @@id([room_id, bed_type_id])
-  @@index([bed_type_id], map: "bed_type_id")
-  @@map("resort_room_bed_options")
-}
-
-model Resort_Bed_Types {
-  bed_type_id             Int                       @id @default(autoincrement())
-  name                    String                    @unique(map: "name") @db.VarChar(50)
-  sleeps                  Int
-  Resort_Room_Bed_Options Resort_Room_Bed_Options[]
-
-  @@map("resort_bed_types")
-}
-
-model Resort_Booking_Cancellations {
-  booking_id      Int                                      @id
-  reason_code     Resort_Booking_Cancellations_reason_code
-  Resort_Bookings Resort_Bookings                          @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "resort_booking_cancellations_ibfk_1")
-
-  @@map("resort_booking_cancellations")
-}
-
-model Resort_Chat_Messages {
-  message_id      Int                              @id @default(autoincrement())
-  booking_id      Int
-  sender_type     Resort_Chat_Messages_sender_type
-  sender_id       Int
-  message_text    String                           @db.Text
-  sent_at         DateTime?                        @default(now()) @db.DateTime(0)
-  Resort_Bookings Resort_Bookings                  @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Chat_Messages_ibfk_1")
-  Users           Users                            @relation(fields: [sender_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_resort_sender")
-
-  @@index([booking_id], map: "booking_id")
-  @@index([sender_id], map: "fk_sender")
-  @@map("resort_chat_messages")
-}
-
-model Resort_Booking_History {
-  history_id      Int                            @id @default(autoincrement())
-  booking_id      Int
-  user_id         Int
-  status          Resort_Booking_History_status? @default(pending)
-  created_at      DateTime?                      @default(now()) @db.Timestamp(0)
-  notes           String?                        @db.Text
-  Resort_Bookings Resort_Bookings                @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_History_ibfk_1")
-  Users           Users                          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Resort_Booking_History_ibfk_2")
-
-  @@index([booking_id], map: "booking_id")
-  @@index([user_id], map: "user_id")
-  @@map("resort_booking_history")
-}
-
-model Resort_Rooms_Media {
-  media_id     Int                           @id @default(autoincrement())
-  room_id      Int
-  created_at   DateTime?                     @default(now()) @db.Timestamp(0)
-  updated_at   DateTime?                     @default(now()) @db.Timestamp(0)
-  media_url    String?                       @db.VarChar(255)
-  media_type   Resort_Rooms_Media_media_type
-  Resort_Rooms Resort_Rooms                  @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "Resort_Rooms_Media_ibfk_1")
-
-  @@index([room_id], map: "Resort_Rooms_Media_ibfk_1")
-  @@map("resort_rooms_media")
-}
-
-model Application_Theme {
-  restaurant_id Int
-  theme         Application_Theme_theme
-  Restaurants   Restaurants             @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Application_Theme_ibfk_1")
-
-  @@id([restaurant_id, theme])
-  @@index([restaurant_id], map: "restaurant_id")
-  @@map("application_theme")
+enum Application_Theme_theme {
+  LAND
+  SEA
 }
 
 enum Global_Settings_Eligible_Payment_Types_payment_method {
@@ -735,10 +632,26 @@ enum Global_Settings_Eligible_Payment_Types_payment_method {
   Offer
 }
 
+enum Resort_Booking_Cancellations_reason_code {
+  GUEST_NO_SHOW
+  BAD_WEATHER
+  PAYMENT_ISSUE
+  DOUBLE_BOOKING
+  PERSONAL_EMERGENCY
+  TRAVEL_RESTRICTIONS
+  PROPERTY_MAINTENANCE
+  OWNER_CANCELLATION
+}
+
 enum Blocked_Users_blocked_by_type {
   restaurant
   admin
   user
+}
+
+enum Resort_Chat_Messages_sender_type {
+  user
+  resort
 }
 
 enum Restaurant_Hours_day_of_week {
@@ -776,6 +689,24 @@ enum Orders_status {
   cancelled
 }
 
+enum Resort_Booking_History_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum Resort_Booking_Payments_payment_method {
+  Credit_Card        @map("Credit Card")
+  Debit_Card         @map("Debit Card")
+  PayPal
+  Cash
+  Bank_Transfer      @map("Bank Transfer")
+  Payment_Reference  @map("Payment Reference")
+  Multicaixa_Express @map("Multicaixa Express")
+  Offer
+}
+
 enum Courier_Reallocation_Requests_motive {
   VEHICLE_ISSUE  @map("VEHICLE-ISSUE")
   UNAVAILABLE
@@ -795,11 +726,29 @@ enum Payments_payment_method {
   Offer
 }
 
+enum Resort_Booking_Payments_status {
+  pending
+  completed
+  failed
+  refunded
+}
+
 enum Payments_status {
   pending
   completed
   failed
   refunded
+}
+
+enum Resort_Rooms_availability {
+  Available
+  Limited
+  Sold_Out  @map("Sold Out")
+}
+
+enum Resort_Rooms_Media_media_type {
+  Thumbnail
+  Video
 }
 
 enum Users_user_role {
@@ -818,84 +767,6 @@ enum Courier_Reallocation_Requests_status {
   cancelled
 }
 
-enum Restaurant_Events_status {
-  upcoming
-  cancelled
-  ongoing
-  expired
-}
-
-enum Resort_Booking_Payments_payment_method {
-  Credit_Card        @map("Credit Card")
-  Debit_Card         @map("Debit Card")
-  PayPal
-  Cash
-  Bank_Transfer      @map("Bank Transfer")
-  Payment_Reference  @map("Payment Reference")
-  Multicaixa_Express @map("Multicaixa Express")
-  Offer
-}
-
-enum Resort_Booking_Payments_status {
-  pending
-  completed
-  failed
-  refunded
-}
-
-enum Resort_Bookings_status {
-  pending
-  confirmed
-  cancelled
-  completed
-}
-
-enum Resort_Booking_Cancellations_reason_code {
-  GUEST_NO_SHOW
-  BAD_WEATHER
-  PAYMENT_ISSUE
-  DOUBLE_BOOKING
-  PERSONAL_EMERGENCY
-  TRAVEL_RESTRICTIONS
-  PROPERTY_MAINTENANCE
-  OWNER_CANCELLATION
-}
-
-enum Resort_Rooms_availability {
-  Available
-  Limited
-  Sold_Out    @map("Sold Out")
-  Unavailable
-}
-
-enum Resort_Chat_Messages_sender_type {
-  user
-  resort
-}
-
-enum Resort_Booking_History_status {
-  pending
-  confirmed
-  cancelled
-  completed
-}
-
-enum Resort_Rooms_Media_media_type {
-  Thumbnail
-  Video
-}
-
-enum Products_product_composition {
-  meat
-  fish
-  wheat
-  vegan
-  alcoholic
-  non_alcoholic @map("non-alcoholic")
-  mixed
-  merchandise
-}
-
 enum Products_product_type {
   starter
   garnish
@@ -905,7 +776,28 @@ enum Products_product_type {
   ticket
 }
 
-enum Application_Theme_theme {
-  LAND
-  SEA
+enum Products_product_composition {
+  meat
+  fish
+  wheat
+  vegetable
+  alcoholic
+  non_alcoholic @map("non-alcoholic")
+  mixed
+  liquid
+  merchandise
+}
+
+enum Resort_Bookings_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum Restaurant_Events_status {
+  upcoming
+  cancelled
+  ongoing
+  expired
 }
