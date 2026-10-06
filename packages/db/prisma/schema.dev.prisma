@@ -520,7 +520,7 @@ model Tickets_Purchased {
   ticket_id                                   Int               @id @default(autoincrement())
   user_id                                     Int
   restaurant_id                               Int
-  order_id                                    Int
+  order_id                                    Int?
   event_id                                    Int
   quantity                                    Int?              @default(1)
   price                                       Decimal           @db.Decimal(10, 2)
@@ -531,7 +531,7 @@ model Tickets_Purchased {
   validator_id                                Int?
   Users_Tickets_Purchased_user_idToUsers      Users             @relation("Tickets_Purchased_user_idToUsers", fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_1")
   Restaurants                                 Restaurants       @relation(fields: [restaurant_id], references: [restaurant_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_2")
-  Orders                                      Orders            @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
+  Orders                                      Orders?           @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_3")
   Restaurant_Events                           Restaurant_Events @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_4")
   Users_Tickets_Purchased_validator_idToUsers Users?            @relation("Tickets_Purchased_validator_idToUsers", fields: [validator_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Tickets_Purchased_ibfk_5")
 
