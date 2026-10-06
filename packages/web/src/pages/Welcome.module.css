@@ -4,7 +4,18 @@
     height: -webkit-fill-available;
 }
 
-.form {
+.page main[data-view="panel"] {
+    grid-template-columns: 1fr 1fr;
+}
+
+.forgot,
+.login,
+.signup {
+    composes: page;
+}
+
+/*#region Section*/
+.section {
     @apply flex flex-col justify-center items-center gap-2 w-full;
     grid-area: form;
     background-color: var(--base-background);
@@ -12,26 +23,26 @@
     border-radius: 12px;
 }
 
-.form label,
-.form label span,
-.form button[data-variant="text"],
-.form input,
-.form textarea,
-.form select {
+.section label,
+.section label span,
+.section button[data-variant="text"],
+.section input,
+.section textarea,
+.section select {
     font-size: 12px;
 }
 
-.form a,
-.form ul li {
+.section a,
+.section ul li {
     font-size: 12px;
 }
 
-.form header p {
+.section header p {
     @apply my-2;
     opacity: 0.7;
 }
 
-.form hr {
+.section hr {
     --height: 1px;
     --width: 100%;
 
@@ -43,39 +54,30 @@
     opacity: 0.7;
 }
 
-.form form {
+.section form {
     @apply flex flex-col justify-start items-start w-full;
 
     gap: 12px;
 }
 
-.form fieldset {
-    @apply flex flex-col justify-center items-start gap-1 w-full;
+.section fieldset {
+    @apply flex flex-col justify-center items-start gap-4 w-full;
 }
 
-.form fieldset *:not(button[data-variant="text"]) {
+.section fieldset *:not(button[data-variant="text"]) {
     @apply w-full;
 }
 
-.form ul {
+.section ul {
     @apply flex flex-col justify-start items-start gap-1;
 }
 
-.form ul li {
+.section ul li {
     @apply italic;
     padding: 0px 5px;
     border-radius: 5px;
 }
-
-.page main[data-view="panel"] {
-    grid-template-columns: 1fr 1fr;
-}
-
-.forgot,
-.login,
-.signup {
-    composes: page;
-}
+/*#endregion*/
 
 .panel {
     height: -webkit-fill-available;

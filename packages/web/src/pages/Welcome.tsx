@@ -35,19 +35,13 @@ import Icon from "components/icon";
 import { Page$Enumerators } from "./enumerators";
 import { Root$Enumerators } from "styles/enumerators";
 
+import { Welcome$Enumerators } from "./Welcome.enumerators";
+
 import styles from "./Welcome.module.css";
 
 import "./Welcome.css";
 
 // ***************************************************************************************************************
-
-export namespace Welcome$Enumerators {
-    export enum Forms {
-        "login" = "login",
-        "signup" = "signup",
-        "forgot" = "forgot",
-    };
-};
 
 type formType = keyof typeof Welcome$Enumerators.Forms;
 
@@ -159,7 +153,7 @@ function WelcomePage() {
                 <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
                 </section>
 
-                <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
+                <section className={resolveClassNames(styles.section, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="on">
                         <header>
                             <h2 className="flex flex-row justify-start items-center gap-5">
@@ -218,7 +212,7 @@ function WelcomePage() {
                 <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
                 </section>
 
-                <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
+                <section className={resolveClassNames(styles.section, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="on">
                         <header>
                             <h2>Bem-vindo/a ao Madeirense</h2>
@@ -227,11 +221,17 @@ function WelcomePage() {
                         </header>
 
                         <fieldset data-section={type} data-state={state === "authenticating" ? "disabled" : "idle"}>
-                            <label htmlFor="email">E-mail</label>
-                            <input id="email" name="login" type="email" placeholder="oteuemail@provedor.com" required />
+                            <label htmlFor="email">
+                                E-mail
 
-                            <label htmlFor="password">Password</label>
-                            <input id="password" type="password" name="login" placeholder="Password" required />
+                                <input id="email" name="login" type="email" placeholder="oteuemail@provedor.com" required />
+                            </label>
+
+                            <label htmlFor="password">
+                                Password
+
+                                <input id="password" type="password" name="login" placeholder="Password" required />
+                            </label>
 
                             <AnchorButton
                                 to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.forgot}`}
@@ -297,7 +297,7 @@ function WelcomePage() {
             };
 
             return <main {...$mainProps}>
-                <section className={resolveClassNames(styles.form, "flex flex-row justify-center items-center")}>
+                <section className={resolveClassNames(styles.section, "flex flex-row justify-center items-center")}>
                     <form onSubmit={POST} autoComplete="off">
                         <header>
                             <h2>Bem-vindo/a ao Madeirense</h2>
@@ -326,47 +326,55 @@ function WelcomePage() {
                                 <input id="email" type="email" name="email" placeholder="oteuemail@provedor.com" required />
                             </label>
 
-                            <label htmlFor="phone">Nº do telefone</label>
+                            <div className="w-full flex flex-col justify-start items-start">
+                                <label htmlFor="phone">Nº do telefone</label>
 
-                            <div className="flex flex-row justify-start items-center w-full">
-                                <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={""} required>
-                                    <option hidden value="">Seleciona um código</option>
+                                <div className="flex flex-row justify-start items-center gap-3 w-full">
+                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={""} required>
+                                        <option hidden value="">Seleciona um código</option>
 
-                                    {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
-                                        {`(${code}) ${country}`}
-                                    </option>)}
-                                </select>
+                                        {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
+                                            {`(${code}) ${country}`}
+                                        </option>)}
+                                    </select>
 
-                                <input id="phone" type="tel" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
+                                    <input id="phone" type="tel" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
+                                </div>
                             </div>
                         </fieldset>
 
                         <fieldset data-section={`${type}-credentials`} data-state={state === "authenticating" ? "disabled" : "idle"}>
-                            <label htmlFor="password">Password</label>
-                            <input
-                                id="password"
-                                type="password"
-                                name="password"
-                                placeholder="Password"
-                                onChange={({ target }) => setPassword(target.value)}
-                                data-state={password === "" ? "idle" : validations["password"].every(({ validation }) => validation) ? "valid" : "error"}
-                                required
-                            />
+                            <label htmlFor="password">
+                                Password
+
+                                <input
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Password"
+                                    onChange={({ target }) => setPassword(target.value)}
+                                    data-state={password === "" ? "idle" : validations["password"].every(({ validation }) => validation) ? "valid" : "error"}
+                                    required
+                                />
+                            </label>
 
                             <ul className="mb-2">
                                 {validations["password"].map(({ label, validation }) => <li key={label} data-state={password === "" ? "idle" : validation ? "valid" : "error"}>{`> ${label}`}</li>)}
                             </ul>
 
-                            <label htmlFor="password-2">Confirmar password</label>
-                            <input
-                                id="password-2"
-                                type="password"
-                                name="password-2"
-                                placeholder="Confirmar password"
-                                onChange={({ target }) => setConfirmPassword(target.value)}
-                                data-state={confirmPassword === "" ? "idle" : validations["confirmPassword"].every(({ validation }) => validation) ? "valid" : "error"}
-                                required
-                            />
+                            <label htmlFor="password-2">
+                                Confirmar password
+
+                                <input
+                                    id="password-2"
+                                    type="password"
+                                    name="password-2"
+                                    placeholder="Confirmar password"
+                                    onChange={({ target }) => setConfirmPassword(target.value)}
+                                    data-state={confirmPassword === "" ? "idle" : validations["confirmPassword"].every(({ validation }) => validation) ? "valid" : "error"}
+                                    required
+                                />
+                            </label>
 
                             <ul>
                                 {validations["confirmPassword"].map(({ label, validation }) => <li key={label} data-state={confirmPassword === "" ? "idle" : validation ? "valid" : "error"}>{`> ${label}`}</li>)}
