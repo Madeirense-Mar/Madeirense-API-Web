@@ -23,7 +23,7 @@ import Icon from "components/icon";
 
 import AnchorButton from "components/buttons/anchor";
 
-import { Welcome$Enumerators } from "pages/Welcome";
+import { Welcome$Enumerators } from "pages/Welcome.enumerators";
 
 import styles from "./application.module.css";
 
