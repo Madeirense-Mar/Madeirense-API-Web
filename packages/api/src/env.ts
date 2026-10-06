@@ -118,6 +118,7 @@ const env = {
     FACEBOOK_CALLBACK_URL: process.env.FACEBOOK_CALLBACK_URL as string,
 
     // --------------------------: CORS
+    CORS_ALLOW_ALL: (which(process.env.CORS_ALLOW_ALL, 'false') as string) === 'true',
     CORS_ORIGIN_WHITE_LIST: (which(process.env.CORS_ORIGIN_WHITE_LIST, 'http://localhost:3000') as string).split(','),
     FRONTEND_URL: which(process.env.FRONTEND_URL, 'http://localhost:3000') as string,
 

@@ -52,6 +52,7 @@ class Server {
                 if ([
                     !origin,
                     allowedOrigins.includes(origin ?? ''),
+                    env.CORS_ALLOW_ALL,
                     (env.NODE_ENV === 'development') && (allowedOrigins.length === 0)
                 ].includes(true)) {
                     callback(null, true);
