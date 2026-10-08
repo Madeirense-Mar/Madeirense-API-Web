@@ -20,11 +20,17 @@ textarea {
     padding: 12px;
 }
 
+input,
+select,
+textarea {
+    background-color: var(--base-input-element-background-color, var(--background-color));
+}
+
+/*#region Theme specifications*/
 [data-theme*="DARK"] input,
 [data-theme*="DARK"] select,
 [data-theme*="DARK"] textarea {
     border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
-    background-color: var(--background-color);
 }
 
 [data-theme="SEA-DARK"] input,
@@ -32,3 +38,10 @@ textarea {
 [data-theme="SEA-DARK"] textarea {
     --base-input-element-border-color: var(--primary-light);
 }
+
+[data-theme*="LIGHT"] input,
+[data-theme*="LIGHT"] select,
+[data-theme*="LIGHT"] textarea {
+    border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-dark)));
+}
+/*#endregion*/
