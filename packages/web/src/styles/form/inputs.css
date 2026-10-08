@@ -33,6 +33,12 @@ textarea {
     border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
 }
 
+[data-theme="LAND-DARK"] input,
+[data-theme="LAND-DARK"] select,
+[data-theme="LAND-DARK"] textarea {
+    --base-input-element-border-color: var(--secondary);
+}
+
 [data-theme="SEA-DARK"] input,
 [data-theme="SEA-DARK"] select,
 [data-theme="SEA-DARK"] textarea {
