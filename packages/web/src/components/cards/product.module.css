@@ -157,29 +157,47 @@
     composes: card;
 }
 
+.alcoholic {
+    composes: card;
+}
+
+[data-theme="LAND-DARK"] .alcoholic {}
+
+[data-theme="SEA-DARK"] .alcoholic {
+    --card-border-color: var(--tertiary);
+    --card-background-color: color-mix(in srgb, var(--tertiary), black 50%);
+
+    --text-color: var(--neutral-light);
+}
+
+[data-theme="SEA-LIGHT"] .alcoholic {
+    --card-border-color: var(--tertiary);
+    --card-background-color: color-mix(in srgb, var(--tertiary), white 50%);
+}
+
 .non_alcoholic {
     composes: card;
 }
 
-.vegan {
+.vegetable {
     composes: card;
 }
 
-[data-theme="SEA-DARK"] .vegan {
+[data-theme="SEA-DARK"] .vegetable {
     --card-border-color: var(--success);
     --card-background-color: color-mix(in srgb, var(--success), var(--success-dark) 45%);
 
     --text-color: var(--success-dark);
 }
 
-[data-theme="LAND-DARK"] .vegan {
+[data-theme="LAND-DARK"] .vegetable {
     --card-border-color: var(--success);
     --card-background-color: color-mix(in srgb, var(--success-dark) 80%, var(--success) 15%);
-    
+
     --text-color: color-mix(in srgb, var(--success), white 80%);
 }
 
-.vegan div[data-section="thumbnail"] {
+.vegetable div[data-section="thumbnail"] {
     background-color: color-mix(in srgb, var(--success) 50%, white 30%);
 }
 
@@ -190,14 +208,14 @@
 [data-theme="SEA-DARK"] .wheat {
     --card-border-color: var(--secondary);
     --card-background-color: var(--secondary);
-    
+
     --text-color: var(--success-dark);
 }
 
 [data-theme="LAND-DARK"] .wheat {
     --card-border-color: var(--secondary);
     --card-background-color: var(--secondary-light);
-    
+
     --text-color: var(--secondary-dark);
 }
 
