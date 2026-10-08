@@ -1,0 +1,21 @@
+---
+subject: "Não foi possível concluir o pagamento da encomenda #{{payment.order_id}}"
+preheader: O pagamento não foi concluído. Pode tentar novamente na aplicação.
+category: transactional
+description: Payment failed / was rejected by the gateway.
+sample:
+  user: { first_name: Ana }
+  payment:
+    payment_id: 311
+    order_id: 1042
+    amount: "18500.00"
+    method: Multicaixa Express
+  order_url: https://madeirense.co.ao/orders/1042
+---
+{{#> layout}}
+<p class="eyebrow">Pagamento não concluído</p>
+<h1>O pagamento não foi concluído</h1>
+<p>Olá {{user.first_name}}, o pagamento de <strong>{{money payment.amount}}</strong> ({{payment.method}}) referente à encomenda #{{payment.order_id}} não foi concluído. Nenhum valor foi cobrado.</p>
+<div class="panel panel-danger">Pode tentar novamente a partir da página da encomenda. Se o problema persistir, contacte-nos.</div>
+<p style="margin: 28px 0;"><a class="button" href="{{order_url}}">Tentar novamente</a></p>
+{{/layout}}

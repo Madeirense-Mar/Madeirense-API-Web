@@ -9,6 +9,7 @@ import couponRoutes from './coupons.js';
 import courierPositionsRoutes from './courierPositions.js';
 import deliveryLocationRoutes from './deliveryLocations.js';
 import devicePushTokenRoutes from './devicePushTokens.js';
+import emailRoutes from './emails.js';
 import emisRoutes from './emis.js';
 import globalSettingsRoutes from './globalSettings.js';
 import legalRoutes from './legal.js';
@@ -106,6 +107,7 @@ const routes = {
         'courier-positions': courierPositionsRoutes.v1,
         'delivery-locations': deliveryLocationRoutes.v1,
         'device-tokens': devicePushTokenRoutes.v1,
+        'emails': emailRoutes.v1,
         'emis': emisRoutes.v1,
         'global-settings': globalSettingsRoutes.v1,
         'legal': legalRoutes.v1,

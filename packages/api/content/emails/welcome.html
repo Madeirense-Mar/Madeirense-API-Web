@@ -1,0 +1,20 @@
+---
+subject: "Bem-vindo à Madeirense, {{user.first_name}}"
+preheader: A sua conta está pronta — peça, reserve e descubra os nossos eventos.
+category: transactional
+description: Sent once when a customer account is created.
+sample:
+  user:
+    first_name: Ana
+    name: Ana Domingos
+    email: ana@example.com
+  app_url: https://madeirense.co.ao/
+---
+{{#> layout}}
+<p class="eyebrow">Conta criada</p>
+<h1>Bem-vindo, {{user.first_name}}.</h1>
+<p>A sua conta Madeirense está pronta. A partir de agora pode encomendar dos nossos restaurantes, comprar bilhetes para eventos e reservar a sua estadia no resort — tudo no mesmo sítio.</p>
+<p>Vamos mantê-lo a par por e-mail sempre que uma encomenda, pagamento ou bilhete mudar de estado.</p>
+<p style="margin: 28px 0;"><a class="button" href="{{app_url}}">Explorar a Madeirense</a></p>
+<p class="muted">Se não foi você que criou esta conta, ignore este e-mail.</p>
+{{/layout}}

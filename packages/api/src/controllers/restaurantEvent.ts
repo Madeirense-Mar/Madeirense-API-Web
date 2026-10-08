@@ -27,6 +27,10 @@ import {
 } from './utilities/handlers';
 
 import {
+    emailTicketPurchase
+} from './emails';
+
+import {
     generateTicketToken,
     verifyTicketToken
 } from '../utilities/generators';
@@ -113,6 +117,7 @@ export async function cancelRestaurantEvent(
 
         req.events?.global_settings.SILENT$emit("global_settings.change_version.updated");
         req.events?.restaurant_events.emit("restaurant_event.updated", event);
+        req.events?.restaurant_events.emit("restaurant_event.status.updated", event);
     }
 };
 
@@ -1009,6 +1014,8 @@ export async function purchaseTicket(
 
             throw error;
         }
+
+        void emailTicketPurchase(ticket.ticket_id);
 
         return res.status(201).json({
             data: {

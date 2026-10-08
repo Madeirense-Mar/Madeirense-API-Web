@@ -115,6 +115,12 @@ const openAPISpec = {
             basicAuth: {
                 type: 'http',
                 scheme: 'basic'
+            },
+            // Added 2026-10-08 — see middlewares/apiKeys.ts. Generate one at /api/management.
+            apiKey: {
+                type: 'apiKey',
+                in: 'header',
+                name: 'x-api-key'
             }
         },
         schemas: {
@@ -222,6 +228,10 @@ const openAPISpec = {
             }
         }
     },
+    // Applied to every operation; the "Authorize" button in /api/docs sets it for Try-it-out calls.
+    security: [
+        { apiKey: [] }
+    ],
     tags: [
         {
             'name': env.APP_NAME,

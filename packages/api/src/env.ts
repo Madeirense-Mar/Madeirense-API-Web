@@ -136,9 +136,69 @@ const env = {
     // infra/osrm/README.md for the full setup writeup.
     OSRM_BASE_URL: which(process.env.OSRM_BASE_URL, 'http://127.0.0.1:5000') as string,
 
+    // --------------------------: Logging
+    // Added 2026-10-08 — see lib/logger.ts.
+    /** Minimum level recorded overall: error | warn | info | http | verbose | debug. `http` = one line per request. */
+    LOG_LEVEL: which(process.env.LOG_LEVEL, 'http') as string,
+    /** Minimum level echoed to stdout (what `pm2 logs` shows). */
+    LOG_CONSOLE_LEVEL: which(process.env.LOG_CONSOLE_LEVEL, environment === 'development' ? 'debug' : 'info') as string,
+    /** Relative to the process cwd (packages/api when started by PM2/nodemon). */
+    LOG_DIR: which(process.env.LOG_DIR, 'logs') as string,
+    LOG_TO_FILES: which(process.env.LOG_TO_FILES, 'true') === 'true',
+    LOG_RETENTION_DAYS: parseInt(which(process.env.LOG_RETENTION_DAYS, '30') as string),
+    LOG_MAX_FILE_SIZE: which(process.env.LOG_MAX_FILE_SIZE, '20m') as string,
+
+    // --------------------------: Proxy
+    /**
+     * Express `trust proxy` setting. `loopback` trusts X-Forwarded-For only
+     * when the request comes from 127.0.0.1/::1 — i.e. Nginx on the same VPS —
+     * which is what makes `req.ip` (rate limiting, logs, API key usage) the
+     * real client IP instead of Nginx's.
+     */
+    TRUST_PROXY: which(process.env.TRUST_PROXY, 'loopback') as string,
+
+    // --------------------------: API keys
+    // Added 2026-10-08 — see middlewares/apiKeys.ts and management/.
+    /**
+     * `enforce` → requests without a valid `x-api-key` get 401.
+     * `report`  → let them through but log a warning (use while rolling keys out to the apps).
+     * `off`     → middleware disabled.
+     */
+    API_KEY_MODE: which(process.env.API_KEY_MODE, 'enforce') as ('enforce' | 'report' | 'off'),
+    /** How long a validated key is cached in memory before re-checking the DB (revocations from /management are instant regardless). */
+    API_KEY_CACHE_TTL_MS: parseInt(which(process.env.API_KEY_CACHE_TTL_MS, '60000') as string),
+
+    // --------------------------: Management console
+    /** Minutes a /api/management login stays valid. */
+    MANAGEMENT_SESSION_MINUTES: parseInt(which(process.env.MANAGEMENT_SESSION_MINUTES, '60') as string),
+
+    // --------------------------: E-mail (SMTP)
+    // Added 2026-10-08 — see services/mailer.ts. Any SMTP provider works
+    // (Hostinger mailbox, Brevo, Resend, Gmail Workspace…). When SMTP_HOST is
+    // empty, e-mails aren't sent: they're rendered and saved as .html files
+    // under LOG_DIR/mail-previews/ instead, so templates can still be checked.
+    SMTP_HOST: (process.env.SMTP_HOST ?? ''),
+    SMTP_PORT: parseInt(which(process.env.SMTP_PORT, '465') as string),
+    /** true for port 465 (implicit TLS), false for 587 (STARTTLS). */
+    SMTP_SECURE: which(process.env.SMTP_SECURE, 'true') === 'true',
+    SMTP_USER: (process.env.SMTP_USER ?? ''),
+    SMTP_PASSWORD: (process.env.SMTP_PASSWORD ?? ''),
+    /** e.g. `Madeirense <no-reply@madeirense.co.ao>` — the domain must match the SMTP account / SPF / DKIM. */
+    MAIL_FROM: which(process.env.MAIL_FROM, 'Madeirense <no-reply@localhost>') as string,
+    MAIL_REPLY_TO: (process.env.MAIL_REPLY_TO ?? ''),
+    /** Outside production, every e-mail is redirected to this address (leave empty to keep real recipients). */
+    MAIL_DEV_REDIRECT_TO: (process.env.MAIL_DEV_REDIRECT_TO ?? ''),
+    /** Absolute URL of the logo used in e-mail headers (e-mail clients can't load relative/inline SVG logos reliably — use a PNG). */
+    MAIL_LOGO_URL: (process.env.MAIL_LOGO_URL ?? ''),
+    MAIL_SUPPORT_EMAIL: (process.env.MAIL_SUPPORT_EMAIL ?? ''),
+    /** Parallel SMTP sends. Keep low — most providers throttle bursts. */
+    MAIL_CONCURRENCY: parseInt(which(process.env.MAIL_CONCURRENCY, '2') as string),
+
     // Scripts configurations
     // --------------------------: Authorization
     SCRIPT_BEARER_TOKEN: which(process.env.SCRIPT_BEARER_TOKEN, "") as string,
+    /** An API key (usage "service") generated at /api/management, sent by scripts in `x-api-key`. */
+    SCRIPT_API_KEY: (process.env.SCRIPT_API_KEY ?? ''),
 };
 
 export default env;

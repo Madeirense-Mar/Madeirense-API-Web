@@ -15,6 +15,8 @@ import {
 
 import * as pushNotificationController from '../controllers/pushNotifications';
 
+import * as emailController from '../controllers/emails';
+
 import type { 
     eventActionType
 } from './types';
@@ -94,6 +96,12 @@ UsersEventEmitter.on('user.updated', async (user) => {
     } catch (error) {
         console.error(`Failed to push update user:`, error);
     }
+});
+
+UsersEventEmitter.on('user.created', async (user) => {
+    if (user.user_role !== 'Customer') return;
+
+    void emailController.emailWelcome(user.user_id);
 });
 
 export default UsersEventEmitter;

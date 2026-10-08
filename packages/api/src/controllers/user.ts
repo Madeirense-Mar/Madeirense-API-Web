@@ -747,7 +747,8 @@ export async function getUserById(
                 email: true,
                 phone: true,
                 profile_photo: true,
-                user_role: true
+                user_role: true,
+                email_marketing: true
             }
         });
 

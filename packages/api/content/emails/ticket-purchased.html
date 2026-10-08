@@ -1,0 +1,34 @@
+---
+subject: "Os seus bilhetes para {{event.name}}"
+preheader: "{{date event.date}} às {{time event.start_time}} — {{event.restaurant}}"
+category: transactional
+description: Sent after a ticket purchase. The QR code lives in the app, this is the confirmation.
+sample:
+  user: { first_name: Ana }
+  ticket: { ticket_id: 77, quantity: 2, price: "30000.00" }
+  event:
+    event_id: 5
+    name: Noite de Fado à Beira-Mar
+    date: "2026-10-24T00:00:00Z"
+    start_time: "1970-01-01T20:00:00Z"
+    end_time: "1970-01-01T23:30:00Z"
+    restaurant: Madeirense Ilha
+    thumbnail_url: ""
+  tickets_url: https://madeirense.co.ao/events/5
+---
+{{#> layout}}
+{{#if event.thumbnail_url}}
+<img src="{{event.thumbnail_url}}" alt="{{event.name}}" width="520" style="width:100%;border-radius:8px;margin:0 0 24px;">
+{{/if}}
+<p class="eyebrow">Bilhete confirmado</p>
+<h1>{{event.name}}</h1>
+<p>Olá {{user.first_name}}, está tudo pronto. Apresente o código QR do bilhete na aplicação à entrada.</p>
+<table role="presentation" class="items" cellpadding="0" cellspacing="0">
+  <tr><td>Quando</td><td class="price">{{date event.date style="full"}}</td></tr>
+  <tr><td>Horário</td><td class="price">{{time event.start_time}} – {{time event.end_time}}</td></tr>
+  <tr><td>Onde</td><td class="price">{{event.restaurant}}</td></tr>
+  <tr><td>Bilhetes</td><td class="price">{{ticket.quantity}}</td></tr>
+  <tr class="total"><td>Total</td><td class="price">{{money ticket.price}}</td></tr>
+</table>
+<p style="margin: 28px 0;"><a class="button" href="{{tickets_url}}">Ver bilhete</a></p>
+{{/layout}}

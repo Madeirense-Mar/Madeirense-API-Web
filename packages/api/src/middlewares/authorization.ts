@@ -26,6 +26,10 @@ import {
 } from '../utilities/constants.js';
 
 import {
+    setLogContext
+} from '../lib/logger.js';
+
+import {
     generateToken
 } from '../utilities/generators.js';
 
@@ -180,6 +184,8 @@ export const validateJWT = async (
         }
 
         req.user = user;
+
+        setLogContext({ userId: user.user_id });
 
         next();
     } catch (error) {

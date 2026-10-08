@@ -26,6 +26,7 @@ async function main() {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${env.SCRIPT_BEARER_TOKEN}`,
+                "x-api-key": env.SCRIPT_API_KEY,
                 [API$Enumerators.Headers.platform]: API$Enumerators.Platforms.service
             },
             body: JSON.stringify({

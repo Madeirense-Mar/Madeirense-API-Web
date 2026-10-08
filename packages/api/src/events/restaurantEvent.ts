@@ -6,6 +6,8 @@ import AppEmitter from './emitter';
 
 import * as pushNotificationController from '../controllers/pushNotifications';
 
+import * as emailController from '../controllers/emails';
+
 import type { 
     eventActionType
 } from './types';
@@ -53,6 +55,14 @@ RestaurantEventsEventEmitter.on('restaurant_event.deleted', async (restaurant_ev
     } catch (error) {
         console.error(`Failed to push deleted restaurant event:`, error);
     }
+});
+
+// Emitted only by controllers/restaurantEvent.ts#cancelRestaurantEvent (not by
+// regular edits), so ticket holders get exactly one cancellation e-mail.
+RestaurantEventsEventEmitter.on('restaurant_event.status.updated', async (restaurant_event) => {
+    if (restaurant_event.status !== 'cancelled') return;
+
+    void emailController.emailEventCancelled(restaurant_event.event_id);
 });
 
 export default RestaurantEventsEventEmitter;

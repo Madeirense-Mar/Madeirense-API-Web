@@ -515,7 +515,7 @@ export const createOrder = async (
 
         return res.status(201).json({
             data: convertDecimals(order),
-            message: `Order created successfully${!purchasedTickets ? '' : '. Tickets were automatically purchased and associated with your account.'}`,
+            message: `Order created successfully`,
             success: true
         });
     } catch (error) {

@@ -25,6 +25,8 @@ import * as emis from '../services/emis';
 
 import { notifyUser } from './pushNotifications';
 
+import { emailPaymentResult } from './emails';
+
 import type { IAuthenticatedRequest } from '../interfaces';
 
 // ***************************************************************************************************************
@@ -406,6 +408,10 @@ export const updatePaymentStatus = async (
             }
         });
 
+        // Manual confirmation from the back-office (e.g. cash / bank transfer)
+        // gets the same receipt e-mail as an EMIS-confirmed one.
+        if (status !== payment.status) void emailPaymentResult(updatedPayment.payment_id);
+
         return res.status(200).json({
             success: true,
             message: 'Payment status updated successfully',
@@ -523,6 +529,8 @@ export const emisPaymentCallback = async (
                 }
             }
         ).catch(notifyError => console.error('Post-EMIS-callback notification failed:', notifyError));
+
+        void emailPaymentResult(updatedPayment.payment_id);
 
         return res.status(200).json({
             data: undefined,

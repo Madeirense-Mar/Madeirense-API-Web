@@ -1,0 +1,27 @@
+---
+subject: "{{announcement.subject}}"
+preheader: "{{announcement.heading}}"
+category: marketing
+description: Generic broadcast (POST /v1/emails/broadcast). Respects opt-out and adds an unsubscribe link.
+sample:
+  user: { first_name: Ana }
+  announcement:
+    subject: Novo menu de Outono
+    heading: O Outono chegou à Madeirense
+    body: "Renovámos a carta com pratos da época e sabores do mar.\n\nVenha provar — ou encomende para casa."
+    cta_label: Ver o menu
+    cta_url: https://madeirense.co.ao/
+    image_url: ""
+  unsubscribe_url: "#"
+---
+{{#> layout}}
+{{#if announcement.image_url}}
+<img src="{{announcement.image_url}}" alt="" width="520" style="width:100%;border-radius:8px;margin:0 0 24px;">
+{{/if}}
+<h1>{{announcement.heading}}</h1>
+<p>Olá {{user.first_name}},</p>
+{{paragraphs announcement.body}}
+{{#if announcement.cta_url}}
+<p style="margin: 28px 0;"><a class="button" href="{{announcement.cta_url}}">{{#if announcement.cta_label}}{{announcement.cta_label}}{{else}}Saber mais{{/if}}</a></p>
+{{/if}}
+{{/layout}}

@@ -1,0 +1,22 @@
+---
+subject: "Evento cancelado: {{event.name}}"
+preheader: "Lamentamos, o evento de {{date event.date}} foi cancelado."
+category: transactional
+description: Sent to every ticket holder when an event is cancelled.
+sample:
+  user: { first_name: Ana }
+  event:
+    event_id: 5
+    name: Noite de Fado à Beira-Mar
+    date: "2026-10-24T00:00:00Z"
+    start_time: "1970-01-01T20:00:00Z"
+    restaurant: Madeirense Ilha
+  events_url: https://madeirense.co.ao/events
+---
+{{#> layout}}
+<p class="eyebrow">Evento cancelado</p>
+<h1>Lamentamos, {{user.first_name}}.</h1>
+<p>O evento <strong>{{event.name}}</strong>, marcado para {{date event.date}} às {{time event.start_time}} em {{event.restaurant}}, foi cancelado.</p>
+<div class="panel panel-danger">A nossa equipa vai entrar em contacto sobre o reembolso dos seus bilhetes.</div>
+<p style="margin: 28px 0;"><a class="button" href="{{events_url}}">Ver próximos eventos</a></p>
+{{/layout}}

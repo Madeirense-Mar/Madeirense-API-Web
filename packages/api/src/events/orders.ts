@@ -10,6 +10,8 @@ import AppEmitter from './emitter';
 
 import * as pushNotificationController from '../controllers/pushNotifications';
 
+import * as emailController from '../controllers/emails';
+
 import type { 
     eventActionType
 } from './types';
@@ -70,6 +72,9 @@ OrderEventEmitter.on('order.status.updated', async (order) => {
                 data: order as Partial<Orders>
             }
         );
+
+        // Only confirmed / assigned / delivered / cancelled produce an e-mail — see emailOrderStatus.
+        if (order.order_id) void emailController.emailOrderStatus(order.order_id as number);
     } catch (error) {
         console.error('Failed to push order status update notification:', error);
     }
