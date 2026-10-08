@@ -9,7 +9,9 @@ import {
 import {
     BiFoodMenu,
     BiSolidDrink,
-    BiSolidHide
+    BiSolidHide,
+    BiSolidLandscape,
+    BiWater
 } from "react-icons/bi";
 
 import {
@@ -295,6 +297,8 @@ const registry = {
     Store: FaStore,
     SwipeCard: GiSwipeCard,
     Takeout: MdOutlineTakeoutDining,
+    ThemeLand: BiSolidLandscape,
+    ThemeSea: BiWater,
     Ticket: IoTicketSharp,
     Time: MdOutlineAccessTime,
     Timer: PiTimerBold,

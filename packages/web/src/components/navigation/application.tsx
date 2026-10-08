@@ -31,6 +31,7 @@ import styles from "./application.module.css";
 import type {
     $Enums
 } from "@Madeirense/database/browser";
+import env from "env";
 
 // ***************************************************************************************************************
 
@@ -81,6 +82,7 @@ function AppNav() {
 
     const {
         currentTheme,
+        switchTheme,
         toggleVariant
     } = useTheme();
 
@@ -151,6 +153,10 @@ function AppNav() {
         <Button shape="circle" variant="primary" onClick={toggleVariant}>
             <Icon name={currentTheme.includes("DARK") ? "LightMode" : "DarkMode"} />
         </Button>
+
+        {(env.MODE === "development") && <Button shape="circle" variant="primary" onClick={switchTheme}>
+            <Icon name={currentTheme.includes("SEA") ? "ThemeLand" : "ThemeSea"} />
+        </Button>}
 
         {(state === "guest")
             ? <div className="flex flex-row items-center justify-center gap-3">
