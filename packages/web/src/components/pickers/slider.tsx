@@ -103,7 +103,6 @@ const SliderPicker = (_props: IPropTypes) => {
             const pv = typeof pickedValue === "string" ? pickedValue : pickedValue.value;
 
             return <Button
-                className={(pv === v) ? "opacity-100" : "opacity-30"}
                 id={v}
                 key={key}
                 onClick={handlePick}
