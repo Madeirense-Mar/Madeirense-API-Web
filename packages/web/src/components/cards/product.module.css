@@ -173,20 +173,20 @@
 }
 
 [data-theme*="DARK"] .meat {
-    --card-background-color: color-mix(in srgb, var(--accent), black 40%);
+    --card-background-color: color-mix(in srgb, var(--accent), black 15%);
     --card-border-color: color-mix(in srgb, var(--accent), white 40%);
 
-    --text-color: color-mix(in srgb, var(--accent), white 80%);
+    --text-color: color-mix(in srgb, var(--accent), white 90%);
+}
+
+[data-theme*="DARK"] .meat div[data-section="thumbnail"] {
+    background-color: color-mix(in srgb, var(--accent), black 70%);
 }
 
 [data-theme="LAND-DARK"] .meat {
     --card-background-color: color-mix(in srgb, var(--accent), black 10%);
 
     --text-color: var(--neutral-light);
-}
-
-[data-theme*="DARK"] .meat div[data-section="thumbnail"] {
-    background-color: color-mix(in srgb, var(--accent), black 70%);
 }
 
 [data-theme*="LIGHT"] .meat {
@@ -240,7 +240,7 @@
 
 [data-theme="LAND-DARK"] .vegetable {
     --card-border-color: var(--success);
-    --card-background-color: color-mix(in srgb, var(--success-dark) 80%, var(--success) 15%);
+    --card-background-color: color-mix(in srgb, var(--success-dark) 45%, var(--success) 50%);
 
     --text-color: color-mix(in srgb, var(--success), white 80%);
 }

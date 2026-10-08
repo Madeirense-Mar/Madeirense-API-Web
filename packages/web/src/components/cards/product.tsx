@@ -104,7 +104,6 @@ function ProductCard(_props: IProductCardProps) {
 
     const $additionButtonVariant = ((composition: typeof product_composition): variantType => {
         switch (composition) {
-            case "meat": return "danger";
             case "wheat": return "success";
             case "vegetable": return "warning";
 
