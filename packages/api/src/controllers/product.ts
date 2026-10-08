@@ -90,18 +90,20 @@ export const clearAllDiscounts = async (
     }
 };
 
+export type createProductInputType = {
+    name: string,
+    description: string,
+    price: number,
+    restaurant_id?: number,
+    discount?: number,
+    product_composition: $Enums.Products_product_composition,
+    product_type: $Enums.Products_product_type,
+    prep_time_minutes: number,
+    thumbnail?: string
+};
+
 export const createProduct = async (
-    req: IEventfulRequest<any, {
-        name: string,
-        description: string,
-        price: number,
-        restaurant_id?: number,
-        discount?: number,
-        product_composition: $Enums.Products_product_composition,
-        product_type: $Enums.Products_product_type,
-        prep_time_minutes: number,
-        thumbnail?: string
-    }>,
+    req: IEventfulRequest<any, createProductInputType>,
     res: Response<API$Types.response<productType | undefined>>
 ) => {
     const {
@@ -177,6 +179,37 @@ export const createProduct = async (
 
         req.events?.global_settings.SILENT$emit("global_settings.change_version.updated");
         req.events?.products.emit("product.created", product);
+    }
+};
+
+export const BATCH$createProduct = async (
+    req: IEventfulRequest<any, { products: Omit<createProductInputType, ("restaurant_id")>[] }>,
+    res: Response<API$Types.response<undefined>>
+) => {
+    try {
+        const response = await prisma.products.createMany({
+            data: req.body.products.map(p => ({ 
+                ...p, 
+                delisted: false,
+                restaurant_id: null,
+                discount: p.discount || 0,
+                created_at: new Date(),
+                updated_at: new Date()
+            }))
+        });
+
+        return res.status(201).json({
+            data: undefined,
+            message: 'Products created successfully',
+            success: response.count == req.body.products.length,
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    } finally {
+        req.events?.global_settings.SILENT$emit("global_settings.change_version.updated");
     }
 };
 
@@ -672,12 +705,12 @@ export const updateProduct = async (
     req: IEventfulRequest<
         { id: string },
         Partial<{
-            name: string, 
-            description: string, 
-            price: Prisma.Decimal, 
-            discount: Prisma.Decimal, 
-            thumbnail: string, 
-            prep_time_minutes: number, 
+            name: string,
+            description: string,
+            price: Prisma.Decimal,
+            discount: Prisma.Decimal,
+            thumbnail: string,
+            prep_time_minutes: number,
             restaurant_id: number
         }>
     >,

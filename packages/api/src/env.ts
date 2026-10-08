@@ -30,6 +30,7 @@ config({
  * - Unless you're adding empty string or undefined values, _edit your default values in the primary environment files_.
  * - Add documentation via JSDocs to some of the configured environment variables.
  * - Create derived values based on environment values.
+ * - Use the `which` function to cycle through stored env values and default values.
  */
 const env = {
     // Server Configurations
@@ -118,11 +119,13 @@ const env = {
     FACEBOOK_CALLBACK_URL: process.env.FACEBOOK_CALLBACK_URL as string,
 
     // --------------------------: CORS
+    /** When enabled, will only work on development environment. Otherwise, will only render a warning */
     CORS_ALLOW_ALL: (which(process.env.CORS_ALLOW_ALL, 'false') as string) === 'true',
     CORS_ORIGIN_WHITE_LIST: (which(process.env.CORS_ORIGIN_WHITE_LIST, 'http://localhost:3000') as string).split(','),
     FRONTEND_URL: which(process.env.FRONTEND_URL, 'http://localhost:3000') as string,
 
     // --------------------------: UploadCare
+    UPLOAD_CARE_UP_API_URL: process.env.UPLOAD_CARE_UP_API_URL as string,
     UPLOAD_CARE_PUBLIC_KEY: process.env.UPLOAD_CARE_PUBLIC_KEY as string,
     UPLOAD_CARE_SECRET_KEY: process.env.UPLOAD_CARE_SECRET_KEY as string,
 
@@ -131,7 +134,11 @@ const env = {
     // --------------------------: Routing (self-hosted OSRM)
     // Bound to 127.0.0.1 only on the VPS — never exposed publicly. See
     // infra/osrm/README.md for the full setup writeup.
-    OSRM_BASE_URL: which(process.env.OSRM_BASE_URL, 'http://127.0.0.1:5000') as string
+    OSRM_BASE_URL: which(process.env.OSRM_BASE_URL, 'http://127.0.0.1:5000') as string,
+
+    // Scripts configurations
+    // --------------------------: Authorization
+    SCRIPT_BEARER_TOKEN: which(process.env.SCRIPT_BEARER_TOKEN, "") as string,
 };
 
 export default env;

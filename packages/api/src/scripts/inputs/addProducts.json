@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Carne",
+        "description": "Um bom bife",
+        "price": 35000,
+        "prep_time_minutes": 30,
+        "discount": 0,
+        "product_composition": "meat",
+        "product_type": "garnish",
+        "thumbnail": "https://ucarecdn.com/a78b1fc5-aeea-40df-adb7-565b3c887cc3/-/preview/474x315/"
+    },
+    {
+        "name": "Salmão",
+        "description": "Uma posta de salmão",
+        "price": 12000,
+        "prep_time_minutes": 20,
+        "discount": 0,
+        "product_composition": "fish",
+        "product_type": "main",
+        "thumbnail": "https://ucarecdn.com/4386d29a-f686-4581-b033-0fe09c7a24af/-/preview/612x408/"
+    },
+    {
+        "name": "Cerveja",
+        "description": "Cerveja 150ml em lata, servida no copo",
+        "price": 800,
+        "prep_time_minutes": 3,
+        "discount": 0,
+        "product_composition": "alcoholic",
+        "product_type": "beverage",
+        "thumbnail": "https://ucarecdn.com/3cdc698b-e04a-4a85-a105-021c64ef04f3/-/preview/1000x1000/"
+    }
+]

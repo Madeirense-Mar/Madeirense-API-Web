@@ -110,7 +110,7 @@ v1.post(
         body('name').notEmpty().withMessage('Product name is required'),
         body('price').isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price is required'),
         body('restaurant_id').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER }).withMessage('Pass a valid Restaurant ID'),
-        body('thumbnail').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        body('thumbnail').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH, min: ("https://www.").length }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
         body('description').optional({ values: 'falsy' }).isString().isLength({ min: API_MIN_TEXT_REQUEST_LENGTH, max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description length must be within ${API_MIN_TEXT_REQUEST_LENGTH} - ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
         body('product_composition').isIn(Object.values($Enums.Products_product_composition)).withMessage('Product composition must be one of the following: ' + Object.values($Enums.Products_product_composition).join(', ')),
         body('product_type').isIn(Object.values($Enums.Products_product_type)).withMessage('Product type must be one of the following: ' + Object.values($Enums.Products_product_type).join(', ')),
@@ -119,6 +119,28 @@ v1.post(
         Validate.Handle.error
     ],
     controller.createProduct
+);
+
+v1.post(
+    '/batch',
+    onlyAllowUserRoles([
+        'System'
+    ]) as any,
+    [
+        body('products').isArray({ min: 1 }).withMessage('Must send at least 1 product'),
+        body('products.*.name').notEmpty().withMessage('Product name is required'),
+        body('products.*.price').isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price is required'),
+        body('products.*.restaurant_id').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER }).withMessage('Pass a valid Restaurant ID'),
+        body('products.*.thumbnail').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH, min: ("https://www.").length }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        body('products.*.thumbnailBlob').optional({ values: 'falsy' }).isBase64().withMessage(`Thumbnail blob must be sent as a base64 image`),
+        body('products.*.description').optional({ values: 'falsy' }).isString().isLength({ min: API_MIN_TEXT_REQUEST_LENGTH, max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description length must be within ${API_MIN_TEXT_REQUEST_LENGTH} - ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        body('products.*.product_composition').isIn(Object.values($Enums.Products_product_composition)).withMessage('Product composition must be one of the following: ' + Object.values($Enums.Products_product_composition).join(', ')),
+        body('products.*.product_type').isIn(Object.values($Enums.Products_product_type)).withMessage('Product type must be one of the following: ' + Object.values($Enums.Products_product_type).join(', ')),
+        body('products.*.discount').optional({ values: 'falsy' }).isInt({ min: 0, max: 100 }).withMessage('Discount value is based on a percentage, must be within the range of 0 - 100'),
+        body('products.*.prep_time_minutes').isInt({ min: 3 }).withMessage('Preparation time should be at least 3 minutes long'),
+        Validate.Handle.error
+    ],
+    controller.BATCH$createProduct
 );
 
 v1.patch(

@@ -24,6 +24,9 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {
+        "@uploadcare/rest-client": "^6.23.0",
+        "@uploadcare/signed-uploads": "^6.23.0",
+        "@uploadcare/upload-client": "^6.23.0",
         "@vercel/node": "^5.2.1",
         "bcryptjs": "^2.4.3",
         "body-parser": "^2.2.2",
