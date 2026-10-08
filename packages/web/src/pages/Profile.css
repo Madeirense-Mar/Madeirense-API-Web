@@ -1,5 +1,3 @@
 #root[data-page="profile"] main > section {
-    @apply w-full mx-auto;
-
-    max-width: 900px;
+    @apply w-full;
 }

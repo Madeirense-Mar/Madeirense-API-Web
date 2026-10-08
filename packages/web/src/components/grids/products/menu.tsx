@@ -255,7 +255,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
                     />}
                 </div>
 
-                <div data-grid="ProductCard" className={resolveClassNames(styles.grid, "w-full")}>
+                <div className={resolveClassNames(styles.grid, "w-full")}>
                     {list.map((item, idx) => {
                         if (!item) return null;
 

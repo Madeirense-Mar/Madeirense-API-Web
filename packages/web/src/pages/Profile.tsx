@@ -14,6 +14,7 @@ import {
     DEFAULT_APP_PREFERENCES,
     PHONE_CODES,
     generateRandomNumbers,
+    resolveClassNames,
     type appPreferencesType,
     type keyValuePair,
     type parsedGoogleAddressObjectType
@@ -51,6 +52,8 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { IPageState } from "components/interface";
+
+import productGridStyles from "components/grids/products/menu.module.css";
 
 import "./Profile.css";
 
@@ -535,7 +538,7 @@ function ProfilePage() {
             return <main className="flex flex-col justify-start items-start gap-3">
                 <ProfilePictureButton src={user.profile_photo ?? "#"} size="xl" className="mx-auto" enableUpload />
 
-                <SliderPicker defaultValue={profileMenu} list={menuList} onPick={handleMenuChange} />
+                <SliderPicker className="mx-auto" defaultValue={profileMenu} list={menuList} onPick={handleMenuChange} />
 
                 {(menu === "profile") && <section>
                     <form onSubmit={PATCH} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
@@ -779,7 +782,7 @@ function ProfilePage() {
                         <span>Ainda não tens produtos favoritos</span>
                     </div>}
 
-                    <div data-grid="ProductCard" className="w-full">
+                    <div className={resolveClassNames(productGridStyles.grid, "w-full")}>
                         {favoriteProducts.map(p => <ProductCard key={p.product_id} product={p} />)}
                     </div>
                 </section>}
