@@ -2,6 +2,10 @@
     composes: grid from "../grid.module.css";
 }
 
+.filter-bar {
+    @apply flex flex-col justify-start items-start;
+}
+
 @media only screen and (min-width: 344px) {
     .grid {
         grid-template-columns: repeat(2, minmax(220px, 1fr));
@@ -15,16 +19,12 @@
 }
 
 @media only screen and (min-width: 768px) {
-    .filter-bar {
-        @apply flex flex-col justify-center items-center;
+    .grid {
+        grid-template-columns: repeat(3, minmax(300px, 1fr));
     }
 
     .search-filter {
         width: 100%;
-    }
-
-    .grid {
-        grid-template-columns: repeat(3, minmax(300px, 1fr));
     }
 }
 
