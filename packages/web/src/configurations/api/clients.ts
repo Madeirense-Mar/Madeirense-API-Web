@@ -2,6 +2,8 @@ import { ClientRequestService } from "@Madeirense/shared";
 
 import BaseAPIService from "services/api/base";
 
+import env from "env";
+
 import type {
     serviceConstructorOptionsType
 } from "@Madeirense/shared";
@@ -44,7 +46,13 @@ export class AppClients {
 
         this.endpoint = options.baseURL;
 
-        const Client = new ClientRequestService(options);
+        const Client = new ClientRequestService({
+            ...options,
+            defaultHeaders: {
+                "x-api-key": env.API_KEY,
+                ...options.defaultHeaders
+            }
+        });
 
         this.Business = new BaseAPIService({ Client, ...options });
     }

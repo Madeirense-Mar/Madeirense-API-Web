@@ -14,6 +14,7 @@ interface ImportMetaEnv {
 
 
     // API
+    VITE_APP_API_KEY: string,
     VITE_APP_API_URL: string,
     VITE_APP_API_VERSION: `v${number}${("" | `.${number}` | `EXP_${number}`)}${("" | `.${number}`)}`,
 }

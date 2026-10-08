@@ -63,7 +63,10 @@ export class Queries {
     constructor(baseURL: string = `${env.API_URL}/v1`) {
         this.businessEndpoints = new BaseAPIService({
             Client: new ClientRequestService({
-                baseURL
+                baseURL,
+                defaultHeaders: {
+                    "x-api-key": env.API_KEY
+                }
             })
         }).endpoints;
     }

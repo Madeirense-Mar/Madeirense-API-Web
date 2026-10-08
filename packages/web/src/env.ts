@@ -29,6 +29,13 @@ const env = {
 
 
     // API
+    /**
+     * Key generated at `<API>/api/management` (usage: Web app). Sent as
+     * `x-api-key` on every request — see configurations/api/clients.ts.
+     * Like every VITE_ variable it ends up in the public JS bundle: it
+     * identifies/rate-limits/revokes the web client, it is not a secret.
+     */
+    API_KEY: import.meta.env.VITE_APP_API_KEY ?? "",
     API_URL: import.meta.env.VITE_APP_API_URL,
     API_VERSION: import.meta.env.VITE_APP_API_VERSION,
 
