@@ -16,12 +16,16 @@ import {
 // ***************************************************************************************************************
 
 interface ThemeContextType {
+    currentTheme: Application$Types.Themes.types,
     switchTheme: () => void;
     toggleVariant: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType>({
+    currentTheme: "SEA-DARK",
+    /** Toggles between `LAND` and `SEA` themes. Only active on development environments */
     switchTheme: () => { },
+    /** Toggles between `Light` and `Dark`. */
     toggleVariant: () => { }
 });
 
@@ -78,7 +82,7 @@ const ThemeProvider = ({ children }: any) => {
         $body.setAttribute(Root$Enumerators.Attributes.Styles.theme, currentTheme);
     }, [currentTheme])
 
-    return <ThemeContext.Provider value={{ switchTheme, toggleVariant }}>
+    return <ThemeContext.Provider value={{ currentTheme, switchTheme, toggleVariant }}>
         <>{children}</>
     </ThemeContext.Provider>
 };

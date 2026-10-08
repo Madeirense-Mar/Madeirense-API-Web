@@ -16,6 +16,7 @@ import { useCart } from "contexts/Cart";
 import { useNotifications } from "contexts/Notifications";
 import { useOrders } from "contexts/Orders";
 import { useProfile } from "contexts/Profile";
+import { useTheme } from "contexts/Theme";
 
 import Button from "components/buttons";
 import ProfilePictureButton from "components/buttons/profile";
@@ -77,6 +78,11 @@ function AppNav() {
     const location = useLocation();
     const navigate = useNavigate();
     const { push } = useNotifications();
+
+    const {
+        currentTheme,
+        toggleVariant
+    } = useTheme();
 
     const {
         clear$Dry: clearOrders
@@ -141,6 +147,10 @@ function AppNav() {
                 </li>;
             })}
         </ul>
+
+        <Button shape="circle" variant="primary" onClick={toggleVariant}>
+            <Icon name={currentTheme.includes("DARK") ? "LightMode" : "DarkMode"} />
+        </Button>
 
         {(state === "guest")
             ? <div className="flex flex-row items-center justify-center gap-3">
