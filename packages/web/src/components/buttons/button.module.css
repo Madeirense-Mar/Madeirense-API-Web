@@ -123,14 +123,28 @@
 .primary:hover {
     --button-background-color: var(--primary);
     --button-border-color: var(--secondary);
-    --text-color: var(--primary-light);
+    --text-color: var(--neutral-light);
 }
 
+/*#region Secondary*/
 .secondary {
     composes: button;
 
     --button-border-color: var(--primary-light);
+
     --text-color: var(--primary-light);
+}
+
+[data-theme*="LIGHT"] .secondary {
+    --button-border-color: var(--primary-dark);
+
+    --text-color: var(--primary-dark);
+}
+
+[data-theme="LAND-DARK"] .secondary {
+    --button-border-color: var(--secondary);
+
+    --text-color: var(--secondary);
 }
 
 .secondary:hover {
@@ -139,6 +153,25 @@
     --button-border-color: var(--processed-color);
     --button-background-color: var(--processed-color);
 }
+
+[data-theme*="LIGHT"] .secondary:hover {
+    --shared-color: var(--primary);
+
+    --button-border-color: var(--shared-color);
+    --button-background-color: var(--shared-color);
+
+    --text-color: var(--neutral-light);
+}
+
+[data-theme="LAND-DARK"] .secondary:hover {
+    --shared-color: var(--secondary);
+
+    --button-border-color: var(--shared-color);
+    --button-background-color: var(--shared-color);
+
+    --text-color: var(--neutral-dark);
+}
+/*#endregion*/
 
 .selected {
     composes: button;
