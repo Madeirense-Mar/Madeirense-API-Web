@@ -264,9 +264,9 @@
 
 [data-theme="SEA-DARK"] .wheat {
     --card-border-color: var(--secondary);
-    --card-background-color: var(--secondary);
+    --card-background-color: color-mix(in srgb, var(--secondary), black 30%);
 
-    --text-color: var(--success-dark);
+    --text-color: var(--secondary-dark);
 }
 
 [data-theme*="LIGHT"] .wheat {
