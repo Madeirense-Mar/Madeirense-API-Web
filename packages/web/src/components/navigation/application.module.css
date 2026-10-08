@@ -1,6 +1,6 @@
 .nav {
     --h: 70px;
-    --text-color: var(--neutral-dark);
+    --text-color: var(--default-nav-text-color, var(--neutral-dark));
 
     @apply flex flex-row items-center px-2;
 
@@ -16,13 +16,22 @@
     
     gap: 12px;
 
-    background-color: var(--nav-background-color, var(--secondary));
+    background-color: var(--nav-background-color, var(--default-nav-color));
 
     opacity: var(--nav-opacity, 1);
 }
 
+[data-theme*="LAND"] .nav {
+    --default-nav-color: var(--primary);
+    --default-nav-text-color: var(--neutral-light);
+}
+
+[data-theme*="SEA"] .nav {
+    --default-nav-color: var(--secondary);
+}
+
 [data-page="events"] .nav {
-    --text-color: var(--neutral-light);
+    --default-nav-text-color: var(--neutral-light);
     --nav-background-color: black;
 }
 
