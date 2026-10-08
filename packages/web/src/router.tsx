@@ -20,6 +20,8 @@ import { useProfile } from "contexts/Profile";
 
 import Layout from "layouts/Layout";
 
+import { Page$Enumerators } from "pages/enumerators";
+
 import NotFoundPage from "pages/404";
 
 import HomePage from "pages/Home";
@@ -27,6 +29,7 @@ import AuthenticationSuccessPage from "pages/Authentication/success";
 import EventsPage from "pages/Events";
 import OrderPage from "pages/Order";
 import ProductPage from "pages/Product";
+import ProfilePage from "pages/Profile";
 import ResortPage from "pages/Resort";
 import SetCredentialsPage from "pages/SetCredentials";
 import WelcomePage from "pages/Welcome";
@@ -50,7 +53,6 @@ import BackOfficeStaffPage from "pages/BackOffice/Staff";
 import type {
 	$Enums
 } from "@Madeirense/database/browser";
-import { Page$Enumerators } from "pages/enumerators";
 
 // ***************************************************************************************************************
 
@@ -155,6 +157,12 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 				id: "home",
 				index: true,
 				element: <HomePage />
+			},
+			{
+				id: "user-profile",
+				path: `${Madeirense$Enumerators.Pages.App.Profile}`,
+				label: "OAuth callback",
+				element: <ProfilePage />,
 			},
 			{
 				id: "successful-authentication",
