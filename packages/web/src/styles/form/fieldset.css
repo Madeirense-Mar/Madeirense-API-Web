@@ -1,18 +1,20 @@
 fieldset {
     border: 0;
     border-radius: 8px;
-    padding: 20px;
+    padding: var(--fieldset-padding, 20px);
 }
 
+/*#region Theme specifications*/
 [data-theme="LAND-DARK"] fieldset {}
 
 [data-theme="LAND-LIGHT"] fieldset {}
 
 [data-theme="SEA-DARK"] fieldset {
-    background-color: color-mix(in srgb, var(--primary-dark), black 40%);
+    background-color: var(--fieldset-background-color, color-mix(in srgb, var(--primary-dark), black 40%));
 }
 
 [data-theme="SEA-LIGHT"] fieldset {}
+/*#endregion*/
 
 fieldset legend {
     @apply font-bold;

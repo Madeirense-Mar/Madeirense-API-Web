@@ -3,8 +3,9 @@ import "@uploadcare/react-uploader/core.css";
 //#region Styles
 import "styles/tailwind.css";
 import "styles/global.css";
-import "styles/table.css";
 import "styles/root.css";
+import "styles/page.css";
+import "styles/table.css";
 import "styles/form/inputs.css";
 import "styles/form/fieldset.css";
 import "styles/form/label.css";
