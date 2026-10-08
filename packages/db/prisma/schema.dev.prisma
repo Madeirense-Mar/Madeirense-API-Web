@@ -578,6 +578,9 @@ model Users {
   phone                                                                                   String                            @db.VarChar(20)
   profile_photo                                                                           String?                           @db.VarChar(255)
   user_role                                                                               Users_user_role
+  email_marketing                                                                         Boolean                           @default(true)
+  Api_Keys_Api_Keys_created_byToUsers                                                     Api_Keys[]                        @relation("Api_Keys_created_byToUsers")
+  Api_Keys_Api_Keys_revoked_byToUsers                                                     Api_Keys[]                        @relation("Api_Keys_revoked_byToUsers")
   Blocked_Users                                                                           Blocked_Users[]
   Cart                                                                                    Cart[]
   Chat_Messages                                                                           Chat_Messages[]
@@ -614,6 +617,32 @@ model Workstations {
 
   @@unique([user_id, restaurant_id], map: "user_id")
   @@index([restaurant_id], map: "restaurant_id")
+}
+
+/// Added 2026-10-08 — see scripts/2026-10-08_api_keys_and_email_preferences.sql.
+/// Only the SHA-256 of a key is stored (`key_hash`); the key itself is shown once at creation.
+model Api_Keys {
+  key_id                           Int                 @id @default(autoincrement())
+  name                             String              @db.VarChar(100)
+  usage_type                       Api_Keys_usage_type @default(other)
+  description                      String?             @db.VarChar(500)
+  key_prefix                       String              @db.VarChar(24)
+  key_hash                         String              @unique(map: "key_hash") @db.Char(64)
+  usage_count                      BigInt              @default(0) @db.UnsignedBigInt
+  last_used_at                     DateTime?           @db.DateTime(0)
+  last_used_ip                     String?             @db.VarChar(45)
+  expires_at                       DateTime?           @db.DateTime(0)
+  revoked_at                       DateTime?           @db.DateTime(0)
+  revoked_by                       Int?
+  created_by                       Int?
+  created_at                       DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at                       DateTime?           @default(now()) @db.Timestamp(0)
+  Users_Api_Keys_created_byToUsers Users?              @relation("Api_Keys_created_byToUsers", fields: [created_by], references: [user_id], onUpdate: NoAction, map: "Api_Keys_ibfk_1")
+  Users_Api_Keys_revoked_byToUsers Users?              @relation("Api_Keys_revoked_byToUsers", fields: [revoked_by], references: [user_id], onUpdate: NoAction, map: "Api_Keys_ibfk_2")
+
+  @@index([created_by], map: "created_by")
+  @@index([revoked_by], map: "revoked_by")
+  @@index([revoked_at, expires_at], map: "idx_active")
 }
 
 enum Application_Theme_theme {
@@ -800,4 +829,13 @@ enum Restaurant_Events_status {
   cancelled
   ongoing
   expired
+}
+
+enum Api_Keys_usage_type {
+  web
+  mobile
+  developer
+  shareholder
+  service
+  other
 }

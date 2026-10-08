@@ -45,6 +45,7 @@ CREATE TABLE `Users` (
   `phone` varchar(20) NOT NULL,
   `profile_photo` varchar(255) DEFAULT NULL,
   `user_role` enum('Customer','Staff','Admin','Driver','System','Ghost') NOT NULL,
+  `email_marketing` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -157,6 +158,34 @@ CREATE TABLE `Device_Push_Tokens` (
   UNIQUE KEY `fcm_token` (`fcm_token`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `Device_Push_Tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Added 2026-10-08 — API keys for the base request layer + /api/management.
+-- For an existing database run scripts/2026-10-08_api_keys_and_email_preferences.sql
+-- instead (it also adds Users.email_marketing).
+CREATE TABLE `Api_Keys` (
+  `key_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `usage_type` enum('web','mobile','developer','shareholder','service','other') NOT NULL DEFAULT 'other',
+  `description` varchar(500) DEFAULT NULL,
+  `key_prefix` varchar(24) NOT NULL,
+  `key_hash` char(64) NOT NULL,
+  `usage_count` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_used_at` datetime DEFAULT NULL,
+  `last_used_ip` varchar(45) DEFAULT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  `revoked_at` datetime DEFAULT NULL,
+  `revoked_by` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`key_id`),
+  UNIQUE KEY `key_hash` (`key_hash`),
+  KEY `created_by` (`created_by`),
+  KEY `revoked_by` (`revoked_by`),
+  KEY `idx_active` (`revoked_at`, `expires_at`),
+  CONSTRAINT `Api_Keys_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `Users` (`user_id`) ON DELETE SET NULL,
+  CONSTRAINT `Api_Keys_ibfk_2` FOREIGN KEY (`revoked_by`) REFERENCES `Users` (`user_id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /** ----------------------------------------------------------------------------------------- */
 
