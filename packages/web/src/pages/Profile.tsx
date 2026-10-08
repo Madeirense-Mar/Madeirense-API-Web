@@ -538,7 +538,7 @@ function ProfilePage() {
             return <main className="flex flex-col justify-start items-start gap-3">
                 <ProfilePictureButton src={user.profile_photo ?? "#"} size="xl" className="mx-auto" enableUpload />
 
-                <SliderPicker className="mx-auto" defaultValue={profileMenu} list={menuList} onPick={handleMenuChange} />
+                <SliderPicker defaultValue={profileMenu} list={menuList} onPick={handleMenuChange} />
 
                 {(menu === "profile") && <section>
                     <form onSubmit={PATCH} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
