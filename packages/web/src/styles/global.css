@@ -96,7 +96,7 @@ body[data-theme="LAND-DARK"] {
     --base-border-color: var(--secondary);
     --base-background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
 
-    --background-color: color-mix(in srgb, var(--secondary-dark), black 50%);
+    --background-color: var(--secondary-dark);
 }
 
 body[data-theme="LAND-LIGHT"] {
@@ -111,7 +111,10 @@ body[data-theme="SEA-DARK"] {
 }
 
 body[data-theme="SEA-LIGHT"] {
-    --background-color: color-mix(in srgb, var(--primary-light), black 70%);
+    --base-border-color: var(--primary-dark);
+    --base-background-color: var(--primary);
+
+    --background-color: color-mix(in srgb, var(--primary-light), white 70%);
 }
 
 body * {
