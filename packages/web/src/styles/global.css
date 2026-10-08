@@ -221,8 +221,5 @@ main {
 }
 
 @media only screen and (min-width: 1366px) {
-    body #root>main {
-        --main-base-width: 60vw;
-    }
 }
 /*#endregion*/
