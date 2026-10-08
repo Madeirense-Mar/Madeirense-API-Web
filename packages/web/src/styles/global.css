@@ -80,6 +80,7 @@ body {
     background-color: var(--background-color);
 }
 
+/*#region Theme specifications*/
 body[data-theme*="DARK"] {
     --base-text-color: var(--neutral-light);
 
@@ -116,6 +117,7 @@ body[data-theme="SEA-LIGHT"] {
 
     --background-color: color-mix(in srgb, var(--primary-light), white 70%);
 }
+/*#endregion*/
 
 body * {
     color: var(--text-color, var(--base-text-color));
