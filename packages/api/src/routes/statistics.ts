@@ -5,8 +5,8 @@ import {
     query
 } from 'express-validator';
 
-import { 
-    DATE_INTERVALS, 
+import {
+    DATE_INTERVALS,
     Madeirense$Enumerators
 } from '@Madeirense/shared';
 
@@ -20,9 +20,13 @@ import {
 } from '../middlewares/validation';
 
 import * as controller from '../controllers/statistics';
-import { API_MIN_ID_NUMBER } from 'utilities/constants';
 
 // ***************************************************************************************************************
+
+const FIRST_STATISTICS_YEAR = 2025;
+
+const ACTIONS = Object.values(Madeirense$Enumerators.StatisticsParameters.Actions);
+const FACTS = Object.values(Madeirense$Enumerators.StatisticsParameters.Fact);
 
 const defaultValidations = [
     ...Validate.Parameters.table,
@@ -38,6 +42,17 @@ v1.use(onlyAllowUserRoles([
     'Staff'
 ]) as any);
 
+// Dashboard header KPIs for a period (default: this month so far) vs the
+// preceding period of equal length.
+v1.get(
+    '/overview',
+    [
+        ...Validate.Queries.statistics,
+        Validate.Handle.error
+    ],
+    controller.getOverview as any
+);
+
 v1.get(
     '/count/:table/per/:column',
     [
@@ -52,7 +67,6 @@ v1.get(
     '/:table/:relation/count',
     [
         ...defaultValidations,
-        query('restaurant_id').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER }).withMessage('Restaurant ID query should be positive integer'),
         Validate.Handle.error
     ],
     controller.getRelationCount as any
@@ -62,6 +76,8 @@ v1.get(
     '/:table/:relation/top',
     [
         ...defaultValidations,
+        query(Madeirense$Enumerators.SearchQueries.group_by).optional({ values: 'falsy' }).isIn(controller.TOP_LOCATION_GROUPS).withMessage(`Locations can only be grouped by: ${controller.TOP_LOCATION_GROUPS.join(', ')}`),
+        query(Madeirense$Enumerators.SearchQueries.user_role).optional({ values: 'falsy' }).isIn(controller.TOP_USER_ROLES).withMessage(`Top users can only be ranked for roles: ${controller.TOP_USER_ROLES.join(', ')}`),
         Validate.Handle.error
     ],
     controller.getTopRelation as any
@@ -71,7 +87,7 @@ v1.get(
     '/:table/:relation/:action/count',
     [
         ...defaultValidations,
-        param('action').isIn(Object.values(Madeirense$Enumerators.StatisticsParameters.Actions)).withMessage(`Only ${Object.values(Madeirense$Enumerators.StatisticsParameters.Actions).join(', ')} actions are allowed`),
+        param('action').isIn(ACTIONS).withMessage(`Only ${ACTIONS.join(', ')} actions are allowed`),
         Validate.Handle.error
     ],
     controller.getRelationActionCount as any
@@ -81,10 +97,15 @@ v1.get(
     '/:table/report/:fact',
     [
         ...defaultValidations,
-        param('fact').isIn(Object.values(Madeirense$Enumerators.StatisticsParameters.Fact)).withMessage(`Only ${Object.values(Madeirense$Enumerators.StatisticsParameters.Fact).join(', ')} facts are allowed`),
+        param('fact').isIn(FACTS).withMessage(`Only ${FACTS.join(', ')} facts are allowed`),
         query(Madeirense$Enumerators.SearchQueries.interval).optional({ values: 'falsy' }).isIn(DATE_INTERVALS).withMessage(`Date interval must be within: ${DATE_INTERVALS.join(', ')}`),
         query(Madeirense$Enumerators.SearchQueries.month).optional({ values: 'falsy' }).isInt({ min: 1, max: 12 }).withMessage(`Choose a valid month, 1 - 12`),
-        query(Madeirense$Enumerators.SearchQueries.year).optional({ values: 'falsy' }).isInt({ min: 2025, max: (new Date()).getFullYear() }).withMessage(`Choose a valid year for a statistic, from 2025 until now.`),
+        // Upper bound checked per request — a bound computed once at module load
+        // would reject the new year until the server restarted.
+        query(Madeirense$Enumerators.SearchQueries.year).optional({ values: 'falsy' })
+            .isInt({ min: FIRST_STATISTICS_YEAR })
+            .custom((year: string) => parseInt(year, 10) <= new Date().getFullYear())
+            .withMessage(`Choose a valid year for a statistic, from ${FIRST_STATISTICS_YEAR} until now.`),
         Validate.Handle.error
     ],
     controller.getReport as any

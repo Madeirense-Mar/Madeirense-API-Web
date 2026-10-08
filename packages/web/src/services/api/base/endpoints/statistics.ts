@@ -7,12 +7,25 @@ import type {
 import {
     Madeirense$Enumerators,
     type Madeirense$Types,
-    type countEntryType
+    type countEntryType,
+    type statisticsOverviewType
 } from "@Madeirense/shared";
 
 // ***************************************************************************************************************
 
 class StatisticsEndpoints extends BaseAPIAbstractEndpoint {
+    async overview(
+        {
+            query
+        }: {
+            query?: Madeirense$Types.searchQueryRecord
+        } = {
+                query: undefined
+            }
+    ) {
+        return (await this.client.get<statisticsOverviewType>(`/statistics/overview`, query)).data;
+    }
+
     async countTablePerColumn<Column = string>(
         table: keyof typeof DB$Enumerators.Tables,
         column: Column,

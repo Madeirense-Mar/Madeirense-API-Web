@@ -138,3 +138,15 @@ Only `getMyOrders` was actually missing it; fixed, and `getAllOrders`
 (admin/staff listing, same bug, same file) fixed alongside it even though
 nothing flagged it — same contract violation, same fix. Mobile's
 `flutter analyze`/build/pub get all clean after the client-side rollback.
+
+## Statistics/dashboard endpoints rewritten 2026-10-08
+`controllers/statistics.ts` + `routes/statistics.ts`. Trigger: `1055 ... only_full_group_by` on top-products. Every raw query in this controller had the same class of problem or worse, so the whole file was rebuilt:
+
+- **All raw SQL now uses `prisma.$queryRaw` + `Prisma.sql`** (parameterised). The old `$queryRawUnsafe` + string interpolation let `?group_by=` inject arbitrary SQL. `Prisma.raw` is only ever used for constants defined in the controller.
+- **GROUP BY is always on a primary key or the selected bucket expression**, so `only_full_group_by` is satisfied (the old code grouped by `Products.name`/`Users.name`/`Coupons.code`/`neighborhood`).
+- Other latent bugs fixed: top-areas `strict=true` put `WHERE` before `JOIN` (syntax error); coupons `strict=true` used a nonexistent `Orders.state` column; the revenue report returned raw `COUNT(*)` `bigint`s, which `res.json` can't serialize; `parseInt` was truncating money; yearly revenue was filtered to a single year; the `year` validator's max was frozen at server start.
+- Top products ignore cancelled orders and now return `quantity` (units sold) next to `orders` (distinct orders). **The web page still computes revenue as `orders × price`**, which undercounts multi-unit orders. It should use `quantity`.
+- New: `GET /statistics/overview` (period KPIs + previous-period comparison), `/Orders/report/peak_hours`, `/Orders/report/delivery_time`, `/count/Payments/per/payment_method|status`, `/count/Resort_Bookings/per/status`, `/Restaurants/Orders/top`, `/Users/Orders/top?user_role=Customer`, `/Restaurant_Events/Tickets_Purchased/top`. Every statistics route now accepts `restaurant_id`, `from`, `to` (ISO date; a bare-date `to` is inclusive).
+- Shared: new `Fact` values + `from`/`to` SearchQueries + response types in `shared/src/types/statistics.ts`, so **run `yarn build-shared-code`**.
+- Verified by running the controller's real raw queries against a scratch MySQL 8.0 (default `ONLY_FULL_GROUP_BY`, case-sensitive table names like staging) loaded from `MADEIRENSE_TABLES.sql`. The Prisma model-API calls (`groupBy`/`count`) are type-checked only. **Not yet hit through the running server.** Robbie's local dev server was then upgraded to **MySQL 26.7.0** (Innovation/EA track, YY.M versioning, successor to 9.7). The queries use only long-standing MySQL syntax, but they were tested on 8.0, not 26.7. Re-check on the real local server. Staging/production's MySQL version is undocumented here; confirm it before relying on dev parity.
+- Not done (needs a decision): Staff users see every restaurant's statistics. Nothing scopes them to their `Workstations` restaurant.

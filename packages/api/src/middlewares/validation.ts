@@ -183,8 +183,18 @@ export namespace Validate {
             query('limit').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER, max: 100 }).withMessage('Limit must be between 1 and 100'),
         ]
 
+        // Shared by every /statistics route. `group_by` is a query (not a path
+        // param) and is whitelisted per-route, next to the controller that uses it.
         export const statistics = [
-            param('group_by').optional({ values: 'falsy' }).isString().withMessage('The group pattern description must be a valid string relating to the table being searched'),
+            query('restaurant_id').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER }).withMessage('Restaurant ID query should be positive integer'),
+            query('from').optional({ values: 'falsy' }).isISO8601().withMessage('"from" must be an ISO-8601 date (YYYY-MM-DD) or datetime'),
+            query('to').optional({ values: 'falsy' }).isISO8601().withMessage('"to" must be an ISO-8601 date (YYYY-MM-DD) or datetime')
+                .bail()
+                .custom((to: string, { req }) => {
+                    const from = req.query?.from;
+
+                    return (typeof from !== 'string' || from === '') || (new Date(to).getTime() >= new Date(from).getTime());
+                }).withMessage('"to" must not be before "from"'),
             query('quantity').optional({ values: 'falsy' }).isInt({ min: 1, max: 100 }).withMessage('Quantity must be between 1 and 100'),
             query('strict').optional({ values: 'falsy' }).isIn(['false', 'true']).withMessage('To define strict mode pass a boolean value (true or false)'),
         ]

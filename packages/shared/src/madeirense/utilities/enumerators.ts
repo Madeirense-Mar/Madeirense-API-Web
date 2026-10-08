@@ -53,6 +53,7 @@ export namespace Madeirense$Enumerators {
         "courier_id" = "courier_id",
         "coupon_code" = "coupon_code",
         "event_id" = "event_id",
+        "from" = "from",
         "group_by" = "group_by",
         "group" = "group",
         "gt" = "gt",
@@ -77,6 +78,7 @@ export namespace Madeirense$Enumerators {
         "type" = "type",
         "upcoming" = "upcoming",
         "user_id" = "user_id",
+        "to" = "to",
         "user_role" = "user_role",
         "year" = "year",
         "withRooms" = "withRooms"
@@ -94,6 +96,8 @@ export namespace Madeirense$Enumerators {
         }
 
         export enum Fact {
+            "delivery_time" = "delivery_time",
+            "peak_hours" = "peak_hours",
             "revenue" = "revenue"
         }
         // "count" = "count",
