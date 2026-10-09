@@ -51,7 +51,8 @@
     transition: all 0.1s ease-in-out;
 }
 
-:disabled {
+:disabled,
+[data-disabled] {
     cursor: pointer;
     opacity: 0.2;
     pointer-events: none;
