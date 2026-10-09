@@ -227,6 +227,7 @@
     composes: tag from "../tags/tag.module.css";
 }
 
+/*#region Text*/
 .text {
     composes: button;
 
@@ -249,19 +250,29 @@
     --button-background-color: var(--primary);
 }
 
+[data-theme*="LIGHT"] .text:hover {
+    --text-color: var(--primary-light);
+}
+
 .text-selected {
     composes: text;
 }
 
 [data-theme="LAND-DARK"] .text-selected {
-    --button-background-color: var(--primary-dark);
-    --text-color: var(--secondary);
+    --button-background-color: var(--primary);
+    --text-color: color-mix(in srgb, var(--primary-light), var(--neutral-light) 80%);
 }
 
 [data-theme="SEA-DARK"] .text-selected {
     --button-background-color: var(--secondary-dark);
     --text-color: var(--secondary);
 }
+
+[data-theme*="LIGHT"] .text-selected {
+    --button-background-color: var(--primary);
+    --text-color: color-mix(in srgb, var(--primary-light), var(--neutral-light) 80%);
+}
+/*#endregion*/
 
 .warning {
     composes: button;
