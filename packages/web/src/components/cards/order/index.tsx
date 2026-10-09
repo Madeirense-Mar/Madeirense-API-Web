@@ -7,7 +7,6 @@ import {
 } from "react";
 
 import {
-    Link,
     useLocation
 } from "react-router-dom";
 
@@ -34,6 +33,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import Progress from "components/progressBar";
 import Tag from "components/tags";
+import AnchorTag from "components/tags/anchor";
 
 import MODAL_DRIVER_ASSIGNATION_FORM from "components/modals/forms/drivers/assignation";
 
@@ -51,7 +51,6 @@ import type {
     variantType,
     withVariant
 } from "components/types";
-import AnchorTag from "components/tags/anchor";
 
 // ***************************************************************************************************************
 
