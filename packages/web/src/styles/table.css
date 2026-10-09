@@ -1,6 +1,6 @@
 table {
     border: 1px solid var(--table-border-color);
-    border-collapse: collapse;
+    border-collapse: separate;
     border-spacing: 0;
     border-radius: 12px;
     overflow: hidden;
@@ -8,36 +8,39 @@ table {
 
 table th,
 table td {
-    @apply px-3
+    @apply px-3;
+    
+    border-color: var(--table-cell-border-color, var(--base-table-cell-border-color));
+    border-style: var(--table-cell-border-style, solid);
 }
 
-[data-theme="LAND-DARK"] table {}
+table th {
+    border-bottom-width: 1px;
+}
 
-[data-theme="LAND-LIGHT"] table {}
+table tfoot tr td {
+    border-top-width: 1px;
+}
+
+/*#region Theme specifications ============================ */
+/*#region DARK*/
+[data-theme*="LIGHT"] table {
+    --processed-color: color-mix(in srgb, var(--primary-dark), black 40%);
+
+    --table-border-color: var(--processed-color);
+    --base-table-cell-border-color: var(--processed-color);
+}
+/*#endregion*/
+
+/*#region LIGHT*/
+[data-theme="LAND-DARK"] table {
+    --table-border-color: var(--secondary);
+    --base-table-cell-border-color: var(--secondary);
+}
 
 [data-theme="SEA-DARK"] table {
     --table-border-color: var(--primary-light);
-    --table-cell-border-color: var(--primary-light);
+    --base-table-cell-border-color: var(--primary-light);
 }
-
-[data-theme="SEA-DARK"] table tbody {
-    background-color: color-mix(in srgb, var(--primary-dark), white 12%);
-}
-
-[data-theme="SEA-DARK"] table tbody tr:hover {
-    background-color: color-mix(in srgb, var(--primary-dark), white 10%);
-}
-
-[data-theme="SEA-DARK"] table tbody tr td:hover {
-    background-color: color-mix(in srgb, var(--primary-dark), white 8%);
-}
-
-[data-theme="SEA-DARK"] table tfoot {
-    background-color: color-mix(in srgb, var(--primary-dark), black 22%);
-}
-
-[data-theme="SEA-DARK"] table thead {
-    background-color: color-mix(in srgb, var(--primary-dark), black 22%);
-}
-
-[data-theme="SEA-LIGHT"] table {}
+/*#endregion*/
+/*#region Theme specifications ============================ */
