@@ -1,75 +1,44 @@
+/*#region Root variables ================================== */
 :root {
     --progress-bar-height: 3px;
 }
 
+/*#endregion*/
+
+/*#region Progress ======================================== */
 .progress {
-    --height: var(--progress-bar-height);
+    --h: var(--progress-bar-height);
 
     @apply flex flex-row justify-start items-center;
 
-    border-radius: 52px;
     overflow: hidden;
+    
     min-width: 200px;
-    height: var(--height);
-    max-height: var(--height);
-    min-height: var(--height);
-    background-color: var(--background-color);
+
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+
+    border-radius: 52px;
+
+    background-color: var(--progress-background-color);
 }
 
-.progress > div {
-    --height: 100%;
-    
+.progress>div {
+    --h: 100%;
+
     position: relative;
 
-    height: var(--height);
-    max-height: var(--height);
-    min-height: var(--height);
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
 
     background-color: var(--value-background-color);
 }
 
-.animated div {
-    animation: pulse-width 0.6s infinite alternate ease-in-out;
-    transform-origin: left;
-}
+/*#endregion*/
 
-/* TODO: Unimplemented style > danger */
-.danger {
-    composes: progress;
-}
-
-/* TODO: Unimplemented style > important */
-.important {
-    composes: progress;
-}
-
-.primary {
-    --background-color: color-mix(in srgb, var(--secondary), white 80%);
-    --value-background-color: var(--primary);
-
-    composes: progress;
-}
-
-/* TODO: Unimplemented style > secondary */
-.secondary {
-    composes: progress;
-}
-
-/* TODO: Unimplemented style > selected */
-.selected {
-    composes: progress;
-}
-
-/* TODO: Unimplemented style > success */
-.success {
-    composes: progress;
-}
-
-/* TODO: Unimplemented style > warning */
-.warning {
-    composes: progress;
-}
-
+/*#region Modes =========================================== */
 @keyframes pulse-width {
     from {
         transform: scaleX(1);
@@ -80,3 +49,69 @@
         /* oscillates to 70% of current width */
     }
 }
+
+
+.animated div {
+    animation: pulse-width 0.6s infinite alternate ease-in-out;
+    transform-origin: left;
+}
+
+/*#endregion*/
+
+/*#region Variants ======================================== */
+/*#region Danger*/
+.danger {
+    composes: progress;
+}
+
+[data-theme*="DARK"] .danger {
+    --progress-background-color: color-mix(in srgb, var(--accent), var(--neutral-light) 50%);
+    --value-background-color: var(--secondary);
+}
+
+[data-theme*="LIGHT"] .danger {
+    --progress-background-color: color-mix(in srgb, var(--accent), var(--neutral-dark) 60%);
+    --value-background-color: var(--accent);
+}
+/*#endregion*/
+
+/*#region Important*/
+.important {
+    composes: progress;
+}
+/*#endregion*/
+
+/*#region Primary*/
+.primary {
+    composes: progress;
+
+    --progress-background-color: color-mix(in srgb, var(--secondary), white 80%);
+    --value-background-color: var(--primary);
+}
+/*#endregion*/
+
+/*#region Secondary*/
+.secondary {
+    composes: progress;
+}
+/*#endregion*/
+
+/*#region Selected*/
+.selected {
+    composes: progress;
+}
+/*#endregion*/
+
+/*#region Success*/
+.success {
+    composes: progress;
+}
+/*#endregion*/
+
+/*#region Warning*/
+.warning {
+    composes: progress;
+}
+/*#endregion*/
+
+/*#endregion*/
