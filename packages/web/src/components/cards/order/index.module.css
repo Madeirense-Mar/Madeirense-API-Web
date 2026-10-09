@@ -1,7 +1,5 @@
 /*#region Card ============================================ */
 .card {
-    composes: card from "../card.module.css";
-
     --card-padding: 12px;
     
     --card-button-height: 29.33px;
@@ -77,6 +75,16 @@
 .danger {
     composes: card;
 }
+
+[data-theme*="DARK"] .danger {
+    --card-background-color: color-mix(in srgb, var(--accent), var(--neutral-dark) 60%);
+    --card-border-color: color-mix(in srgb, var(--accent), var(--neutral-light) 30%);
+}
+
+[data-theme*="LIGHT"] .danger {
+    --card-background-color: color-mix(in srgb, var(--accent), var(--neutral-light) 70%);
+    --card-border-color: color-mix(in srgb, var(--accent), var(--neutral-dark) 30%);
+}
 /*#endregion*/
 
 /*#region Important*/
@@ -88,6 +96,14 @@
 /*#region Primary*/
 .primary {
     composes: card;
+}
+
+[data-theme*="DARK"] .primary {
+    --card-background-color: var(--primary-dark);
+}
+
+[data-theme*="LIGHT"] .primary {
+    --card-background-color: var(--primary-light);
 }
 /*#endregion*/
 
