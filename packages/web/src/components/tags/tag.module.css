@@ -117,6 +117,12 @@
     --tag-border-color: var(--success);
     --tag-text-color: var(--success);
 }
+
+[data-theme*="LIGHT"] .success {
+    --tag-background-color: var(--success);
+    --tag-border-color: var(--success-dark);
+    --tag-text-color: var(--success-dark);
+}
 /*#endregion*/
 
 /*#region Warning*/
@@ -129,6 +135,13 @@
     --tag-border-style: dotted;
     --tag-border-color: var(--secondary-dark);
     --tag-text-color: var(--secondary-dark);
+}
+
+[data-theme*="LIGHT"] .warning {
+    --tag-background-color: var(--secondary-dark);
+    --tag-border-style: dotted;
+    --tag-border-color: var(--secondary);
+    --tag-text-color: var(--secondary);
 }
 /*#endregion*/
 /*#endregion*/
