@@ -7,7 +7,7 @@ main>section {
     background-color: var(--section-background-color, var(--base-section-background-color));
 }
 
-/*#region Theme specification ============================= */
+/*#region Theme specifications =========================== */
 [data-theme="LAND-DARK"] section {
     --base-section-border-color: transparent;
     --base-section-background-color: color-mix(in srgb, var(--secondary-dark), black 40%);
@@ -22,7 +22,6 @@ main>section {
     --base-section-border-color: color-mix(in srgb, var(--primary-dark), black 40%);
     --base-section-background-color: transparent;
 }
-
 /*#endregion*/
 
 /*#region Media =========================================== */
