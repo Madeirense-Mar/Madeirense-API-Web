@@ -12,6 +12,7 @@ import {
 } from "@Madeirense/shared";
 
 import Button from "components/buttons";
+import Tag from "components/tags";
 
 import styles from "./slider.module.css";
 
@@ -23,6 +24,7 @@ interface IPropTypes extends ComponentProps<"div"> {
     defaultValue?: string;
     direction?: "horizontal" | "vertical";
     disabled?: boolean;
+    element?: 'Button' | 'Tag',
     list: keyValuePair<string, valueType>[];
     onPick?: (value: string) => void;
 };
@@ -33,6 +35,7 @@ const SliderPicker = (_props: IPropTypes) => {
         defaultValue,
         direction = "horizontal",
         disabled,
+        element = 'Button',
         list,
         onPick,
         ...props
@@ -101,17 +104,21 @@ const SliderPicker = (_props: IPropTypes) => {
         {list.map(({ key, value }) => {
             const v = typeof value === "string" ? value : value.value;
             const pv = typeof pickedValue === "string" ? pickedValue : pickedValue.value;
+            const variant = (pv === v) ? "selected" : "secondary";
 
-            return <Button
-                id={v}
-                key={key}
-                onClick={handlePick}
-                variant={(pv === v) ? "selected" : "secondary"}
-            >
-                {typeof value === "string" ? null : value.icon}
+            const props = {
+                id: v,
+                key,
+                onClick: handlePick
+            };
 
-                {key}
-            </Button>
+            switch (element) {
+                case 'Button':
+                    return <Button {...props} {...{ variant }}>{typeof value === "string" ? null : value.icon} {key}</Button>
+
+                default:
+                    return <Tag {...props} {...{ variant }}>{typeof value === "string" ? null : value.icon} {key}</Tag>
+            }
         })}
 
         <div className="space"></div>
