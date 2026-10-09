@@ -458,34 +458,34 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
 
                     <table>
                         <thead>
-                            <tr className="italic font-semibold border-b border-solid border-black/20 opacity-70">
-                                <td className="w-full p-2">
+                            <tr className="italic font-semibold">
+                                <th className="p-2 text-left">
                                     <Icon name="Store" className="inline-block mr-2" />
 
                                     Restaurante
-                                </td>
+                                </th>
 
-                                <td className="p-2 whitespace-nowrap border-r border-solid border-black/20">
+                                <th className="p-2 whitespace-nowrap">
                                     <Icon name="HourglassRunning" className="inline-block mr-2" />
 
                                     Tempo de preparo (minutos)
-                                </td>
+                                </th>
 
-                                <td className="p-2 whitespace-nowrap">
+                                <th className="p-2 whitespace-nowrap">
                                     <Icon name="Timer" className="inline-block mr-2" />
 
                                     Tempo de entrega (minutos)
-                                </td>
+                                </th>
                             </tr>
                         </thead>
 
-                        <tfoot className="opacity-60 hover:opacity-100">
-                            <tr className="italic font-semibold border-t border-solid border-black/20 opacity-70">
-                                <td className="w-full p-2 border-r border-solid border-black/20">
+                        <tfoot>
+                            <tr className="italic font-semibold opacity-70">
+                                <td className="w-full p-2">
                                     Definir para todos
                                 </td>
 
-                                <td className="p-2 border-r border-solid border-black/20">
+                                <td className="p-2">
                                     <div className="w-full flex flex-row justify-center items-center gap-1">
                                         {getUpdaterStatusIndicator(`ttp`)}
 
@@ -505,11 +505,11 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
 
                         <tbody>
                             {restaurants.map(r => <tr key={r.restaurant_id} className="hover:bg-gray-300/20">
-                                <td className="px-2 w-full font-semibold italic border-r border-solid border-black/20">
+                                <td className="px-2 w-full font-semibold italic">
                                     {r.name}
                                 </td>
 
-                                <td className="p-2 border-r border-solid border-black/20">
+                                <td className="p-2">
                                     <div className="w-full flex flex-row justify-center items-center gap-1">
                                         {getUpdaterStatusIndicator(`ttp-${r.restaurant_id}`)}
 
