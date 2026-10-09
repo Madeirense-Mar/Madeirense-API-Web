@@ -33,7 +33,7 @@ function HomePage() {
             <MenuProductsGrid
                 group="menu"
                 productType={defaultProduct_type === "all" ? undefined : defaultProduct_type}
-                className="w-full"
+                className="w-full flex flex-col justify-start items-start gap-5"
                 trackAppUpdates
             />
         </main>

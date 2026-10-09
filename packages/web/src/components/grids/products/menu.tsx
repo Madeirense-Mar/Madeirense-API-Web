@@ -39,6 +39,7 @@ import {
     type App$Types
 } from "contexts/App";
 
+import SearchBar from "components/forms/searchBar";
 import ProductCard from "components/cards/product";
 import Icon from "components/icon";
 import Tag from "components/tags";
@@ -53,7 +54,6 @@ import type {
     $Enums,
     Products
 } from "@Madeirense/database/browser";
-import SearchBar from "components/forms/searchBar";
 
 // ***************************************************************************************************************
 
@@ -68,6 +68,18 @@ interface IPropTypes extends ComponentProps<"div"> {
 };
 
 type filterType = "all" | $Enums.Products_product_type;
+
+const defaultCompositionFilters = {
+    alcoholic: false,
+    fish: false,
+    liquid: false,
+    meat: false,
+    merchandise: false,
+    mixed: false,
+    non_alcoholic: false,
+    vegetable: false,
+    wheat: false
+};
 
 function ProductsMenuGrid(_props: IPropTypes) {
     const {
@@ -90,6 +102,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
 
     const [search, setSearch] = useState("");
     const [listFilter, setListFilter] = useState<filterType>(productType ?? "all");
+    const [compositionFilters, setCompositionFilters] = useState<Record<$Enums.Products_product_composition, boolean>>(defaultCompositionFilters);
 
     const { get } = useApp();
 
@@ -145,6 +158,16 @@ function ProductsMenuGrid(_props: IPropTypes) {
         timeoutRef.current = setTimeout((value) => {
             setSearch(value);
         }, (inputValue === "") ? 0 : 5000, inputValue);
+    };
+
+    function handleCompositionPick(values: string[]) {
+        const _compositionFilters = { ...defaultCompositionFilters };
+
+        values.forEach(v => {
+            _compositionFilters[v as $Enums.Products_product_composition] = true;
+        });
+
+        setCompositionFilters(_compositionFilters);
     };
 
     function handleTypeChange(type: string) {
@@ -222,10 +245,11 @@ function ProductsMenuGrid(_props: IPropTypes) {
             const list = fullList
                 .filter(item => search === "" ? true : item?.name.toLowerCase().includes(search.toLowerCase()))
                 .filter(item => listFilter === "all" ? true : item?.product_type === listFilter)
+                .filter(item => Object.values(compositionFilters).every(v => !v) ? true : (!item?.product_composition) ? false : Object.entries(compositionFilters).filter(e => e[1]).map(e => e[0] as $Enums.Products_product_composition).includes(item.product_composition))
                 .filter(item => (!defaultRestaurant || item?.restaurant_id === null) ? true : item?.restaurant_id === defaultRestaurant)
                 ;
 
-            const $sliderPickerProps = {
+            const $typeSliderPickerProps = {
                 defaultValue: listFilter,
                 list: [
                     { key: "Todos", value: { value: "all", icon: (trackAppUpdates && isFetching) ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Restaurant" /> } },
@@ -241,9 +265,39 @@ function ProductsMenuGrid(_props: IPropTypes) {
                 ],
                 onPick: handleTypeChange
             };
+
+            const $compositionSliderPickerProps = {
+                list: (
+                    [
+                        { key: "Não-Alcoolicas", value: { value: "non_alcoholic", icon: <Icon name="NoDrinks" /> } },
+                        { key: "Alcoolicas", value: { value: "alcoholic", icon: <Icon name="SolidDrink" /> } },
+                        { key: "Peixe", value: { value: "fish", icon: <Icon name="FishSharp" /> } },
+                        { key: "Carne", value: { value: "meat", icon: <Icon name="Meat" /> } },
+                        { key: "Mistura", value: { value: "mixed", icon: <Icon name="Salad" /> } },
+                        { key: "Vegano", value: { value: "vegetable", icon: <Icon name="Vegan" /> } },
+                        { key: "Farináceos", value: { value: "wheat", icon: <Icon name="Wheat" /> } },
+                    ] as keyValuePair<string, { value: $Enums.Products_product_composition, icon: any }>[]
+                )
+                .filter(({ value }) => fullList.map(p => p?.product_composition).includes(value.value))
+                .filter(({ value }) => {
+                    switch (listFilter) {
+                        case 'beverage':
+                            return ['alcoholic', 'non_alcoholic'].includes(value.value);
+                            
+                        default:
+                            return !['alcoholic', 'non_alcoholic'].includes(value.value);
+                    }
+                }),
+                onMultiplePick: handleCompositionPick
+            };
+
             return <div {...$divProps}>
                 <div className={styles["filter-bar"]}>
-                    <SliderPicker {...$sliderPickerProps} />
+                    <SliderPicker {...$typeSliderPickerProps} />
+
+                    {(listFilter !== 'all') && <SliderPicker element="Tag" {...$compositionSliderPickerProps} multiple />}
+
+                    <hr />
 
                     {!disableSearch && <SearchBar
                         className={styles["search-filter"]}

@@ -3,7 +3,49 @@
 }
 
 .filter-bar {
-    @apply flex flex-col justify-start items-start;
+    @apply flex flex-col justify-start items-start gap-3 w-full;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background-color: var(--filter-bar-background-color, transparent);
+}
+
+[data-theme="LAND-DARK"] .filter-bar {
+    --filter-bar-background-color: color-mix(in srgb, var(--secondary-dark), var(--neutral-light) 15%);
+}
+
+[data-theme="SEA-DARK"] .filter-bar {
+    --filter-bar-background-color: color-mix(in srgb, var(--primary-dark), var(--primary) 40%);
+}
+
+[data-theme="LAND-LIGHT"] .filter-bar {
+    --filter-bar-background-color: color-mix(in srgb, var(--secondary), var(--neutral-light) 45%);
+}
+
+[data-theme="SEA-LIGHT"] .filter-bar {
+    --filter-bar-background-color: color-mix(in srgb, var(--primary-light), var(--neutral-light) 5%);
+}
+
+.filter-bar hr {
+    --h: 1px;
+    
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+
+    width: 100%;
+
+    background-color: var(--hr-background-color);
+}
+
+[data-theme*="DARK"] .filter-bar hr {
+    --hr-background-color: var(--neutral-light);
+}
+
+[data-theme*="LIGHT"] .filter-bar hr {
+    --hr-background-color: var(--neutral-dark);
 }
 
 @media only screen and (min-width: 344px) {
