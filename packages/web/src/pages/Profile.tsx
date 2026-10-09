@@ -37,12 +37,13 @@ import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
 import ProfilePictureButton from "components/buttons/profile";
-import OrderCard from "components/cards/order";
 import ProductCard from "components/cards/product";
-import DropOffFieldset from "components/forms/elements/fieldsets/dropOff";
 import Icon from "components/icon";
 import SliderPicker from "components/pickers/slider";
+import Tag from "components/tags";
 
+import DropOffFieldset from "components/forms/elements/fieldsets/dropOff";
+import productGridStyles from "components/grids/products/menu.module.css";
 import DeletionForm from "components/modals/forms/delete";
 
 import { Root$Enumerators } from "styles/enumerators";
@@ -53,10 +54,8 @@ import type {
 
 import type { IPageState } from "components/interface";
 
-import productGridStyles from "components/grids/products/menu.module.css";
 
 import "./Profile.css";
-import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -511,14 +510,6 @@ function ProfilePage() {
             }
         },
         {
-            key: "Pedidos", value: {
-                value: "orders",
-                icon: (page.status === "saving-orders")
-                    ? <Icon name="Loading" className="animate-spin" />
-                    : <Icon name="Order" />
-            }
-        },
-        {
             key: "Definições", value: {
                 value: "settings",
                 icon: (page.status === "saving-settings")
@@ -789,16 +780,6 @@ function ProfilePage() {
 
                     <div className={resolveClassNames(productGridStyles.grid, "w-full")}>
                         {favoriteProducts.map(p => <ProductCard key={p.product_id} product={p} />)}
-                    </div>
-                </section>}
-
-                {(menu === "orders") && <section id={menu}>
-                    {!orders.length && <div data-state="empty">
-                        <span>Ainda não fizeste pedidos</span>
-                    </div>}
-
-                    <div data-grid="OrderCard" className="w-full">
-                        {orders.map(o => <OrderCard key={o.order_id} order={o} />)}
                     </div>
                 </section>}
 
