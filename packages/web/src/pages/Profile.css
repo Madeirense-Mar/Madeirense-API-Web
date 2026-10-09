@@ -1,3 +1,56 @@
-#root[data-page="profile"] main > section {
+#root[data-page="profile"] main>section {
     @apply w-full;
 }
+
+#root[data-page="profile"] main>section>section>header {
+    @apply flex flex-row justify-start items-center gap-2 text-2xl font-black;
+}
+
+#root[data-page="profile"] main>#profile,
+#root[data-page="profile"] main>#orders {
+    --section-padding: 0px;
+    --section-background-color: transparent;
+    --section-border-color: transparent;
+}
+
+#root[data-page="profile"] main>#locations>section {
+    @apply flex flex-col justify-start items-start gap-3 w-full;
+}
+
+#root[data-page="profile"] main>#locations>section>div,
+#root[data-page="profile"] main>#settings>div {
+    @apply flex items-start;
+}
+
+[data-theme*="DARK"] #root[data-page="profile"] main>#locations>section>ul>li {
+    @apply hover:bg-gray-300/20;
+}
+
+[data-theme="LAND-LIGHT"] #root[data-page="profile"] main>#locations>section>ul>li:hover {
+    background-color: color-mix(in srgb, var(--secondary-light), var(--neutral-light) 10%);
+}
+
+[data-theme="SEA-LIGHT"] #root[data-page="profile"] main>#locations>section>ul>li:hover {
+    background-color: color-mix(in srgb, var(--primary-light), var(--neutral-light) 40%);
+}
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    #root[data-page="profile"] main>#locations>section>div, 
+    #root[data-page="profile"] main>#settings>div {
+        @apply flex-row justify-between;
+    }
+
+    #root[data-page="profile"] main>#locations>section>div>p,
+    #root[data-page="profile"] main>#settings>div>p {
+        @apply w-4/6;
+    }
+}
+
+@media only screen and (min-width: 1366px) {}
+
+/*#endregion*/

@@ -56,6 +56,7 @@ import type { IPageState } from "components/interface";
 import productGridStyles from "components/grids/products/menu.module.css";
 
 import "./Profile.css";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -535,46 +536,46 @@ function ProfilePage() {
         }
 
         default: {
-            return <main className="flex flex-col justify-start items-start gap-3">
+            return <main className="flex flex-col justify-start items-start gap-6">
                 <ProfilePictureButton src={user.profile_photo ?? "#"} size="xl" className="mx-auto" enableUpload />
 
                 <SliderPicker defaultValue={profileMenu} list={menuList} onPick={handleMenuChange} />
 
-                {(menu === "profile") && <section>
+                {(menu === "profile") && <section id={menu}>
                     <form onSubmit={PATCH} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
                         <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                            <legend className="flex flex-row justify-start items-center gap-2 text-4xl pb-2 mb-2 border-b border-solid border-black w-full">
+                            <legend className="flex flex-row justify-start items-center gap-2 text-2xl pb-2">
                                 <Icon name="User" />
 
                                 Conta
                             </legend>
 
-                            <label className="flex flex-row justify-between items-center w-full">
-                                <span className="text-2xl">Nome</span>
+                            <label className="flex flex-col justify-between items-start w-full">
+                                <span>Nome</span>
 
-                                <input name="name" type="text" data-element="h2" defaultValue={user.name} className="max-w-[45%] w-[45%]" />
+                                <input name="name" type="text" data-element="h2" defaultValue={user.name} className="w-full" />
                             </label>
                         </fieldset>
 
                         <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                            <legend className="flex flex-row justify-start items-center gap-2 text-4xl pb-2 mb-2 border-b border-solid border-black w-full">
+                            <legend className="flex flex-row justify-start items-center gap-2 text-2xl pb-2">
                                 <Icon name="Phone" />
 
                                 Contato
                             </legend>
 
-                            <label className="flex flex-row justify-between items-center w-full">
-                                <span className="text-2xl">E-mail</span>
+                            <label className="flex flex-col justify-between items-start w-full">
+                                <span>E-mail</span>
 
-                                <input name="e-mail" type="email" data-element="h2" defaultValue={user.email} className="max-w-[45%] w-[45%]" />
+                                <input name="e-mail" type="email" data-element="h2" defaultValue={user.email} className="w-full" />
                             </label>
 
-                            <div className="w-full flex flex-row justify-between items-center">
+                            <div className="w-full flex flex-col justify-between items-start">
                                 <label htmlFor="phone">
-                                    <span className="text-2xl">Nº do telefone</span>
+                                    <span>Nº do telefone</span>
                                 </label>
 
-                                <div className="flex flex-row justify-start items-center max-w-[45%] w-[45%] gap-2">
+                                <div className="flex flex-row justify-start items-center w-full gap-2">
                                     <select ref={$selectRef} title="Código do telefone" id="code" name="code" data-element="h2" defaultValue={defaultPhoneCode} required className="text-center">
                                         <option hidden value="">Seleciona um código</option>
 
@@ -583,13 +584,13 @@ function ProfilePage() {
                                         </option>)}
                                     </select>
 
-                                    <input defaultValue={user.phone.substring(defaultPhoneCode.length)} id="phone" className="w-full text-center" type="tel" data-element="h2" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
+                                    <input defaultValue={user.phone.substring(defaultPhoneCode.length)} id="phone" className="w-full" type="tel" data-element="h2" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
                                 </div>
                             </div>
                         </fieldset>
 
                         <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                            <legend className="flex flex-row justify-start items-center gap-2 text-4xl pb-2 mb-2 border-b border-solid border-black w-full">
+                            <legend className="flex flex-row justify-start items-center gap-2 text-2xl pb-2">
                                 <Icon name="Lock" />
 
                                 Privacidade
@@ -612,7 +613,7 @@ function ProfilePage() {
                             </ul>
                         </fieldset>
 
-                        <div className="w-full flex flex-row justify-between items-center mt-4">
+                        <div className="w-full flex flex-row justify-between items-center">
                             <Button type="reset" value={menu} variant="secondary" className="opacity-45 hover:opacity-100">
                                 <Icon name="Clean" />
 
@@ -628,70 +629,74 @@ function ProfilePage() {
                     </form>
                 </section>}
 
-                {(menu === "locations") && <section className="flex flex-col w-full justify-start items-start gap-10">
-                    <section className="w-full">
-                        <header className="flex flex-row justify-start items-center gap-2 text-4xl font-black pb-2 mb-2 border-b border-solid border-black w-full">
+                {(menu === "locations") && <section id={menu} className="flex flex-col w-full justify-start items-start gap-10">
+                    <section>
+                        <header>
                             <Icon name="MapMarked" />
 
                             Permissões
                         </header>
 
-                        <ul className="w-full flex flex-col justify-start items-start">
-                            <li className="w-full flex flex-row justify-start items-center gap-2">
-                                <div>
-                                    <span className="font-medium">Partilhar a minha localização</span>
+                        <div>
+                            <p>
+                                <span className="font-medium">Partilhar a minha localização</span>
 
-                                    <p className="opacity-70">Nós precisamos da tua localização para saber onde envair os motoristas com os teus pedidos, sem esta permissão terás de especificar a tua localização sempre que fizeres um pedido.</p>
+                                <br />
 
-                                    <p className="opacity-70 italic underline">Para re-ativar/desativar a permissão da localização deve fazê-lo nas configurações de permissões do seu navegador.</p>
-                                </div>
+                                <span className="opacity-70">
+                                    Nós precisamos da tua localização para saber onde envair os motoristas com os teus pedidos, sem esta permissão terás de especificar a tua localização sempre que fizeres um pedido.
 
-                                <Button
-                                    value={preferences.location}
-                                    className="ml-auto"
-                                    onClick={["default", "deferred"].includes(preferences.location) ? handleLocationPermissionUpdate : undefined}
-                                    variant={["default", "deferred"].includes(preferences.location) ? "primary" : preferences.location === "allowed" ? "success" : "danger"}
-                                >
-                                    {(preferences.location === "allowed") && <>
-                                        <Icon name="MapCheck" />
+                                    <span className="italic underline ml-1">
+                                        Para re-ativar/desativar a permissão da localização deve fazê-lo nas configurações de permissões do seu navegador.
+                                    </span>
+                                </span>
+                            </p>
 
-                                        A partilhar
-                                    </>}
+                            <Button
+                                value={preferences.location}
+                                className="ml-auto"
+                                onClick={["default", "deferred"].includes(preferences.location) ? handleLocationPermissionUpdate : undefined}
+                                variant={["default", "deferred"].includes(preferences.location) ? "primary" : preferences.location === "allowed" ? "success" : "danger"}
+                            >
+                                {(preferences.location === "allowed") && <>
+                                    <Icon name="MapCheck" />
 
-                                    {["default", "deferred"].includes(preferences.location) && <>
-                                        <Icon name="MapCheck" />
+                                    A partilhar
+                                </>}
 
-                                        Partilhar
-                                    </>}
+                                {["default", "deferred"].includes(preferences.location) && <>
+                                    <Icon name="MapCheck" />
 
-                                    {(preferences.location === "denied") && <>
-                                        <Icon name="MapOff" />
+                                    Partilhar
+                                </>}
 
-                                        Desativado
-                                    </>}
-                                </Button>
-                            </li>
-                        </ul>
+                                {(preferences.location === "denied") && <>
+                                    <Icon name="MapOff" />
+
+                                    Desativado
+                                </>}
+                            </Button>
+                        </div>
                     </section>
 
-                    <section className="w-full">
-                        <header className="flex flex-row justify-start items-center gap-2 text-4xl font-black pb-2 mb-2 border-b border-solid border-black w-full">
+                    <section>
+                        <header className="w-full">
                             <Icon name="MapMarker" />
 
                             Pontos de entrega
+
+                            {["default", "deferred", "denied"].includes(preferences.location) && <Tag variant="warning" className="ml-auto">
+                                <Icon name="Warning" />
+
+                                <p>Para usares esta funcionalidade precisas de partilhar a tua localização</p>
+                            </Tag>}
                         </header>
-
-                        {["default", "deferred", "denied"].includes(preferences.location) && <div data-state="warning" className="w-full flex flex-row justify-center items-center gap-2 p-2">
-                            <Icon name="Warning" />
-
-                            <p>Para usares esta funcionalidade precisas de partilhar a tua localização</p>
-                        </div>}
 
                         {!showDeliveryLocationMap && <ul className="w-full flex flex-col justify-start items-start gap-1" data-state={["default", "deferred", "denied"].includes(preferences.location) ? "disabled" : "idle"}>
                             {deliveryLocations.map(d => {
                                 const WASNT_DEFINED = [(d.latitude ?? "0").toString(), (d.longitude ?? "0").toString()].map(parseInt).some(v => v === 0);
 
-                                return <li key={d.location_id} className="w-full flex flex-row justify-start items-center gap-2 rounded-md hover:bg-gray-300/20 p-2">
+                                return <li key={d.location_id} className="w-full flex flex-row justify-start items-center gap-2 rounded-md p-2">
                                     {(d.name === "Casa") ? <Icon name="Home" /> :
                                         (d.name === "Trabalho") ? <Icon name="Work" /> :
                                             ((d.name ?? "").includes("Madeirense")) ? <Icon name="Restaurant" /> :
@@ -777,7 +782,7 @@ function ProfilePage() {
                     </section>
                 </section>}
 
-                {(menu === "favorites") && <section>
+                {(menu === "favorites") && <section id={menu}>
                     {!favoriteProducts.length && <div data-state="empty">
                         <span>Ainda não tens produtos favoritos</span>
                     </div>}
@@ -787,7 +792,7 @@ function ProfilePage() {
                     </div>
                 </section>}
 
-                {(menu === "orders") && <section>
+                {(menu === "orders") && <section id={menu}>
                     {!orders.length && <div data-state="empty">
                         <span>Ainda não fizeste pedidos</span>
                     </div>}
@@ -797,47 +802,50 @@ function ProfilePage() {
                     </div>
                 </section>}
 
-                {(menu === "settings") && <section>
-                    <header className="flex flex-row justify-start items-center gap-2 text-4xl font-black pb-2 mb-2 border-b border-solid border-black w-full">
+                {(menu === "settings") && <section id={menu}>
+                    <header className="flex flex-row justify-start items-center gap-2 text-2xl font-black pb-2">
                         <Icon name="NotificationCircle" />
 
                         Notificações
                     </header>
 
-                    <ul className="w-full flex flex-col justify-start items-start">
-                        <li className="w-full flex flex-row justify-start items-center gap-2">
-                            <div>
-                                <span className="font-medium">A minha subscrição</span>
+                    <div>
+                        <p>
+                            <span className="font-medium">A minha subscrição</span> 
+                            
+                            <br/>
 
-                                <p className="opacity-70">Usamos subscrições para enviar notificações sobre os teus pedidos, novidades e avisos para o teu navegador. <span className="italic">Podes sempre rever a tua subscrição a qualquer altura.</span></p>
-                            </div>
+                            <span className="opacity-70">
+                                Usamos subscrições para enviar notificações sobre os teus pedidos, novidades e avisos para o teu navegador. <span className="italic">Podes sempre rever a tua subscrição a qualquer altura.</span>
+                            </span>
+                        </p>
 
-                            <Button
-                                value={preferences.notifications}
-                                className="ml-auto"
-                                onClick={handleNotificationSubscriptionUpdate}
-                                variant={["default", "deferred"].includes(preferences.notifications) ? "primary" : preferences.notifications === "allowed" ? "danger" : "secondary"}
-                            >
-                                {(preferences.notifications === "allowed") && <>
-                                    <Icon name="NotificationOff" />
+                        <Button
+                            value={preferences.notifications}
+                            className="ml-auto"
+                            onClick={handleNotificationSubscriptionUpdate}
+                            variant={["default", "deferred"].includes(preferences.notifications) ? "primary" : preferences.notifications === "allowed" ? "danger" : "secondary"}
+                        >
+                            {(preferences.notifications === "allowed") && <>
+                                <Icon name="NotificationOff" />
 
-                                    Terminar subscrição
-                                </>}
+                                Terminar subscrição
+                            </>}
 
-                                {["default", "deferred"].includes(preferences.notifications) && <>
-                                    <Icon name="Notification" />
+                            {["default", "deferred"].includes(preferences.notifications) && <>
+                                <Icon name="Notification" />
 
-                                    Subscrever às notificações
-                                </>}
+                                Subscrever às notificações
+                            </>}
 
-                                {(preferences.notifications === "denied") && <>
-                                    <Icon name="NotificationActive" />
+                            {(preferences.notifications === "denied") && <>
+                                <Icon name="NotificationActive" />
 
-                                    Ativar subscrição
-                                </>}
-                            </Button>
-                        </li>
-                    </ul>
+                                Ativar subscrição
+                            </>}
+                        </Button>
+                    </div>
+
                 </section>}
             </main>
         }
