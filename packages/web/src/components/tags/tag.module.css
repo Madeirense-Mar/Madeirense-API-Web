@@ -27,9 +27,9 @@
 .danger {
     composes: tag;
 
-    --tag-background-color: #fee2e2;
-    --tag-border-color: #f87171;
-    --tag-text-color: #7f1d1d;
+    --tag-background-color: color-mix(in srgb, var(--accent), var(--neutral-light) 80%);
+    --tag-border-color: var(--accent);
+    --tag-text-color: var(--accent);
 }
 /*#endregion*/
 
