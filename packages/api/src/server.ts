@@ -242,7 +242,8 @@ class Server {
         console.log(`> Version: 0.1.0`);
         console.log(`> Environment: ${env.NODE_ENV}`);
         console.log(`> Listening on port: ${this.app.get('port')}`);
-        console.log(`> Docs @ ${env.API_URL}/docs`);
+        console.log(`> API Console @ ${env.API_URL}/api/management`);
+        console.log(`> Docs @ ${env.API_URL}/api/docs`);
 
         console.log(`> Description:`);
         //TODO: Add an API description below.
