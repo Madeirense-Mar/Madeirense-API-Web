@@ -1,3 +1,7 @@
+import {
+    API$Enumerators
+} from '@Madeirense/shared';
+
 import type { apiKeyListItemType } from '../services/apiKeys';
 import type { emailTemplateMetaType } from '../services/emailTemplates';
 import type { managementUserType } from './session';
@@ -198,7 +202,7 @@ export const keysView = ({
     flash,
     body: `
 <h1>API keys</h1>
-<p class="sub">Every request to <code>/api/v1/*</code> must send a valid key in the <code>x-api-key</code> header. Enforcement mode: <strong>${h(mode)}</strong>${mode !== 'enforce' ? ' — requests without a key are currently <em>not</em> rejected (set <code>API_KEY_MODE=enforce</code>).' : '.'}</p>
+<p class="sub">Every request to <code>/api/v1/*</code> must send a valid key in the <code>${API$Enumerators.Headers['api-key']}</code> header. Enforcement mode: <strong>${h(mode)}</strong>${mode !== 'enforce' ? ' — requests without a key are currently <em>not</em> rejected (set <code>API_KEY_MODE=enforce</code>).' : '.'}</p>
 
 ${created ? `<div class="card" style="border-color:var(--ok)">
   <h2>Key created for “${h(created.name)}”</h2>
@@ -207,7 +211,7 @@ ${created ? `<div class="card" style="border-color:var(--ok)">
     <input id="new-key" type="text" readonly value="${h(created.plain)}">
     <button type="button" class="shrink" data-copy="#new-key">Copy</button>
   </div>
-  <p class="muted" style="margin:0">Use it as a request header: <code>x-api-key: ${h(created.plain.slice(0, 15))}…</code></p>
+  <p class="muted" style="margin:0">Use it as a request header: <code>${API$Enumerators.Headers['api-key']}: ${h(created.plain.slice(0, 15))}…</code></p>
 </div>` : ''}
 
 <div class="card">

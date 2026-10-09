@@ -1,5 +1,6 @@
 import {
     ClientRequestService,
+    API$Enumerators,
     API$Types,
     Madeirense$Types
 } from "@Madeirense/shared";
@@ -65,7 +66,7 @@ export class Queries {
             Client: new ClientRequestService({
                 baseURL,
                 defaultHeaders: {
-                    "x-api-key": env.API_KEY
+                    [API$Enumerators.Headers["api-key"]]: env.API_KEY
                 }
             })
         }).endpoints;

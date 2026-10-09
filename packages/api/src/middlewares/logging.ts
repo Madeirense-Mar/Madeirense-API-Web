@@ -1,21 +1,22 @@
 import { randomUUID } from 'crypto';
 
-import type {
-    NextFunction,
-    Request,
-    Response
-} from 'express';
-
-import type { API$Types } from '@Madeirense/shared';
+import { 
+    API$Enumerators,
+    type API$Types
+} from '@Madeirense/shared';
 
 import {
     logContext,
     logger
 } from '../lib/logger';
 
-// ***************************************************************************************************************
+import type {
+    NextFunction,
+    Request,
+    Response
+} from 'express';
 
-const REQUEST_ID_HEADER = 'x-request-id';
+// ***************************************************************************************************************
 
 /** Query-string keys whose values never reach the logs. */
 const REDACTED_QUERY_KEYS = ['token', 'api_key', 'apikey', 'key', 'password', 'code'];
@@ -41,10 +42,10 @@ const redactUrl = (url: string) => {
  * `logger.*` call made while handling the request will inherit.
  */
 export const requestContext = (req: Request, res: Response, next: NextFunction) => {
-    const incoming = req.header(REQUEST_ID_HEADER);
+    const incoming = req.header(API$Enumerators.Headers['request-id']);
     const requestId = (incoming && /^[\w-]{8,64}$/.test(incoming)) ? incoming : randomUUID();
 
-    res.setHeader(REQUEST_ID_HEADER, requestId);
+    res.setHeader(API$Enumerators.Headers['request-id'], requestId);
 
     (req as Request & { requestId?: string }).requestId = requestId;
 

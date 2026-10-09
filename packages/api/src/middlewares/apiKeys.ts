@@ -4,7 +4,10 @@ import type {
     Response
 } from 'express';
 
-import type { API$Types } from '@Madeirense/shared';
+import { 
+    API$Enumerators,
+    type API$Types
+} from '@Madeirense/shared';
 
 import env from '../env';
 
@@ -14,7 +17,6 @@ import {
 } from '../lib/logger';
 
 import {
-    API_KEY_HEADER,
     verifyApiKey,
     type apiKeyFailureType,
     type resolvedApiKeyType
@@ -53,7 +55,7 @@ const EXEMPT: (string | RegExp)[] = [
 const isExempt = (path: string) => EXEMPT.some(rule => (typeof rule === 'string' ? rule === path : rule.test(path)));
 
 const MESSAGES: Record<apiKeyFailureType, string> = {
-    MISSING: `An API key is required (send it in the "${API_KEY_HEADER}" header)`,
+    MISSING: `An API key is required (send it in the "${API$Enumerators.Headers['api-key']}" header)`,
     MALFORMED: 'The API key is malformed',
     UNKNOWN: 'The API key is not valid',
     REVOKED: 'The API key has been revoked',
@@ -73,7 +75,7 @@ export const requireApiKey = async (
     if (env.API_KEY_MODE === 'off' || req.method === 'OPTIONS' || isExempt(req.path)) return next();
 
     try {
-        const result = await verifyApiKey(req.header(API_KEY_HEADER), req.ip);
+        const result = await verifyApiKey(req.header(API$Enumerators.Headers['api-key']), req.ip);
 
         if (result.ok) {
             req.apiKey = result.key;

@@ -1,6 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 
 import { 
+    API$Enumerators,
     ApplicationStates, 
     onlyType, 
     which,
@@ -120,7 +121,7 @@ const openAPISpec = {
             apiKey: {
                 type: 'apiKey',
                 in: 'header',
-                name: 'x-api-key'
+                name: API$Enumerators.Headers['api-key']
             }
         },
         schemas: {

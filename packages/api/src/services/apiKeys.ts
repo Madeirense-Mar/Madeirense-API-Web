@@ -9,6 +9,10 @@ import {
     type $Enums
 } from '@Madeirense/database';
 
+import {
+    API$Enumerators
+} from '@Madeirense/shared';
+
 import env from '../env';
 
 import { prisma } from '../lib/prisma';
@@ -35,8 +39,6 @@ import { scoped } from '../lib/logger';
  */
 
 const log = scoped('api-keys');
-
-export const API_KEY_HEADER = 'x-api-key';
 
 export type apiKeyUsageType = $Enums.Api_Keys_usage_type;
 

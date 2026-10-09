@@ -1,4 +1,7 @@
-import { ClientRequestService } from "@Madeirense/shared";
+import { 
+    API$Enumerators,
+    ClientRequestService
+} from "@Madeirense/shared";
 
 import BaseAPIService from "services/api/base";
 
@@ -49,7 +52,7 @@ export class AppClients {
         const Client = new ClientRequestService({
             ...options,
             defaultHeaders: {
-                "x-api-key": env.API_KEY,
+                [API$Enumerators.Headers["api-key"]]: env.API_KEY,
                 ...options.defaultHeaders
             }
         });

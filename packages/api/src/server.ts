@@ -93,8 +93,8 @@ class Server {
             },
             credentials: true,
             methods: ['GET', 'PATCH', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-            allowedHeaders: ['Content-Type', 'Authorization', API$Enumerators.Headers.platform, 'x-api-key', 'x-request-id'],
-            exposedHeaders: ['x-request-id']
+            allowedHeaders: ['Content-Type', 'Authorization', API$Enumerators.Headers.platform, API$Enumerators.Headers['api-key'], API$Enumerators.Headers['request-id']],
+            exposedHeaders: [API$Enumerators.Headers['request-id']]
         }));
 
         this.app.use(express.json({ limit: '10mb' }));

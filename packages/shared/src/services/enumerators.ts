@@ -13,8 +13,10 @@ export namespace API$Enumerators {
     }
 
     export enum Headers {
+        "api-key" = "x-api-key",
         "locale" = "x-locale",
-        "platform" = "x-platform"
+        "platform" = "x-platform",
+        "request-id" = "x-request-id",
     }
 
     export enum LogEntries {
