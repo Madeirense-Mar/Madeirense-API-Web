@@ -1,3 +1,4 @@
+/*#region Card ============================================ */
 .card {
     composes: card from "../card.module.css";
 
@@ -31,7 +32,9 @@
 .card:has(div[class*="progress" i][data-status="cancelled"]) div[class*="progress" i] {
     opacity: 0.4;
 }
+/*#endregion*/
 
+/*#region Modes =========================================== */
 .default {
     @apply flex flex-col justify-center items-center gap-2;    
 }
@@ -67,37 +70,48 @@
     grid-area: index;
     text-align: center;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > danger */
+/*#region Variants ======================================== */
+/*#region Danger*/
 .danger {
     composes: card;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > important */
+/*#region Important*/
 .important {
     composes: card;
 }
+/*#endregion*/
 
+/*#region Primary*/
 .primary {
     composes: card;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > secondary */
+/*#region Secondary*/
 .secondary {
     composes: card;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > selected */
+/*#region Selected*/
 .selected {
     composes: card;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > success */
+/*#region Success*/
 .success {
     composes: card;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > warning */
+/*#region Warning*/
 .warning {
     composes: card;
 }
+/*#endregion*/
+/*#endregion*/
