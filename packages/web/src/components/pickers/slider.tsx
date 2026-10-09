@@ -12,6 +12,7 @@ import {
 } from "@Madeirense/shared";
 
 import Button from "components/buttons";
+import Icon from "components/icon";
 import Tag from "components/tags";
 
 import styles from "./slider.module.css";
@@ -24,9 +25,11 @@ interface IPropTypes extends ComponentProps<"div"> {
     defaultValue?: string;
     direction?: "horizontal" | "vertical";
     disabled?: boolean;
-    element?: 'Button' | 'Tag',
+    element?: 'Button' | 'Tag';
     list: keyValuePair<string, valueType>[];
+    multiple?: boolean;
     onPick?: (value: string) => void;
+    onMultiplePick?: (values: string[]) => void;
 };
 
 const SliderPicker = (_props: IPropTypes) => {
@@ -37,18 +40,49 @@ const SliderPicker = (_props: IPropTypes) => {
         disabled,
         element = 'Button',
         list,
+        multiple = false,
         onPick,
+        onMultiplePick,
         ...props
     } = _props;
 
     const $divRef = useRef<HTMLDivElement | null>(null);
 
     const [pickedValue, pickValue] = useState<valueType>(defaultValue ?? list[0].value);
+    const [pickedValues, setPickedValues] = useState<string[]>([]);
+
+    const assertions = {
+        "isClearElementDisabled": [
+            pickedValues.length === 0
+        ].includes(true)
+    };
 
     function handlePick({ target }: MouseEvent<HTMLButtonElement>) {
-        pickValue((target as HTMLButtonElement).id);
+        switch (multiple) {
+            case true:
+                const value = (target as HTMLButtonElement).id;
 
-        onPick?.((target as HTMLButtonElement).id)
+                const _pickedValues = pickedValues.includes(value)
+                    ? pickedValues.filter(v => v !== value)
+                    : [...pickedValues, value];
+
+                setPickedValues(_pickedValues);
+
+                onMultiplePick?.(_pickedValues);
+                break;
+
+            default:
+                pickValue((target as HTMLButtonElement).id);
+                break;
+        }
+
+        onPick?.((target as HTMLButtonElement).id);
+    }
+
+    function clearPickedValues() {
+        setPickedValues([]);
+
+        onMultiplePick?.([]);
     }
 
     useEffect(() => {
@@ -91,6 +125,16 @@ const SliderPicker = (_props: IPropTypes) => {
         $button.scrollIntoView({ block: "center", behavior: "smooth", inline: "center" })
     }, [pickedValue]);
 
+    const $clearElementProps = {
+        onClick: clearPickedValues
+    };
+
+    const $clearElementChildren = <>
+        <Icon name="Close" />
+
+        Limpar
+    </>;
+
     return <div
         className={resolveClassNames(styles.picker, styles[direction], className)}
         ref={$divRef}
@@ -101,10 +145,20 @@ const SliderPicker = (_props: IPropTypes) => {
     >
         <div className="space"></div>
 
+        {multiple && <>
+            {(element === 'Button') && <Button {...$clearElementProps} disabled={assertions.isClearElementDisabled}>
+                {$clearElementChildren}
+            </Button>}
+
+            {(element === 'Tag') && <Tag {...$clearElementProps} {...{ ...(assertions.isClearElementDisabled) ? { ["data-disabled"]: "" } : {} }}>
+                {$clearElementChildren}
+            </Tag>}
+        </>}
+
         {list.map(({ key, value }) => {
             const v = typeof value === "string" ? value : value.value;
-            const pv = typeof pickedValue === "string" ? pickedValue : pickedValue.value;
-            const variant = (pv === v) ? "selected" : "secondary";
+            const pv = (multiple) ? null : typeof pickedValue === "string" ? pickedValue : pickedValue.value;
+            const variant = ((multiple) ? pickedValues.includes(v) : (pv === v)) ? "selected" : "secondary";
 
             const props = {
                 id: v,
