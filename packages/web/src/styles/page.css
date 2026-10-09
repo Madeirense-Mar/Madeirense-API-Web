@@ -1,31 +1,26 @@
 main>section {
-    padding: var(--section-padding, 8px);
+    padding: var(--section-padding, 32px);
 
-    border: 1px solid var(--section-border-color);
+    border: 1px solid var(--section-border-color, var(--base-section-border-color));
     border-radius: 12px;
 
-    background-color: var(--section-background-color);
+    background-color: var(--section-background-color, var(--base-section-background-color));
 }
 
 /*#region Theme specification ============================= */
 [data-theme="LAND-DARK"] section {
-    --section-border-color: transparent;
-    --section-background-color: transparent;
+    --base-section-border-color: transparent;
+    --base-section-background-color: color-mix(in srgb, var(--secondary-dark), black 40%);
 }
 
 [data-theme="SEA-DARK"] section {
-    --section-border-color: transparent;
-    --section-background-color: color-mix(in srgb, var(--primary-dark), black 40%);
+    --base-section-border-color: transparent;
+    --base-section-background-color: color-mix(in srgb, var(--primary-dark), black 40%);
 }
 
-[data-theme="LAND-LIGHT"] section {
-    --section-border-color: transparent;
-    --section-background-color: transparent;
-}
-
-[data-theme="SEA-LIGHT"] section {
-    --section-border-color: transparent;
-    --section-background-color: transparent;
+[data-theme*="LIGHT"] section {
+    --base-section-border-color: color-mix(in srgb, var(--primary-dark), black 40%);
+    --base-section-background-color: transparent;
 }
 
 /*#endregion*/

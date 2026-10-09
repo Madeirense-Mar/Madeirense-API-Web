@@ -1,19 +1,24 @@
 fieldset {
-    border: 0;
-    border-radius: 8px;
     padding: var(--fieldset-padding, 20px);
+
+    border: 1px solid var(--fieldset-border-color, var(--base-fieldset-border-color, transparent));
+    border-radius: 8px;
+    
+    background-color: var(--fieldset-background-color, var(--base-fieldset-background-color));
 }
 
 /*#region Theme specifications*/
-[data-theme="LAND-DARK"] fieldset {}
-
-[data-theme="LAND-LIGHT"] fieldset {}
-
-[data-theme="SEA-DARK"] fieldset {
-    background-color: var(--fieldset-background-color, color-mix(in srgb, var(--primary-dark), black 40%));
+[data-theme="LAND-DARK"] fieldset {
+    --base-fieldset-background-color: color-mix(in srgb, var(--secondary-dark), black 40%);
 }
 
-[data-theme="SEA-LIGHT"] fieldset {}
+[data-theme="SEA-DARK"] fieldset {
+    --base-fieldset-background-color: color-mix(in srgb, var(--primary-dark), black 40%);
+}
+
+[data-theme*="LIGHT"] fieldset {
+    --base-fieldset-border-color: color-mix(in srgb, var(--primary-dark), black 40%);
+}
 /*#endregion*/
 
 fieldset legend {
