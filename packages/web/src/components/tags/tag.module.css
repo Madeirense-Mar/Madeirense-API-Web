@@ -99,6 +99,12 @@
     --tag-border-color: var(--secondary);
     --tag-text-color: var(--primary-dark);
 }
+
+[data-theme*="LIGHT"] .selected {
+    --tag-background-color: var(--primary-dark);
+    --tag-border-color: var(--primary-dark);
+    --tag-text-color: var(--secondary);
+}
 /*#endregion*/
 
 /*#region Success*/
