@@ -46,15 +46,36 @@
     --tag-text-color: var(--secondary);
 }
 
-/* TODO: Unimplemented style > secondary */
+/*#region Secondary*/
 .secondary {
     composes: tag;
+
+    --tag-border-color: var(--primary-light);
+    --tag-text-color: var(--primary-light);
 }
 
-/* TODO: Unimplemented style > selected */
+[data-theme*="LIGHT"] .secondary {
+    --tag-border-color: var(--primary-dark);
+    --tag-text-color: var(--primary-dark);
+}
+
+[data-theme="LAND-DARK"] .secondary {
+    --tag-border-color: var(--secondary);
+    --tag-text-color: var(--secondary);
+}
+/*#endregion*/
+
+/*#region Selected*/
 .selected {
     composes: tag;
 }
+
+[data-theme*="DARK"] .selected {
+    --tag-background-color: var(--primary-light);
+    --tag-border-color: var(--secondary);
+    --tag-text-color: var(--primary-dark);
+}
+/*#endregion*/
 
 .success {
     composes: tag;
