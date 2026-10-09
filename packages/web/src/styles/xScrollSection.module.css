@@ -8,15 +8,13 @@
     border-bottom: 1px solid var(--header-border-color);
 }
 
-[data-theme="LAND-DARK"] .x-scroll-section>header {}
-
-[data-theme="LAND-LIGHT"] .x-scroll-section>header {}
-
-[data-theme="SEA-DARK"] .x-scroll-section>header {
-    --header-border-color: var(--secondary)
+[data-theme*="DARK"] .x-scroll-section>header {
+    --header-border-color: var(--secondary);
 }
 
-[data-theme="SEA-LIGHT"] .x-scroll-section>header {}
+[data-theme*="LIGHT"] .x-scroll-section>header {
+    --header-border-color: var(--primary-dark);
+}
 
 .x-scroll-section>div {
     @apply flex flex-row justify-start items-start w-full overflow-x-hidden flex-nowrap;
