@@ -174,7 +174,7 @@ function Orders({
         case "summary": {
             if (!selectedOrder || !order_id) return null;
 
-            const asseritions = {
+            const assertions = {
                 "isFinalized": [
                     "cancelled",
                     "delivered"
@@ -183,7 +183,7 @@ function Orders({
 
             const sections = [
                 { key: "Sumário", value: "summary", icon: <Icon name="Notes" /> },
-                ...(asseritions.isFinalized ? [] : [{ key: `Chat`, value: "chat", icon: <Icon name="Chat" /> }]),
+                ...(assertions.isFinalized ? [] : [{ key: `Chat`, value: "chat", icon: <Icon name="Chat" /> }]),
                 { key: "Histórico", value: "history", icon: <Icon name="History" /> },
             ];
 
