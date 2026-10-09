@@ -1,3 +1,4 @@
+/*#region Tag ============================================= */
 .tag {
     @apply flex flex-row justify-center items-center gap-2;
     
@@ -19,7 +20,10 @@
 .tag * {
     color: inherit;
 }
+/*#endregion*/
 
+/*#region Variants ======================================== */
+/*#region Danger*/
 .danger {
     composes: tag;
 
@@ -27,12 +31,15 @@
     --tag-border-color: #f87171;
     --tag-text-color: #7f1d1d;
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > important */
+/*#region Important*/
 .important {
     composes: tag;
 }
+/*#endregion*/
 
+/*#region Primary*/
 .primary {
     composes: tag;
 
@@ -45,6 +52,7 @@
     --tag-background-color: var(--primary-dark);
     --tag-text-color: var(--secondary);
 }
+/*#endregion*/
 
 /*#region Secondary*/
 .secondary {
@@ -52,6 +60,22 @@
 
     --tag-border-color: var(--primary-light);
     --tag-text-color: var(--primary-light);
+}
+
+.secondary:hover {
+    --tag-background-color: var(--primary-dark);
+    --tag-border-color: var(--primary-dark);
+}
+
+[data-theme*="LIGHT"] .secondary:hover {
+    --tag-background-color: var(--primary);
+    --tag-border-color: var(--primary);
+    --tag-text-color: var(--neutral-light);
+}
+
+[data-theme="LAND-DARK"] .secondary:hover {
+    --tag-background-color: var(--secondary);
+    --tag-text-color: var(--secondary-dark);
 }
 
 [data-theme*="LIGHT"] .secondary {
@@ -77,18 +101,19 @@
 }
 /*#endregion*/
 
+/*#region Success*/
 .success {
     composes: tag;
 }
 
-/* TODO: Unimplemented style > success */
 [data-theme*="DARK"] .success {
     --tag-background-color: var(--success-dark);
     --tag-border-color: var(--success);
     --tag-text-color: var(--success);
 }
+/*#endregion*/
 
-/* TODO: Unimplemented style > warning */
+/*#region Warning*/
 .warning {
     composes: tag;
 }
@@ -99,3 +124,5 @@
     --tag-border-color: var(--secondary-dark);
     --tag-text-color: var(--secondary-dark);
 }
+/*#endregion*/
+/*#endregion*/
