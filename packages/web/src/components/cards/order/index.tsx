@@ -39,7 +39,7 @@ import MODAL_DRIVER_ASSIGNATION_FORM from "components/modals/forms/drivers/assig
 
 import styles from "./index.module.css";
 
-import type { 
+import type {
     $Enums
 } from "@Madeirense/database/browser";
 
@@ -158,21 +158,30 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
     const progressBarValue = useMemo(() => {
         switch (type) {
-            case "delivery": return (["cancelled", "delivered"] as $Enums.Orders_status[]).includes(localOrderStatus as $Enums.Orders_status)
-                ? 100
-                : ((ORDERS_PREPARATION_STATUS.indexOf(localOrderStatus as $Enums.Orders_status) + 1) * 100 / ORDERS_PREPARATION_STATUS.length);
+            case "delivery": switch (localOrderStatus) {
+                case "cancelled":
+                    return 0;
+
+                case "delivered":
+                    return 100;
+
+                default:
+                    return (ORDERS_PREPARATION_STATUS.indexOf(localOrderStatus as $Enums.Orders_status) + 1) * 100 / ORDERS_PREPARATION_STATUS.length;
+            }
 
             case "ticket": switch (localOrderStatus) {
-                case "pending": return 50;
-                case "delivered": return 100;
+                case "pending":
+                    return 50;
 
-                case "cancelled":
+                case "delivered":
+                    return 100;
+
                 default: return 0;
             }
 
-            default: return 0;
+            default:
+                return 0;
         }
-
     }, [localOrderStatus, type]);
 
     const _hasAvailableDrivers = useMemo(
@@ -217,16 +226,9 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
         />, { title: `Escolher estafeta para o pedido #${order?.order_id}` });
     };
 
-    const $cardVariant: variantType = useMemo(() => (
+    const $computedVariant: variantType = useMemo(() => (
         ["pending"].includes(localOrderStatus as $Enums.Orders_status) ? "warning" :
-            ["confirmed", "preparing", "ready", "assigned"].includes(localOrderStatus as $Enums.Orders_status) ? "primary" :
-                ["delivered"].includes(localOrderStatus as $Enums.Orders_status) ? "success" :
-                    ["cancelled"].includes(localOrderStatus as $Enums.Orders_status) ? "danger" : "secondary"
-    ), [localOrderStatus]);
-
-    const $tagVariant: variantType = useMemo(() => (
-        ["pending"].includes(localOrderStatus as $Enums.Orders_status) ? "warning" :
-            ["confirmed", "preparing", "ready", "assigned"].includes(localOrderStatus as $Enums.Orders_status) ? "primary" :
+            ["assigned"].includes(localOrderStatus as $Enums.Orders_status) ? "primary" :
                 ["delivered"].includes(localOrderStatus as $Enums.Orders_status) ? "success" :
                     ["cancelled"].includes(localOrderStatus as $Enums.Orders_status) ? "danger" : "secondary"
     ), [localOrderStatus]);
@@ -275,7 +277,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
     return <div
         className={resolveClassNames(
-            styles[(variant === "primary") ? $cardVariant : variant],
+            styles[(variant === "primary") ? $computedVariant : variant],
             styles[(assertions.isCardIndexed) ? "indexed" : "default"],
             className
         )}
@@ -302,7 +304,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
                 </span>
             </Tag>}
 
-            <Tag variant={$tagVariant}>
+            <Tag variant={$computedVariant}>
                 {localOrderStatus === "pending" && type === "delivery" ? <Icon name="Loading" className="animate-spin" /> : null}
                 {localOrderStatus === "cancelled" && <Icon name="Close" />}
                 {localOrderStatus === "assigned" && <Icon name="Running" />}
@@ -355,6 +357,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
         <Progress
             value={progressBarValue}
+            variant={$computedVariant}
             className="w-full"
             animated={assertions.isProgressBarAnimated}
         />
