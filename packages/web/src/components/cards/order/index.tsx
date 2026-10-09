@@ -184,6 +184,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
     );
 
     const assertions = {
+        "isCardIndexed": index && mode === "admin",
         "isProgressBarAnimated": (type !== "ticket") && ([
             "assigned",
             "confirmed",
@@ -215,6 +216,13 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             {...{ callback }}
         />, { title: `Escolher estafeta para o pedido #${order?.order_id}` });
     };
+
+    const $cardVariant: variantType = useMemo(() => (
+        ["pending"].includes(localOrderStatus as $Enums.Orders_status) ? "warning" :
+            ["confirmed", "preparing", "ready", "assigned"].includes(localOrderStatus as $Enums.Orders_status) ? "primary" :
+                ["delivered"].includes(localOrderStatus as $Enums.Orders_status) ? "success" :
+                    ["cancelled"].includes(localOrderStatus as $Enums.Orders_status) ? "danger" : "secondary"
+    ), [localOrderStatus]);
 
     const $tagVariant: variantType = useMemo(() => (
         ["pending"].includes(localOrderStatus as $Enums.Orders_status) ? "warning" :
@@ -267,13 +275,13 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
     return <div
         className={resolveClassNames(
-            styles[variant],
-            styles[mode === "default" ? "default" : index ? "indexed" : "default"],
+            styles[(variant === "primary") ? $cardVariant : variant],
+            styles[(assertions.isCardIndexed) ? "indexed" : "default"],
             className
         )}
         {...props}
     >
-        {(index && mode === "admin") && <span>
+        {(assertions.isCardIndexed) && <span>
             {index}
         </span>}
 
