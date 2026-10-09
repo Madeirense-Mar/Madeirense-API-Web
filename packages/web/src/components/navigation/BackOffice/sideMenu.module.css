@@ -1,3 +1,4 @@
+/*#region Menu ============================================ */
 .menu {
     --menu-max-width: 200px;
     --menu-min-width: 52px;
@@ -10,7 +11,7 @@
     grid-area: aside;
     position: relative;
 
-    border-right: calc(var(--border-width) * 2) solid var(--secondary);
+    border-right: calc(var(--border-width) * 2) solid var(--border-right-color);
 
     max-width: var(--menu-max-width);
     min-width: var(--menu-min-width);
@@ -21,20 +22,59 @@
     transition-duration: 0.5s;
 }
 
-[data-theme="LAND-DARK"] .menu {}
+.menu:not([data-toggled]) {
+    @apply items-center;
+}
 
-[data-theme="LAND-LIGHT"] .menu {}
+.menu[data-toggled] {
+    --px: calc(var(--container-padding) - 8px);
+
+    @apply items-start;
+
+    width: var(--max-width);
+}
+
+[data-theme="LAND-DARK"] .menu {
+    --border-right-color: var(--primary-light);
+
+    background-color: var(--primary-dark);
+}
+
+[data-theme="LAND-LIGHT"] .menu {
+    --border-right-color: var(--secondary-dark);
+
+    background-color: var(--secondary);
+}
 
 [data-theme="SEA-DARK"] .menu {
+    --border-right-color: var(--secondary);
+
     background-color: var(--secondary-dark);
 }
 
-[data-theme="SEA-LIGHT"] .menu {}
+[data-theme="SEA-LIGHT"] .menu {
+    --border-right-color: var(--secondary-dark);
 
+    background-color: var(--primary);
+}
+/*#endregion*/
+
+/*#region List & List item ================================ */
 .menu ul li {
     @apply flex flex-row justify-center items-center;
 }
 
+.menu:not([data-toggled]) ul li span {
+    display: none;
+}
+
+.menu[data-toggled] ul {
+    opacity: 1;
+    width: 100%;
+}
+/*#endregion*/
+
+/*#region Anchor ========================================== */
 .menu ul li a {
     --size: var(--menu-min-width);
 
@@ -51,42 +91,46 @@
     border-left: var(--anchor-border-width, 0px) solid var(--anchor-border-color, transparent);
 }
 
+[data-theme="SEA-LIGHT"] .menu ul li a {
+    --text-color: var(--neutral-light);
+}
+
 .menu ul li a:hover {
     --anchor-background-color: color-mix(in srgb, var(--secondary), black 90%);
+}
+
+[data-theme*="LIGHT"] .menu ul li a:hover {
+    --text-color: var(--neutral-light);
+}
+
+[data-theme="LAND-LIGHT"] .menu ul li a:hover {
+    --anchor-background-color: color-mix(in srgb, var(--secondary), black 10%);
+    --text-color: var(--neutral-dark);
 }
 
 .menu ul li a[data-active] {
     --anchor-border-width: 4px;
 }
 
-[data-theme="LAND-DARK"] .menu ul li a[data-active] {}
+[data-theme="LAND-DARK"] .menu ul li a[data-active] {
+    --anchor-background-color: color-mix(in srgb, var(--primary-dark), black 60%);
+    --anchor-border-color: var(--primary-light);
+}
 
-[data-theme="LAND-LIGHT"] .menu ul li a[data-active] {}
+[data-theme="LAND-LIGHT"] .menu ul li a[data-active] {
+    --anchor-background-color: color-mix(in srgb, var(--secondary), black 60%);
+    --anchor-border-color: var(--primary-light);
+    
+    --text-color: var(--secondary-light);
+}
 
 [data-theme="SEA-DARK"] .menu ul li a[data-active] {
     --anchor-background-color: color-mix(in srgb, var(--secondary), black 60%);
     --anchor-border-color: var(--secondary);
 }
 
-[data-theme="SEA-LIGHT"] .menu ul li a[data-active] {}
-
-.menu:not([data-toggled]) {
-    @apply items-center;
+[data-theme="SEA-LIGHT"] .menu ul li a[data-active] {
+    --anchor-background-color: var(--primary-dark);
+    --anchor-border-color: var(--primary-light);
 }
-
-.menu:not([data-toggled]) ul li span {
-    display: none;
-}
-
-.menu[data-toggled] {
-    --px: calc(var(--container-padding) - 8px);
-
-    @apply items-start;
-
-    width: var(--max-width);
-}
-
-.menu[data-toggled] ul {
-    opacity: 1;
-    width: 100%;
-}
+/*#endregion*/
