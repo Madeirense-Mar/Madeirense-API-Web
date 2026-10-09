@@ -1,0 +1,23 @@
+.settings>section{
+    @apply w-full flex flex-col justify-start items-start gap-6;
+}
+
+.settings>section>header{
+    @apply flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full;
+}
+
+.settings>section>form>fieldset {
+    @apply flex flex-col justify-start items-start gap-3 w-full;
+}
+
+[data-theme*="DARK"] .settings>section>form>fieldset {
+    --fieldset-padding: 0px;
+}
+
+.settings>section>form>fieldset>label {
+    @apply  flex flex-row justify-between items-start w-full gap-10;
+}
+
+.settings>section>form>fieldset>legend {
+    @apply flex flex-row justify-between items-center gap-2 w-full mb-3;
+}

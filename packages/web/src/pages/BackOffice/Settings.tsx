@@ -12,6 +12,7 @@ import {
 import {
     DEFAULT_APP_SETTINGS,
     getLabel,
+    resolveClassNames,
     type restaurantType,
 } from "@Madeirense/shared";
 
@@ -24,6 +25,8 @@ import Icon from "components/icon";
 
 import PaymentTypesList from "components/lists/paymentOptions";
 
+import styles from "./Settings.module.css";
+
 import type {
     $Enums,
     Global_Settings,
@@ -31,12 +34,13 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { IPageState } from "components/interface";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
 const delayMS = 2500;
 
-function BackOfficeSettingsPage(props: ComponentProps<"main">) {
+function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) {
     const {
         "global-settings": globalSettings
     } = MXP$App.Base.Business.endpoints;
@@ -299,29 +303,31 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
         return () => { if (tRef) clearTimeout(tRef); }
     }, []);
 
-    return <main {...props}>
+    return <main {...props} className={resolveClassNames(styles.settings, className)}>
         <header className="w-full flex flex-row justify-between items-center mb-4">
             <h1>Definições</h1>
         </header>
 
-        <section className="w-full">
-            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full">
+        <section>
+            <header>
                 {page.status === "orders" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Order" />}
 
                 <h2>Pedidos</h2>
             </header>
 
             <form id={"orders" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "orders" ? "disabled" : "idle"}>
-                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
-                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                        <Icon name="Queue" />
+                <fieldset>
+                    <legend>
+                        <Tag variant="secondary">
+                            <Icon name="Queue" />
 
-                        Fila
+                            Fila
+                        </Tag>
 
-                        <span className="ml-auto font-normal italic">Definições da fila de pedidos</span>
+                        <span className="font-normal italic">Definições da fila de pedidos</span>
                     </legend>
 
-                    <label className="flex flex-row justify-between items-start w-full gap-10">
+                    <label>
                         <div className="flex flex-col justify-start items-start gap-2">
                             <span className="text-xl">Limite para aviso</span>
 
@@ -343,16 +349,18 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                     </label>
                 </fieldset>
 
-                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
-                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                        <Icon name="FlashAuto" />
+                <fieldset>
+                    <legend>
+                        <Tag variant="secondary">
+                            <Icon name="FlashAuto" />
 
-                        Ações e automação
+                            Ações e automação
+                        </Tag>
 
-                        <span className="ml-auto font-normal italic">Definição das funcionalidades do aplicativo</span>
+                        <span className="font-normal italic">Definição das funcionalidades do aplicativo</span>
                     </legend>
 
-                    <label className="flex flex-row justify-between items-start w-full gap-10">
+                    <label>
                         <div className="flex flex-col justify-start items-start gap-2">
                             <span className="text-xl">Associação automática</span>
 
@@ -369,7 +377,7 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                             </span>
                         </div>
 
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px] my-auto">
                             {getUpdaterStatusIndicator("auto_assign_driver")}
 
                             {(appState === "loading")
@@ -382,8 +390,8 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
             </form>
         </section>
 
-        <section className="w-full">
-            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full">
+        <section>
+            <header>
                 {page.status === "time" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Time" />}
 
                 <h2>Tempo</h2>
@@ -397,16 +405,18 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
             </span>}
 
             <form id={"time" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
-                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
-                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                        <Icon name="KitchenSet" />
+                <fieldset>
+                    <legend>
+                        <Tag variant="secondary">
+                            <Icon name="KitchenSet" />
 
-                        Cozinha
+                            Cozinha
+                        </Tag>
 
-                        <span className="ml-auto font-normal italic">Tempo médio de preparo geral para todos pratos</span>
+                        <span className="font-normal italic">Tempo médio de preparo geral para todos pratos</span>
                     </legend>
 
-                    <label className="flex flex-row justify-between items-start w-full gap-10">
+                    <label>
                         <div className="flex flex-col justify-start items-start gap-2">
                             <span className="text-xl">Tempo médio</span>
 
@@ -428,13 +438,15 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
                     </label>
                 </fieldset>
 
-                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
-                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                        <Icon name="Kitchen" />
+                <fieldset>
+                    <legend>
+                        <Tag variant="secondary">
+                            <Icon name="Kitchen" />
 
-                        Preparo e entrega
+                            Preparo e entrega
+                        </Tag>
 
-                        <span className="ml-auto font-normal italic">Tempos relevantes à experiência do cliente, informação sobre tempo de espera</span>
+                        <span className="font-normal italic">Tempos relevantes à experiência do cliente, informação sobre tempo de espera</span>
                     </legend>
 
                     {(page.error && ((["ttd", "ttp"] as (typeof page.status)[]).some(s => (page.status as (typeof page.status)).includes(s)))) && <span
@@ -525,8 +537,8 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
             </form>
         </section>
 
-        <section className="w-full">
-            <header className="flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full">
+        <section>
+            <header>
                 {page.status === "payments" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Money" />}
 
                 <h2>Pagamentos</h2>
@@ -540,13 +552,15 @@ function BackOfficeSettingsPage(props: ComponentProps<"main">) {
             </span>}
 
             <form id={"payments" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "time" ? "disabled" : "idle"}>
-                <fieldset className="flex flex-col justify-start items-start gap-2 w-full">
-                    <legend className="flex flex-row justify-start items-center gap-2 text-l pb-2 mb-2 w-full">
-                        <Icon name="CashRegister" />
+                <fieldset>
+                    <legend>
+                        <Tag variant="secondary">
+                            <Icon name="CashRegister" />
 
-                        Tipos de pagamento
+                            Tipos de pagamento
+                        </Tag>
 
-                        <span className="ml-auto font-normal italic">Modalidades de pagamentos aceites pelo restaurante. Seleccione os métodos elegíveis.</span>
+                        <span className="font-normal italic">Modalidades de pagamentos aceites pelo restaurante. Seleccione os métodos elegíveis.</span>
                     </legend>
 
                     <PaymentTypesList
