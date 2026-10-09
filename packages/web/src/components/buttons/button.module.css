@@ -189,14 +189,27 @@
 
 /*#endregion*/
 
+/*#region Selected*/
 .selected {
     composes: button;
 
     --button-background-color: var(--primary-dark);
     --button-border-color: var(--primary-light);
-
+    
     --text-color: var(--secondary);
 }
+
+[data-theme*="DARK"] .selected {
+    --button-background-color: var(--primary-light);
+    --button-border-color: var(--secondary);
+    
+    --text-color: var(--primary-dark);
+}
+
+[data-theme*="DARK"] .selected svg {
+    --text-color: var(--secondary);
+}
+/*#endregion*/
 
 .success {
     composes: button;
