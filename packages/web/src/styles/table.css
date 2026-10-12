@@ -1,15 +1,17 @@
 table {
-    border: 1px solid var(--table-border-color);
+    border: var(--table-border-width, 1px) solid var(--table-border-color);
     border-collapse: separate;
-    border-spacing: 0;
     border-radius: 12px;
-    overflow: hidden;
+    border-spacing: 0;
+
+    overflow: var(--table-overflow, hidden);
 }
 
 table th,
 table td {
-    @apply px-3;
-    
+    padding-left: var(--table-cell-px, 12px);
+    padding-right: var(--table-cell-px, 12px);
+
     border-color: var(--table-cell-border-color, var(--base-table-cell-border-color));
     border-style: var(--table-cell-border-style, solid);
 }

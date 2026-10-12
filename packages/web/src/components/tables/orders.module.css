@@ -1,11 +1,61 @@
+/*#region Table =========================================== */
 .table {
     --img-size: 152px;
 
-    --row-height: 52px;
+    --row-height: 40px;
+    background-color: var(--table-background-color, var(--background-color));
 
-    background-color: var(--background-color);
 }
 
+.table tbody tr[data-row="restaurant"],
+.table tfoot tr:first-child {
+    height: var(--row-height);
+    min-height: var(--row-height);
+    max-height: var(--row-height);
+}
+
+.table tfoot tr:first-child {
+    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
+}
+
+.table tfoot tr:last-child {
+    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
+}
+
+.table tbody tr[data-row="restaurant"] {
+    background-color: var(--secondary);
+}
+
+.table tbody tr[data-row="restaurant"] span {
+    @apply font-bold;
+    color: var(--base-text-contrast-color);
+    font-size: 1.3em;
+}
+
+.table td,
+.table th {
+    --table-cell-px: 0px;
+}
+
+.table tr:has(div[class*="card"]) td:first-child {
+    border-right: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
+}
+
+.table td[data-section="summary"] {}
+
+.table td[data-section="summary"] div[data-type="thumbnail"] {
+    height: 52px;
+    width: var(--img-size);
+    border-radius: 12px;
+}
+
+.table td[data-section="chat"] {}
+
+.table td[data-section="history"] {}
+
+/*#endregion*/
+
+/*#region Table wrapper =================================== */
 .wrapper {
     --row-height: 52px;
 
@@ -48,69 +98,17 @@
 
     @apply flex flex-col justify-center items-center;
 
-    gap: 32px; 
+    gap: 32px;
 
     height: var(--h);
 
     background-color: var(--background-color);
 }
 
-.table div[class*="card"] {
-    border: none;
-    border-radius: 0px;
-    padding: 0px;
-}
+/*#endregion*/
 
-.table tbody tr[data-row="restaurant"],
-.table tfoot tr:first-child {
-    height: var(--row-height);
-    min-height: var(--row-height);
-    max-height: var(--row-height);
-}
-
-.table tfoot tr:first-child {
-    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
-}
-
-.table tfoot tr:last-child {
-    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
-}
-
-.table tbody tr[data-row="restaurant"] {
-    background-color: var(--secondary);
-}
-
-.table tbody tr[data-row="restaurant"] span {
-    @apply font-bold;
-    color: var(--base-text-contrast-color);
-    font-size: 1.3em;
-}
-
-.table tr td {
-    @apply px-4;
-}
-
-.table tr:has(div[class*="card"]) td:first-child {
-    border-right: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
-}
-
-.table tfoot td[data-section],
-.table tr td:has(div[class*="card"]) {
-    @apply py-4;
-}
-
-.table td[data-section="summary"] {}
-
-.table td[data-section="summary"] div[data-type="thumbnail"] {
-    height: 52px;
-    width: var(--img-size);
-    border-radius: 12px;
-}
-
-.table td[data-section="chat"] {}
-
-.table td[data-section="history"] {}
-
+/*#region Modes =========================================== */
+/*#region Order */
 .order {
     composes: table;
 }
@@ -123,14 +121,44 @@
     border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
 }
 
+/*#endregion*/
+
+/*#region Summary */
 .summary {
-    --table-row-border-width: 0px;
+    composes: table;
+
+    --table-border-width: 0px;
+    --table-overflow: visible;
+}
+
+.summary tfoot tr:last-of-type td {
+    padding: 24px;
+    border: 1px solid var(--td-border-color, transparent);
 }
 
 .summary tbody tr td {
-    @apply pb-4
+    padding-bottom: 24px;
 }
 
+.summary tfoot tr:last-of-type td {
+    border-radius: 0 0 8px 8px;
+}
+
+[data-theme*="DARK"] .summary {
+    --table-background-color: transparent;
+}
+
+[data-theme*="DARK"] .summary tfoot tr {
+    background-color: var(--background-color);
+}
+
+[data-theme*="LIGHT"] .summary tfoot tr:last-of-type td {
+    --td-border-color: var(--base-border-color);
+}
+/*#endregion*/
+/*#endregion*/
+
+/*#region Media queries =================================== */
 @media only screen and (min-width: 344px) {}
 
 @media only screen and (min-width: 428px) {}
@@ -142,3 +170,5 @@
 }
 
 @media only screen and (min-width: 1366px) {}
+
+/*#endregion*/
