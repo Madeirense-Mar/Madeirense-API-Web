@@ -195,20 +195,21 @@
 
     --button-background-color: var(--primary-dark);
     --button-border-color: var(--primary-light);
-    
+
     --text-color: var(--secondary);
 }
 
 [data-theme*="DARK"] .selected {
     --button-background-color: var(--primary-light);
     --button-border-color: var(--secondary);
-    
+
     --text-color: var(--primary-dark);
 }
 
 [data-theme*="DARK"] .selected svg {
     --text-color: var(--secondary);
 }
+
 /*#endregion*/
 
 .success {
@@ -247,7 +248,7 @@
 }
 
 .text:hover {
-    --button-background-color: var(--primary);
+    --button-background-color: var(--primary-dark);
 }
 
 [data-theme*="LIGHT"] .text:hover {
@@ -272,6 +273,11 @@
     --button-background-color: var(--primary);
     --text-color: color-mix(in srgb, var(--primary-light), var(--neutral-light) 80%);
 }
+
+[data-theme*="LIGHT"] .text-selected:hover {
+    --text-color: var(--primary-dark);
+}
+
 /*#endregion*/
 
 .warning {
