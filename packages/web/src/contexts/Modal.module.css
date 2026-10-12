@@ -41,6 +41,10 @@
     width: 100%;
 }
 
+.modal main > section {
+    --section-padding: 12px;
+}
+
 .modal::backdrop {
     pointer-events: none;
 
