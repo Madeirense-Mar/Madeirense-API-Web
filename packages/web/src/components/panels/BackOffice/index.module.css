@@ -8,29 +8,58 @@
     left: 100%;
 
     height: calc(100% - 70px);
-
     width: calc(100% - 52px);
 
     padding: var(--base-padding) 10vw;
 
-    background-color: var(--background-color);
+    background-color: var(--panel-background-color, var(--base-section-background-color));
 
     transition: transform 0.4s ease-in-out;
 }
 
-.panel>section {
-    border-radius: 12px;
-    padding: 20px;
-}
-
-[data-theme="LAND-DARK"] .panel>section {}
-
-[data-theme="SEA-DARK"] .panel>section {
-    background-color: color-mix(in srgb, var(--primary), black 80%);
-}
-
 .panel[data-enabled] {
     transform: translateX(-100%);
+}
+
+[data-theme="LAND-LIGHT"] .panel {
+    --panel-background-color: var(--background-color);
+}
+
+[data-theme="SEA-LIGHT"] .panel {
+    --panel-background-color: var(--background-color);
+}
+
+.panel>hr {
+    --h: 1px;
+
+    @apply my-6;
+
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+
+    width: 100%;
+}
+
+.panel>fieldset {
+    @apply flex flex-col justify-start items-start gap-6 w-full;
+}
+
+.panel>fieldset>label {
+    @apply flex flex-row justify-between items-start w-full gap-10;
+}
+
+.panel>fieldset>label input,
+.panel>fieldset>label select {
+    @apply w-full;
+}
+
+.panel>fieldset>legend {
+    @apply flex flex-row justify-between items-center gap-6 w-full mb-3;
+}
+
+[data-theme*="DARK"] .panel>fieldset {
+    --fieldset-padding: 0px;
 }
 
 @media only screen and (min-width: 344px) {}

@@ -18,17 +18,19 @@ import {
 
 import {
     APP_TTL_DEFAULT,
+    MENU_PRODUCT_COMPOSITIONS,
     MENU_PRODUCT_TYPES,
     formatUUID_UC_CDN_URL,
     getLabel,
     locales,
+    resolveClassNames,
     which,
     type productType,
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
 
-import ApplicationQueries, { 
+import ApplicationQueries, {
     Queries$Types
 } from "configurations/queries";
 
@@ -47,13 +49,16 @@ import DeletionForm from "components/modals/forms/delete";
 
 import env from "env";
 
+import xScrollSectionStyles from "styles/xScrollSection.module.css";
+
 import type {
     Products
 } from "@Madeirense/database/browser";
 
-import type { 
+import type {
     statusType
 } from "components/types";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -234,13 +239,15 @@ function ProductPanel({ id }: { id: number }) {
 
         default: {
             return <>
-                {(data?.delisted) && <div data-appState="warning" className="rounded-md border flex flex-col justify-start items-center p-4 gap-2 w-full">
-                    <div className="w-full flex flex-row justify-start items-center gap-3">
-                        <Icon name="Warning" className="text-lg" />
+                {(data?.delisted) && <Tag variant="warning" className="w-full">
+                    <Icon name="Warning" />
 
-                        <span>Este produto foi ocultado</span>
-                    </div>
-                </div>}
+                    <span>Este produto foi ocultado</span>
+                </Tag>}
+
+                <h1>
+                    Sobre o producto
+                </h1>
 
                 <ScrollToSection
                     product_id={id as number}
@@ -248,25 +255,93 @@ function ProductPanel({ id }: { id: number }) {
                     disabled={data?.delisted || false}
                 />
 
-                <div className="w-full flex flex-row justify-between items-center gap-3">
-                    <label className="flex flex-row justify-start items-center gap-2 w-full">
-                        {getUpdaterStatusIndicator("name")}
+                <fieldset>
+                    <legend>
+                        <Tag variant="secondary">
+                            <Icon name="FlashAuto" />
 
-                        <input className="w-full" name="name" title="Nome do produto" data-element="h1" type="text" defaultValue={data?.name} onKeyDown={handleKeyDown} onBlur={handleEvent} readOnly={data?.delisted || false} />
+                            Descrição
+                        </Tag>
+
+                        <span className="font-normal italic">Definir a apresentação do producto para clientes</span>
+                    </legend>
+
+                    <label>
+                        <div className="flex flex-col justify-start items-start gap-2">
+                            <span className="text-xl">Nome</span>
+
+                            <span className="font-normal opacity-60">
+                                Nome apresentado para os clientes na lista de productos do menu, nas facturas/recibos, registos de históricos, pedidos e notificações.
+                            </span>
+                        </div>
+
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                            {getUpdaterStatusIndicator("name")}
+
+                            <input className="w-full" name="name" title="Nome do produto" type="text" defaultValue={data?.name} onKeyDown={handleKeyDown} onBlur={handleEvent} readOnly={data?.delisted || false} />
+                        </div>
                     </label>
 
-                    <label htmlFor="product_type" className="flex flex-row justify-start items-centerv gap-2 w-full ">
-                        {getUpdaterStatusIndicator("product_type")}
+                    <label>
+                        <div className="flex flex-col justify-start items-start gap-2">
+                            <span className="text-xl">Categoria</span>
 
-                        <select title="Tipo de produto" id="product_type" name="product_type" data-element="h1" defaultValue={data?.product_type ?? ""} className="w-full text-right" disabled={data?.delisted || false} required>
-                            <option hidden value="">Tipo do produto</option>
+                            <span className="font-normal opacity-60">
+                                Serve para o filtro da lista de productos, agrupa pela categoria de refeição.
+                            </span>
+                        </div>
 
-                            {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
-                                {getLabel(t)}
-                            </option>)}
-                        </select>
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                            {getUpdaterStatusIndicator("product_type")}
+
+                            <select title="Tipo de produto" id="product_type" name="product_type" defaultValue={data?.product_type ?? ""} disabled={data?.delisted || false} required>
+                                <option hidden value="">Tipo do produto</option>
+
+                                {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
+                                    {getLabel(t)}
+                                </option>)}
+                            </select>
+                        </div>
                     </label>
-                </div>
+
+                    <label>
+                        <div className="flex flex-col justify-start items-start gap-2">
+                            <span className="text-xl">Composição</span>
+
+                            <span className="font-normal opacity-60">
+                                Serve para o filtro da lista de productos e muda o tipo de cor como é apresentado.
+                            </span>
+                        </div>
+
+                        <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                            {getUpdaterStatusIndicator("product_composition")}
+
+                            <select title="Composição do produto" id="product_composition" name="product_composition" defaultValue={data?.product_composition ?? ""} disabled={data?.delisted || false} required>
+                                <option hidden value="">Composição</option>
+
+                                {MENU_PRODUCT_COMPOSITIONS.map(t => <option key={t} value={t}>
+                                    {getLabel(t)}
+                                </option>)}
+                            </select>
+                        </div>
+                    </label>
+
+                    <label>
+                        <div className="flex flex-col justify-start items-start gap-2 w-full">
+                            <span className="text-xl">
+                                {getUpdaterStatusIndicator("description")}
+
+                                Descrição
+                            </span>
+
+                            <span className="font-normal opacity-60">
+                                Qual é a história do producto? Melhores aspectos ou características?
+                            </span>
+
+                            <textarea title="Descrição" id="description" name="description" defaultValue={data?.description ?? ""} onChange={handleEvent} className="w-full" />
+                        </div>
+                    </label>
+                </fieldset>
 
                 {(data?.delisted)
                     ? <>
@@ -278,80 +353,138 @@ function ProductPanel({ id }: { id: number }) {
                     </>
 
                     : <>
-                        <label className="flex flex-row justify-start items-center gap-1 w-full border p-2 rounded-lg">
-                            <input type="checkbox" placeholder="Aonde será servido o produto" defaultChecked={!pickRestaurant} onChange={toggleRestaurantPick} />
+                        <hr />
 
-                            <span>Produto será servido por todos os restaurantes</span>
-                        </label>
+                        <fieldset>
+                            <legend>
+                                <Tag variant="secondary">
+                                    <Icon name="FlashAuto" />
 
-                        {pickRestaurant && <label htmlFor="restaurant_id" className="w-full flex flex-row gap-2 justify-start items-center">
-                            <span data-text="tag" className="mr-auto">
-                                {getUpdaterStatusIndicator("restaurant_id")}
+                                    Preço
+                                </Tag>
 
-                                <Icon name="Store" />
+                                <span className="font-normal italic">Definir preços e/ou descontos</span>
+                            </legend>
 
-                                Restaurante
-                            </span>
+                            <label>
+                                <div className="flex flex-col justify-start items-start gap-2">
+                                    <span className="text-xl">Preço</span>
 
-                            <RestaurantsSelect title="Restaurante" id="restaurant_id" name="restaurant_id" defaultOptionLabel="Escolha um restaurante" defaultValue={""} required />
-                        </label>}
+                                    <span className="font-normal opacity-60">
+                                        Preço do producto que estará registado.
+                                    </span>
 
-                        <label htmlFor="description" className="flex flex-row justify-start items-center gap-2 text-base">
-                            {getUpdaterStatusIndicator("description")}
+                                    <Tag variant="warning">
+                                        <Icon name="Warning" className="text-lg" />
 
-                            <Icon name="Notes" />
-
-                            Sobre
-                        </label>
-
-                        <textarea title="Descrição" id="description" data-element="p" name="description" defaultValue={data?.description ?? ""} onChange={handleEvent} className="w-full" />
-
-                        <div className="w-full flex flex-col justify-start items-start gap-2 p-2 border rounded-md">
-                            <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-betw items-center gap-2 border p-2 rounded-lg">
-                                {getUpdaterStatusIndicator("prep_time_minutes")}
-
-                                <Icon name="Time" />
-
-                                <span className="mr-auto">Tempo de preparo (em minutos)</span>
-
-                                <input title="Tempo de preparo (em minutos)" id="prep_time_minutes" name="prep_time_minutes" defaultValue={3} min={3} onChange={handleEvent} type="number" required />
-                            </label>
-
-                            <label className="flex flex-row justify-start items-center gap-2 w-full p-2 border rounded-md">
-                                {getUpdaterStatusIndicator("price")}
-
-                                <Icon name="Money" />
-
-                                <span className="mr-auto text-lg">Preço</span>
-
-                                <div data-appState="warning" className="flex flex-row justify-start items-center gap-2">
-                                    <Icon name="Warning" className="text-lg" />
-
-                                    <span className="text-sm">Alteração do só afetará os produtos que não foram vendidos</span>
+                                        <span className="text-sm">Alteração do só afetará os produtos que não foram vendidos</span>
+                                    </Tag>
                                 </div>
 
-                                {(freePricing)
-                                    ? <input className="text-right" name="price" title="Preço" data-element="p" type="text" value="Grátis" onClick={() => toggleFreePricing()} readOnly />
-                                    : <input className="text-right" name="price" title="Preço (editável)" data-element="p" type="number" min={0} defaultValue={parseFloat(`${data?.price}`)} onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                                }
+                                <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                                    {getUpdaterStatusIndicator("price")}
+
+                                    {(freePricing)
+                                        ? <input className="text-right" name="price" title="Preço" type="text" value="Grátis" onClick={() => toggleFreePricing()} readOnly />
+                                        : <input className="text-right" name="price" title="Preço (editável)" type="number" min={0} defaultValue={parseFloat(`${data?.price}`)} onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                                    }
+                                </div>
                             </label>
 
-                            <label className="flex flex-row justify-start items-center gap-2 w-full p-2 border rounded-md">
-                                {getUpdaterStatusIndicator("discount")}
+                            <label>
+                                <div className="flex flex-col justify-start items-start gap-2">
+                                    <span className="text-xl">Desconto</span>
 
-                                <Icon name="Discount" />
+                                    <span className="font-normal opacity-60">
+                                        Percentagem de desconto aplicada para o producto, ficará visível no menu.
+                                    </span>
+                                </div>
 
-                                <span className="mr-auto text-lg">Aplicar desconto</span>
+                                <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                                    {getUpdaterStatusIndicator("discount")}
 
-                                <input className="text-right" name="discount" title="Desconto" data-element="p" type="number" min={0} defaultValue={parseFloat(`${data?.discount}`)} onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                                    <input className="text-right" name="discount" title="Desconto" type="number" min={0} defaultValue={parseFloat(`${data?.discount}`)} onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                                </div>
                             </label>
-                        </div>
+                        </fieldset>
 
-                        <Button className="w-full flex flex-row justify-start items-center" variant="warning" onClick={handleDeletion}>
-                            <Icon name="Hide" />
+                        <hr />
 
-                            Ocultar produto
-                        </Button>
+                        <fieldset>
+                            <legend>
+                                <Tag variant="secondary">
+                                    <Icon name="FlashAuto" />
+
+                                    Disponibilidade
+                                </Tag>
+
+                                <span className="font-normal italic">Definir a apresentação do producto para clientes</span>
+                            </legend>
+
+                            <label>
+                                <div className="flex flex-col justify-start items-start gap-2">
+                                    <span className="text-xl">Acesso</span>
+
+                                    <span className="font-normal opacity-60">
+                                        Produto será servido por todos os restaurantes?
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-col justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                                    <input type="checkbox" placeholder="Aonde será servido o produto" defaultChecked={!pickRestaurant} onChange={toggleRestaurantPick} />
+                                </div>
+                            </label>
+
+                            {pickRestaurant && <label>
+                                <div className="flex flex-col justify-start items-start gap-2">
+                                    <span className="text-xl">Estabelecimento</span>
+
+                                    <span className="font-normal opacity-60">
+                                        Aonde será servido?
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-col justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                                    {getUpdaterStatusIndicator("restaurant_id")}
+
+                                    <RestaurantsSelect title="Restaurante" id="restaurant_id" name="restaurant_id" defaultOptionLabel="Escolha um restaurante" defaultValue={""} required />
+                                </div>
+                            </label>}
+                        </fieldset>
+
+                        <hr />
+
+                        <fieldset>
+                            <legend>
+                                <Tag variant="secondary">
+                                    <Icon name="FlashAuto" />
+
+                                    Tempo
+                                </Tag>
+
+                                <span className="font-normal italic">Definir a apresentação do producto para clientes</span>
+                            </legend>
+
+                            <label>
+                                <div className="flex flex-col justify-start items-start gap-2 w-full">
+                                    <span className="text-xl">
+                                        {getUpdaterStatusIndicator("description")}
+
+                                        Tempo de preparo (em minutos)
+                                    </span>
+
+                                    <span className="font-normal opacity-60">
+                                        Representa o tempo de preparo adicionado à estimativa de espera partilhada com o cliente
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
+                                    {getUpdaterStatusIndicator("prep_time_minutes")}
+
+                                    <input title="Tempo de preparo (em minutos)" id="prep_time_minutes" name="prep_time_minutes" defaultValue={3} min={3} onChange={handleEvent} type="number" required />
+                                </div>
+                            </label>
+                        </fieldset>
 
                         <hr className="w-full h-[1px]" />
 
@@ -459,7 +592,7 @@ const ScrollToSection = ({
         }
 
         default: {
-            return <section className="HORIZONTAL_SCROLLTO_SECTION w-full">
+            return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], "w-full")}>
                 <header>
                     {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                         {kvp.icon}
