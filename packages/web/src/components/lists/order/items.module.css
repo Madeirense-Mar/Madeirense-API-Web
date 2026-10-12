@@ -9,8 +9,6 @@
     padding: var(--list-item-padding);
 
     border-radius: var(--list-item-border-radius);
-
-    background-color: var(--base-background-color)
 }
 
 .list li {
@@ -27,15 +25,9 @@
     justify-content: space-between;
 }
 
-[data-theme="LAND-DARK"] .list li:last-child {}
-
-[data-theme="LAND-LIGHT"] .list li:last-child {}
-
-[data-theme="SEA-DARK"] .list li:last-child {
-    background-color: var(--primary);
+[data-theme*="LIGHT"] .list li:last-child {
+    --price-tag-border-color: var(--base-border-color);
 }
-
-[data-theme="SEA-LIGHT"] .list li:last-child {}
 
 .list li:last-child * {
     color: var(--base-text-contrast-color);
