@@ -23,7 +23,7 @@
     --success: #8dd751;
     --success-dark: #1a3404;
     /*#endregion*/
-    
+
     /*#region Base element sizes*/
     --base-notification-height: 70px;
     /*#endregion*/
@@ -39,7 +39,7 @@
     --gap-xs: 4px;
 
     --border-width: 1px;
-    
+
     --page-margin: 12px;
     /*#endregion*/
 }
@@ -90,7 +90,7 @@ body[data-theme*="DARK"] {
 
 body[data-theme*="LIGHT"] {
     --base-text-color: var(--neutral-dark);
-    
+
     --text-contrast-color: var(--neutral-dark);
 }
 
@@ -112,12 +112,16 @@ body[data-theme="SEA-DARK"] {
     --background-color: var(--primary-dark);
 }
 
-body[data-theme="SEA-LIGHT"] {
+body[data-theme*="LIGHT"] {
     --base-border-color: var(--primary-dark);
+}
+
+body[data-theme="SEA-LIGHT"] {
     --base-background-color: var(--primary);
 
     --background-color: color-mix(in srgb, var(--primary-light), white 70%);
 }
+
 /*#endregion*/
 
 body * {
@@ -197,16 +201,17 @@ main {
     height: auto;
 
     padding-bottom: var(--main-padding, var(--container-padding));
-    padding-top: var(--main-padding,var(--container-padding));
+    padding-top: var(--main-padding, var(--container-padding));
 
     overflow-x: hidden;
     overflow-y: auto;
-    
+
     margin-left: var(--main-margin-x, auto);
     margin-right: var(--main-margin-x, auto);
 
     width: var(--main-width, var(--main-base-width));
 }
+
 /*#endregion*/
 
 /*#region Media*/
@@ -228,6 +233,6 @@ main {
     }
 }
 
-@media only screen and (min-width: 1366px) {
-}
+@media only screen and (min-width: 1366px) {}
+
 /*#endregion*/
