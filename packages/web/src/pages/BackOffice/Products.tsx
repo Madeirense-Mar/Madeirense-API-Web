@@ -3,7 +3,7 @@ import {
     type ChangeEvent
 } from "react";
 
-import { 
+import {
     useModal
 } from "contexts/Modal";
 
@@ -60,6 +60,7 @@ function BackOfficeProductsPage() {
 
         <section>
             <ProductsMenuGrid
+                className="w-full flex flex-col justify-start items-start gap-5"
                 group="menu"
                 mode="admin"
                 trackAppUpdates
