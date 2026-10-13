@@ -19,7 +19,8 @@ import {
     USER_ROLES,
     getLabel,
     Madeirense$Types,
-    type appPreferencesType
+    type appPreferencesType,
+    resolveClassNames
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
@@ -37,6 +38,9 @@ import Icon from "components/icon";
 import Tag from "components/tags";
 
 import AddUserForm from "components/modals/forms/user/add";
+import DeletionForm from "components/modals/forms/delete";
+
+import styles from "./Staff.module.css";
 
 import type {
     Blocked_Users,
@@ -47,6 +51,7 @@ import type {
 import type {
     IPageState
 } from "components/interface";
+import BlockUserForm from "components/modals/forms/user/block";
 
 // ***************************************************************************************************************
 
@@ -61,9 +66,7 @@ type stateType = {
 
 type userStateType = "active" | "blocked";
 
-function BackOfficeStaffPage(props: ComponentProps<"main">) {
-    const colSpan = 8;
-
+function BackOfficeStaffPage({ className, ...props }: ComponentProps<"main">) {
     const navigate = useNavigate();
 
     const { show } = useModal();
@@ -145,6 +148,40 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
         if (debounceRef.current) clearTimeout(debounceRef.current);
 
         debounceRef.current = setTimeout(() => updateSearchParams(e), (e.target.value === "") ? 0 : 3000);
+    };
+
+    function navigateToStaffUserPanel(e: MouseEvent<HTMLButtonElement>) {
+        const { target } = e;
+
+        navigate(`/back-office/staff/${(target as HTMLButtonElement).id}`);
+    };
+
+    function openUserDeletionModal(event: MouseEvent<HTMLButtonElement>) {
+        const { target } = event;
+
+        show(<DeletionForm
+            itemId={parseInt((target as HTMLButtonElement).value)}
+            item="user"
+            callback={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
+        />, {
+            title: `Eliminar perfil de funcionário`
+        });
+    };
+
+    function openUserBlockModal(e: MouseEvent<HTMLButtonElement>) {
+        const { target } = e;
+
+        const user: Users | undefined = data.find(d => d.user_id === parseInt((target as HTMLButtonElement).id))
+            ?.Users;
+
+        if (!user) return;
+
+        show(<BlockUserForm
+            callback={refetch}
+            {...{ user }}
+        />, {
+            title: `Bloquear utilizador`
+        });
     };
 
     function openUserCreationModal() {
@@ -277,6 +314,18 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
         }
     }, [refetch, Storage]);
 
+    const headers = [
+        "#",
+        "Nome",
+        "E-mail",
+        "Telemóvel",
+        "Tipo",
+        "Restaurante",
+        "Data de criação",
+        "Estado",
+        "Acções"
+    ];
+
     return <main {...props}>
         <section className="w-full flex flex-col justify-start items-start gap-3">
             <header className="w-full flex flex-row justify-between items-center">
@@ -316,24 +365,17 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
             </div>
 
             <div className="w-full overflow-auto">
-                <table id="staff-table" className="w-full">
+                <table id="staff-table" className={resolveClassNames(styles.table, "w-full")}>
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Nome</th>
-                            <th>E-mail</th>
-                            <th>Telemóvel</th>
-                            <th>Tipo</th>
-                            <th>Restaurante</th>
-                            <th>Data de criação</th>
-                            <th>Estado</th>
+                            {headers.map(h => <th key={h}>{h}</th>)}
                         </tr>
                     </thead>
 
                     <tbody>
                         {(isFetching)
                             ? <tr>
-                                <td colSpan={colSpan}>
+                                <td colSpan={headers.length}>
                                     <div className="w-full flex flex-row justify-center items-center">
                                         <Icon name="Loading" className="animate-spin" />
                                     </div>
@@ -341,7 +383,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
                             </tr>
 
                             : (data.length === 0) && <tr>
-                                <td colSpan={colSpan}>
+                                <td colSpan={headers.length}>
                                     <div className="w-full flex flex-row justify-center items-center">
                                         Não existem utilizadores registados
                                     </div>
@@ -359,7 +401,7 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
 
                                 return MATCHES_STATE;
                             })
-                            .map(w => <tr className="cursor-pointer" key={w.workstation_id} onClick={() => navigate(`/back-office/staff/${w.Users.user_id}`)}>
+                            .map(w => <tr key={w.workstation_id}>
                                 {[
                                     { id: "#", data: w.workstation_id },
                                     {
@@ -395,6 +437,21 @@ function BackOfficeStaffPage(props: ComponentProps<"main">) {
 
                                             {GET_STATE_LABEL(GET_USER_STATE(w.Users.Blocked_Users))}
                                         </Tag>
+                                    },
+                                    {
+                                        id: "", data: <div className="w-full flex flex-row justify-center items-center gap-3">
+                                            <Button id={`${w.Users.user_id}`} variant="warning" onClick={navigateToStaffUserPanel}>
+                                                <Icon name="Edit" />
+                                            </Button>
+
+                                            <Button id={`${w.Users.user_id}`} variant="danger" onClick={openUserDeletionModal}>
+                                                <Icon name="Trash" />
+                                            </Button>
+
+                                            <Button id={`${w.Users.user_id}`} onClick={openUserBlockModal}>
+                                                <Icon name="Lock" />
+                                            </Button>
+                                        </div>
                                     }
                                 ].map(dataset => <td key={`${w.workstation_id}-${dataset.id}`}>
                                     {dataset.data}

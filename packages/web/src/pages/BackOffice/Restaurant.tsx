@@ -4,32 +4,36 @@ import {
     type MouseEvent,
 } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import {
-    toDayOfTheWeek,
     toTimeDecimal,
     Madeirense$Enumerators,
-    type restaurantType
+    type restaurantType,
+    resolveClassNames
 } from "@Madeirense/shared";
-
-import type {
-    Restaurant_Hours
-} from "@Madeirense/database/browser";
 
 import { useApp } from "contexts/App";
 import { useModal } from "contexts/Modal";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
+import Tag from "components/tags";
 
 import RestaurantForm from "components/forms/add/restaurant";
 
-import RestaurantEventList from "components/lists/restaurantEvents";
+import DeletionForm from "components/modals/forms/delete";
 import AddRestaurantEventForm from "components/modals/forms/add/restaurantEvent";
 
+import RestaurantEventList from "components/lists/restaurantEvents";
+
+import styles from "./Restaurant.module.css";
+
 import type { IPageState } from "components/interface";
-import { useNavigate } from "react-router-dom";
-import Tag from "components/tags";
-import DeletionForm from "components/modals/forms/delete";
+
+import type {
+    Restaurant_Hours
+} from "@Madeirense/database/browser";
 
 // ***************************************************************************************************************
 
@@ -82,7 +86,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
         "isLoading": (pageStatus === "loading")
     };
 
-    function navigateToRestaurantPanel (event: MouseEvent<HTMLButtonElement>) {
+    function navigateToRestaurantPanel(event: MouseEvent<HTMLButtonElement>) {
         const { target } = event;
 
         navigate(`${Madeirense$Enumerators.Pages.BackOffice.Restaurant}/${(target as HTMLButtonElement).id}`);
@@ -105,7 +109,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
             item="restaurant"
             callback={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
         />, {
-            title: `Registar restaurante`
+            title: `Remover restaurante`
         });
     };
 
@@ -131,7 +135,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                 </div>
 
                 : <div className="w-full overflow-auto">
-                    <table id="staff-table" className="w-full">
+                    <table id="staff-table" className={resolveClassNames(styles.table, "w-full")}>
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -153,7 +157,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                                         { id: "name", data: r.name },
                                         { id: "location", data: r.Delivery_Locations?.address },
                                         {
-                                            id: "opening", 
+                                            id: "opening",
                                             data: <div className="w-full flex flex-row justify-center items-center gap-3">
                                                 <Tag variant="secondary">{day_of_week}</Tag>
 
@@ -161,7 +165,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                                             </div>
                                         },
                                         {
-                                            id: "closing", 
+                                            id: "closing",
                                             data: <div className="w-full flex flex-row justify-center items-center gap-3">
                                                 <Tag variant="secondary">{day_of_week}</Tag>
 
@@ -169,7 +173,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                                             </div>
                                         },
                                         {
-                                            id: "actions", 
+                                            id: "actions",
                                             data: <div className="w-full flex flex-row justify-center items-center gap-3">
                                                 <Button id={`${r.restaurant_id}`} variant="warning" shape="circle" onClick={navigateToRestaurantPanel}>
                                                     <Icon name="Edit" />

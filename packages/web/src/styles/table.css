@@ -9,6 +9,8 @@ table {
 
 table th,
 table td {
+    padding-bottom: var(--table-cell-py, 0px);
+    padding-top: var(--table-cell-py, 0px);
     padding-left: var(--table-cell-px, 12px);
     padding-right: var(--table-cell-px, 12px);
 
@@ -16,8 +18,17 @@ table td {
     border-style: var(--table-cell-border-style, solid);
 }
 
+table td:hover {
+    background-color: var(--table-cell-hovered-background-color, var(--base-table-cell-hovered-background-color), transparent);
+}
+
+
 table th {
     border-bottom-width: 1px;
+}
+
+table tr:hover {
+    background-color: var(--table-row-hovered-background-color, var(--base-table-row-hovered-background-color), transparent);
 }
 
 table tfoot tr td {
@@ -40,9 +51,26 @@ table tfoot tr td {
     --base-table-cell-border-color: var(--secondary);
 }
 
+[data-theme="LAND-DARK"] table td:hover {
+    --table-cell-hovered-background-color: color-mix(in srgb,var(--secondary-light), var(--secondary-dark) 90%);
+}
+
+[data-theme="LAND-DARK"] table tr:hover {
+    --table-row-hovered-background-color: color-mix(in srgb,var(--secondary-light), var(--secondary-dark) 70%);
+}
+
 [data-theme="SEA-DARK"] table {
     --table-border-color: var(--primary-light);
     --base-table-cell-border-color: var(--primary-light);
+}
+
+
+[data-theme="SEA-DARK"] table td:hover {
+    --table-cell-hovered-background-color: color-mix(in srgb,var(--primary-light), var(--primary-dark) 90%);
+}
+
+[data-theme="SEA-DARK"] table tr:hover {
+    --table-row-hovered-background-color: color-mix(in srgb,var(--primary-light), var(--primary-dark) 70%);
 }
 /*#endregion*/
 /*#region Theme specifications ============================ */
