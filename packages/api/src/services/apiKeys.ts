@@ -9,10 +9,6 @@ import {
     type $Enums
 } from '@Madeirense/database';
 
-import {
-    API$Enumerators
-} from '@Madeirense/shared';
-
 import env from '../env';
 
 import { prisma } from '../lib/prisma';
