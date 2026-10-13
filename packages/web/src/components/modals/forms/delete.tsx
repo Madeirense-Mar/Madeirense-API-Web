@@ -45,6 +45,7 @@ type itemType = (
     | "product"
     | "order"
     | "user"
+    | "restaurant"
 );
 
 const List = ({
@@ -55,6 +56,13 @@ const List = ({
         case "event": {
             return <ul {...props}>
                 <li>Ver os pedidos, pagamentos e lista de ingressos comprados</li>
+            </ul>
+        };
+
+        case "order": {
+            return <ul {...props}>
+                <li>Ver o histórico</li>
+                <li>Ver as conversas do chat</li>
             </ul>
         };
 
@@ -74,10 +82,15 @@ const List = ({
             </ul>
         };
 
-        case "order": {
+        case "restaurant": {
             return <ul {...props}>
-                <li>Ver o histórico</li>
-                <li>Ver as conversas do chat</li>
+                <li className="italic p-2 rounded-md border">
+                    <Tag variant="warning">
+                        Nota: Devido o cálculo de lucro e entregas, tirando os comentários que são eliminados permanentemente, os produtos são ocultados de listagens publicas.
+                    </Tag>
+                </li>
+
+                <li></li>
             </ul>
         };
 
@@ -118,6 +131,7 @@ const DeletionForm = ({
 
     const {
         authentication,
+        restaurants,
         "restaurant-events": restaurantEvents,
         orders,
         users
@@ -177,6 +191,8 @@ const DeletionForm = ({
                     await deleteProfile();
 
                     break;
+
+                case "restaurant": await restaurants.delete(itemId); break;
 
                 case "user": await users.delete(itemId); break;
 
