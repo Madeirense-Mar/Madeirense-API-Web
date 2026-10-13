@@ -29,6 +29,7 @@ import AddRestaurantEventForm from "components/modals/forms/add/restaurantEvent"
 import type { IPageState } from "components/interface";
 import { useNavigate } from "react-router-dom";
 import Tag from "components/tags";
+import DeletionForm from "components/modals/forms/delete";
 
 // ***************************************************************************************************************
 
@@ -81,10 +82,28 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
         "isLoading": (pageStatus === "loading")
     };
 
+    function navigateToRestaurantPanel (event: MouseEvent<HTMLButtonElement>) {
+        const { target } = event;
+
+        navigate(`${Madeirense$Enumerators.Pages.BackOffice.Restaurant}/${(target as HTMLButtonElement).id}`);
+    };
+
     function openRestaurantCreationModal() {
         show(<RestaurantForm
             restaurant={defaultRestaurant}
             onSuccess={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
+        />, {
+            title: `Registar restaurante`
+        });
+    };
+
+    function openRestaurantDeletionModal(event: MouseEvent<HTMLButtonElement>) {
+        const { target } = event;
+
+        show(<DeletionForm
+            itemId={parseInt((target as HTMLButtonElement).value)}
+            item="restaurant"
+            callback={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
         />, {
             title: `Registar restaurante`
         });
@@ -115,11 +134,11 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                     <table id="staff-table" className="w-full">
                         <thead>
                             <tr>
-                                <th>Capa</th>
                                 <th>Nome</th>
                                 <th>Localização</th>
                                 <th>Abertura</th>
                                 <th>Fecho</th>
+                                <th>Acções</th>
                             </tr>
                         </thead>
 
@@ -129,24 +148,37 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                                 const cTime = `${toTimeDecimal(new Date(closing_time).getHours())}:${toTimeDecimal(new Date(closing_time).getMinutes())}`;
                                 const oTime = `${toTimeDecimal(new Date(opening_time).getHours())}:${toTimeDecimal(new Date(opening_time).getMinutes())}`;
 
-                                return <tr className="cursor-pointer" key={r.restaurant_id} onClick={() => navigate(`${Madeirense$Enumerators.Pages.BackOffice.Restaurant}/${r.restaurant_id}`)}>
+                                return <tr key={r.restaurant_id}>
                                     {[
-                                        { id: "thumbnail", data: <img className="h-[120px] w-full" src={r.thumbnail_url ?? "#"} alt={r.name} /> },
                                         { id: "name", data: r.name },
                                         { id: "location", data: r.Delivery_Locations?.address },
                                         {
-                                            id: "opening", data: <>
+                                            id: "opening", 
+                                            data: <div className="w-full flex flex-row justify-center items-center gap-3">
                                                 <Tag variant="secondary">{day_of_week}</Tag>
 
                                                 {oTime}
-                                            </>
+                                            </div>
                                         },
                                         {
-                                            id: "closing", data: <>
+                                            id: "closing", 
+                                            data: <div className="w-full flex flex-row justify-center items-center gap-3">
                                                 <Tag variant="secondary">{day_of_week}</Tag>
 
                                                 {cTime}
-                                            </>
+                                            </div>
+                                        },
+                                        {
+                                            id: "actions", 
+                                            data: <div className="w-full flex flex-row justify-center items-center gap-3">
+                                                <Button id={`${r.restaurant_id}`} variant="warning" shape="circle" onClick={navigateToRestaurantPanel}>
+                                                    <Icon name="Edit" />
+                                                </Button>
+
+                                                <Button id={`${r.restaurant_id}`} variant="danger" shape="circle" onClick={openRestaurantDeletionModal}>
+                                                    <Icon name="Trash" />
+                                                </Button>
+                                            </div>
                                         },
                                     ].map(dataset => <td key={`${r.restaurant_id}-${dataset.id}`}>
                                         {dataset.data}
