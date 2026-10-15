@@ -6,8 +6,6 @@
     --l-size: 100px;
     --xl-size: 200px;
 
-    --button-height: var(--m-size, 40px);
-
     --button-padding: 12px;
 
     --button-border-width: 1px;
@@ -67,12 +65,16 @@
     min-width: var(--size);
 }
 
-.rect {}
-
 /*#endregion*/
 
 /*#region Size ============================================ */
-.xs .s .m .l .xl {
+.xs,
+.s,
+.m,
+.l,
+.xl {
+    composes: button;
+
     background-size: cover;
 }
 
