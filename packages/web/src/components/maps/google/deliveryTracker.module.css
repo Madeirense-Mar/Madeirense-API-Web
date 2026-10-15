@@ -1,18 +1,30 @@
+/*#region Tracker ========================================= */
 .tracker {
     --default-height: 400px;
 
-    width: 100%;
+    @apply flex flex-col justify-center items-center;
+
     height: auto;
     min-height: var(--default-height);
+
+    width: 100%;
+
+    border: 1px var(--tracker-border-style, solid) var(--tracker-border-color, var(--primary-light));
+    border-radius: var(--tracker-border-radius, 12px);
+
+    background-color: var(--tracker-background-color, var(--primary));
 }
 
-.tracker > div:first-of-type {
+.tracker>div:first-of-type {
     @apply border rounded-lg overflow-hidden w-full;
 
     height: var(--default-height);
     min-height: var(--default-height);
 }
 
+/*#endregion*/
+
+/*#region Icons =========================================== */
 .address {
     @apply bg-green-100 text-green-900 border-green-600;
 }
@@ -25,10 +37,24 @@
     @apply bg-orange-100 text-orange-900 border-orange-600;
 }
 
-/* TODO: Unimplemented style > danger */
+/*#endregion*/
+
+/*#region Variants ======================================== */
+/*#region Danger*/
 .danger {
     composes: tracker;
+
+    --tracker-border-style: dotted;
+    --tracker-border-color: color-mix(in srgb, var(--accent), var(--neutral-light) 75%);
+    --tracker-background-color: color-mix(in srgb, var(--accent), var(--neutral-dark) 75%);
 }
+
+[data-theme*="LIGHT"] .danger {
+    --tracker-border-color: var(--accent);
+    --tracker-background-color: color-mix(in srgb, var(--accent), var(--neutral-light) 45%);
+}
+
+/*#endregion*/
 
 /* TODO: Unimplemented style > important */
 .important {
@@ -59,3 +85,5 @@
 .warning {
     composes: tracker;
 }
+
+/*#endregion*/

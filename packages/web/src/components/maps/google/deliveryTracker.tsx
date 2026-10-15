@@ -242,14 +242,14 @@ const GoogleMapDeliveryTracker = ({
         case (assertions.noAPIKey): {
             console.error("Google Maps API key is not set. Please set VITE_APP_GOOGLE_API_KEY in your environment variables.");
 
-            return <div data-state="error" {...$divProps}>
+            return <div {...$divProps}>
                 <Icon name="ExclamationCircle" />
 
                 Error: Google Maps API key is missing.
             </div>
         }
 
-        case (assertions.hasError): return (<div data-state="error" {...$divProps}>
+        case (assertions.hasError): return (<div {...$divProps}>
             <Tag variant="danger">
                 <Icon name="ExclamationCircle" />
 
@@ -259,7 +259,7 @@ const GoogleMapDeliveryTracker = ({
             </Tag>
         </div>);
 
-        case (!isLoaded): return (<div data-state="loading" {...$divProps}>
+        case (!isLoaded): return (<div {...$divProps}>
             <Icon name="Loading" className='animate-spin' />
         </div>);
 
