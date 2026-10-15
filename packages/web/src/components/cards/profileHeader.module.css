@@ -1,3 +1,4 @@
+/*#region Cards =========================================== */
 .card {
     composes: card from "./card.module.css";
     
@@ -13,12 +14,12 @@
         "thumbnail tags"
     ;
 
-    border-color: var(--card-border-color, var(--neutral));
+    border-color: var(--card-border-color, var(--base-border-color));
     border-radius: var(--card-border-radius, 7px);
     border-style: var(--card-border-style, solid);
     border-width: var(--card-border-width, var(--border-width));
 
-    background-color: var(--card-background-color, white);
+    background-color: var(--card-background-color, transparent);
 
     padding: var(--card-padding, var(--padding));
 }
@@ -45,7 +46,9 @@
 .card button {
     grid-area: thumbnail;
 }
+/*#endregion*/
 
+/*#region Variants ======================================== */
 /* TODO: Unimplemented style > danger */
 .danger {
     composes: card;
@@ -80,3 +83,4 @@
 .warning {
     composes: card;
 }
+/*#endregion*/
