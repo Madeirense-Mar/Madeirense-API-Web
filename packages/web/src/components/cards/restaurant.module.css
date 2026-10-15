@@ -1,22 +1,19 @@
+/*#region Card ============================================ */
 .card {
     --default-padding: 12px;
-
     --card-height: 265px;
 
-    composes: card from "./card.module.css";
+    --text-color: var(--neutral-light);
 
-    display: grid;
-    align-items: center;
-    column-gap: var(--card-column-gap, 12px);
-    row-gap: var(--card-row-gap, 5px);
-    grid-template-areas:
-        "thumbnail title"
-        "thumbnail info"
-    ;
+    @apply flex flex-col justify-start items-start;
+
+    gap: calc(4px * 2);
 
     height: var(--card-height);
     max-height: var(--card-height);
     min-height: var(--card-height);
+
+    padding: calc(4px * 4);
 
     border-color: var(--card-border-color, var(--base-border-color));
     border-radius: var(--card-border-radius, 12px);
@@ -24,64 +21,27 @@
     border-width: var(--card-border-width, var(--border-width));
 
     background-color: var(--card-background-color, #fff);
+
+    background-position: center center;
 }
 
 .card a,
 .card h4 {
     @apply font-bold;
 
-    grid-area: title;
+    margin-bottom: auto;
     font-size: 1.5em;
 }
 
-.card div[data-section="thumbnail"] {
-    @apply flex flex-col justify-center items-center w-full h-full gap-2;
-    grid-area: thumbnail;
+.card ul {
+    @apply flex flex-row justify-start items-start;
 
-    background-position: center center;
-    background-size: 100%;
-    background-repeat: no-repeat;
-
-    padding: 12px;
-    border-right: var(--card-border-width, var(--border-width)) solid var(--base-border-color);
-    border-radius: 12px 0 0 12px;
-
-    height: var(--height);
-    max-height: var(--height);
-    min-height: var(--height);
-    width: var(--size);
-    max-width: var(--size);
-    min-width: var(--size);
+    gap: 8px;
 }
 
-.card div[data-section="thumbnail"] {
-    --height: 100%;
-}
+/*#endregion*/
 
-.card div[data-section="thumbnail"] span {
-    font-size: 12px;
-}
-
-.card section {
-    @apply flex flex-col justify-start items-start gap-2 w-full mt-auto;
-
-    overflow: auto;
-    margin-top: auto;
-    grid-area: info;
-}
-
-.card section span {
-    @apply italic;
-
-    width: 100%;
-    justify-content: center;
-    border-radius: 0px;
-}
-
-.card section span:not(:last-of-type) {
-    border-right-width: 0px;
-}
-
+/*#region Variants ======================================== */
 /* TODO: Unimplemented style > danger */
 .danger {
     composes: card;
@@ -116,15 +76,4 @@
 .warning {
     composes: card;
 }
-
-@media only screen and (max-width: 652px) {}
-
-@media only screen and (max-width: 1239px) {
-    .card {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .card div[data-section="thumbnail"] {
-        --size: 100%;
-    }
-}
+/*#endregion*/

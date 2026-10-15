@@ -65,44 +65,42 @@ function RestaurantCard(_props: withVariant<IPropTypes>) {
 
     const navigate = useNavigate();
 
-    return <div className={resolveClassNames(styles[variant], className)} {...props}>
-        <div
-            className={disableLink ? undefined : "cursor-pointer"}
-            onClick={disableLink ? undefined : () => { navigate(profileLink) }}
-            style={{ backgroundImage: `url(${thumbnail_url})` }}
-            data-section="thumbnail"
-        ></div>
-
+    return <div
+        className={resolveClassNames(styles[variant], className, disableLink ? undefined : "cursor-pointer")}
+        style={{ backgroundImage: `url(${thumbnail_url})` }}
+        onClick={disableLink ? undefined : () => { navigate(profileLink) }}
+        {...props}
+    >
         {mode === "admin" && <Link to={profileLink}>{name}</Link>}
         {mode === "default" && <h4>{name}</h4>}
 
-        <section>
-            <div className="w-full flex flex-row justify-start items-start">
-                {(Restaurant_Hours ?? []).map((h, idx) => <Tag key={h.hours_id} variant={(idx === new Date().getDay()) ? "selected" : "primary"}>
+        <ul>
+            {(Restaurant_Hours ?? []).map((h, idx) => <li key={h.hours_id}>
+                <Tag variant={(idx === new Date().getDay()) ? "selected" : "secondary"}>
                     {toDayOfTheWeek(h.day_of_week as $Enums.Restaurant_Hours_day_of_week)}
-                </Tag>)}
-            </div>
+                </Tag>
+            </li>)}
+        </ul>
 
-            <div className="w-full flex flex-row justify-start items-start">
-                <div className="w-full flex flex-col justify-start items-start">
-                    <span className="font-semibold">Abertura</span>
-                    <span>{oTime}</span>
-                </div>
+        <div className="flex flex-row justify-start items-start gap-2">
+            <Tag title="Abertura" variant="secondary">
+                <Icon name="Clock" />
 
-                <div className="w-full flex flex-col justify-start items-start">
-                    <span className="font-semibold">Fecho</span>
-                    <span>{cTime}</span>
-                </div>
-            </div>
+                {oTime}
+            </Tag>
 
-            <div className="w-full flex flex-row justify-start items-start">
-                <Icon name="MapMarker" />
+            <Tag title="Fecho" variant="secondary">
+                <Icon name="ClockOff" />
 
-                <span className="font-semibold">
-                    {Delivery_Locations?.address}
-                </span>
-            </div>
-        </section>
+                {cTime}
+            </Tag>
+        </div>
+
+        <Tag>
+            <Icon name="MapMarker" />
+
+            {Delivery_Locations?.address}
+        </Tag>
     </div>
 };
 
