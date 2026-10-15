@@ -406,7 +406,7 @@ function BackOfficeStaffPage({ className, ...props }: ComponentProps<"main">) {
                                     { id: "#", data: w.workstation_id },
                                     {
                                         id: "name", data: <div className="flex flex-row justify-start items-center gap-2">
-                                            <ProfilePictureButton src={w.Users.profile_photo ?? "#"} size="xs" />
+                                            <ProfilePictureButton src={w.Users.profile_photo ?? "#"} size="m" />
 
                                             {w.Users.name}
                                         </div>
