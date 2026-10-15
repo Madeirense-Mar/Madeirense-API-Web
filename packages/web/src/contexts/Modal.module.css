@@ -55,7 +55,7 @@
 .modal[open] {
     pointer-events: all;
 
-    top: calc(50% - calc(var(--height) / 2));
+    top: calc(30% - calc(var(--height) / 2));
 
     opacity: 1;
 }
