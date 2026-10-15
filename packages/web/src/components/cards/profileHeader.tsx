@@ -52,7 +52,7 @@ function ProfileHeaderCard(_props: withVariant<IPropTypes>) {
     } = user;
 
     return <div className={resolveClassNames(styles[variant], className)} {...props}>
-        <ProfilePictureButton src={profile_photo ?? "#"} size="m" />
+        <ProfilePictureButton src={profile_photo ?? "#"} size="l" />
 
         {(mode === "admin") && <Link
             to={`${Madeirense$Enumerators.Pages.BackOffice.Staff}/${user_id}`}

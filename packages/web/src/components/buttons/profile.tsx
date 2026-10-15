@@ -30,7 +30,7 @@ import type { IButtonPropTypes } from "./interfaces";
 
 // ***************************************************************************************************************
 
-interface IPropTypes extends IButtonPropTypes {
+interface IPropTypes extends Omit<IButtonPropTypes, ("variant" | "shape")> {
     enableUpload?: boolean,
     src?: string
 };
@@ -40,11 +40,9 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
         className,
         disabled = false,
         enableUpload = false,
-        shape = 'round',
         size = 's',
         src = "#",
         style,
-        variant = "primary",
         ...props
     } = _props;
 
@@ -130,7 +128,7 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
     };
 
     return <button
-        className={resolveClassNames(styles.profile, styles[variant], styles[size], className)}
+        className={resolveClassNames(styles[size], className)}
         style={(src) ? { backgroundImage: `url(${src})`, ...style } : style}
         {...props}
         {...{ disabled, ref }}

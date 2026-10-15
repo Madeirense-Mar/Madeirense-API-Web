@@ -1,18 +1,26 @@
+/*#region Button ========================================== */
 .button {
-    composes: button from "./button.module.css";
+    --xs-size: 20px;
+    --s-size: 32px;
+    --m-size: 40px;
+    --l-size: 100px;
+    --xl-size: 200px;
+    --size: var(--button-size, var(--button-height));
 
-    --button-width: var(--button-height);
-    
-    @apply flex flex-col justify-center items-center;
+    @apply flex flex-col justify-center items-center rounded-full;
 
-    max-width: var(--button-width);
-    min-width: var(--button-width);
+    cursor: var(--button-cursor-pointer, initial);
 
-    background-size: contain;
+    max-height: var(--size);
+    min-height: var(--size);
+    max-width: var(--size);
+    min-width: var(--size);
+
+    background-color: var(--primary-light);
     background-position: center;
     background-repeat: no-repeat;
 
-    outline: calc(3 * var(--button-border-width)) var(--button-border-color);
+    outline: calc(3 * var(--button-border-width, 1px)) var(--button-border-color, var(--secondary));
 }
 
 .button>div {
@@ -30,42 +38,43 @@
     min-width: var(--size);
 }
 
-/* TODO: Unimplemented style > danger */
-.danger {
+.button>div>svg {
+    --text-color: var(--neutral-dark);
+
+    font-size: 3em;
+}
+
+/*#endregion*/
+
+/*#region Size ============================================ */
+.xs,
+.s,
+.m,
+.l,
+.xl {
     composes: button;
+
+    background-size: cover;
 }
 
-/* TODO: Unimplemented style > important */
-.important {
-    composes: button;
+.xs {
+    --button-height: var(--xs-size);
 }
 
-.primary {
-    composes: button;
-
-    --button-background-color: #e6e6e6;
+.s {
+    --button-height: var(--s-size);
 }
 
-[data-theme*="DARK"] .primary {
-    --button-border-color: var(--neutral-dark);
+.m {
+    --button-height: var(--m-size);
 }
 
-/* TODO: Unimplemented style > secondary */
-.secondary {
-    composes: button;
+.l {
+    --button-height: var(--l-size);
 }
 
-/* TODO: Unimplemented style > selected */
-.selected {
-    composes: button;
+.xl {
+    --button-height: var(--xl-size);
 }
 
-/* TODO: Unimplemented style > success */
-.success {
-    composes: button;
-}
-
-/* TODO: Unimplemented style > warning */
-.warning {
-    composes: button;
-}
+/*#endregion*/
