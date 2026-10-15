@@ -175,6 +175,8 @@ import {
 } from "react-icons/rx";
 
 import {
+    TbClock,
+    TbClockOff,
     TbMapCheck,
     TbMapCancel,
     TbMapOff,
@@ -206,6 +208,8 @@ const registry = {
     ChevronRight: MdChevronRight,
     Circle: FaCircle,
     Clean: MdCleaningServices,
+    Clock: TbClock,
+    ClockOff: TbClockOff,
     Close: IoMdClose,
     Comments: FaComment,
     Coupon: RiCoupon2Line,
