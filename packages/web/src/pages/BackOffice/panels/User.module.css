@@ -1,0 +1,12 @@
+.order-tracker {
+    @apply w-full flex flex-col justify-start items-start;
+
+    --border-radius: 12px;
+    
+    --card-border-radius: var(--border-radius) var(--border-radius) 0 0;
+    --tracker-border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.order-tracker >div:first-child {
+    border-bottom: none;
+}

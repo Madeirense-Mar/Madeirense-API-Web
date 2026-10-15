@@ -41,6 +41,8 @@ import BlockUserForm from "components/modals/forms/user/block";
 import DeletionForm from "components/modals/forms/delete";
 import DriverReallocationForm from "components/modals/forms/drivers/reallocation";
 
+import styles from "./User.module.css";
+
 import type {
     $Enums,
     Users
@@ -101,8 +103,10 @@ function UserPanel({ id }: { id: number }) {
 
     const currentDelivery = !ordersResponse ? null : (ordersResponse?.data ?? []).find(o => o.status === "assigned");
 
-    const orders = !ordersResponse ? [] : ordersResponse?.data ?? []
+    const orders = !ordersResponse ? [] : ordersResponse?.data ?? [];
 
+    const filteredOrders = orders.filter(o => o.order_id !== (currentDelivery?.order_id ?? -1));
+    
     function getActionLabel(action: actionType) {
         switch (action) {
             case "block": return "Bloquear";
@@ -271,24 +275,22 @@ function UserPanel({ id }: { id: number }) {
                 </div>
                 : <>
                     {currentDelivery && <>
-                        <h5>Entrega a decorrer</h5>
+                        <h4>Entrega a decorrer</h4>
 
-                        <div className="w-full flex flex-col justify-start items-start">
+                        <div className={styles["order-tracker"]}>
                             <OrderCard order={currentDelivery} className="w-full" />
 
                             <GoogleMapDeliveryTracker order={currentDelivery} />
                         </div>
                     </>}
 
-                    {Boolean(orders.length) && <>
-                        <h5>Histórico de entregas</h5>
+                    {Boolean(filteredOrders.length) && <>
+                        <h4>Histórico de entregas</h4>
 
-                        <div data-grid="OrderCard" className="w-full">
-                            {orders
-                                .filter(o => o.order_id !== (currentDelivery?.order_id ?? -1))
-                                .map(o => <OrderCard key={o.order_id} order={o} disableLink />)
-                            }
-                        </div>
+                        {filteredOrders
+                            .filter(o => o.order_id !== (currentDelivery?.order_id ?? -1))
+                            .map(o => <OrderCard key={o.order_id} order={o} disableLink />)
+                        }
                     </>}
                 </>}
         </section>}
