@@ -1,5 +1,6 @@
 import {
-    type ComponentProps
+    type ComponentProps,
+    type MouseEvent
 } from "react";
 
 import {
@@ -44,6 +45,7 @@ function RestaurantCard(_props: withVariant<IPropTypes>) {
         disableLink = false,
         mode = "default",
         restaurant,
+        onClick,
         onSuccess,
         variant = "primary",
         ...props
@@ -65,10 +67,20 @@ function RestaurantCard(_props: withVariant<IPropTypes>) {
 
     const navigate = useNavigate();
 
+    function handleClick (event: MouseEvent<HTMLDivElement>) {
+        if (disableLink) {
+            onClick?.(event);
+
+            return;
+        }
+
+        navigate(profileLink);
+    }
+
     return <div
         className={resolveClassNames(styles[variant], className, disableLink ? undefined : "cursor-pointer")}
+        onClick={handleClick}
         style={{ backgroundImage: `url(${thumbnail_url})` }}
-        onClick={disableLink ? undefined : () => { navigate(profileLink) }}
         {...props}
     >
         {mode === "admin" && <Link to={profileLink}>{name}</Link>}
