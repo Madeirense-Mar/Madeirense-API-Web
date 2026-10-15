@@ -7,6 +7,8 @@
 
     @apply flex flex-col justify-start items-start;
 
+    position: relative;
+
     gap: calc(4px * 2);
 
     height: var(--card-height);
@@ -21,8 +23,37 @@
     border-width: var(--card-border-width, var(--border-width));
 
     background-color: var(--card-background-color, #fff);
-
     background-position: center center;
+
+    overflow: hidden;
+}
+
+.card::before {
+    --size: 100%;
+
+    content: "";
+
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    height: var(--size);
+    max-height: var(--size);
+    min-height: var(--size);
+
+    width: var(--size);
+    max-width: var(--size);
+    min-width: var(--size);
+    
+    background: linear-gradient(to top, var(--vignette-background-color, var(--neutral-dark)), transparent 35%, var(--vignette-background-color, var(--neutral-dark)));
+
+    opacity: var(--vignette-opacity, 0);
+
+    transition: opacity 0.2s ease-in-out;
+}
+
+.card:hover::before {
+    --vignette-opacity: 0.8;
 }
 
 .card a,
