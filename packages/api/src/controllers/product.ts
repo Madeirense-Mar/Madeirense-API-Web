@@ -744,7 +744,7 @@ export const updateProduct = async (
             });
         }
 
-        if (rId !== null) {
+        if (rId) {
             const existingRestaurant = await prisma.restaurants.findUnique({
                 where: { restaurant_id }
             });
