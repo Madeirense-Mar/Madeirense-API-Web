@@ -603,6 +603,7 @@ export const getProductComments = async (
                     Users: {
                         select: {
                             user_id: true,
+                            email: true,
                             name: true,
                             profile_photo: true
                         }
