@@ -1,17 +1,61 @@
 label[data-variant="selectable"] {
-    @apply flex flex-row justify-start items-center flex-nowrap gap-3 border;
+    @apply flex flex-nowrap;
 
+    flex-direction: var(--label-flex-direction, row);
+    align-items: var(--label-align-items, center);
+    justify-content: var(--label-justify-content, flex-start);
+    gap: var(--label-gap, 12px);
+
+    background-color: var(--label-background-color, transparent);
+    
     border-radius: 12px;
+    border-width: var(--label-border-width, 1px);
 }
 
-[data-theme="LAND-DARK"] label[data-variant="selectable"]:has(input:checked) {}
+/*#region Theme variations ================================ */
+/*#region Land*/
+[data-theme="LAND-DARK"] label[data-variant="selectable"]:hover {
+    --label-background-color: color-mix(in srgb, var(--secondary), black 75%);
+}
 
-[data-theme="LAND-LIGHT"] label[data-variant="selectable"]:has(input:checked) {}
+[data-theme="LAND-DARK"] label[data-variant="selectable"]:has(input:checked) {
+    --text-color: var(--neutral-dark);
 
+    --label-background-color: color-mix(in srgb, var(--secondary-light), black 20%);
+}
+
+[data-theme="LAND-LIGHT"] label[data-variant="selectable"]:hover {
+    --label-background-color: color-mix(in srgb, var(--secondary-dark), transparent 90%);
+}
+
+[data-theme="LAND-LIGHT"] label[data-variant="selectable"]:has(input:checked) {
+    --border-color: var(--secondary-dark);
+
+    --label-background-color: color-mix(in srgb, var(--secondary-dark), transparent 80%);
+}
+
+/*#endregion*/
+
+/*#region Sea*/
 [data-theme="SEA-DARK"] label[data-variant="selectable"]:has(input:checked) {
     --text-color: var(--primary-light);
-    
-    background-color: color-mix(in srgb, var(--primary-light), black 70%);
+
+    --label-background-color: color-mix(in srgb, var(--text-color), black 70%);
 }
 
-[data-theme="SEA-LIGHT"] label[data-variant="selectable"]:has(input:checked) {}
+[data-theme="SEA-DARK"] label[data-variant="selectable"]:hover {
+    --label-background-color: color-mix(in srgb, var(--primary), black 65%);
+}
+
+[data-theme="SEA-LIGHT"] label[data-variant="selectable"]:hover {
+    --label-background-color: color-mix(in srgb, var(--primary), transparent 90%);
+}
+
+[data-theme="SEA-LIGHT"] label[data-variant="selectable"]:has(input:checked) {
+    --border-color: var(--primary);
+
+    --label-background-color: color-mix(in srgb, var(--primary), transparent 80%);
+}
+
+/*#endregion*/
+/*#endregion*/

@@ -1,8 +1,8 @@
-.settings>section{
+.settings>section {
     @apply w-full flex flex-col justify-start items-start gap-6;
 }
 
-.settings>section>header{
+.settings>section>header {
     @apply flex flex-row justify-start items-center gap-2 font-black text-3xl pb-2 mb-2 border-b border-solid w-full;
 }
 
@@ -15,9 +15,38 @@
 }
 
 .settings>section>form>fieldset>label {
-    @apply  flex flex-row justify-between items-start w-full gap-10;
+    @apply w-full;
+}
+
+.settings>section>form>fieldset>label[data-variant="selectable"] {
+    --label-justify-content: space-between; 
+
+    padding: 12px;
+}
+
+.settings>section>form>fieldset>label>div:first-child>span:first-child {
+    @apply text-xl;
 }
 
 .settings>section>form>fieldset>legend {
     @apply flex flex-row justify-between items-center gap-2 w-full mb-3;
 }
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    .settings>section>form>fieldset>label>div:first-child {
+        max-width: 600px;
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+    .settings>section>form>fieldset>label>div:first-child {
+        max-width: 1000px;
+    }
+}
+
+/*#endregion*/

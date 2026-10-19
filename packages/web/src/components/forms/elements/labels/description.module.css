@@ -1,0 +1,10 @@
+/*#region Label =========================================== */
+.label {
+    @apply flex flex-row justify-between items-center;
+}
+
+.label>div:first-child {
+    @apply flex flex-col justify-start items-start;
+}
+
+/*#endregion*/

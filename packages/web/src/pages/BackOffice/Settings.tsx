@@ -22,7 +22,9 @@ import { useApp } from "contexts/App";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
+import Tag from "components/tags";
 
+import DescriptionLabel from "components/forms/elements/labels/description";
 import PaymentTypesList from "components/lists/paymentOptions";
 
 import styles from "./Settings.module.css";
@@ -34,13 +36,19 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { IPageState } from "components/interface";
-import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
-const delayMS = 2500;
+const DELAY_MS = 2500;
 
-function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) {
+const LOADING_INPUT = {
+    type: "text",
+    defaultValue: "a carregar",
+    className: "w-full text-center",
+    disabled: true
+};
+
+function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">) {
     const {
         "global-settings": globalSettings
     } = MXP$App.Base.Business.endpoints;
@@ -93,8 +101,8 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
             ? <Icon name="Close" />
 
             : (assertions.isLoading)
-                ? <Icon name="Check" />
-                : <Icon name="Loading" className="animate-spin" />
+                ? <Icon name="Loading" className="animate-spin" />
+                : <Icon name="Check" />
             ;
 
         else return null;
@@ -148,10 +156,10 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
 
         timeoutRef.current = setTimeout(async () => {
             $form.dispatchEvent(new Event("submit", { bubbles: true }));
-        }, delayMS);
+        }, DELAY_MS);
     };
 
-    function update(element: any, delay = delayMS) {
+    function update(element: any, delay = DELAY_MS) {
         const _value = element.value;
         const property = element.name as (typeof page.status);
 
@@ -327,26 +335,30 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
                         <span className="font-normal italic">Definições da fila de pedidos</span>
                     </legend>
 
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2">
-                            <span className="text-xl">Limite para aviso</span>
-
-                            {(page.error && (page.status === "order_threshold")) && <span data-state="error" className="font-normal px-2 rounded-sm">
-                                {page.error.message}
-                            </span>}
-
-                            <span className="font-normal opacity-60">Número de pedidos em fila <span className="font-normal italic">(individual para cada restaurante)</span> que serão entregues no tempo esperado, caso os pedidos excedam o limite os clientes serão notificados sobre possíveis atrasos.</span>
-                        </div>
-
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
-                            {getUpdaterStatusIndicator("order_threshold")}
-
-                            {(appState === "loading")
-                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                : settings && <input min={1} name="order_threshold" type="number" defaultValue={settings.order_threshold} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                            }
-                        </div>
-                    </label>
+                    <DescriptionLabel
+                        title="Limite para aviso"
+                        description={<span className="font-normal opacity-60">Número de pedidos em fila <span className="font-normal italic">(individual para cada restaurante)</span> que serão entregues no tempo esperado, caso os pedidos excedam o limite os clientes serão notificados sobre possíveis atrasos.</span>}
+                        alerts={{
+                            error: (page.error && (page.status === "order_threshold"))
+                                ? page.error.message
+                                : undefined
+                        }}
+                        input={{
+                            icon: getUpdaterStatusIndicator("order_threshold"),
+                            element: "input",
+                            props: (appState === "loading")
+                                ? LOADING_INPUT
+                                : {
+                                    type: "number",
+                                    min: 1,
+                                    name: "order_threshold",
+                                    defaultValue: settings?.order_threshold,
+                                    className: "w-full text-center",
+                                    onKeyDown: handleKeyDown,
+                                    onBlur: handleEvent
+                                }
+                        }}
+                    />
                 </fieldset>
 
                 <fieldset>
@@ -360,32 +372,35 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
                         <span className="font-normal italic">Definição das funcionalidades do aplicativo</span>
                     </legend>
 
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2">
-                            <span className="text-xl">Associação automática</span>
+                    <DescriptionLabel
+                        selectable
+                        title="Associação automática"
+                        description={<span className="font-normal opacity-60">
+                            Associa todos os pedidos que estiverem no estado
 
-                            {(page.error && (page.status === "auto_assign_driver")) && <span data-state="error" className="font-normal px-2 rounded-sm">
-                                {page.error.message}
-                            </span>}
+                            <span className="mx-2 italic underline">{getLabel<$Enums.Orders_status>("ready")}</span>
 
-                            <span className="font-normal opacity-60">
-                                Associa todos os pedidos que estiverem no estado
-
-                                <span className="mx-2 italic underline">{getLabel<$Enums.Orders_status>("ready")}</span>
-
-                                a um estafeta livre e próximo ao restaurante sem precisar de uma ação manual.
-                            </span>
-                        </div>
-
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px] my-auto">
-                            {getUpdaterStatusIndicator("auto_assign_driver")}
-
-                            {(appState === "loading")
-                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                : settings && <input type="checkbox" name="auto_assign_driver" defaultChecked={settings.auto_assign_driver ?? false} className="w-full text-center" onChange={handleEvent} />
-                            }
-                        </div>
-                    </label>
+                            a um estafeta livre e próximo ao restaurante sem precisar de uma ação manual.
+                        </span>}
+                        alerts={{
+                            error: (page.error && (page.status === "auto_assign_driver"))
+                                ? page.error.message
+                                : undefined
+                        }}
+                        input={{
+                            icon: getUpdaterStatusIndicator("auto_assign_driver"),
+                            element: "input",
+                            props: (appState === "loading")
+                                ? LOADING_INPUT
+                                : {
+                                    type: "checkbox",
+                                    name: "auto_assign_driver",
+                                    defaultChecked: (settings?.auto_assign_driver ?? false),
+                                    className: "w-full text-center",
+                                    onChange: handleEvent
+                                }
+                        }}
+                    />
                 </fieldset>
             </form>
         </section>
@@ -416,26 +431,30 @@ function BackOfficeSettingsPage({ className, ...props}: ComponentProps<"main">) 
                         <span className="font-normal italic">Tempo médio de preparo geral para todos pratos</span>
                     </legend>
 
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2">
-                            <span className="text-xl">Tempo médio</span>
-
-                            {(page.error && (page.status === "prep_buffer")) && <span data-state="error" className="font-normal px-2 rounded-sm">
-                                {page.error.message}
-                            </span>}
-
-                            <span className="font-normal opacity-60">Tempo <span className="font-normal italic">(em minutos)</span> adicional ao preparo de cada pedido pela cozinha.</span>
-                        </div>
-
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[152px] max-w-[152px] w-[152px]">
-                            {getUpdaterStatusIndicator("prep_buffer")}
-
-                            {(appState === "loading")
-                                ? <input type="text" defaultValue="a carregar" className="w-full text-center" disabled />
-                                : settings && <input min={1} name="prep_buffer" type="number" defaultValue={settings.prep_buffer} className="w-full text-center" onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                            }
-                        </div>
-                    </label>
+                    <DescriptionLabel
+                        title="Tempo médio"
+                        description={<span className="font-normal opacity-60">Tempo <span className="font-normal italic">(em minutos)</span> adicional ao preparo de cada pedido pela cozinha.</span>}
+                        alerts={{
+                            error: (page.error && (page.status === "prep_buffer"))
+                                ? page.error.message
+                                : undefined
+                        }}
+                        input={{
+                            icon: getUpdaterStatusIndicator("prep_buffer"),
+                            element: "input",
+                            props: (appState === "loading")
+                                ? LOADING_INPUT
+                                : {
+                                    type: "number",
+                                    min: 1,
+                                    name: "prep_buffer",
+                                    defaultValue: settings?.prep_buffer,
+                                    className: "w-full text-center",
+                                    onKeyDown: handleKeyDown,
+                                    onBlur: handleEvent
+                                }
+                        }}
+                    />
                 </fieldset>
 
                 <fieldset>
