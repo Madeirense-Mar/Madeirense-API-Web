@@ -12,7 +12,7 @@ label[data-variant="selectable"] {
     border-width: var(--label-border-width, 1px);
 }
 
-/*#region Theme variations ================================ */
+/*#region Theme specifications ============================ */
 /*#region Land*/
 [data-theme="LAND-DARK"] label[data-variant="selectable"]:hover {
     --label-background-color: color-mix(in srgb, var(--secondary), black 75%);

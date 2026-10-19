@@ -46,7 +46,7 @@
 }
 
 .panel>fieldset>label {
-    @apply flex flex-row justify-between items-start w-full gap-10;
+    @apply w-full gap-5;
 }
 
 .panel>fieldset>label input,

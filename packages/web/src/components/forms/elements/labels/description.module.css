@@ -1,10 +1,56 @@
 /*#region Label =========================================== */
 .label {
-    @apply flex flex-row justify-between items-center;
+    @apply flex items-center;
+
+    flex-direction: var(--label-flex-direction, row);
+    justify-content: var(--label-justify-content, space-between);
+}
+
+.label>div {
+    width: 100%;
 }
 
 .label>div:first-child {
     @apply flex flex-col justify-start items-start;
 }
 
+.label>div:last-child {
+    min-width: var(--w);
+}
+
+.label>div:last-child:has(input, select) {
+    width: var(--w);
+    max-width: var(--w);
+}
+
+/*#endregion*/
+
+/*#region Layouts variations ============================== */
+.column {
+    --label-flex-direction: column;
+    --label-justify-content: flex-start;
+}
+
+.row {
+    --label-flex-direction: row;
+    --label-justify-content: space-between;
+}
+
+/*#endregion*/
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {
+}
+
+@media only screen and (min-width: 428px) {
+}
+
+@media only screen and (min-width: 768px) {
+    .label>div:last-child  {
+        --w: 300px;
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+}
 /*#endregion*/

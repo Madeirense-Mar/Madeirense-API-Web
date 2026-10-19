@@ -2,6 +2,9 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
+import Tag from "components/tags";
+import Icon from "components/icon";
+
 import styles from "./description.module.css";
 
 import type {
@@ -10,28 +13,32 @@ import type {
 
 // ***************************************************************************************************************
 
+enum LabelLayouts {
+    column = "column",
+    row = "row"
+};
+
+interface IPropTypes extends Omit<BaseLabelPropTypes, "icon"> {
+    layout?: keyof typeof LabelLayouts;
+};
+
 const DescriptionLabel = ({
     alerts,
     className,
     description,
     input,
+    layout = LabelLayouts.row,
     selectable = false,
     title,
     ...props
-}: Omit<BaseLabelPropTypes, "icon">) => {
-    const { 
-        element, 
+}: IPropTypes) => {
+    const {
+        element,
         icon,
         props: inputProps
     } = input;
 
-    const Element = element as React.ElementType;
-
-    return <label 
-        className={resolveClassNames(styles.label, className)} 
-        {...(selectable) ? { "data-variant": "selectable" } : {}}
-        {...props}
-    >
+    const body = <>
         <div>
             <span>
                 {title}
@@ -40,14 +47,56 @@ const DescriptionLabel = ({
             <span>
                 {description}
             </span>
-        </div>
 
-        <div>
-            {icon}
-            
-            <Element {...inputProps} />
+            {alerts?.error && <Tag variant="danger">
+                <Icon name="Close" />
+                
+                {alerts?.error}
+            </Tag>}
+
+            {alerts?.warning && <Tag variant="warning">
+                <Icon name="Warning" />
+
+                {alerts?.warning}
+            </Tag>}
         </div>
-    </label>
+    </>;
+
+    const computedProps = {
+        className: resolveClassNames(styles.label, styles[layout], className),
+        ...(selectable) ? { "data-variant": "selectable" } : {},
+        ...props
+    };
+
+    const Element = element as React.ElementType;
+
+    switch (element) {
+        case "select":
+            return <label {...computedProps}>
+                {body}
+
+                <div>
+                    {icon}
+
+                    <Element {...inputProps}>
+                        {input.options.map(op => <option key={op.value.data} {...op.value.props}>
+                            {op.key}
+                        </option>)}
+                    </Element>
+                </div>
+            </label>
+
+        default:
+            return <label {...computedProps}>
+                {body}
+
+                <div>
+                    {icon}
+
+                    <Element {...inputProps} />
+                </div>
+            </label>
+    }
 };
 
 export default DescriptionLabel;
