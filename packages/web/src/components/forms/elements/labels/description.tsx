@@ -79,7 +79,7 @@ const DescriptionLabel = ({
                     {icon}
 
                     <Element {...inputProps}>
-                        {input.options.map(op => <option key={op.value.data} {...op.value.props}>
+                        {input.options.map(op => <option key={op.value.data} value={op.value.data} {...op.value.props}>
                             {op.key}
                         </option>)}
                     </Element>
