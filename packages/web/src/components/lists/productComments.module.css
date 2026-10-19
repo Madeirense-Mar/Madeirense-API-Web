@@ -1,6 +1,57 @@
 .list {
-    composes: list from "./list.module.css";
-    
-    --error-height: 40px;
-    row-gap: 12px;
+    @apply flex flex-col justify-start items-start gap-5;
 }
+
+/*#region Comment ========================================= */
+.comment {
+    @apply w-full;
+    
+    display: grid;
+    align-items: center;
+    justify-content: flex-start;
+    grid-template-columns: 32px 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "profile info"
+        "profile msg"
+    ;
+
+    column-gap: 12px;
+    row-gap: 4px;
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background-color: var(--column-background-color, transparent);
+}
+
+.comment>div:nth-child(1) {
+    grid-area: profile;
+}
+
+.comment>div:nth-child(2) {
+    grid-area: info;
+}
+
+.comment>span:nth-child(3) {
+    grid-area: msg;
+}
+/*#endregion*/
+
+/*#region Theme variations ================================ */
+[data-theme="LAND-DARK"] .comment:hover {
+    --column-background-color: color-mix(in srgb, var(--secondary), transparent 80%);
+}
+
+[data-theme="LAND-LIGHT"] .comment:hover {
+    --column-background-color: color-mix(in srgb, var(--secondary-dark), transparent 80%);
+}
+
+[data-theme="SEA-DARK"] .comment:hover {
+    --column-background-color: color-mix(in srgb, var(--primary-light), transparent 60%);
+}
+
+[data-theme="SEA-LIGHT"] .comment:hover {
+    --column-background-color: color-mix(in srgb, var(--primary), transparent 80%);
+}
+/*#endregion*/

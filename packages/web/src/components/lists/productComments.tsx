@@ -142,7 +142,7 @@ function ProductCommentsList(_props: IPropTypes) {
                 <p>{error?.message}</p>
             </li>
         </ul>);
-        
+
         case "pending": return (<ul {...$ulProps}>
             <li>
                 <Icon name="Loading" className="animate-spin mx-auto my-4" />
@@ -182,35 +182,33 @@ function ProductCommentsList(_props: IPropTypes) {
 
                     const ref = idx === list.length - 1 ? lastElementRef : undefined;
 
-                    return <li key={item.comment_id} {...{ ref }}>
+                    return <li key={item.comment_id} className={styles.comment} {...{ ref }}>
                         <ProfilePictureButton src={item.Users?.profile_photo ?? "#"} size="s" />
 
-                        <div className="w-full flex flex-col justify-between items-start gap-1">
-                            <div className="w-full flex flex-row justify-start items-center gap-2">
-                                {(item as queuefiedProductCommentType)?.state === "queued" && <Icon name="Upload" />}
-                                {(item as queuefiedProductCommentType)?.state === "failed" && <Icon name="Close" />}
-                                {(item as queuefiedProductCommentType)?.state === "uploading" && <Icon name="Loading" className="animate-spin" />}
-                                {(item as queuefiedProductCommentType)?.state === "uploaded" && <Icon name="Check" />}
+                        <div className="flex flex-row justify-start items-center gap-3">
+                            {(item as queuefiedProductCommentType)?.state === "queued" && <Icon name="Upload" />}
+                            {(item as queuefiedProductCommentType)?.state === "failed" && <Icon name="Close" />}
+                            {(item as queuefiedProductCommentType)?.state === "uploading" && <Icon name="Loading" className="animate-spin" />}
+                            {(item as queuefiedProductCommentType)?.state === "uploaded" && <Icon name="Check" />}
 
-                                <span className="font-bold">
-                                    {`${item.Users?.name}${item.user_id === user?.user_id ? " (Você)" : ""}`}
-                                </span>
+                            <span className="font-bold">
+                                {`${item.Users?.name}${item.user_id === user?.user_id ? " (Eu)" : ""}`}
+                            </span>
 
-                                {mode === "admin" && <Tag className="opacity-40 italic">
-                                    <Icon name="Email" />
+                            {mode === "admin" && <Tag variant="secondary">
+                                <Icon name="Email" />
 
-                                    {item.Users?.email}
-                                </Tag>}
+                                {item.Users?.email}
+                            </Tag>}
 
-                                <Tag className="opacity-40 italic ml-auto">
-                                    <Icon name="Calendar1" />
+                            <span className="inline-flex justify-center items-center gap-3 opacity-40 italic ml-auto">
+                                <Icon name="Calendar1" />
 
-                                    {new Date(item.created_at as Date).toLocaleDateString()}
-                                </Tag>
-                            </div>
-
-                            <span>{item.comment}</span>
+                                {new Date(item.created_at as Date).toLocaleString()}
+                            </span>
                         </div>
+
+                        <span>{item.comment}</span>
                     </li>;
                 })}
 
