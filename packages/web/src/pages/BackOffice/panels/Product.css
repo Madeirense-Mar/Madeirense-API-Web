@@ -1,0 +1,30 @@
+div[data-type="thumbnail"] {
+    background-size: cover;
+    background-position: center center;
+}
+
+#product-thumbnail {
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background-color: var(--section-background-color, transparent);
+}
+
+/*#region Theme variations ================================ */
+[data-theme="LAND-DARK"] #product-thumbnail {
+    --section-background-color: color-mix(in srgb, var(--secondary), transparent 65%);
+}
+
+[data-theme="LAND-LIGHT"] #product-thumbnail {
+    --section-background-color: color-mix(in srgb, var(--secondary), transparent 50%);
+}
+
+[data-theme="SEA-DARK"] #product-thumbnail {
+    --section-background-color: var(--primary);
+}
+
+[data-theme="SEA-LIGHT"] #product-thumbnail {
+    --section-background-color: color-mix(in srgb, var(--primary), transparent 50%);
+}
+/*#endregion*/

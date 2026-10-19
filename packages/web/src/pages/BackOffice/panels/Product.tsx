@@ -41,9 +41,13 @@ import { useModal } from "contexts/Modal";
 import { useNotifications } from "contexts/Notifications";
 
 import Button from "components/buttons";
-import RestaurantsSelect from "components/forms/elements/selects/restaurants";
 import Icon from "components/icon";
+import Tag from "components/tags";
+
 import ProductCommentsList from "components/lists/productComments";
+
+import DescriptionLabel from "components/forms/elements/labels/description";
+import RestaurantsSelect from "components/forms/elements/selects/restaurants";
 
 import DeletionForm from "components/modals/forms/delete";
 
@@ -58,22 +62,25 @@ import type {
 import type {
     statusType
 } from "components/types";
-import Tag from "components/tags";
+
+import "./Product.css";
 
 // ***************************************************************************************************************
 
+// #region CONSTANTS
+const DELAY_MS = 2500;
 const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
+// #endregion
 
 defineLocale('pt', async () => {
     return locales.get("pt")?.uploadCare ?? {} as any;
 });
 
-const delayMS = 2500;
-
 function ProductPanel({ id }: { id: number }) {
     const { products } = useMemo(() => MXP$App.Base.Business.endpoints, []);
 
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const updaterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const updateStatusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const navigate = useNavigate();
 
@@ -90,6 +97,7 @@ function ProductPanel({ id }: { id: number }) {
     const { push } = useNotifications();
 
     const [updater, setUpdater] = useState<keyof Products | "">("");
+    const [updateStatus, setUpdateStatus] = useState<"idle" | "success" | "error">("idle");
     const [deleting, setDeleting] = useState(false);
     const [freePricing, setFreePricing] = useState<boolean>(false);
     const [pickRestaurant, setPickRestaurant] = useState<boolean>(false);
@@ -99,7 +107,7 @@ function ProductPanel({ id }: { id: number }) {
         isFetching
     } = useQuery({
         queryKey: ([
-            "App$GetOrder",
+            "App$GetProduct$BackofficePanel",
             "product",
             id
         ] as Queries$Types.queryKey[]),
@@ -110,7 +118,16 @@ function ProductPanel({ id }: { id: number }) {
     const data = which(cachedData, fetchedData) as productType;
 
     function getUpdaterStatusIndicator(...properties: (keyof Products)[]) {
-        if (properties.includes(updater as keyof Products)) return <Icon name="Loading" className="animate-spin" />;
+        if (properties.length === 0)
+            return null;
+
+        if (properties.includes(updater as keyof Products))
+            switch (updateStatus) {
+                case "error": return <Icon name="Close" />;
+                case "success": return <Icon name="Check" />;
+
+                default: return <Icon name="Loading" className="animate-spin" />;
+            };
 
         return null;
     };
@@ -162,7 +179,7 @@ function ProductPanel({ id }: { id: number }) {
     function toggleFreePricing() { setFreePricing(f => !f); }
     function toggleRestaurantPick() { setPickRestaurant(p => !p) };
 
-    function update(element: any, delay = delayMS) {
+    function update(element: any, delay = DELAY_MS) {
         const property = element.name as keyof Products;
         const _value = element.value;
 
@@ -189,9 +206,10 @@ function ProductPanel({ id }: { id: number }) {
                 break;
         };
 
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (updaterTimeoutRef.current) clearTimeout(updaterTimeoutRef.current);
+        if (updateStatusTimeoutRef.current) clearTimeout(updateStatusTimeoutRef.current);
 
-        timeoutRef.current = setTimeout(async () => {
+        updaterTimeoutRef.current = setTimeout(async () => {
             try {
                 setUpdater(property);
 
@@ -202,7 +220,11 @@ function ProductPanel({ id }: { id: number }) {
                         [property]: value
                     }
                 });
+
+                setUpdateStatus("success");
             } catch (error) {
+                setUpdateStatus("error");
+
                 push({
                     id: "N#ERROR_UPDATING_PRODUCT",
                     alert: (error as Error).message,
@@ -213,12 +235,26 @@ function ProductPanel({ id }: { id: number }) {
                     }
                 });
             } finally {
-                setUpdater("");
+                updateStatusTimeoutRef.current = setTimeout(() => setUpdater(""), delay * 2);
             }
         }, delay);
     };
 
-    useEffect(() => { const tRef = timeoutRef.current; return () => { if (tRef) clearTimeout(tRef); } }, []);
+    useEffect(() => {
+        const tRef = updaterTimeoutRef.current;
+        const uRef = updateStatusTimeoutRef.current;
+
+        return () => {
+            if (tRef) clearTimeout(tRef);
+            if (uRef) clearTimeout(uRef);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (updater !== "") return;
+
+        setUpdateStatus("idle");
+    }, [updater]);
 
     useEffect(() => { setFreePricing(parseInt(`${data?.price ?? '0'}`) === 0); }, [data?.price]);
 
@@ -258,7 +294,7 @@ function ProductPanel({ id }: { id: number }) {
                 <fieldset>
                     <legend>
                         <Tag variant="secondary">
-                            <Icon name="FlashAuto" />
+                            <Icon name="BookOpenText" />
 
                             Descrição
                         </Tag>
@@ -266,82 +302,114 @@ function ProductPanel({ id }: { id: number }) {
                         <span className="font-normal italic">Definir a apresentação do producto para clientes</span>
                     </legend>
 
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2">
-                            <span className="text-xl">Nome</span>
+                    <DescriptionLabel
+                        title="Nome"
+                        description={<span className="font-normal opacity-60">Nome apresentado para os clientes na lista de productos do menu, nas facturas/recibos, registos de históricos, pedidos e notificações.</span>}
+                        input={{
+                            icon: getUpdaterStatusIndicator("name"),
+                            element: "input",
+                            props: {
+                                className: "w-full",
+                                name: "name",
+                                title: "Nome do produto",
+                                type: "text",
+                                readOnly: data?.delisted || false,
+                                defaultValue: data?.name,
+                                onKeyDown: handleKeyDown,
+                                onBlur: handleEvent
+                            }
+                        }}
+                    />
 
-                            <span className="font-normal opacity-60">
-                                Nome apresentado para os clientes na lista de productos do menu, nas facturas/recibos, registos de históricos, pedidos e notificações.
-                            </span>
-                        </div>
+                    <DescriptionLabel
+                        title="Categoria"
+                        description={<span className="font-normal opacity-60">Serve para o filtro da lista de productos, agrupa pela categoria de refeição.</span>}
+                        input={{
+                            icon: getUpdaterStatusIndicator("product_type"),
+                            element: "select",
+                            options: [
+                                {
+                                    key: "Tipo do produto",
+                                    value: {
+                                        data: "",
+                                        props: {
+                                            hidden: true
+                                        }
+                                    }
+                                },
+                                ...MENU_PRODUCT_TYPES.map(t => ({
+                                    key: getLabel(t),
+                                    value: {
+                                        data: t
+                                    }
+                                }))
+                            ],
+                            props: {
+                                title: "Tipo de produto",
+                                id: "product_type",
+                                name: "product_type",
+                                defaultValue: data?.product_type as string,
+                                disabled: data?.delisted || false,
+                                required: true,
+                                onChange: handleEvent
+                            }
+                        }}
+                    />
 
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                            {getUpdaterStatusIndicator("name")}
+                    <DescriptionLabel
+                        title="Composição"
+                        description={<span className="font-normal opacity-60">Serve para o filtro da lista de productos e muda o tipo de cor como é apresentado.</span>}
+                        input={{
+                            icon: getUpdaterStatusIndicator("product_composition"),
+                            element: "select",
+                            options: [
+                                {
+                                    key: "Composição do producto",
+                                    value: {
+                                        data: "",
+                                        props: {
+                                            hidden: true
+                                        }
+                                    }
+                                },
+                                ...MENU_PRODUCT_COMPOSITIONS.map(t => ({
+                                    key: getLabel(t),
+                                    value: {
+                                        data: t
+                                    }
+                                }))
+                            ],
+                            props: {
+                                title: "Tipo de produto",
+                                id: "product_composition",
+                                name: "product_composition",
+                                defaultValue: data?.product_composition as string,
+                                disabled: data?.delisted || false,
+                                required: true,
+                                onChange: handleEvent
+                            }
+                        }}
+                    />
 
-                            <input className="w-full" name="name" title="Nome do produto" type="text" defaultValue={data?.name} onKeyDown={handleKeyDown} onBlur={handleEvent} readOnly={data?.delisted || false} />
-                        </div>
-                    </label>
-
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2">
-                            <span className="text-xl">Categoria</span>
-
-                            <span className="font-normal opacity-60">
-                                Serve para o filtro da lista de productos, agrupa pela categoria de refeição.
-                            </span>
-                        </div>
-
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                            {getUpdaterStatusIndicator("product_type")}
-
-                            <select title="Tipo de produto" id="product_type" name="product_type" defaultValue={data?.product_type ?? ""} disabled={data?.delisted || false} required>
-                                <option hidden value="">Tipo do produto</option>
-
-                                {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
-                                    {getLabel(t)}
-                                </option>)}
-                            </select>
-                        </div>
-                    </label>
-
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2">
-                            <span className="text-xl">Composição</span>
-
-                            <span className="font-normal opacity-60">
-                                Serve para o filtro da lista de productos e muda o tipo de cor como é apresentado.
-                            </span>
-                        </div>
-
-                        <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                            {getUpdaterStatusIndicator("product_composition")}
-
-                            <select title="Composição do produto" id="product_composition" name="product_composition" defaultValue={data?.product_composition ?? ""} disabled={data?.delisted || false} required>
-                                <option hidden value="">Composição</option>
-
-                                {MENU_PRODUCT_COMPOSITIONS.map(t => <option key={t} value={t}>
-                                    {getLabel(t)}
-                                </option>)}
-                            </select>
-                        </div>
-                    </label>
-
-                    <label>
-                        <div className="flex flex-col justify-start items-start gap-2 w-full">
-                            <span className="text-xl">
-                                {getUpdaterStatusIndicator("description")}
-
-                                Descrição
-                            </span>
-
-                            <span className="font-normal opacity-60">
-                                Qual é a história do producto? Melhores aspectos ou características?
-                            </span>
-
-                            <textarea title="Descrição" id="description" name="description" defaultValue={data?.description ?? ""} onChange={handleEvent} className="w-full" />
-                        </div>
-                    </label>
-                </fieldset>
+                    <DescriptionLabel
+                        title="Descrição"
+                        layout="column"
+                        description={<span className="font-normal opacity-60">Qual é a história do producto? Melhores aspectos ou características?</span>}
+                        input={{
+                            icon: getUpdaterStatusIndicator("description"),
+                            element: "textarea",
+                            props: {
+                                className: "w-full",
+                                name: "name",
+                                id: "description",
+                                title: "Descrição",
+                                defaultValue: data?.description || "",
+                                readOnly: data?.delisted || false,
+                                onChange: handleEvent
+                            }
+                        }}
+                    />
+                </fieldset >
 
                 {(data?.delisted)
                     ? <>
@@ -358,7 +426,7 @@ function ProductPanel({ id }: { id: number }) {
                         <fieldset>
                             <legend>
                                 <Tag variant="secondary">
-                                    <Icon name="FlashAuto" />
+                                    <Icon name="PriceTags" />
 
                                     Preço
                                 </Tag>
@@ -366,46 +434,53 @@ function ProductPanel({ id }: { id: number }) {
                                 <span className="font-normal italic">Definir preços e/ou descontos</span>
                             </legend>
 
-                            <label>
-                                <div className="flex flex-col justify-start items-start gap-2">
-                                    <span className="text-xl">Preço</span>
 
-                                    <span className="font-normal opacity-60">
-                                        Preço do producto que estará registado.
-                                    </span>
-
-                                    <Tag variant="warning">
-                                        <Icon name="Warning" className="text-lg" />
-
-                                        <span className="text-sm">Alteração do só afetará os produtos que não foram vendidos</span>
-                                    </Tag>
-                                </div>
-
-                                <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                                    {getUpdaterStatusIndicator("price")}
-
-                                    {(freePricing)
-                                        ? <input className="text-right" name="price" title="Preço" type="text" value="Grátis" onClick={() => toggleFreePricing()} readOnly />
-                                        : <input className="text-right" name="price" title="Preço (editável)" type="number" min={0} defaultValue={parseFloat(`${data?.price}`)} onKeyDown={handleKeyDown} onBlur={handleEvent} />
+                            <DescriptionLabel
+                                title="Preço"
+                                description={<span className="font-normal opacity-60">Preço do producto que estará registado.</span>}
+                                alerts={{ warning: "Alteração do só afetará os produtos que não foram vendidos" }}
+                                input={{
+                                    icon: getUpdaterStatusIndicator("price"),
+                                    element: "input",
+                                    props: {
+                                        className: "text-right",
+                                        name: "price",
+                                        ...((freePricing)
+                                            ? {
+                                                type: "text",
+                                                value: "Grátis",
+                                                readOnly: true,
+                                                onClick: () => toggleFreePricing()
+                                            }
+                                            : {
+                                                type: "number",
+                                                min: 1,
+                                                defaultValue: parseFloat(`${data?.price}`),
+                                                onBlur: handleEvent,
+                                                onKeyDown: handleKeyDown
+                                            }
+                                        )
                                     }
-                                </div>
-                            </label>
+                                }}
+                            />
 
-                            <label>
-                                <div className="flex flex-col justify-start items-start gap-2">
-                                    <span className="text-xl">Desconto</span>
-
-                                    <span className="font-normal opacity-60">
-                                        Percentagem de desconto aplicada para o producto, ficará visível no menu.
-                                    </span>
-                                </div>
-
-                                <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                                    {getUpdaterStatusIndicator("discount")}
-
-                                    <input className="text-right" name="discount" title="Desconto" type="number" min={0} defaultValue={parseFloat(`${data?.discount}`)} onKeyDown={handleKeyDown} onBlur={handleEvent} />
-                                </div>
-                            </label>
+                            <DescriptionLabel
+                                title="Desconto"
+                                description={<span className="font-normal opacity-60">Percentagem de desconto aplicada para o producto, ficará visível no menu.</span>}
+                                input={{
+                                    icon: getUpdaterStatusIndicator("discount"),
+                                    element: "input",
+                                    props: {
+                                        className: "text-right",
+                                        name: "discount",
+                                        title: "Desconto",
+                                        type: "number",
+                                        defaultValue: parseFloat(`${data?.discount}`),
+                                        onBlur: handleEvent,
+                                        onKeyDown: handleKeyDown
+                                    }
+                                }}
+                            />
                         </fieldset>
 
                         <hr />
@@ -413,7 +488,7 @@ function ProductPanel({ id }: { id: number }) {
                         <fieldset>
                             <legend>
                                 <Tag variant="secondary">
-                                    <Icon name="FlashAuto" />
+                                    <Icon name="Restaurant" />
 
                                     Disponibilidade
                                 </Tag>
@@ -421,21 +496,23 @@ function ProductPanel({ id }: { id: number }) {
                                 <span className="font-normal italic">Definir a apresentação do producto para clientes</span>
                             </legend>
 
-                            <label>
-                                <div className="flex flex-col justify-start items-start gap-2">
-                                    <span className="text-xl">Acesso</span>
+                            <DescriptionLabel
+                                className="p-3"
+                                selectable
+                                title="Acesso"
+                                description={<span className="font-normal opacity-60">Produto será servido por todos os restaurantes?</span>}
+                                input={{
+                                    element: "input",
+                                    props: {
+                                        type: "checkbox",
+                                        placeholder: "Aonde será servido o produto",
+                                        defaultChecked: !pickRestaurant,
+                                        onChange: toggleRestaurantPick
+                                    }
+                                }}
+                            />
 
-                                    <span className="font-normal opacity-60">
-                                        Produto será servido por todos os restaurantes?
-                                    </span>
-                                </div>
-
-                                <div className="flex flex-col justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                                    <input type="checkbox" placeholder="Aonde será servido o produto" defaultChecked={!pickRestaurant} onChange={toggleRestaurantPick} />
-                                </div>
-                            </label>
-
-                            {pickRestaurant && <label>
+                            {pickRestaurant && <label className="w-full flex flex-row justify-between items-center gap-5">
                                 <div className="flex flex-col justify-start items-start gap-2">
                                     <span className="text-xl">Estabelecimento</span>
 
@@ -447,7 +524,7 @@ function ProductPanel({ id }: { id: number }) {
                                 <div className="flex flex-col justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
                                     {getUpdaterStatusIndicator("restaurant_id")}
 
-                                    <RestaurantsSelect title="Restaurante" id="restaurant_id" name="restaurant_id" defaultOptionLabel="Escolha um restaurante" defaultValue={""} required />
+                                    <RestaurantsSelect title="Restaurante" id="restaurant_id" name="restaurant_id" defaultOptionLabel="Escolha um restaurante" defaultValue={""} required onChange={handleEvent} />
                                 </div>
                             </label>}
                         </fieldset>
@@ -457,7 +534,7 @@ function ProductPanel({ id }: { id: number }) {
                         <fieldset>
                             <legend>
                                 <Tag variant="secondary">
-                                    <Icon name="FlashAuto" />
+                                    <Icon name="Clock" />
 
                                     Tempo
                                 </Tag>
@@ -465,25 +542,25 @@ function ProductPanel({ id }: { id: number }) {
                                 <span className="font-normal italic">Definir a apresentação do producto para clientes</span>
                             </legend>
 
-                            <label>
-                                <div className="flex flex-col justify-start items-start gap-2 w-full">
-                                    <span className="text-xl">
-                                        {getUpdaterStatusIndicator("description")}
-
-                                        Tempo de preparo (em minutos)
-                                    </span>
-
-                                    <span className="font-normal opacity-60">
-                                        Representa o tempo de preparo adicionado à estimativa de espera partilhada com o cliente
-                                    </span>
-                                </div>
-
-                                <div className="flex flex-row justify-center items-center gap-1 min-w-[200px] max-w-[200px] w-[200px]">
-                                    {getUpdaterStatusIndicator("prep_time_minutes")}
-
-                                    <input title="Tempo de preparo (em minutos)" id="prep_time_minutes" name="prep_time_minutes" defaultValue={3} min={3} onChange={handleEvent} type="number" required />
-                                </div>
-                            </label>
+                            <DescriptionLabel
+                                title="Tempo de preparo (em minutos)"
+                                description={<span className="font-normal opacity-60">Representa o tempo de preparo adicionado à estimativa de espera partilhada com o cliente</span>}
+                                input={{
+                                    icon: getUpdaterStatusIndicator("prep_time_minutes"),
+                                    element: "input",
+                                    props: {
+                                        id: "prep_time_minutes",
+                                        name: "prep_time_minutes",
+                                        title: "Tempo de preparo (em minutos)",
+                                        type: "number",
+                                        defaultValue: 3,
+                                        min: 3,
+                                        required: true,
+                                        onKeyDown: handleKeyDown,
+                                        onBlur: handleEvent
+                                    }
+                                }}
+                            />
                         </fieldset>
 
                         <hr className="w-full h-[1px]" />
@@ -592,7 +669,7 @@ const ScrollToSection = ({
         }
 
         default: {
-            return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], "w-full")}>
+            return <section id="product-thumbnail" className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], "w-full")}>
                 <header>
                     {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                         {kvp.icon}
@@ -602,7 +679,7 @@ const ScrollToSection = ({
                 </header>
 
                 <div data-type="container">
-                    <section id="event-thumbnail" className="gap-2">
+                    <section className="flex flex-col justify-start items-start gap-2 w-full">
                         <div data-type="thumbnail" style={{ height: "300px", backgroundImage: `url(${thumbnail_url})` }} className="w-full flex flex-col justify-center items-center rounded-md border">
                             {state === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
                         </div>

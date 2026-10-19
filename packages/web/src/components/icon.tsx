@@ -103,6 +103,7 @@ import {
 
 import {
     IoIosLogOut,
+    IoIosPricetags,
     IoIosWarning,
     IoMdAdd,
     IoMdClose,
@@ -154,6 +155,7 @@ import {
 } from "react-icons/md";
 
 import {
+    PiBookOpenText,
     PiBowlFoodFill,
     PiMoneyWavyFill,
     PiNewspaperClipping,
@@ -196,6 +198,7 @@ const registry = {
     ArrowLeft: FaArrowLeft,
     ArrowRight: FaArrowRight,
     ArrowUp: FaArrowUp,
+    BookOpenText: PiBookOpenText,
     BowlRice: FaBowlRice,
     Calendar1: RiCalendarTodoLine,
     CalendarExpired: FaRegCalendarTimes,
@@ -283,6 +286,7 @@ const registry = {
     Phone: MdPhone,
     Plus: GoPlus,
     Plus2: FaPlus,
+    PriceTags: IoIosPricetags,
     Product: AiFillProduct,
     Queue: HiMiniQueueList,
     Recycle: FaRecycle,
