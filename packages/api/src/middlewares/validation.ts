@@ -114,10 +114,10 @@ export namespace Validate {
             ) => fields.some(field => {
                 const fieldValue = req.body[field];
 
-                return [
-                    !isInvalidValue(fieldValue),
-                    (fieldValue.toString().trim() !== '')
-                ].every(Boolean);
+                if (isInvalidValue(fieldValue))
+                    return false;
+                
+                return (fieldValue.toString().trim() !== '');
             });
 
             export const forbiddenFields = (fields: string[], message = 'These fields should be updated using the correct endpoint') => {
