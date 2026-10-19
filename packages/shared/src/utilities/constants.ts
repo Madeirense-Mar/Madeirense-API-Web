@@ -136,7 +136,7 @@ export const MENU_PRODUCT_COMPOSITIONS = [
     "merchandise",
     "mixed",
     "non_alcoholic",
-    "vegan",
+    "vegetable",
     "wheat"
 ] as ReadonlyArray<$Enums.Products_product_composition>;
 
