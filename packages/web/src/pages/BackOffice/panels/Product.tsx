@@ -188,16 +188,17 @@ function ProductPanel({ id }: { id: number }) {
         let value;
 
         switch (property) {
-            case "price":
-                if (["", "0"].includes(`${_value}`)) toggleFreePricing();
-                value = _value === "" ? 0 : parseFloat(_value);
-                break;
-
             case "discount":
+            case "prep_time_minutes":
             case "restaurant_id":
                 value = _value === "" ? 0 : parseInt(_value, 10);
                 break;
 
+            case "price":
+                if (["", "0"].includes(`${_value}`)) toggleFreePricing();
+                value = _value === "" ? 0 : parseFloat(_value);
+                break;
+                
             default:
                 if (_value === "") return;
 
