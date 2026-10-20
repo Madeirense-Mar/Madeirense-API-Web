@@ -206,7 +206,7 @@ const DiscountForm = ({
 
             <fieldset className="w-full flex flex-row justify-start items-start gap-3 rounded-md">
                 <DescriptionLabel
-                    className="gap-5"
+                    className="gap-5 w-full"
                     title="Desconto"
                     description="Valor de desconto (em percentagem) que será atribuido à todos os productos seleccionados."
                     input={{
