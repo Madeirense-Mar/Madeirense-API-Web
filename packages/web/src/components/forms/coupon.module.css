@@ -1,0 +1,4 @@
+.form fieldset {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+}

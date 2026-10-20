@@ -1,0 +1,47 @@
+.form fieldset {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+}
+
+.list li:first-child {
+    padding: 12px;
+    border-radius: 12px;
+}
+
+[data-theme*="LIGHT"] .list li:first-child {
+    border: 1px solid var(--base-border-color);
+}
+
+[data-theme="LAND-DARK"] .list li:first-child {
+    background-color: color-mix(in srgb, var(--secondary-dark), var(--neutral-dark) 60%);
+}
+
+[data-theme="SEA-DARK"] .list li:first-child {
+    background-color: color-mix(in srgb, var(--primary), var(--neutral-dark) 10%);
+}
+
+.list-item-header {
+    --radius: 8px;
+
+    border-radius: var(--radius) var(--radius) 0px var(--radius);
+}
+
+.list-item label[data-variant="selectable"] {
+    --label-border-radius: 0px;
+    
+    border-bottom-width: 0px;
+    border-top-width: 0px;
+}
+
+.last-list-item label[data-variant="selectable"] {
+    --radius: 4px;
+    --label-border-radius: 0px 0px var(--radius) var(--radius);
+    
+    @apply mb-5;
+
+    border-bottom-width: 1px;
+}
+
+.last-list-item:last-child label[data-variant="selectable"] {
+    margin-bottom: 0px;
+}

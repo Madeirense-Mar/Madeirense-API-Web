@@ -9,6 +9,7 @@ import {
 
 import {
     API$Enumerators,
+    resolveClassNames,
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
@@ -19,16 +20,20 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tags";
 
+import styles from "./coupon.module.css";
+
 import type {
     Coupons
 } from "@Madeirense/database/browser";
 
 import type { IComponentState } from "components/interface";
+import DescriptionLabel from "./elements/labels/description";
 
 // ***************************************************************************************************************
 
 const CouponForm = ({
     callback,
+    className,
     ...props
 }: {
     callback?: () => void
@@ -144,7 +149,12 @@ const CouponForm = ({
         }
     };
 
-    return <form data-state={(IS_LOADING || status === "loading") ? "disabled" : "idle"} onSubmit={PATCH_POST} className="h-full w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
+    return <form
+        className={resolveClassNames(styles.form, className)}
+        data-state={(IS_LOADING || status === "loading") ? "disabled" : "idle"}
+        onSubmit={PATCH_POST}
+        {...props}
+    >
         {(status === "success") && <div data-state="success" className="w-full flex flex-row justify-center items-center gap-2">
             <Icon name="Check" />
 
@@ -152,62 +162,91 @@ const CouponForm = ({
         </div>}
 
         <div className="w-full flex flex-row justify-between items-center gap-1">
-            <label data-variant="selectable" htmlFor="renew" className="w-full border p-2 rounded-lg">
-                <input id="renew" type="radio" name="mode" defaultChecked={mode === "renew"} value="renew" onChange={selectFormMode} className="mr-auto" />
-
-                <Icon name="Update" />
+            <label data-variant="selectable" htmlFor="renew" className="w-full p-2 rounded-lg">
+                {(IS_LOADING)
+                    ? <Icon name="Loading" className="animate-spin" />
+                    : <Icon name="Update" />
+                }
 
                 <span>Atualizar cupons</span>
+
+                <input id="renew" type="radio" name="mode" defaultChecked={mode === "renew"} value="renew" onChange={selectFormMode} className="opacity-0" />
             </label>
 
-            <label data-variant="selectable" htmlFor="add" className="w-full border p-2 rounded-lg">
-                <input id="add" type="radio" name="mode" defaultChecked={mode === "add"} value="add" onChange={selectFormMode} className="mr-auto" />
-
+            <label data-variant="selectable" htmlFor="add" className="w-full p-2 rounded-lg">
                 <Icon name="Add" />
 
                 <span>Criar cupon</span>
+
+                <input id="add" type="radio" name="mode" defaultChecked={mode === "add"} value="add" onChange={selectFormMode} className="opacity-0" />
             </label>
         </div>
 
+        <hr className="w-full opacity-30" />
+
         {(mode === "add") && <fieldset className="w-full flex flex-col justify-start items-start gap-3 rounded-md">
-            <legend>Criar cupon</legend>
-
-            <label htmlFor="code" className="text-lg w-full flex flex-row justify-start items-center gap-2">
-                <Icon name="Coupon" />
-
-                <span>
-                    Códido
-
+            <DescriptionLabel
+                className="w-full gap-3"
+                title="Código"
+                description={<span>
+                    O nome do cupão a ser utilizado pelos clientes. 
                     <span className="italic opacity-30 ml-1 text-sm">(exe. MADEIRENSE-CÓDIGO-CUPON)</span>
-                </span>
+                </span>}
+                input={{
+                    element: "input",
+                    icon: <Icon name="Coupon" />,
+                    props: {
+                        title: "Código de cupon",
+                        id: "code",
+                        name: "code",
+                        className: "text-center w-full uppercase",
+                        placeholder: "Código de cupon",
+                        type: "text",
+                        required: true
+                    }
+                }}
+            />
 
-                <input title="Código de cupon" id="code" name="code" className="ml-auto w-[252px] text-center" placeholder="Código de cupon" type="text" data-element="h3" required />
-            </label>
+            <DescriptionLabel
+                className="w-full gap-3"
+                title="Desconto"
+                description="Percentagem de desconto oferecido pelo cupon."
+                input={{
+                    element: "input",
+                    icon: <Icon name="Discount" />,
+                    props: {
+                        title: "Código de cupon",
+                        id: "coupon-discount",
+                        name: "coupon-discount",
+                        className: "text-center w-full",
+                        placeholder: "Percentagem",
+                        type: "number",
+                        required: true
+                    }
+                }}
+            />
 
-            <label htmlFor="coupon-discount" className="text-lg w-full flex flex-row justify-start items-center gap-2">
-                <Icon name="Discount" />
-
-                <span>Desconto</span>
-
-                <input title="Desconto" id="coupon-discount" name="coupon-discount" className="ml-auto w-[252px] text-center" placeholder="Percentagem" type="number" data-element="h3" required />
-            </label>
-
-            <label htmlFor="expires_at" className="text-lg w-full flex flex-row justify-start items-center gap-2">
-                <Icon name="Calendar1" />
-
-                <span>Data de expiração</span>
-
-                <input min={new Date().toISOString().split('T')[0]} title="Nova data de expiração" id="expires_at" name="expires_at" className="ml-auto w-[252px] text-center" placeholder="Data de expiração" type="date" data-element="h3" required />
-            </label>
+            <DescriptionLabel
+                className="w-full gap-3"
+                title="Data de expiração"
+                description="Determina o prazo de validade do cupon, desde o dia que foi criado até à data de expiração. Após a data, o cupon pode ser re-activado vezes sem conta."
+                input={{
+                    element: "input",
+                    icon: <Icon name="Calendar1" />,
+                    props: {
+                        min: new Date().toISOString().split('T')[0],
+                        title: "Nova data de expiração",
+                        id: "expires_at",
+                        name: "expires_at",
+                        className: "text-center w-full",
+                        placeholder: "Data de expiração",
+                        type: "date"
+                    }
+                }}
+            />
         </fieldset>}
 
-        {(mode === "renew") && <fieldset className="w-full flex flex-col justify-start items-start gap-11 rounded-md">
-            <legend className="flex flex-row justify-start items-center gap-2">
-                Cupons
-
-                {(IS_LOADING) && <Icon name="Loading" className="animate-spin" />}
-            </legend>
-
+        {(mode === "renew") && <fieldset className="w-full flex flex-col justify-start items-start gap-5 rounded-md">
             <label htmlFor="search" className="w-full flex flex-row justify-start items-center gap-2">
                 <Icon name="Search" />
 
@@ -239,7 +278,7 @@ const CouponForm = ({
                             {`${c.discount}%`}
                         </Tag>
 
-                        <Tag>
+                        <Tag variant="secondary">
                             <Icon name="Calendar1" />
 
                             {new Date(c.expires_at).toLocaleString()}
@@ -247,7 +286,7 @@ const CouponForm = ({
                     </label>
                 </li>)}
 
-                {Boolean(expiredCoupons.length) && <li className="w-full gap-2 rounded-md border p-1 font-black flex flex-row justify-start items-center">
+                {Boolean(expiredCoupons.length) && <li className={resolveClassNames("w-full gap-2 rounded-md border p-1 font-black flex flex-row justify-start items-center", Boolean(activeCoupons.length) ? "mt-5" : null)}>
                     <Icon name="Close" />
 
                     Expirados
@@ -257,7 +296,7 @@ const CouponForm = ({
                     <input id={`${c.coupon_id}-coupon`} type="checkbox" value={c.coupon_id} name="coupon_ids" />
 
                     <label htmlFor={`${c.coupon_id}-coupon`} className="cursor-pointer w-full gap-2 flex flex-row justify-start items-center">
-                        <Icon name="Coupon" />
+                        <Icon name="CouponOff" />
 
                         <span className="italic">{c.code}</span>
 
@@ -267,7 +306,7 @@ const CouponForm = ({
                             {`${c.discount}%`}
                         </Tag>
 
-                        <Tag>
+                        <Tag variant="danger">
                             <Icon name="CalendarExpired" />
 
                             <span className="line-through">
@@ -278,20 +317,33 @@ const CouponForm = ({
                 </li>)}
             </ul>
 
-            <label htmlFor="expires_at" className="w-full flex flex-row justify-start items-center gap-2 mr-auto border-t pt-2">
-                <Icon name="Calendar1" />
+            <hr className="w-full opacity-30" />
 
-                <span>Data de expiração</span>
-
-                <input min={new Date().toISOString().split('T')[0]} title="Nova data de expiração" id="expires_at" name="expires_at" className="ml-auto text-center" placeholder="Data de expiração" type="date" data-element="h3" />
-            </label>
+            <DescriptionLabel
+                className="w-full gap-3"
+                title="Data de expiração"
+                description="Determina o prazo de validade do cupon, desde o dia que foi criado até à data de expiração. Após a data, o cupon pode ser re-activado vezes sem conta."
+                input={{
+                    element: "input",
+                    icon: <Icon name="Calendar1" />,
+                    props: {
+                        min: new Date().toISOString().split('T')[0],
+                        title: "Nova data de expiração",
+                        id: "expires_at",
+                        name: "expires_at",
+                        className: "text-center w-full",
+                        placeholder: "Data de expiração",
+                        type: "date"
+                    }
+                }}
+            />
         </fieldset>}
 
-        {(status === "error") && <div data-state="error" className="w-full flex flex-row justify-center items-center gap-2">
+        {(status === "error") && <Tag variant="danger" className="mx-auto">
             <Icon name="ExclamationCircle" />
 
             {error?.message}
-        </div>}
+        </Tag>}
 
         {(status === "loading")
             ? <Button variant="secondary" className="w-full" disabled>

@@ -1,0 +1,17 @@
+.form fieldset {
+    --fieldset-padding: 0px;
+}
+
+.form fieldset:first-child>div:first-child {
+    --height: 200px;
+
+    height: var(--height);
+    max-height: var(--height);
+    min-height: var(--height);
+
+    width: 100%;
+    
+    border-radius: 10px;
+    
+    background-color: gray;
+}

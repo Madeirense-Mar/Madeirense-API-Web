@@ -6,17 +6,21 @@
     justify-content: var(--label-justify-content, space-between);
 }
 
-.label>div {
-    width: 100%;
+.label>div:first-child {
+    --default-width: 100%;
+
+    @apply flex flex-col justify-start items-start;
+
+    max-width: var(--w, var(--default-width));
 }
 
-.label>div:first-child {
-    @apply flex flex-col justify-start items-start;
+.label>div:first-child>span:first-child {
+    font-weight: var(--label-title-font-weight, 800);
 }
 
 .label>div:last-child {
     @apply flex flex-row items-center gap-3;
-    
+
     min-width: var(--w);
 
     justify-content: var(--wrapper-justify-content, flex-start);
@@ -39,6 +43,14 @@
     --label-justify-content: flex-start;
 }
 
+.column>div {
+    --w: 100%;
+
+    width: var(--w);
+    max-width: var(--w);
+    min-width: var(--w);
+}
+
 .row {
     --label-flex-direction: row;
     --label-justify-content: space-between;
@@ -47,18 +59,20 @@
 /*#endregion*/
 
 /*#region Media =========================================== */
-@media only screen and (min-width: 344px) {
-}
+@media only screen and (min-width: 344px) {}
 
-@media only screen and (min-width: 428px) {
-}
+@media only screen and (min-width: 428px) {}
 
 @media only screen and (min-width: 768px) {
-    .label>div:last-child  {
+    .row>div:first-child {
+        --w: 700px;
+    }
+
+    .row>div:last-child {
         --w: 300px;
     }
 }
 
-@media only screen and (min-width: 1366px) {
-}
+@media only screen and (min-width: 1366px) {}
+
 /*#endregion*/

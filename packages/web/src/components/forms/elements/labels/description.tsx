@@ -18,7 +18,7 @@ enum LabelLayouts {
     row = "row"
 };
 
-interface IPropTypes extends Omit<BaseLabelPropTypes, "icon"> {
+interface IPropTypes extends BaseLabelPropTypes {
     layout?: keyof typeof LabelLayouts;
 };
 
@@ -30,17 +30,20 @@ const DescriptionLabel = ({
     layout = LabelLayouts.row,
     selectable = false,
     title,
+    icon,
     ...props
 }: IPropTypes) => {
     const {
         element,
-        icon,
+        icon: inputIcon,
         props: inputProps
     } = input;
 
     const body = <>
         <div>
-            <span>
+            <span className={resolveClassNames(icon ? "inline-flex gap-2 justify-center items-center" : "")}>
+                {icon && <Icon name={icon} />}
+
                 {title}
             </span>
 
@@ -76,7 +79,7 @@ const DescriptionLabel = ({
                 {body}
 
                 <div>
-                    {icon}
+                    {inputIcon && <Icon name={inputIcon} />}
 
                     <Element {...inputProps}>
                         {input.options.map(op => <option key={op.value.data} value={op.value.data} {...op.value.props}>
@@ -91,7 +94,7 @@ const DescriptionLabel = ({
                 {body}
 
                 <div>
-                    {icon}
+                    {inputIcon && <Icon name={inputIcon} />}
 
                     <Element {...inputProps} />
                 </div>

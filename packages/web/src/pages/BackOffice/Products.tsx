@@ -1,4 +1,5 @@
 import {
+    MouseEvent,
     useState,
     type ChangeEvent
 } from "react";
@@ -14,8 +15,14 @@ import ProductsMenuGrid from "components/grids/products/menu";
 
 import AddProductForm from "components/modals/forms/product/add";
 import ProductDiscountForm from "components/modals/forms/product/discount";
+import CouponForm from "components/forms/coupon";
 
 // ***************************************************************************************************************
+
+enum Modals {
+    DISCOUNT="DISCOUNT",
+    PRODUCT="PRODUCT"
+};
 
 function BackOfficeProductsPage() {
     const { show } = useModal();
@@ -26,16 +33,16 @@ function BackOfficeProductsPage() {
         setType((target as HTMLSelectElement).value as (typeof type));
     };
 
-    function openAddProductModal() {
-        show(<AddProductForm />, {
-            title: `Adicionar produto ao menu`
-        });
-    };
+    function openModal(e: MouseEvent<HTMLButtonElement>) {
+        switch ((e.target as HTMLButtonElement).value) {
+            case Modals.DISCOUNT:
+                show(<ProductDiscountForm />, { title: `Ver/Atribuir descontos` });
+                break;
 
-    function openProductDiscountModal() {
-        show(<ProductDiscountForm />, {
-            title: `Ver/Atribuir descontos`
-        });
+            case Modals.PRODUCT:
+                show(<AddProductForm />, { title: `Adicionar produto ao menu` });
+                break;
+        };
     };
 
     return <main>
@@ -46,19 +53,19 @@ function BackOfficeProductsPage() {
                     <option value="delisted-products">Ocultados</option>
                 </select>
 
-                <Button variant="warning" onClick={openProductDiscountModal}>
+                <Button value={Modals.DISCOUNT} variant="warning" onClick={openModal}>
                     <Icon name="Discount" />
 
                     Ver/Atribuir descontos
                 </Button>
 
-                <Button shape="circle" onClick={openAddProductModal}>
+                <Button value={Modals.PRODUCT} onClick={openModal}>
                     <Icon name="Plus" />
+
+                    Adicionar novo prato/producto
                 </Button>
             </header>
-        </section>
 
-        <section>
             <ProductsMenuGrid
                 className="w-full flex flex-col justify-start items-start gap-5"
                 group="menu"
@@ -66,6 +73,18 @@ function BackOfficeProductsPage() {
                 trackAppUpdates
                 {...{ type }}
             />
+        </section>
+
+        <section>
+            <header>
+                <h2 className="inline-flex justify-center items-center gap-3">
+                    <Icon name="Coupon" />
+
+                    Cupons de desconto
+                </h2>
+            </header>
+
+            <CouponForm className="w-full flex flex-col justify-start items-start gap-4" />
         </section>
     </main>
 };

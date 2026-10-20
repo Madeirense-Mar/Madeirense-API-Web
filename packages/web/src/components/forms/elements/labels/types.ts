@@ -19,7 +19,7 @@ export interface BaseLabelPropTypes extends ComponentProps<"label"> {
         | { element: 'select', props?: ComponentProps<"select">, options: keyValuePair<string, { data: (number | string), props?: ComponentProps<"option"> }>[] }
         | { element: 'textarea', props?: ComponentProps<"textarea"> }
     ) & {
-        icon?: any
+        icon?: iconNameType
     };
     selectable?: boolean;
 };

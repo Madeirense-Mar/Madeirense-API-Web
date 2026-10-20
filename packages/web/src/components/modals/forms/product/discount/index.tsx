@@ -13,7 +13,6 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 
 import DiscountForm from "./discount";
-import CouponForm from "./coupon";
 
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
@@ -39,9 +38,8 @@ const ScrollToSection = ({
     const [pickedSection, setPickedSection] = useState<`section-${scrollSectionType}`>("section-discounts");
 
     const sections = [
-        { key: `Descontos`, value: "section-discounts", icon: <Icon name="Discount" /> },
+        { key: `Editar`, value: "section-discounts", icon: <Icon name="Edit" /> },
         { key: `Atribuir`, value: "section-new", icon: <Icon name="Add" /> },
-        { key: `Cupons`, value: "section-coupons", icon: <Icon name="Coupon" /> },
     ];
 
     function pickSection(e: MouseEvent<HTMLButtonElement>) {
@@ -72,10 +70,6 @@ const ScrollToSection = ({
 
             <section id="section-new" data-state={pickedSection === "section-new" ? "idle" : "disabled"}>
                 <DiscountForm mode="add" {...{ callback }} />
-            </section>
-
-            <section id="section-coupons" data-state={pickedSection === "section-coupons" ? "idle" : "disabled"}>
-                <CouponForm {...{ callback }} />
             </section>
         </div>
     </section>

@@ -16,6 +16,7 @@ import {
     getLabel,
     formatUUID_UC_CDN_URL,
     locales,
+    resolveClassNames,
 } from "@Madeirense/shared";
 
 import env from "env";
@@ -25,13 +26,20 @@ import { useModal } from "contexts/Modal";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
+
+import DescriptionLabel from "components/forms/elements/labels/description";
 import RestaurantsSelector from "components/forms/elements/selects/restaurants";
+
+import styles from "./add.module.css";
 
 import type {
     $Enums
 } from "@Madeirense/database/browser";
 
-import type { IComponentState } from "components/interface";
+import type {
+    IComponentState
+} from "components/interface";
+import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
@@ -77,10 +85,11 @@ const AddProductForm = ({
     } = form;
 
     const assertions = {
+        hasUploadedThumbnail: data?.uploadedThumbnailURL !== "",
         isWorking: [
             "uploading-thumbnail"
         ].includes(status)
-    }
+    };
 
     const _ONLY_APPLICABLE_PRODUCT_COMPOSITIONS = (product_type?: $Enums.Products_product_type) => {
         if (!product_type) return (comp: $Enums.Products_product_composition) => true;
@@ -92,7 +101,7 @@ const AddProductForm = ({
                         "alcoholic",
                         "non_alcoholic"
                     ] as $Enums.Products_product_composition[]).includes(comp);
-            
+
                 default:
                     return !([
                         "alcoholic",
@@ -194,95 +203,173 @@ const AddProductForm = ({
         }
     };
 
-    return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4" {...props}>
-        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-6 rounded-md">
-            <legend>Sobre</legend>
-
-            <header className="w-full flex flex-row justify-between items-center">
-                <h5>Imagem da capa</h5>
-
-                <FileUploaderRegular
-                    filesViewMode="grid"
-                    multipleMin={1}
-                    multipleMax={1}
-                    localeName="pt"
-                    onFileUploadStart={toggleUploadState("thumbnail")}
-                    onFileUploadSuccess={handleUpload("thumbnail")}
-                    pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                    sourceList="local, facebook, gdrive"
-                    confirmUpload
-                    gridShowFileNames
-                    imgOnly
-                    useCloudImageEditor
-                />
-            </header>
-
-            {[
-                status === "uploading-thumbnail",
-                data?.uploadedThumbnailURL !== ""
-            ].includes(true) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px]">
-                    {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
-                </div>}
-
-            <label htmlFor="name" className="w-full text-left">
-                <input id="name" className="w-full" name="name" title="Nome do prato" data-element="h3" type="text" placeholder="Nome do produto" required />
-            </label>
-
-            <div className="w-full flex flex-row justify-between items-center gap-5">
-                <label htmlFor="product_type" className="w-full text-left">
-                    <select onChange={handleProductTypePick} title="Tipo de produto" id="product_type" name="product_type" data-element="h3" defaultValue={""} className="w-full" required>
-                        <option hidden value="">Tipo do produto</option>
-
-                        {MENU_PRODUCT_TYPES.map(t => <option key={t} value={t}>
-                            {getLabel(t)}
-                        </option>)}
-                    </select>
-                </label>
-
-                <label htmlFor="product_composition" className="w-full text-left">
-                    <select disabled={!Boolean(form.data?.pickedProductType)} title="Composição do produto" id="product_composition" name="product_composition" data-element="h3" defaultValue={""} className="w-full" required>
-                        <option hidden value="">Composição do produto</option>
-
-                        {MENU_PRODUCT_COMPOSITIONS.filter(_ONLY_APPLICABLE_PRODUCT_COMPOSITIONS(form.data?.pickedProductType)).map(t => <option key={t} value={t}>
-                            {getLabel(t)}
-                        </option>)}
-                    </select>
-                </label>
+    return <form onSubmit={POST} className={resolveClassNames(styles.form, "h-ful w-full flex flex-col justify-start items-start gap-11")} {...props}>
+        <fieldset className="w-full flex flex-col justify-start items-center gap-5">
+            <div style={{ backgroundImage: `url(${data?.uploadedThumbnailURL || "#"})`}}>
             </div>
-
-            <label htmlFor="description" className="w-full text-left">
-                <span>Descrição</span>
-
-                <br />
-
-                <textarea id="description" name="description" placeholder="Descrição..." data-element="p" className="w-full p-2" required />
-            </label>
+            
+            <FileUploaderRegular
+                className="ml-auto"
+                filesViewMode="grid"
+                multipleMin={1}
+                multipleMax={1}
+                localeName="pt"
+                onFileUploadStart={toggleUploadState("thumbnail")}
+                onFileUploadSuccess={handleUpload("thumbnail")}
+                pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
+                sourceList="local, facebook, gdrive"
+                confirmUpload
+                gridShowFileNames
+                imgOnly
+                useCloudImageEditor
+            />
         </fieldset>
 
-        <fieldset className="w-full flex flex-row justify-between items-center gap-2 border rounded-lg">
-            <legend>Preço</legend>
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-center gap-5">
+            {(assertions.hasUploadedThumbnail || assertions.isWorking) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px]">
+                {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
+            </div>}
 
-            <label htmlFor="price" className="text-lg flex flex-row justify-start items-center gap-2">
-                <Icon name="Money" />
+            <DescriptionLabel
+                className="w-full"
+                title="Nome do producto"
+                description="O que estará descrito na lista, nas facturas."
+                icon="Product"
+                layout="column"
+                input={{
+                    element: "input",
+                    props: {
+                        id: "name",
+                        className: "w-full",
+                        name: "name",
+                        title: "Nome do prato",
+                        type: "text",
+                        placeholder: "Nome do produto",
+                        required: true
+                    }
+                }}
+            />
 
-                <span>Preço</span>
-            </label>
+            <DescriptionLabel
+                className="w-full"
+                title="Tipo"
+                description="Serve para o filtro e caracterização. Ajuda os clientes a encontram-no facilmente."
+                icon="ProductType"
+                input={{
+                    element: "select",
+                    options: [
+                        { key: "Tipo do producto", value: { data: "", props: { hidden: true } } },
+                        ...MENU_PRODUCT_TYPES.map(t => ({
+                            key: getLabel(t), value: { data: t }
+                        }))
+                    ],
+                    props: {
+                        id: "product_type",
+                        className: "w-full text-center",
+                        name: "product_type",
+                        title: "Tipo de producto",
+                        defaultValue: "",
+                        onChange: handleProductTypePick,
+                        required: true
+                    }
+                }}
+            />
 
-            <input title="Preço" id="price" name="price" defaultValue={0} min={0} type="number" data-element="h3" required />
+            <DescriptionLabel
+                className="w-full"
+                title="Composição"
+                description="Serve para o filtro e caracterização. Ajuda os clientes a encontram-no facilmente."
+                icon="ProductComposition"
+                input={{
+                    element: "select",
+                    options: [
+                        { key: "Composição do producto", value: { data: "", props: { hidden: true } } },
+                        ...MENU_PRODUCT_COMPOSITIONS.filter(_ONLY_APPLICABLE_PRODUCT_COMPOSITIONS(form.data?.pickedProductType)).map(t => ({
+                            key: getLabel(t), value: { data: t }
+                        }))
+                    ],
+                    props: {
+                        id: "product_composition",
+                        className: "w-full text-center",
+                        name: "product_composition",
+                        title: "Tipo de composição",
+                        defaultValue: "",
+                        required: true
+                    }
+                }}
+            />
+
+            <DescriptionLabel
+                layout="column"
+                className="w-full"
+                title="Descrição"
+                description="Informação sobre o producto. Contem alergénicos? Para quantas pessoas serve? Tem algum facto ou história interessante?"
+                input={{
+                    element: "textarea",
+                    props: {
+                        id: "description",
+                        className: "w-full",
+                        name: "description",
+                        title: "Tipo de composição",
+                        placeholder: "Descrição...",
+                        required: true
+                    }
+                }}
+            />
         </fieldset>
 
-        <fieldset className="w-full flex flex-col justify-start items-start gap-2 border rounded-md">
-            <legend>Outros</legend>
+        <hr className="w-full opacity-30" />
 
-            <label htmlFor="prep_time_minutes" className="w-full flex flex-row justify-between items-center gap-2 p-2">
-                <Icon name="Time" />
+        <fieldset className="w-full flex flex-col justify-start items-center gap-5">
+            <DescriptionLabel
+                className="w-full"
+                title="Preço"
+                description={<span>
+                    Quanto custa? Preencha com <span className="font-black">0</span> para ser grátis.
+                </span>}
+                icon="PriceTags"
+                input={{
+                    element: "input",
+                    props: {
+                        id: "price",
+                        className: "w-full text-center",
+                        name: "price",
+                        title: "Preço",
+                        type: "number",
+                        defaultValue: 0,
+                        min: 0,
+                        required: true
+                    }
+                }}
+            />
 
-                <span className="mr-auto">Tempo de preparo (em minutos)</span>
+            <DescriptionLabel
+                className="w-full"
+                title="Tempo de preparo (em minutos)"
+                description={<span>
+                    Tempo de demora para preparar o producto. Em caso de producto para restaurantes, o tempo de demora é determinado pelo producto no carrinho que mais demora.
+                </span>}
+                icon="Time"
+                input={{
+                    element: "input",
+                    props: {
+                        id: "prep_time_minutes",
+                        className: "w-full text-center",
+                        name: "prep_time_minutes",
+                        title: "Tempo de preparo",
+                        type: "number",
+                        defaultValue: 3,
+                        min: 3,
+                        required: true
+                    }
+                }}
+            />
+        </fieldset>
 
-                <input title="Tempo de preparo (em minutos)" id="prep_time_minutes" name="prep_time_minutes" defaultValue={3} min={3} type="number" required />
-            </label>
+        <hr className="w-full opacity-30" />
 
-            <label className="flex flex-row justify-start items-center gap-1 w-full p-2">
+        <fieldset className="w-full flex flex-col justify-start items-center gap-5">
+            <label className="flex flex-row justify-start items-center gap-1 w-full p-2" data-variant="selectable">
                 <input type="checkbox" placeholder="Aonde será servido o produto" defaultChecked={!data?.pickRestaurant} onChange={handleRestaurantToggle} />
 
                 <span>Produto será servido por todos os restaurantes</span>
@@ -298,11 +385,11 @@ const AddProductForm = ({
         </fieldset>
 
         <div className="flex flex-col justify-start items-start w-full gap-2 mt-auto">
-            {error && <p data-state="error" className="w-full flex flex-row justify-start items-center gap-4">
+            {error && <Tag variant="danger">
                 <Icon name="ExclamationCircle" />
 
                 {error.message}
-            </p>}
+            </Tag>}
 
             {(status === "loading")
                 ? <Button className="w-full" disabled>
