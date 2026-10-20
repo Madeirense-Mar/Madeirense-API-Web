@@ -194,7 +194,7 @@ const CouponForm = ({
                 </span>}
                 input={{
                     element: "input",
-                    icon: <Icon name="Coupon" />,
+                    icon: "Coupon",
                     props: {
                         title: "Código de cupon",
                         id: "code",
@@ -213,7 +213,7 @@ const CouponForm = ({
                 description="Percentagem de desconto oferecido pelo cupon."
                 input={{
                     element: "input",
-                    icon: <Icon name="Discount" />,
+                    icon: "Discount",
                     props: {
                         title: "Código de cupon",
                         id: "coupon-discount",
@@ -232,7 +232,7 @@ const CouponForm = ({
                 description="Determina o prazo de validade do cupon, desde o dia que foi criado até à data de expiração. Após a data, o cupon pode ser re-activado vezes sem conta."
                 input={{
                     element: "input",
-                    icon: <Icon name="Calendar1" />,
+                    icon: "Calendar1",
                     props: {
                         min: new Date().toISOString().split('T')[0],
                         title: "Nova data de expiração",
@@ -325,7 +325,7 @@ const CouponForm = ({
                 description="Determina o prazo de validade do cupon, desde o dia que foi criado até à data de expiração. Após a data, o cupon pode ser re-activado vezes sem conta."
                 input={{
                     element: "input",
-                    icon: <Icon name="Calendar1" />,
+                    icon: "Calendar1",
                     props: {
                         min: new Date().toISOString().split('T')[0],
                         title: "Nova data de expiração",

@@ -211,7 +211,7 @@ const DiscountForm = ({
                     description="Valor de desconto (em percentagem) que será atribuido à todos os productos seleccionados."
                     input={{
                         element: "input",
-                        icon: <Icon name="Discount" />,
+                        icon: "Discount",
                         props: {
                             title: "Desconto",
                             id: "discount",
