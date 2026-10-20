@@ -1,10 +1,12 @@
 main>section {
     padding: var(--section-padding, 32px);
 
-    border: 1px solid var(--section-border-color, var(--base-section-border-color));
-    border-radius: 12px;
+    border: var(--section-border-width, 1px) solid var(--section-border-color, var(--base-section-border-color));
+    border-radius: var(--section-border-radius, 12px);
 
     background-color: var(--section-background-color, var(--base-section-background-color));
+
+    overflow: var(--section-overflow, auto);
 }
 
 /*#region Theme specifications =========================== */

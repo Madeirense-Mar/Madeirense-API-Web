@@ -35,10 +35,20 @@ select {
 }
 /*#endregion*/
 
+/*#region Textarea*/
+textarea {
+    border-radius: 4px;
+    border-bottom-style: dotted !important;
+}
+/*#endregion*/
+
 /*#region Theme specifications*/
-[data-theme*="DARK"] input,
-[data-theme*="DARK"] select,
 [data-theme*="DARK"] textarea {
+    border: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
+}
+
+[data-theme*="DARK"] input,
+[data-theme*="DARK"] select {
     border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
 }
 
@@ -54,9 +64,12 @@ select {
     --base-input-element-border-color: var(--primary-light);
 }
 
-[data-theme*="LIGHT"] input,
-[data-theme*="LIGHT"] select,
 [data-theme*="LIGHT"] textarea {
+    border: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-dark)));
+}
+
+[data-theme*="LIGHT"] input,
+[data-theme*="LIGHT"] select {
     border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-dark)));
 }
 

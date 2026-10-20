@@ -8,7 +8,7 @@ label[data-variant="selectable"] {
 
     background-color: var(--label-background-color, transparent);
     
-    border-radius: 12px;
+    border-radius: var(--label-border-radius, 12px);
     border-width: var(--label-border-width, 1px);
 }
 

@@ -21,5 +21,9 @@
 }
 
 .x-scroll-section>div>section {
-    @apply w-full min-w-full;
+    --w: 100%;
+
+    width: var(--w);
+    max-width: var(--w);
+    min-width: var(--w);
 }

@@ -12,18 +12,22 @@
     left: 50%;
     top: calc(50% - calc(var(--height) / 2) + calc(var(--height) / 3));
     transform: translateX(-50%);
-
+    
     height: var(--height);
     max-height: var(--height);
     min-height: var(--height);
     width: var(--width);
     max-width: 80%;
     min-width: var(--width);
+    
+    padding: 20px;
 
     border-radius: 20px; 
-    padding: 20px;
     
     background-color: var(--background-color);
+
+    box-shadow: 0 0 40px black;
+
     opacity: 0;
 }
 
@@ -42,7 +46,19 @@
 }
 
 .modal main > section {
-    --section-padding: 12px;
+    --section-padding: 0px;
+}
+
+[data-theme*="DARK"] .modal main > section {
+    --section-background-color: transparent;
+}
+
+[data-theme*="LIGHT"] .modal main > section {
+    --section-border-width: 0px;
+}
+
+[data-theme*="DARK"] .modal main fieldset {
+    --fieldset-background-color: transparent;
 }
 
 .modal::backdrop {
@@ -66,3 +82,21 @@
     pointer-events: all;
     opacity: 0.7;
 }
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {
+}
+
+@media only screen and (min-width: 428px) {
+}
+
+@media only screen and (min-width: 768px) {
+    .modal {
+        --height: 600px;
+        --width: 1200px;
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+}
+/*#endregion*/
