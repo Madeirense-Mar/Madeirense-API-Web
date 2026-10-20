@@ -8,6 +8,7 @@ import {
 
 import {
     BiFoodMenu,
+    BiShapePolygon,
     BiSolidDrink,
     BiSolidHide,
     BiSolidLandscape,
@@ -151,6 +152,7 @@ import {
     MdOutlineWork,
     MdPendingActions,
     MdPhone,
+    MdShapeLine,
     MdUpdate
 } from "react-icons/md";
 
@@ -185,7 +187,8 @@ import {
     TbMeat,
     TbPasswordMobilePhone,
     TbSalad,
-    TbToolsKitchen,
+    TbTicketOff,
+    TbToolsKitchen
 } from "react-icons/tb";
 
 import env from "env";
@@ -193,13 +196,20 @@ import env from "env";
 // ***************************************************************************************************************
 
 const registry = {
+    //#region A --------------------------------------------
     Add: IoMdAdd,
     ArrowDown: FaArrowDown,
     ArrowLeft: FaArrowLeft,
     ArrowRight: FaArrowRight,
     ArrowUp: FaArrowUp,
+    //#endregion
+
+    //#region B --------------------------------------------
     BookOpenText: PiBookOpenText,
     BowlRice: FaBowlRice,
+    //#endregion
+
+    //#region C --------------------------------------------
     Calendar1: RiCalendarTodoLine,
     CalendarExpired: FaRegCalendarTimes,
     Camera: FaCamera,
@@ -216,13 +226,20 @@ const registry = {
     Close: IoMdClose,
     Comments: FaComment,
     Coupon: RiCoupon2Line,
+    CouponOff: TbTicketOff,
     CreditCard: FaCreditCard,
+    //#endregion
+
+    //#region D --------------------------------------------
     DarkMode: MdDarkMode,
     Dashboard: RxDashboard,
     Delivery: RiTakeawayLine,
     Dessert: LuDessert,
     Discount: RiDiscountPercentFill,
     Drink: MdLocalDrink,
+    //#endregion
+
+    //#region E --------------------------------------------
     Edit: HiPencil,
     Email: MdEmail,
     Empty: GrEmptyCircle,
@@ -230,6 +247,9 @@ const registry = {
     Eye: FaRegEye,
     ExclamationCircle: FaExclamationCircle,
     EyeSlash: FaRegEyeSlash,
+    //#endregion
+
+    //#region F --------------------------------------------
     Facebook: FaFacebook,
     Facebook2: FaFacebookF,
     FishSharp: IoFishSharp,
@@ -237,19 +257,33 @@ const registry = {
     Filter: FaFilter,
     Food: PiBowlFoodFill,
     FoodMenu: BiFoodMenu,
+    //#endregion
+
+    //#region G --------------------------------------------
     Gift: AiFillGift,
     Google: FaGoogle,
-    TakeMyMoney: GiTakeMyMoney,
+    //#endregion
+
+    //#region H --------------------------------------------
     HeartEmpty: FaRegHeart,
     HeartFilled: FaHeart,
     Hide: BiSolidHide,
     History: MdOutlineHistory,
     Home: FaHome,
     HourglassRunning: IoHourglassOutline,
+    //#endregion
+
+    //#region I --------------------------------------------
     Image: FaRegImage,
     ImageFilter: MdFilter,
+    //#endregion
+
+    //#region K --------------------------------------------
     Kitchen: TbToolsKitchen,
     KitchenSet: FaKitchenSet,
+    //#endregion
+
+    //#region L --------------------------------------------
     LightMode: MdLightMode,
     Link: RiLink,
     Link2: FaLink,
@@ -257,6 +291,9 @@ const registry = {
     Lock: FaLock,
     Login: MdOutlineLogin,
     Logout: IoIosLogOut,
+    //#endregion
+
+    //#region M --------------------------------------------
     MapCancel: TbMapCancel,
     MapCheck: TbMapCheck,
     MapMarked: FaMapMarkedAlt,
@@ -269,16 +306,25 @@ const registry = {
     Money: PiMoneyWavyFill,
     MoneyTransfer: FaMoneyBillTransfer,
     MyLocation: MdMyLocation,
+    //#endregion
+
+    //#region N --------------------------------------------
     NoDrinks: MdOutlineNoDrinks,
     Notes: MdOutlineNotes,
     Notification: IoNotifications,
     NotificationActive: MdNotificationsActive,
     NotificationOff: IoNotificationsOff,
     NotificationCircle: IoNotificationsCircleSharp,
+    //#endregion
+
+    //#region O --------------------------------------------
     Order: PiNewspaperClipping,
     OutlinedCircle: FaRegCircle,
     OutlinedDot: FaRegDotCircle,
     OutlinedTimes: FaRegTimesCircle,
+    //#endregion
+
+    //#region P -------------------------------------------- 
     Party: GiPartyPopper,
     Password: CgPassword,
     Paypal: BsPaypal,
@@ -288,11 +334,22 @@ const registry = {
     Plus2: FaPlus,
     PriceTags: IoIosPricetags,
     Product: AiFillProduct,
+    ProductComposition: MdShapeLine,
+    ProductType: BiShapePolygon,
+    //#endregion
+
+    //#region Q --------------------------------------------
     Queue: HiMiniQueueList,
+    //#endregion
+
+    //#region R --------------------------------------------
     Recycle: FaRecycle,
     Restaurant: MdFoodBank,
     Report: IoDocumentTextOutline,
     Running: PiSneakerMoveBold,
+    //#endregion
+
+    //#region S --------------------------------------------
     Salad: TbSalad,
     Save: FaSave,
     Search: FaSearch,
@@ -304,13 +361,20 @@ const registry = {
     Star: FaStar,
     Store: FaStore,
     SwipeCard: GiSwipeCard,
+    //#endregion
+
+    //#region T --------------------------------------------
     Takeout: MdOutlineTakeoutDining,
+    TakeMyMoney: GiTakeMyMoney,
     ThemeLand: BiSolidLandscape,
     ThemeSea: BiWater,
     Ticket: IoTicketSharp,
     Time: MdOutlineAccessTime,
     Timer: PiTimerBold,
     Trash: FaTrash,
+    //#endregion
+
+    //#region U --------------------------------------------
     Update: MdUpdate,
     Upload: FaUpload,
     User: FaRegUserCircle,
@@ -319,11 +383,18 @@ const registry = {
     UserRegistration: LiaUserPlusSolid,
     UserStaff: FaUser,
     Users: FaUsers,
+    //#endregion
+
+    //#region V --------------------------------------------
     Vegan: LuVegan, 
     Video: MdOndemandVideo,
+    //#endregion
+
+    //#region W --------------------------------------------
     Warning: IoIosWarning,
     Wheat: GiWheat,
     Work: MdOutlineWork
+    //#endregion
 };
 
 export type iconNameType = keyof (typeof registry);
