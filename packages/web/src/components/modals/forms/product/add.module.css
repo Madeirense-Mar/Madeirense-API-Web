@@ -1,5 +1,6 @@
 .form fieldset {
     --fieldset-padding: 0px;
+    --fieldset-border-width: 0px;
 }
 
 .form fieldset:first-child>div:first-child {
