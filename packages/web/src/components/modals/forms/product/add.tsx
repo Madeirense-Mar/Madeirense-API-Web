@@ -85,7 +85,6 @@ const AddProductForm = ({
     } = form;
 
     const assertions = {
-        hasUploadedThumbnail: data?.uploadedThumbnailURL !== "",
         isWorking: [
             "uploading-thumbnail"
         ].includes(status)
@@ -205,10 +204,28 @@ const AddProductForm = ({
 
     return <form onSubmit={POST} className={resolveClassNames(styles.form, "h-ful w-full flex flex-col justify-start items-start gap-11")} {...props}>
         <fieldset className="w-full flex flex-col justify-start items-center gap-5">
-            <div style={{ backgroundImage: `url(${data?.uploadedThumbnailURL || "#"})`}}>
+            <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="flex flex-col justify-center items-center">
+                {assertions.isWorking
+                    ? <Icon name="Loading" className="animate-spin" />
+
+                    : !data?.uploadedThumbnailURL && <FileUploaderRegular
+                        filesViewMode="grid"
+                        multipleMin={1}
+                        multipleMax={1}
+                        localeName="pt"
+                        onFileUploadStart={toggleUploadState("thumbnail")}
+                        onFileUploadSuccess={handleUpload("thumbnail")}
+                        pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
+                        sourceList="local, facebook, gdrive"
+                        confirmUpload
+                        gridShowFileNames
+                        imgOnly
+                        useCloudImageEditor
+                    />
+                }
             </div>
-            
-            <FileUploaderRegular
+
+            {data?.uploadedThumbnailURL && <FileUploaderRegular
                 className="ml-auto"
                 filesViewMode="grid"
                 multipleMin={1}
@@ -222,14 +239,10 @@ const AddProductForm = ({
                 gridShowFileNames
                 imgOnly
                 useCloudImageEditor
-            />
+            />}
         </fieldset>
 
         <fieldset data-state={assertions.isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-center gap-5">
-            {(assertions.hasUploadedThumbnail || assertions.isWorking) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px]">
-                {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
-            </div>}
-
             <DescriptionLabel
                 className="w-full"
                 title="Nome do producto"
