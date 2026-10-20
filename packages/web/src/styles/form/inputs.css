@@ -1,3 +1,4 @@
+/*#region Inputs ========================================== */
 input,
 select {
     --h: 40px;
@@ -7,70 +8,98 @@ select {
     min-height: var(--h);
 }
 
-input[type="checkbox"],
-input[type="radio"] {
-    --h: 20px;
-}
-
-textarea {
-    padding: 12px;
-}
-
 input,
 select,
 textarea {
-    background-color: var(--base-input-element-background-color, var(--background-color));
+    background-color: var(--input-background-color, var(--base-input-background-color, var(--background-color)));
 }
 
 /*#region Input*/
 input {
-    padding: 0 var(--base-input-padding-x, 12px);
+    padding: 0 var(--input-padding-x, 12px);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    --h: 20px;
 }
 
 /*#endregion*/
 
 /*#region Select*/
 select {
-    padding: 0 var(--base-select-padding-x, 12px);
+    padding: 0 var(--select-padding-x, 12px);
 }
+
 /*#endregion*/
 
 /*#region Textarea*/
 textarea {
+    padding: 12px;
+
     border-radius: 4px;
     border-bottom-style: dotted !important;
 }
+
 /*#endregion*/
 
-/*#region Theme specifications*/
+/*#endregion*/
+
+/*#region Theme specifications ============================ */
+
+/*#region LIGHT*/
+
+[data-theme*="LIGHT"] textarea {
+    border: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-dark)));
+}
+
+[data-theme*="LIGHT"] input,
+[data-theme*="LIGHT"] select {
+    border-bottom: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-dark)));
+}
+
+[data-theme*="LIGHT"] input:hover,
+[data-theme*="LIGHT"] select:hover,
+[data-theme*="LIGHT"] textarea:hover {
+    --base-input-background-color: color-mix(in srgb, var(--neutral-dark), transparent 80%);
+}
+
+/*#endregion*/
+
+/*#region DARK*/
 [data-theme*="DARK"] textarea {
-    border: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
+    border: 1px solid var(--input-border-color, var(--base-textarea-border-color, var(--neutral-light)));
 }
 
 [data-theme*="DARK"] input,
 [data-theme*="DARK"] select {
-    border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-light)));
+    border-bottom: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-light)));
 }
 
 [data-theme="LAND-DARK"] input,
 [data-theme="LAND-DARK"] select,
 [data-theme="LAND-DARK"] textarea {
-    --base-input-element-border-color: var(--secondary);
+    --base-input-border-color: var(--secondary);
+}
+
+[data-theme="LAND-DARK"] input:hover,
+[data-theme="LAND-DARK"] select:hover,
+[data-theme="LAND-DARK"] textarea:hover {
+    --base-input-background-color: color-mix(in srgb, var(--secondary-light), var(--neutral-dark) 75%);
 }
 
 [data-theme="SEA-DARK"] input,
 [data-theme="SEA-DARK"] select,
 [data-theme="SEA-DARK"] textarea {
-    --base-input-element-border-color: var(--primary-light);
+    --base-input-border-color: var(--primary-light);
 }
 
-[data-theme*="LIGHT"] textarea {
-    border: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-dark)));
+[data-theme="SEA-DARK"] input:hover,
+[data-theme="SEA-DARK"] select:hover,
+[data-theme="SEA-DARK"] textarea:hover {
+    --base-input-background-color: color-mix(in srgb, var(--primary-light), var(--neutral-dark) 65%);
 }
 
-[data-theme*="LIGHT"] input,
-[data-theme*="LIGHT"] select {
-    border-bottom: 1px solid var(--input-element-border-color, var(--base-input-element-border-color, var(--neutral-dark)));
-}
+/*#endregion*/
 
 /*#endregion*/
