@@ -11,7 +11,7 @@ import type {
 interface IState<Custom, Status extends string> {
     status: statusType<Status>;
     error: Error | null;
-    data: Custom | null;
+    data: Custom;
 };
 
 export interface IComponentState<Custom, Status extends string = "idle"> extends IState<Custom, Status> {};
