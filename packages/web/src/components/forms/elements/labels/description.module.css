@@ -8,6 +8,7 @@
 
 .label>div:first-child {
     --default-width: 100%;
+    --tag-width: auto;
 
     @apply flex flex-col justify-start items-start;
 
