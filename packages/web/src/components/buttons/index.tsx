@@ -26,6 +26,7 @@ interface IPropTypes extends MutatedInterface { };
 
 const Button = forwardRef<HTMLButtonElement, IPropTypes>((props, ref) => {
     const {
+        borderless = false,
         children = null,
         className,
         size = "m",
@@ -40,6 +41,7 @@ const Button = forwardRef<HTMLButtonElement, IPropTypes>((props, ref) => {
             styles[variant],
             styles[size],
             styles[shape],
+            borderless ? styles.borderless : undefined,
             className
         )}
         {...{

@@ -11,7 +11,8 @@ import type {
 // ***************************************************************************************************************
 
 export interface IButtonPropTypes extends ComponentPropsWithRef<"button"> {
-    variant?: variantType;
+    borderless?: boolean;
     shape?: shapeType;
     size?: sizeType,
+    variant?: variantType;
 };

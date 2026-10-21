@@ -212,7 +212,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
             <header className="w-full flex flex-row justify-between items-center">
                 <h1>Eventos</h1>
 
-                <Button value={Modals.CREATE_EVENT} onClick={openModal} variant="primary">
+                <Button value={Modals.CREATE_EVENT} onClick={openModal} variant="primary" borderless>
                     <Icon name="Plus" />
                 </Button>
             </header>
@@ -222,7 +222,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                     <Icon name="Loading" className="animate-spin" />
                 </div>
 
-                : <RestaurantEventList mode="list" />
+                : <RestaurantEventList className={styles["events-list"]} mode="list" />
             }
         </section>
     </main>

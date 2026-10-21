@@ -1,6 +1,8 @@
 /*#region List ============================================ */
 .list {
-    @apply flex flex-col justify-start items-start gap-3;
+    @apply flex flex-col justify-start items-start;
+
+    gap: var(--ul-gap, 12px);
 }
 
 .list li:not([data-type="filter"], [data-empty])  {
@@ -10,7 +12,7 @@
 .list li:not(:nth-child(2)) {
     padding: 12px;
 
-    border-radius: 12px;
+    border-radius: var(--li-border-radius, 12px);
     
     background-color: var(--li-background-color, transparent);
 }

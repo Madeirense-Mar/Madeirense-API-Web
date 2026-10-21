@@ -18,19 +18,21 @@ import type {
 // ***************************************************************************************************************
 
 interface IPropTypes extends ComponentPropsWithoutRef<typeof Link> {
-    shape?: shapeType,
-    size?: sizeType,
+    borderless?: boolean;
+    shape?: shapeType;
+    size?: sizeType;
     variant?: (
         | variantType
         | "tag"
         | "text"
         | "text-selected"
         | `receipt-${"primary" | "secondary"}`
-    )
+    );
 };
 
 const AnchorButton = forwardRef<HTMLAnchorElement, IPropTypes>((props, ref) => {
     const {
+        borderless = false,
         children = null,
         className,
         size = "m",
@@ -45,6 +47,7 @@ const AnchorButton = forwardRef<HTMLAnchorElement, IPropTypes>((props, ref) => {
             styles[variant],
             styles[shape],
             styles[size],
+            borderless ? styles.borderless : undefined,
             className
         )}
         {...{
