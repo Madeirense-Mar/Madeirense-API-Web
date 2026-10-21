@@ -9,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 import {
     toTimeDecimal,
     Madeirense$Enumerators,
-    type restaurantType,
-    resolveClassNames
+    resolveClassNames,
+    type restaurantType
 } from "@Madeirense/shared";
 
 import { useApp } from "contexts/App";
@@ -22,10 +22,10 @@ import Tag from "components/tags";
 
 import RestaurantForm from "components/forms/add/restaurant";
 
+import RestaurantEventList from "components/lists/restaurantEvents";
+
 import DeletionForm from "components/modals/forms/delete";
 import AddRestaurantEventForm from "components/modals/forms/add/restaurantEvent";
-
-import RestaurantEventList from "components/lists/restaurantEvents";
 
 import styles from "./Restaurant.module.css";
 
@@ -40,6 +40,12 @@ import type {
 type itemType = "restaurant" | "event";
 
 type additionType = `adding-${itemType}`;
+
+enum Modals {
+    CREATE_RESTAURANT = "CREATE_RESTAURANT",
+    DELETE_RESTAURANT = "DELETE_RESTAURANT",
+    CREATE_EVENT = "CREATE_EVENT",
+};
 
 const defaultRestaurant: restaurantType = {
     created_at: new Date(),
@@ -92,31 +98,37 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
         navigate(`${Madeirense$Enumerators.Pages.BackOffice.Restaurant}/${(target as HTMLButtonElement).id}`);
     };
 
-    function openRestaurantCreationModal() {
-        show(<RestaurantForm
-            restaurant={defaultRestaurant}
-            onSuccess={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
-        />, {
-            title: `Registar restaurante`
-        });
-    };
+    function openModal({ target }: MouseEvent<HTMLButtonElement>) {
+        const callback = () => updatePage(p => { return { ...p, pageStatus: "idle" } });
 
-    function openRestaurantDeletionModal(event: MouseEvent<HTMLButtonElement>) {
-        const { target } = event;
+        switch ((target as HTMLButtonElement).value as Modals) {
+            case Modals.CREATE_RESTAURANT:
+                show(<RestaurantForm
+                    restaurant={defaultRestaurant}
+                    onSuccess={callback}
+                />, {
+                    title: `Registar restaurante`
+                });
+                break;
 
-        show(<DeletionForm
-            itemId={parseInt((target as HTMLButtonElement).value)}
-            item="restaurant"
-            callback={() => updatePage(p => { return { ...p, pageStatus: "idle" } })}
-        />, {
-            title: `Remover restaurante`
-        });
-    };
+            case Modals.DELETE_RESTAURANT:
+                show(<DeletionForm
+                    itemId={parseInt((target as HTMLButtonElement).id)}
+                    item="restaurant"
+                    {...{ callback }}
+                />, {
+                    title: `Remover restaurante`
+                });
+                break;
 
-    function openEventCreationModal() {
-        show(<AddRestaurantEventForm />, {
-            title: `Marcar evento`
-        });
+            case Modals.CREATE_EVENT:
+                show(<AddRestaurantEventForm
+                    {...{ callback }}
+                />, {
+                    title: `Marcar evento`
+                });
+                break;
+        }
     };
 
     return <main {...props}>
@@ -124,7 +136,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
             <header className="w-full flex flex-row justify-between items-center">
                 <h1>Restaurantes</h1>
 
-                <Button onClick={openRestaurantCreationModal} variant="primary">
+                <Button value={Modals.CREATE_RESTAURANT} onClick={openModal} variant="primary">
                     <Icon name="Plus" />
                 </Button>
             </header>
@@ -179,7 +191,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
                                                     <Icon name="Edit" />
                                                 </Button>
 
-                                                <Button id={`${r.restaurant_id}`} variant="danger" shape="circle" onClick={openRestaurantDeletionModal}>
+                                                <Button id={`${r.restaurant_id}`} value={Modals.DELETE_RESTAURANT} variant="danger" shape="circle" onClick={openModal}>
                                                     <Icon name="Trash" />
                                                 </Button>
                                             </div>
@@ -200,7 +212,7 @@ function BackOfficeRestaurantPage(props: ComponentProps<"main">) {
             <header className="w-full flex flex-row justify-between items-center">
                 <h1>Eventos</h1>
 
-                <Button onClick={openEventCreationModal} variant="primary">
+                <Button value={Modals.CREATE_EVENT} onClick={openModal} variant="primary">
                     <Icon name="Plus" />
                 </Button>
             </header>

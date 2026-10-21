@@ -1,111 +1,81 @@
 .form {
-    @apply w-full;
+    @apply flex flex-col justify-start items-start;
 
-    row-gap: 5px;
-    column-gap: 12px;
-    grid-template-areas:
-        "thumbnail"
-        "title"
-        "info"
-    ;
-
-    border-color: var(--border-color);
-
-    background-color: var(--background-color);
+    gap: 36px;
 }
 
-.form * {
-    @apply flex flex-col justify-start items-start gap-2 w-full mt-auto;
+.form>fieldset {
+    --fieldset-padding: 0px;
+    --fieldset-border-width: 0px;
 
-    grid-area: info;
-    
-    overflow: auto;
-    
-    margin-top: auto;
+    @apply flex flex-col justify-start items-start w-full;
+
+    gap: 20px;
 }
 
-.form * span {
-    @apply italic;
+.form>fieldset>legend {
+    --tag-white-space: nowrap;
+
+    @apply flex flex-row justify-between items-center w-full;
+
+    margin-bottom: 12px;
+}
+
+.schedule {
+    @apply flex flex-col justify-start items-start;
 
     width: 100%;
-    justify-content: center;
-    border-radius: 0px;
-}
 
-.form * span:not(:last-of-type) {
-    border-right-width: 0px;
-}
-
-.form fieldset {
-    height: 100%;
-}
-
-.form fieldset label,
-.form fieldset input {
-    width: inherit;
-}
-
-.form input[name="name"] {
-    --border-width: 0px;
-
-    @apply font-bold;
-    
-    grid-area: title;
-    
-    border-radius: 0px !important;
-    border-top-width: var(--border-width);
-    border-left-width: var(--border-width);
-    border-right-width: var(--border-width);
-    border-bottom-width: 3px;
-    
-    padding: 0px !important;
-
-    font-size: 1.5em;
-}
-
-.form div[data-section="thumbnail"] {
-    --height: 300px;
-
-    @apply flex flex-col justify-center items-center w-full h-full gap-2;
-
-    grid-area: thumbnail;
-
-    height: var(--height);
-    max-height: var(--height);
-    min-height: var(--height);
-    width: var(--size);
-    max-width: var(--size);
-    min-width: var(--size);
-
-    background-position: center center;
-    background-size: 100%;
-    background-repeat: no-repeat;
-
-    padding: 12px;
+    gap: 20px;
+    padding: 20px;
 
     border-radius: 12px;
+
+    background-color: var(--section-background-color);
 }
 
-.form div[data-section="thumbnail"]:has(input:not([hidden])) {
-    background-color: var(--base-background-thumbnail);
+.schedule ul li {
+    @apply w-full flex flex-row justify-start items-center gap-3;
 }
 
-.form div[data-section="thumbnail"]:has(input[hidden]) {
-    cursor: pointer;
+.schedule ul li > label,
+.schedule ul li > label>input {
+    width: 100%;
 }
 
-.form div[data-section="thumbnail"]:has(input[hidden]):hover {
-    background-size: 105%;
+[data-theme*="DARK"] .schedule {
+    --section-background-color: color-mix(in srgb, var(--neutral-dark), transparent 20%);
 }
 
-@media only screen and (max-width: 652px) {}
-
-@media only screen and (max-width: 1239px) {
-    .form {
-        grid-template-columns: 1fr;
-    }
-
-    .form div[data-section="thumbnail"] {
-        --size: 100%;
-    }
+[data-theme*="LIGHT"] .schedule {
+    --section-background-color: color-mix(in srgb, var(--neutral-dark), transparent 90%);
 }
+
+/*#region Location (manual) ================================ */
+.location {
+    composes: schedule;
+}
+
+.coordinates,
+.fields {
+    @apply grid w-full gap-3;
+
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.coordinates label,
+.fields label {
+    @apply flex flex-col justify-start items-start gap-1 w-full;
+}
+
+.coordinates input,
+.fields input {
+    width: 100%;
+}
+
+/* The free-text address spans the whole row. */
+.fields label[data-field="address"] {
+    grid-column: 1 / -1;
+}
+
+/*#endregion*/
