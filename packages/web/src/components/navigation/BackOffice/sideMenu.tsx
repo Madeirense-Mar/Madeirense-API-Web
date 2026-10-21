@@ -46,22 +46,6 @@ const linkList: ReadonlyArray<{
         ]
     },
     {
-        to: Madeirense$Enumerators.Pages.BackOffice.Staff,
-        label: "Utilizadores",
-        icon: <Icon name="Users" />,
-        role: [
-            "Admin"
-        ]
-    },
-    {
-        to: Madeirense$Enumerators.Pages.BackOffice.Products,
-        label: "Menu",
-        icon: <Icon name="FoodMenu" />,
-        role: [
-            "Admin"
-        ]
-    },
-    {
         to: Madeirense$Enumerators.Pages.BackOffice.Restaurant,
         label: "Restaurantes",
         icon: <Icon name="Store" />,
@@ -87,6 +71,22 @@ const linkList: ReadonlyArray<{
             "Admin",
             "Driver",
             "Staff"
+        ]
+    },
+    {
+        to: Madeirense$Enumerators.Pages.BackOffice.Staff,
+        label: "Utilizadores",
+        icon: <Icon name="Users" />,
+        role: [
+            "Admin"
+        ]
+    },
+    {
+        to: Madeirense$Enumerators.Pages.BackOffice.Products,
+        label: "Menu",
+        icon: <Icon name="FoodMenu" />,
+        role: [
+            "Admin"
         ]
     },
     {
