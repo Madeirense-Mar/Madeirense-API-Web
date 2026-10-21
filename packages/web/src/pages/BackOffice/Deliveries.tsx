@@ -39,7 +39,7 @@ import {
 import OrderHistoryList from "components/lists/order/history";
 import OrderItemsList from "components/lists/order/items";
 
-import GoogleMapDeliveryTracker from "components/maps/google/deliveryTracker";
+import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
 
 import Tag from "components/tags";
 
@@ -101,7 +101,7 @@ const ScrollSection = (
 
         <div>
             <section id="map" className="gap-2 w-full">
-                <GoogleMapDeliveryTracker {...{ order }} />
+                <LeafletDeliveryTracker {...{ order }} />
             </section>
 
             <section id="chat" className="gap-2 w-full">

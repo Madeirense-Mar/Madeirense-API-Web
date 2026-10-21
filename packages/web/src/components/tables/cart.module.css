@@ -14,7 +14,6 @@
 .table div[data-type="thumbnail"] {
     height: 100px;
     width: var(--img-size);
-    background-size: cover;
 }
 
 .table tbody tr:first-child,

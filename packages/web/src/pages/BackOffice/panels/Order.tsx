@@ -40,7 +40,7 @@ import OrderItemsList from "components/lists/order/items";
 import OrderHistoryList from "components/lists/order/history";
 
 import DriversPicker from "components/pickers/drivers";
-import GoogleMapDeliveryTracker from "components/maps/google/deliveryTracker";
+import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
 
 import type {
     $Enums,
@@ -402,7 +402,7 @@ function OrderPanel({ id }: { id: number }) {
                         mode="admin"
                     />}
 
-                    <GoogleMapDeliveryTracker order={data as restaurantOrderType} />
+                    <LeafletDeliveryTracker order={data as restaurantOrderType} />
                 </section>
 
                 <ScrollToSection order_id={(data as restaurantOrderType).order_id} />

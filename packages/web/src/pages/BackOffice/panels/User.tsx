@@ -34,7 +34,7 @@ import Button from "components/buttons";
 import OrderCard from "components/cards/order";
 import ProfileHeaderCard from "components/cards/profileHeader";
 import RestaurantCard from "components/cards/restaurant";
-import GoogleMapDeliveryTracker from "components/maps/google/deliveryTracker";
+import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
 import Icon from "components/icon";
 
 import BlockUserForm from "components/modals/forms/user/block";
@@ -280,7 +280,7 @@ function UserPanel({ id }: { id: number }) {
                         <div className={styles["order-tracker"]}>
                             <OrderCard order={currentDelivery} className="w-full" />
 
-                            <GoogleMapDeliveryTracker order={currentDelivery} />
+                            <LeafletDeliveryTracker order={currentDelivery} />
                         </div>
                     </>}
 

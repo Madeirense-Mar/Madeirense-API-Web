@@ -17,7 +17,7 @@ import {
     resolveClassNames,
     type appPreferencesType,
     type keyValuePair,
-    type parsedGoogleAddressObjectType
+    type parsedAddressObjectType
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
@@ -152,7 +152,7 @@ function ProfilePage() {
         location_id?: number,
         latitude: number,
         longitude: number
-    } & parsedGoogleAddressObjectType | null>(null);
+    } & parsedAddressObjectType | null>(null);
 
     const [showDeliveryLocationMap, toggleDeliveryLocationMap] = useState(false);
 
@@ -174,7 +174,7 @@ function ProfilePage() {
         console.log("resetting", e);
     };
 
-    async function handleLocationUpdate(delivery_location: { latitude: number, longitude: number } & parsedGoogleAddressObjectType) {
+    async function handleLocationUpdate(delivery_location: { latitude: number, longitude: number } & parsedAddressObjectType) {
         setPickedDeliveryLocation(dl => ({ ...dl, ...delivery_location }));
     };
 

@@ -11,7 +11,7 @@ import Button from "components/buttons";
 import ProfileHeaderCard from "components/cards/profileHeader";
 import Icon from "components/icon";
 import OrderItemsList from "components/lists/order/items";
-import GoogleMapDeliveryTracker from "components/maps/google/deliveryTracker";
+import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
 
 import type {
     Users
@@ -74,7 +74,7 @@ function OrderSummaryView({
     return <div {...props}>
         {(selectedOrder.status === "assigned") && <ProfileHeaderCard user={selectedOrder.Users_Orders_courier_idToUsers as Users} className="w-full" />}
 
-        {!assertions.isFinalized && <GoogleMapDeliveryTracker order={selectedOrder} />}
+        {!assertions.isFinalized && <LeafletDeliveryTracker order={selectedOrder} />}
 
         {(isCancelling)
             ? <>

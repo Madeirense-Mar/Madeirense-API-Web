@@ -3,7 +3,7 @@
     border-bottom-right-radius: 0px;
 }
 
-#delivery-map div[class*="ProfileHeaderCard"]+div[class*="GoogleMapDeliveryTracker"] div:first-child {
+#delivery-map div[class*="ProfileHeaderCard"]+div[data-component="delivery-tracker"] {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
 }

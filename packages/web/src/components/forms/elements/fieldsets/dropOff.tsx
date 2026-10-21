@@ -1,24 +1,25 @@
 import {
+    useRef,
     useState,
     type ComponentProps
 } from "react";
 
 import {
-    getAddressFromCoordinatesAPI,
+    getAddressFromCoordinates,
     type distanceVectorType,
-    type parsedGoogleAddressObjectType,
+    type parsedAddressObjectType,
 } from "@Madeirense/shared";
 
 import env from "env";
 
-import GoogleMapLocationPicker from "components/maps/google/locationPicker";
+import LeafletLocationPicker from "components/maps/leaflet/locationPicker";
 
 import Icon from "components/icon";
 
 // ***************************************************************************************************************
 
 export namespace DropOffFieldset$Types {
-    export type location = { latitude: number, longitude: number } & parsedGoogleAddressObjectType;
+    export type location = { latitude: number, longitude: number } & parsedAddressObjectType;
 };
 
 interface IPropTypes extends ComponentProps<"fieldset"> {
@@ -33,9 +34,19 @@ interface IPropTypes extends ComponentProps<"fieldset"> {
     save?: boolean;
 };
 
-const API_KEY = env.GOOGLE_API_KEY;
+/** Used when the geocoder knows nothing near the picked point: the coordinates still identify it. */
+const coordinatesAsAddress = ({ latitude, longitude }: distanceVectorType): parsedAddressObjectType => ({
+    street_number: "",
+    street_name: "",
+    neighborhood: "",
+    city: "",
+    state: "",
+    country: "",
+    postal_code: "",
+    address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+});
 
-function GoogleDropOffFieldset(_props: IPropTypes) {
+function DropOffFieldset(_props: IPropTypes) {
     const {
         DEBUG = false,
         defaultName = undefined,
@@ -49,99 +60,99 @@ function GoogleDropOffFieldset(_props: IPropTypes) {
         ...props
     } = _props;
 
-    const [address, setAddress] = useState<parsedGoogleAddressObjectType | null>(null);
+    const [address, setAddress] = useState<parsedAddressObjectType | null>(null);
     const [dropOffLocation, updateLocation] = useState<distanceVectorType | undefined>(initialLocation);
     const [error, setError] = useState<Error | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [showAddress, toggleShowAddress] = useState<boolean>((defaultName !== undefined) ? true : false);
 
+    /** Aborts the previous lookup so a slow response can't overwrite a newer pick. */
+    const lookupController = useRef<AbortController | null>(null);
+
     const handleLocationSelect = async (location: distanceVectorType) => {
-        updateLocation(location)
+        updateLocation(location);
+
+        lookupController.current?.abort();
+
+        const controller = new AbortController();
+
+        lookupController.current = controller;
 
         try {
             setLoading(true);
             setError(null);
 
-            const _address = await getAddressFromCoordinatesAPI(location, true, { API_KEY });
+            const _address = await getAddressFromCoordinates(location, {
+                baseURL: env.GEOCODING_URL,
+                signal: controller.signal
+            }) ?? coordinatesAsAddress(location);
 
             onLocationSelect?.({
-                ...(_address as parsedGoogleAddressObjectType),
+                ..._address,
                 ...location
             });
 
-            setAddress(_address as parsedGoogleAddressObjectType);
+            setAddress(_address);
         } catch (error) {
+            if (controller.signal.aborted) return;
+
             setError(error as Error);
         } finally {
-            setLoading(false);
+            if (!controller.signal.aborted) setLoading(false);
         }
     };
 
+    return <fieldset {...props}>
+        {!hideLegend && <legend>{legendLabel}</legend>}
 
-    switch (API_KEY) {
-        case "": {
-            console.error("Google Maps API key is not set. Please set VITE_APP_GOOGLE_API_KEY in your environment variables.");
+        <LeafletLocationPicker
+            DEBUG={DEBUG}
+            onLocationSelect={handleLocationSelect}
+            initialLocation={dropOffLocation}
+        />
 
-            return <fieldset {...props}>
-                {!hideLegend && <legend>{legendLabel}</legend>}
+        {!save && <label className='flex flex-row justify-start items-center gap-2'>
+            <input type="checkbox" defaultChecked={defaultName !== undefined} name="save_dropoff_location" id="save_dropoff_location" onChange={({ target }) => toggleShowAddress(target.checked)} />
 
-                <GoogleMapLocationPicker />
-            </fieldset>
-        };
+            Salvar endereço?
+        </label>}
 
-        default: {
-            return <fieldset {...props}>
-                {!hideLegend && <legend>{legendLabel}</legend>}
+        {error && <div data-state="error" className='w-full p-3 flex flex-row justify-start items-center gap-2'>
+            <Icon name="ExclamationCircle" />
 
-                <GoogleMapLocationPicker
-                    onLocationSelect={handleLocationSelect}
-                    initialLocation={dropOffLocation}
-                />
+            {error.message}
+        </div>}
 
-                {!save && <label className='flex flex-row justify-start items-center gap-2'>
-                    <input type="checkbox" defaultChecked={defaultName !== undefined} name="save_dropoff_location" id="save_dropoff_location" onChange={({ target }) => toggleShowAddress(target.checked)} />
+        {(save || showAddress) && <div className='flex flex-row justify-start items-start gap-2 w-full'>
+            <label className='w-1/3'>
+                {presetName === "Casa" && <Icon name="Home" className='inline-block mr-2' />}
+                {presetName === "Trabalho" && <Icon name="Work" className='inline-block mr-2' />}
 
-                    Salvar endereço?
-                </label>}
+                <span>Nome</span>
 
-                {error && <div data-state="error" className='w-full p-3 flex flex-row justify-start items-center gap-2'>
-                    <Icon name="ExclamationCircle" />
+                <br />
 
-                    {error.message}
-                </div>}
+                <input defaultValue={defaultName ?? ""} type="text" name="delivery_location_name" id="delivery_location_name" className='w-full' placeholder='Casa, Trabalho...' required {...(presetName ? { readOnly: true, value: presetName } : {})} />
+            </label>
 
-                {(save || showAddress) && <div className='flex flex-row justify-start items-start gap-2 w-full'>
-                    <label className='w-1/3'>
-                        {presetName === "Casa" && <Icon name="Home" className='inline-block mr-2' />}
-                        {presetName === "Trabalho" && <Icon name="Work" className='inline-block mr-2' />}
+            <label className='w-full'>
+                <div className='flex flex-row justify-start items-center gap-2'>
+                    <span>Endereço</span>
 
-                        <span>Nome</span>
+                    {loading && <Icon name="Loading" className="animate-spin" />}
+                </div>
 
-                        <br />
+                <input type="text" name="delivery_location_address" id="delivery_location_address" className='w-full' readOnly placeholder='Preenchido automáticamente' value={address?.address ?? ""} />
+            </label>
+        </div>}
 
-                        <input defaultValue={defaultName ?? ""} type="text" name="delivery_location_name" id="delivery_location_name" className='w-full' placeholder='Casa, Trabalho...' required {...(presetName ? { readOnly: true, value: presetName } : {})} />
-                    </label>
+        <label htmlFor="delivery_special_instructions">Direções ou indicações? (Opcional)</label>
 
-                    <label className='w-full'>
-                        <div className='flex flex-row justify-start items-center gap-2'>
-                            <span>Endereço</span>
+        <textarea defaultValue={defaultSpecialInstructions ?? ""} id="delivery_special_instructions" name="delivery_special_instructions" placeholder="Direções, ponto de referência, cuidados..." rows={2} className='w-full' />
 
-                            {loading && <Icon name="Loading" className="animate-spin" />}
-                        </div>
-
-                        <input type="text" name="delivery_location_address" id="delivery_location_address" className='w-full' readOnly placeholder='Preenchido automáticamente' value={address?.address} />
-                    </label>
-                </div>}
-
-                <label htmlFor="delivery_special_instructions">Direções ou indicações? (Opcional)</label>
-
-                <textarea defaultValue={defaultSpecialInstructions ?? ""} id="delivery_special_instructions" name="delivery_special_instructions" placeholder="Direções, ponto de referência, cuidados..." rows={2} className='w-full' />
-
-                <input type="hidden" name="latitude" value={dropOffLocation?.latitude ?? 0} required />
-                <input type="hidden" name="longitude" value={dropOffLocation?.longitude ?? 0} required />
-            </fieldset>
-        }
-    };
+        <input type="hidden" name="latitude" value={dropOffLocation?.latitude ?? 0} required />
+        <input type="hidden" name="longitude" value={dropOffLocation?.longitude ?? 0} required />
+    </fieldset>
 };
 
-export default GoogleDropOffFieldset;
+export default DropOffFieldset;

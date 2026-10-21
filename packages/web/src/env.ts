@@ -1,4 +1,5 @@
 import { 
+    DEFAULT_GEOCODING_URL,
     type environmentType
 } from "@Madeirense/shared";
 
@@ -17,10 +18,28 @@ const environment = import.meta.env.MODE as environmentType;
  */
 const env = {
     // APP Keys
-    GOOGLE_API_KEY: import.meta.env.VITE_APP_GOOGLE_API_KEY,
-    GOOGLE_MAP_ID: import.meta.env.VITE_APP_GOOGLE_MAP_ID,
     UPLOAD_CARE_PUBLIC_KEY: import.meta.env.VITE_APP_UPLOAD_CARE_PUBLIC_KEY,
     VAPID_PUBLIC_KEY: import.meta.env.VITE_APP_VAPID_PUBLIC_KEY,
+
+    // Maps (Leaflet)
+    /**
+     * Raster tile URL template (`{s}`, `{z}`, `{x}`, `{y}`). Defaults to the public
+     * OpenStreetMap servers: free and keyless, fine for this app's volume, but under
+     * OSM's fair-use policy. Point it at a self-hosted or paid provider if traffic grows.
+     */
+    MAP_TILE_URL: import.meta.env.VITE_APP_MAP_TILE_URL || "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    MAP_TILE_ATTRIBUTION: import.meta.env.VITE_APP_MAP_TILE_ATTRIBUTION || "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+    /**
+     * Base URL of an OSRM-compatible routing server (used by the delivery tracker).
+     * Defaults to the public OSRM demo server: no key, ~1 request/s, no SLA.
+     * Self-host OSRM (e.g. on the VPS, Angola extract) for production reliability.
+     */
+    MAP_ROUTING_URL: import.meta.env.VITE_APP_MAP_ROUTING_URL || "https://router.project-osrm.org",
+    /**
+     * Base URL of a Photon-compatible geocoder (address search + reverse lookup).
+     * Defaults to the public komoot instance: OpenStreetMap data, no key, fair use only.
+     */
+    GEOCODING_URL: import.meta.env.VITE_APP_GEOCODING_URL || DEFAULT_GEOCODING_URL,
 
     // APP Defaults
     LOG_ERROR: import.meta.env.VITE_APP_LOG_ERROR,
