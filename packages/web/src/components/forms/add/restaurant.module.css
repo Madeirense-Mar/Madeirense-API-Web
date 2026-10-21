@@ -51,7 +51,7 @@
     --section-background-color: color-mix(in srgb, var(--neutral-dark), transparent 90%);
 }
 
-/*#region Location (manual) ================================ */
+/*#region Location (manual) =============================== */
 .location {
     composes: schedule;
 }

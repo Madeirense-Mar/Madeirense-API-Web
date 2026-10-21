@@ -20,7 +20,7 @@ import {
     type withEmptyString,
 } from "@Madeirense/shared";
 
-import ApplicationQueries, { 
+import ApplicationQueries, {
     Queries$Types
 } from "configurations/queries";
 
@@ -81,8 +81,8 @@ function RestaurantEventList(_props: IPropTypes) {
         status,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetRestaurantEvents", 
-            "events", 
+            "App$GetRestaurantEvents",
+            "events",
             !defaultRestaurant ? {} : { restaurant_id: `${defaultRestaurant}` }
         ] as Queries$Types.itemQueryKey[]),
         queryFn: ApplicationQueries.getList<restaurantEventType>,
@@ -156,7 +156,13 @@ function RestaurantEventList(_props: IPropTypes) {
                 );
 
             return <ul {...$ulProps}>
-                {mode === "list" && <HeaderListItem disabled={_list.length === 0} {...$liHeaderProps} />}
+                {mode === "list" && <>
+                    <HeaderListItem disabled={_list.length === 0} {...$liHeaderProps} />
+
+                    <li>
+                        <hr className="w-full border-dashed" />
+                    </li>
+                </>}
 
                 {list.length === 0 && <li data-empty>
                     {mode === "viewport" && <Icon name="Empty" />}
@@ -168,6 +174,8 @@ function RestaurantEventList(_props: IPropTypes) {
                     if (!item) return null;
 
                     const ref = idx === list.length - 1 ? lastElementRef : undefined;
+
+                    const hasExpired = (new Date() > new Date(item.event_date));
 
                     switch (mode) {
                         case "list": return <li id={`event-${item.event_id}`} key={item.event_id} {...{ ref }}>
@@ -189,10 +197,12 @@ function RestaurantEventList(_props: IPropTypes) {
                                 {Boolean(parseInt(`${item.price}`)) ? formatNumber(parseFloat(`${item.price}`)) : "Grátis"}
                             </Tag>
 
-                            <Tag variant="success" className="ml-auto">
+                            <Tag variant={(hasExpired) ? "danger" : "success"} className="ml-auto">
                                 <Icon name="Calendar1" />
 
-                                {new Date(item.event_date).toLocaleDateString()}
+                                <span className={resolveClassNames(hasExpired ? "line-through" : "")}>
+                                    {new Date(item.event_date).toLocaleDateString()}
+                                </span>
                             </Tag>
 
                             <Tag>

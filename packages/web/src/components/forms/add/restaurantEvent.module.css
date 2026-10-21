@@ -1,0 +1,22 @@
+.form {
+    @apply flex flex-col justify-start items-start;
+
+    gap: 36px;
+}
+
+.form>fieldset {
+    --fieldset-padding: 0px;
+    --fieldset-border-width: 0px;
+
+    @apply flex flex-col justify-start items-start w-full;
+
+    gap: 20px;
+}
+
+.form>fieldset>legend {
+    --tag-white-space: nowrap;
+
+    @apply flex flex-row justify-between items-center w-full;
+
+    margin-bottom: 12px;
+}

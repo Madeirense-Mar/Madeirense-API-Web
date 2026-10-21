@@ -1,4 +1,4 @@
-import { 
+import {
     useState,
     type ComponentProps,
     type SubmitEvent
@@ -13,7 +13,8 @@ import {
 
 import {
     formatUUID_UC_CDN_URL,
-    locales
+    locales,
+    resolveClassNames
 } from "@Madeirense/shared";
 
 import env from "env";
@@ -22,12 +23,18 @@ import { useApp } from "contexts/App";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
+import Tag from "components/tags";
 
 import AppSettings from "settings";
 
 import RestaurantsSelector from "../elements/selects/restaurants";
 
-import type { IComponentState } from "components/interface";
+import styles from "./restaurantEvent.module.css";
+
+import type {
+    IComponentState
+} from "components/interface";
+import DescriptionLabel from "../elements/labels/description";
 
 // ***************************************************************************************************************
 
@@ -46,12 +53,12 @@ type ModalState = {
 const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
 
 defineLocale('pt', async () => {
-    return locales.get("pt")?.uploadCare ?? {};
+    return (locales.get("pt")?.uploadCare ?? {}) as any;
 });
 
-const AddRestaurantEventForm = ({ 
-    callback, 
-    hideTitle = false, 
+const AddRestaurantEventForm = ({
+    callback,
+    hideTitle = false,
     ...props
 }: IPropTypes) => {
     const { create } = useApp();
@@ -140,34 +147,44 @@ const AddRestaurantEventForm = ({
         }
     };
 
-    return <form onSubmit={POST} className="h-ful w-full flex flex-col justify-start items-start gap-4 p-3" {...props}>
+    return <form onSubmit={POST} className={styles.form} {...props}>
         {!hideTitle && <h2>Evento</h2>}
 
-        <fieldset className="w-full flex flex-col justify-start items-start gap-2">
-            <legend className="font-bold mb-2">Informação</legend>
+        <fieldset data-state={isWorking ? "disabled" : "idle"}>
+            <legend>
+                <Tag variant="secondary">
+                    <Icon name="Image" />
 
-            <label htmlFor="name" className="w-full text-left">
-                <span>Nome</span>
+                    Capa
+                </Tag>
 
-                <br />
+                <hr className="w-full" />
+            </legend>
 
-                <input id="name" type="name" name="name" placeholder="Nome..." className="w-full" required />
-            </label>
+            <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
+                {status === "uploading-thumbnail"
+                    ? <Icon name="Loading" className="animate-spin" />
+                    : <FileUploaderRegular
+                        filesViewMode="grid"
+                        multipleMin={1}
+                        multipleMax={1}
+                        localeName="pt"
+                        onFileUploadStart={toggleUploadState("thumbnail")}
+                        onFileUploadSuccess={handleUpload("thumbnail")}
+                        pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
+                        sourceList="local, facebook, gdrive"
+                        confirmUpload
+                        gridShowFileNames
+                        imgOnly
+                        useCloudImageEditor
+                    />
+                }
+            </div>
 
-            <label htmlFor="description" className="w-full text-left">
-                <span>Descrição</span>
-
-                <br />
-
-                <textarea id="description" name="description" placeholder="Descrição..." className="w-full p-2" required />
-            </label>
-        </fieldset>
-
-        <fieldset data-state={isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-1 p-2 border rounded-md border-solid">
-            <header className="w-full flex flex-row justify-between items-center">
-                <h5>Imagem da capa</h5>
-
-                <FileUploaderRegular
+            {[
+                status === "uploading-thumbnail",
+                data?.uploadedThumbnailURL !== ""
+            ].includes(true) && <FileUploaderRegular
                     filesViewMode="grid"
                     multipleMin={1}
                     multipleMax={1}
@@ -180,125 +197,232 @@ const AddRestaurantEventForm = ({
                     gridShowFileNames
                     imgOnly
                     useCloudImageEditor
-                />
-            </header>
-
-            {[
-                status === "uploading-thumbnail",
-                data?.uploadedThumbnailURL !== ""
-            ].includes(true) && <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
-                    {status === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
-                </div>}
+                />}
         </fieldset>
 
-        <fieldset data-state={isWorking ? "disabled" : "idle"} className="w-full flex flex-col justify-start items-start gap-2 p-2 border rounded-md border-solid">
-            <header className="w-full flex flex-row justify-between items-center">
-                <h5>Vídeo promocional</h5>
+        <fieldset data-state={isWorking ? "disabled" : "idle"}>
+            <legend>
+                <Tag variant="secondary">
+                    <Icon name="Video" />
 
-                <FileUploaderRegular
-                    accept="video/mp4,video/webm,video/mov,video/avi"
-                    filesViewMode="grid"
-                    multipleMin={1}
-                    multipleMax={1}
-                    localeName="pt"
-                    localeDefinitionOverride={AppSettings.UploadCare.Overrides.video}
-                    onFileUploadStart={toggleUploadState("video")}
-                    onFileUploadSuccess={handleUpload("video")}
-                    pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                    sourceList="local, facebook, gdrive"
-                    confirmUpload
-                    gridShowFileNames
-                />
-            </header>
+                    Vídeo promocional
+                </Tag>
 
-            {(status === "uploading-video") && <div className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
-                <Icon name="Loading" className="animate-spin" />
-            </div>}
+                <hr className="w-full" />
+            </legend>
 
-            {(data?.uploadedVideoURL !== "") && <ReactPlayer
-                src={data?.uploadedVideoURL}
-                width="100%"
-                height={300}
-                className="rounded-md border"
-                playing
-                controls
-            />}
+            {(data?.uploadedVideoURL !== "")
+                ? <>
+                    <ReactPlayer
+                        src={data?.uploadedVideoURL}
+                        width="100%"
+                        height={300}
+                        className="rounded-md border"
+                        playing
+                        controls
+                    />
+
+                    <FileUploaderRegular
+                        className="ml-auto"
+                        accept="video/mp4,video/webm,video/mov,video/avi"
+                        filesViewMode="grid"
+                        multipleMin={1}
+                        multipleMax={1}
+                        localeName="pt"
+                        localeDefinitionOverride={AppSettings.UploadCare.Overrides.video}
+                        onFileUploadStart={toggleUploadState("video")}
+                        onFileUploadSuccess={handleUpload("video")}
+                        pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
+                        sourceList="local, facebook, gdrive"
+                        confirmUpload
+                        gridShowFileNames
+                    />
+                </>
+
+                : <div data-type="thumbnail" className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
+                    {status === "uploading-video"
+                        ? <Icon name="Loading" className="animate-spin" />
+                        : <FileUploaderRegular
+                            accept="video/mp4,video/webm,video/mov,video/avi"
+                            filesViewMode="grid"
+                            multipleMin={1}
+                            multipleMax={1}
+                            localeName="pt"
+                            localeDefinitionOverride={AppSettings.UploadCare.Overrides.video}
+                            onFileUploadStart={toggleUploadState("video")}
+                            onFileUploadSuccess={handleUpload("video")}
+                            pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
+                            sourceList="local, facebook, gdrive"
+                            confirmUpload
+                            gridShowFileNames
+                        />
+                    }
+                </div>
+            }
+        </fieldset>
+
+        <fieldset className="w-full flex flex-col justify-start items-start gap-2">
+            <legend>
+                <Tag variant="secondary">
+                    <Icon name="Party" />
+
+                    Evento
+                </Tag>
+
+                <hr className="w-full" />
+            </legend>
+
+            <DescriptionLabel
+                className="w-full"
+                title="Nome"
+                description="Como se chama o evento."
+                layout="column"
+                input={{
+                    element: "input",
+                    props: {
+                        id: "name",
+                        className: "w-full",
+                        name: "name",
+                        title: "Nome",
+                        type: "text",
+                        placeholder: "Nome...",
+                        required: true
+                    }
+                }}
+            />
+
+            <DescriptionLabel
+                layout="column"
+                className="w-full"
+                title="Descrição"
+                description="Informação sobre o evento."
+                input={{
+                    element: "textarea",
+                    props: {
+                        id: "description",
+                        className: "w-full",
+                        name: "description",
+                        title: "Descrição",
+                        placeholder: "Descrição...",
+                        required: true
+                    }
+                }}
+            />
         </fieldset>
 
         <fieldset className="w-full flex flex-row justify-start items-start gap-2">
-            <legend className="font-bold mb-2">Localização, Data e horário</legend>
+            <legend>
+                <Tag variant="secondary">
+                    <Icon name="Calendar1" />
+
+                    Localização, Data e horário
+                </Tag>
+
+                <hr className="w-full" />
+            </legend>
 
             <label htmlFor="restaurant_id" className="w-full text-left">
-                <span>Restaurante</span>
+                <span className="font-extrabold">Restaurante</span>
 
                 <br />
+
+                <span>
+                    Em que restaurante acontecerá o evento?
+                </span>
 
                 <RestaurantsSelector title="Restaurante" id="restaurant_id" name="restaurant_id" defaultOptionLabel="Local do evento" defaultValue={""} className="w-full" required hideDefaultOption />
             </label>
 
             <label htmlFor="event_date" className="w-full text-left">
-                <span>Data do evento</span>
+                <span className="font-extrabold">Data do evento</span>
 
                 <br />
 
                 <input id="event_date" type="date" min={new Date().toISOString().split('T')[0]} name="event_date" placeholder="Data do evento" className="w-full" required />
             </label>
 
-            <div className="flex flex-row justify-start items-center gap-2">
-                <label htmlFor="start_time" className="text-left">
-                    <span className="whitespace-nowrap">Hora de começo</span>
+            <div className="flex flex-row justify-start items-center gap-2 w-full">
+                <label htmlFor="start_time" className="w-full">
+                    <span className="font-extrabold">Hora de começo</span>
 
                     <br />
 
-                    <input id="start_time" type="time" name="start_time" placeholder="Começo" />
+                    <input id="start_time" type="time" name="start_time" placeholder="Começo" className="w-full text-center" />
                 </label>
 
-                <label htmlFor="end_time" className="whitespace-nowrap text-left">
-                    <span>Hora do fim</span>
+                <label htmlFor="end_time" className="w-full">
+                    <span className="font-extrabold">Hora do fim</span>
 
                     <br />
 
-                    <input id="end_time" type="time" name="end_time" placeholder="Fim" />
+                    <input id="end_time" type="time" name="end_time" placeholder="Fim" className="w-full text-center" />
                 </label>
             </div>
         </fieldset>
 
         <fieldset className="w-full flex flex-row justify-start items-start gap-2">
-            <legend className="font-bold mb-2">Preço de entrada e capacidade</legend>
+            <legend>
+                <Tag variant="secondary">
+                    <Icon name="PriceTags" />
 
+                    Preço de entrada e capacidade
+                </Tag>
 
-            <div className="w-full flex flex-row justify-start items-center gap-2">
-                <label htmlFor="price" className="w-full text-left">
-                    <span>Preço <span className="italic opacity-45 text-sm">(Deixar vazio se o ingresso for grátis)</span></span>
+                <hr className="w-full" />
+            </legend>
 
-                    <br />
+            <DescriptionLabel
+                className="w-full"
+                title="Preço"
+                description={
+                    <span className="italic opacity-45 text-sm">(Deixar vazio se o ingresso for grátis)</span>
+                }
+                input={{
+                    element: "input",
+                    props: {
+                        id: "price",
+                        type: "number",
+                        min: 0,
+                        name: "price",
+                        placeholder: "Preço",
+                        className: "w-full",
+                        required: true
+                    }
+                }}
+            />
 
-                    <input id="price" type="number" min={0} name="price" placeholder="Preço" className="w-full" />
-                </label>
-
-                <label htmlFor="spots" className="text-left">
-                    <span className="whitespace-nowrap">Capacidade <span className="italic opacity-45 text-sm">(Deixar vazio se não tiver limite)</span></span>
-
-                    <br />
-
-                    <input id="spots" type="spots" min={0} name="spots" placeholder="Capacidade" className="w-full" />
-                </label>
-            </div>
+            <DescriptionLabel
+                className="w-full"
+                title="Capacidade"
+                description={
+                    <span className="italic opacity-45 text-sm">(Deixar vazio se não tiver limite)</span>
+                }
+                input={{
+                    element: "input",
+                    props: {
+                        id: "spots",
+                        type: "number",
+                        min: 0,
+                        name: "spots",
+                        placeholder: "Capacidade",
+                        className: "w-full",
+                        required: true
+                    }
+                }}
+            />
         </fieldset>
 
-        <div className="flex flex-col justify-start items-start w-full gap-2 mt-auto">
-            {error && <p data-state="error" className="w-full flex flex-row justify-start items-center gap-4">
-                <Icon name="ExclamationCircle" />
+        {error && <Tag className="mx-auto" variant="danger">
+            <Icon name="ExclamationCircle" />
 
-                {error.message}
-            </p>}
+            {error.message}
+        </Tag>}
 
-            <Button type="submit" className="w-full" disabled={status === "loading"}>
-                Postar evento
+        <Button type="submit" className="w-full" disabled={status === "loading"}>
+            Postar evento
 
-                {status === "loading" && <Icon name="Loading" className="animate-spin" />}
-            </Button>
-        </div>
+            {status === "loading" && <Icon name="Loading" className="animate-spin" />}
+        </Button>
     </form>
 };
 

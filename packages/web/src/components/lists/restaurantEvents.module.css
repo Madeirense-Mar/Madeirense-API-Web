@@ -1,3 +1,4 @@
+/*#region List ============================================ */
 .list {
     @apply flex flex-col justify-start items-start gap-3;
 }
@@ -6,6 +7,24 @@
     @apply flex flex-row justify-start items-center w-full gap-2;
 }
 
+.list li:not(:nth-child(2)) {
+    padding: 12px;
+
+    border-radius: 12px;
+    
+    background-color: var(--li-background-color, transparent);
+}
+
+[data-theme="LAND-DARK"] .list li:not(:nth-child(2)):hover {
+    --li-background-color: color-mix(in srgb, var(--secondary-light), transparent 80%);
+}
+
+[data-theme="SEA-DARK"] .list li:not(:nth-child(2)):hover {
+    --li-background-color: var();
+}
+/*#endregion*/
+
+/*#region Viewport ======================================== */
 .viewport {
     composes: list;
 
@@ -49,3 +68,4 @@
     padding-left: var(--container-padding);
     padding-right: var(--container-padding);
 }
+/*#endregion*/

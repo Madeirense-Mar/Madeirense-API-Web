@@ -323,7 +323,7 @@ const AddProductForm = ({
                         id: "description",
                         className: "w-full",
                         name: "description",
-                        title: "Tipo de composição",
+                        title: "Descrição",
                         placeholder: "Descrição...",
                         required: true
                     }
