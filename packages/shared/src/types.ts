@@ -45,10 +45,6 @@ export type fixedLengthRecord<
     N extends number
 > = [K, ...K[]] extends { length: N } ? Record<K, V> : never;
 
-export type googleAPIOptionsType = {
-    API_KEY?: string
-};
-
 export type keyValuePair<K extends (string | number | symbol), V = string> = {
     key: K,
     value: V

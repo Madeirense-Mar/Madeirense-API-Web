@@ -1,62 +1,15 @@
 import { calculateDistance } from "./calculators.js";
-import { parseAddressComponents } from "./parsers.js";
 import { ELocationErrorCode } from "./enumerators.js";
 
 import type { ILocator } from "../interfaces.js";
 
 import type { 
-    distanceVectorType, 
-    googleAPIOptionsType
+    distanceVectorType
 } from "../types.js";
 
 import type { restaurantType } from "../types/restaurants.js";
 
 // ***************************************************************************************************************
-
-export type parsedGoogleAddressObjectType = {
-    street_number: string,
-    street_name: string,
-    neighborhood: string,
-    city: string,
-    state: string,
-    country: string,
-    postal_code: string,
-    address: string,
-}
-
-/**
- * Returns address information based on Latitude and Longitude.
- * @typedef {Object} Location
- * @property {number} lat - Latitude of the location.
- * @property {number} lng - Longitude of the location.
- * @returns string
- */
-export const getAddressFromCoordinatesAPI = async (
-    { latitude, longitude }: Readonly<distanceVectorType>, 
-    parse: boolean = false, 
-    { API_KEY }: Readonly<googleAPIOptionsType>
-): Promise<string | parsedGoogleAddressObjectType> => {
-    if (API_KEY === "") throw new Error('Google API key is not defined');
-
-    const URL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`
-
-    try {
-        const response = await fetch(URL)
-        const data = await response.json()
-
-        if (data.status === 'OK' && data.results.length > 0) {
-            if (!parse) return data.results[0].formatted_address
-
-            else return parseAddressComponents(data.results[0]);
-        } else {
-            throw new Error(`Geocoding failed: ${data.status}`)
-        }
-    } catch (error) {
-        console.error('Geocoding error:', error);
-
-        throw error
-    }
-}
 
 /**
  * Get the user's current location using the browser's Geolocation API

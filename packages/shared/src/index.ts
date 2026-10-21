@@ -27,6 +27,7 @@ export * from "./utilities/enumerators.js";
 export * from "./utilities/formatters.js";
 export * from "./utilities/functions.js";
 export * from "./utilities/generators.js";
+export * from "./utilities/geocoding.js";
 export * from "./utilities/getters.js";
 export * from "./utilities/parsers.js";
 export * from "./utilities/transformers.js";

@@ -15,6 +15,15 @@
     min-height: var(--picker-height);
 }
 
+/* z-index: 0 gives Leaflet's panes (z 400–1000) their own stacking context,
+   so the map never paints over the controls, headers or modals. */
+.map {
+    height: 100%;
+    width: 100%;
+
+    z-index: 0;
+}
+
 .controls {
     --padding: 12px;
 

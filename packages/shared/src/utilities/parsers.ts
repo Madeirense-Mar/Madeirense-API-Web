@@ -3,54 +3,6 @@ import { isInvalidValue } from "./validators.js";
 
 // ***************************************************************************************************************
 
-interface addressComponent {
-    long_name: string
-    short_name: string
-    types: string[]
-}
-
-interface geocodingResult {
-	address_components: addressComponent[]
-	formatted_address: string
-	geometry: {
-		location: { lat: number, lng: number }
-		location_type: string
-		viewport: {
-			northeast: { lat: number, lng: number }
-			southwest: { lat: number, lng: number }
-		}
-	}
-	place_id: string
-	types: string[]
-};
-
-/**
- * Parses address components from a Google Geocoding API result.
- * @typedef {Object} Location
- * @property {number} lat - Latitude of the location.
- * @property {number} lng - Longitude of the location.
- * @returns string
- */
-export const parseAddressComponents = (result: geocodingResult) => {
-    const components = result.address_components
-
-    const getComponent = (type: string): string => {
-        const component = components.find(comp => comp.types.includes(type))
-        return component?.long_name || ''
-    }
-
-    return {
-        street_number: getComponent('street_number'),
-        street_name: getComponent('route'),
-        neighborhood: getComponent('sublocality_level_1'),
-        city: getComponent('locality'),
-        state: getComponent('administrative_area_level_1'),
-        country: getComponent('country'),
-        postal_code: getComponent('postal_code'),
-        address: result.formatted_address
-    }
-};
-
 /**
  * Returns a new object containing the properties contained within the list.
  * @param obj 
