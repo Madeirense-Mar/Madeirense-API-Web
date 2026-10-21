@@ -1,8 +1,3 @@
-div[data-type="thumbnail"] {
-    background-size: cover;
-    background-position: center center;
-}
-
 #product-thumbnail {
     padding: 12px;
 

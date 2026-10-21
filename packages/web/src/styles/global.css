@@ -134,6 +134,22 @@ code {
         monospace;
 }
 
+div[data-type="thumbnail"] {
+    --height: var(--thumbnail-height, 400px);
+
+    height: var(--height);
+    max-height: var(--height);
+    min-height: var(--height);
+
+    width: 100%;
+    
+    border-radius: 10px;
+    
+    background-color: gray;
+    background-position: center center;
+    background-size: cover;
+}
+
 h2,
 h3 {
     @apply font-black;
