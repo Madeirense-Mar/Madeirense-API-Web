@@ -12,6 +12,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import {
+    Madeirense$Enumerators,
     USER_ROLES,
     getLabel,
     resolveClassNames,
@@ -32,6 +33,7 @@ import Tag from "components/tags";
 
 import { nextPageTriggerSetup } from "./utilities/functions";
 
+import styles from "./staff.module.css";
 import defaultStyles from "./list.module.css";
 
 import type {
@@ -145,15 +147,24 @@ function StaffList(_props: IPropTypes) {
                     Sem pessoal registado
                 </li>}
 
+                <li>
+                    <hr className="w-full border-dashed" />
+                </li>
+
                 {list.map((item, idx) => {
                     if (!item) return null;
 
                     const ref = idx === list.length - 1 ? lastElementRef : undefined;
 
-                    return <li key={item.workstation_id} {...{ ref }}>
-                        <ProfilePictureButton src={item.Users.profile_photo ?? "#"} size="xs" />
+                    const panelLink = [
+                        Madeirense$Enumerators.Pages.BackOffice.Staff,
+                        item.Users.user_id
+                    ].join("/");
 
-                        <Link to={`/back-office/staff/${item.Users.user_id}`}>{item.Users.name}</Link>
+                    return <li key={item.workstation_id} className={styles["list-item"]} {...{ ref }}>
+                        <ProfilePictureButton src={item.Users.profile_photo ?? "#"} size="m" />
+
+                        <Link to={panelLink}>{item.Users.name}</Link>
 
                         <span className="italic opacity-40">{item.Users.email}</span>
 
@@ -165,8 +176,7 @@ function StaffList(_props: IPropTypes) {
                             {getLabel(item.Users.user_role)}
                         </Tag>
                     </li>
-                })
-                }
+                })}
 
                 {isFetchingNextPage && <li>
                     <Icon name="Loading" className="animate-spin mx-auto my-4" />
@@ -176,16 +186,18 @@ function StaffList(_props: IPropTypes) {
 };
 
 const HeaderListItem = ({
+    className,
     defaultFilter,
     defaultRestaurantId,
     disabled = false,
     setter,
+    ...props
 }: {
     defaultFilter: filterType, 
     defaultRestaurantId?: number, 
     disabled?: boolean, 
     setter: Dispatch<SetStateAction<filterType>>
-}) => {
+} & ComponentProps<"li">) => {
     const { get } = useApp();
 
     const headerFilters = [
@@ -224,7 +236,7 @@ const HeaderListItem = ({
         });
     }
 
-    return <li data-type="filter">
+    return <li className={resolveClassNames(defaultStyles["list-header"], className)} data-type="filter" {...props}>
         <Icon name="Filter" />
 
         {headerFilters.map(f => <select
@@ -240,7 +252,7 @@ const HeaderListItem = ({
             </option>)}
         </select>)}
 
-        <Button onClick={clearFilters} variant="secondary">
+        <Button onClick={clearFilters} variant="secondary" className="ml-auto">
             <Icon name="Close" />
         </Button>
     </li>

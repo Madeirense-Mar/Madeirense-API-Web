@@ -1,0 +1,13 @@
+/*#region Staff list ====================================== */
+.staff-list {
+    --ul-gap: 0px;
+
+    border: 1px solid var(--ul-border-color, var(--base-border-color));
+    border-radius: 12px;
+}
+
+.staff-list li {
+    --li-border-radius: 0px;
+}
+
+/*#endregion*/

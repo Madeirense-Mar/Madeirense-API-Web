@@ -1,0 +1,31 @@
+/*#region List item ======================================= */
+.list-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+        "profile    name    tag"
+        "profile    email   tag"
+    ;
+    gap: 8px;
+
+    align-items: center;
+}
+
+.list-item *:nth-child(1) {
+    grid-area: profile;
+}
+
+.list-item *:nth-child(2) {
+    grid-area: name;
+}
+
+.list-item *:nth-child(3) {
+    grid-area: email;
+}
+
+.list-item *:nth-child(4) {
+    grid-area: tag;
+
+    height: min-content;
+}
+/*#endregion*/

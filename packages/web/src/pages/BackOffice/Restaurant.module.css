@@ -8,8 +8,6 @@
     
     border: 1px solid var(--ul-border-color, var(--base-border-color));
     border-radius: 12px;
-
-    overflow: hidden;
 }
 
 .events-list li {

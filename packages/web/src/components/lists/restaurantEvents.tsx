@@ -33,6 +33,7 @@ import Tag from "components/tags";
 
 import { nextPageTriggerSetup } from "./utilities/functions";
 
+import defaultStyles from "./list.module.css";
 import styles from "./restaurantEvents.module.css";
 
 // ***************************************************************************************************************
@@ -178,7 +179,7 @@ function RestaurantEventList(_props: IPropTypes) {
                     const hasExpired = (new Date() > new Date(item.event_date));
 
                     switch (mode) {
-                        case "list": return <li id={`event-${item.event_id}`} key={item.event_id} {...{ ref }}>
+                        case "list": return <li id={`event-${item.event_id}`} key={item.event_id} className={styles["list-item"]} {...{ ref }}>
                             {(disableLink)
                                 ? <span className="font-extrabold">{item.name}</span>
 
@@ -268,7 +269,7 @@ const HeaderListItem = ({
         });
     };
 
-    return <li className="w-full flex flex-row justify-start items-center gap-2" data-type="filter">
+    return <li className={resolveClassNames(defaultStyles["list-header"])} data-type="filter">
         <Icon name="Filter" />
 
         {filters.map(f => <select

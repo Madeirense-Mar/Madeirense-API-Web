@@ -1,32 +1,18 @@
-/*#region List ============================================ */
+/*#region Mode: List ====================================== */
 .list {
-    @apply flex flex-col justify-start items-start;
-
-    gap: var(--ul-gap, 12px);
-}
-
-.list li:not([data-type="filter"], [data-empty])  {
-    @apply flex flex-row justify-start items-center w-full gap-2;
-}
-
-.list li:not(:nth-child(2)) {
-    padding: 12px;
-
-    border-radius: var(--li-border-radius, 12px);
-    
-    background-color: var(--li-background-color, transparent);
-}
-
-[data-theme="LAND-DARK"] .list li:not(:nth-child(2)):hover {
-    --li-background-color: color-mix(in srgb, var(--secondary-light), transparent 80%);
-}
-
-[data-theme="SEA-DARK"] .list li:not(:nth-child(2)):hover {
-    --li-background-color: var();
+    composes: list from "./list.module.css";
 }
 /*#endregion*/
 
-/*#region Viewport ======================================== */
+/*#region List item ======================================= */
+.list-item {
+    @apply flex flex-row justify-start items-center;
+
+    gap: 12px;
+}
+/*#endregion*/
+
+/*#region Mode: Viewport ================================== */
 .viewport {
     composes: list;
 

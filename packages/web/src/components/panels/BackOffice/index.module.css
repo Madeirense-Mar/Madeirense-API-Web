@@ -1,3 +1,4 @@
+/*#region Panel =========================================== */
 .panel {
     @apply flex flex-col justify-start items-start gap-4;
 
@@ -61,11 +62,18 @@
 [data-theme*="DARK"] .panel>fieldset {
     --fieldset-padding: 0px;
 }
+/*#endregion*/
 
-@media only screen and (min-width: 344px) {}
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {
+}
 
-@media only screen and (min-width: 428px) {}
+@media only screen and (min-width: 428px) {
+}
 
-@media only screen and (min-width: 768px) {}
+@media only screen and (min-width: 768px) {
+}
 
-@media only screen and (min-width: 1366px) {}
+@media only screen and (min-width: 1366px) {
+}
+/*#endregion*/

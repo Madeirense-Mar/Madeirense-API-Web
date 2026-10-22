@@ -1,4 +1,5 @@
 import {
+    resolveClassNames,
     type restaurantType
 } from "@Madeirense/shared";
 
@@ -8,6 +9,8 @@ import Icon from "components/icon";
 import RestaurantCard from "components/cards/restaurant";
 import OrdersList from "components/lists/order";
 import StaffList from "components/lists/staff";
+
+import styles from "./Restaurant.module.css";
 
 // ***************************************************************************************************************
 
@@ -44,7 +47,7 @@ function RestaurantPanel({ id }: { id: number }) {
                 <h4>Equipa</h4>
 
                 <StaffList
-                    className="w-full"
+                    className={resolveClassNames(styles["staff-list"], "w-full")}
                     defaultRestaurantId={restaurant.restaurant_id}
                 />
             </>
