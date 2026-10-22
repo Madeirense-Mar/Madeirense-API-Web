@@ -9,7 +9,9 @@ import {
     type MouseEvent
 } from "react";
 
-import { useNavigate } from "react-router-dom";
+import {
+    useNavigate
+} from "react-router-dom";
 
 import ReactPlayer from "react-player";
 
@@ -28,6 +30,8 @@ import {
     type restaurantEventType,
 } from "@Madeirense/shared";
 
+import env from "env";
+
 import AppSettings from "settings";
 
 import { useApp } from "contexts/App";
@@ -35,16 +39,15 @@ import { useModal } from "contexts/Modal";
 import { useNotifications } from "contexts/Notifications";
 
 import Button from "components/buttons";
-import RestaurantsSelect from "components/forms/elements/selects/restaurants";
 import Icon from "components/icon";
+import Tag from "components/tags";
+
+import RestaurantsSelect from "components/forms/elements/selects/restaurants";
+
 import TicketBuyersList from "components/lists/ticketBuyers";
 
 import DeletionForm from "components/modals/forms/delete";
 import CancellationForm from "components/modals/forms/cancel";
-
-import Tag from "components/tags";
-
-import env from "env";
 
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
@@ -52,7 +55,9 @@ import type {
     Restaurant_Events
 } from "@Madeirense/database/browser";
 
-import type { statusType } from "components/types";
+import type { 
+    statusType
+} from "components/types";
 
 // ***************************************************************************************************************
 
@@ -425,6 +430,7 @@ function EventPanel({ id }: { id: number }) {
 };
 
 type sectionType = "thumbnail" | "video";
+
 const ScrollToSection = ({
     callback,
     event_id,

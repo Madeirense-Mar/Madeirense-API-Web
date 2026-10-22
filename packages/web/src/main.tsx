@@ -1,6 +1,10 @@
-import "@uploadcare/react-uploader/core.css";
-
 //#region Styles ==========================================
+
+//#region External styles
+import "@uploadcare/react-uploader/core.css";
+//#endregion
+
+//#region App styles
 import "styles/tailwind.css";
 import "styles/global.css";
 import "styles/root.css";
@@ -10,6 +14,7 @@ import "styles/table.css";
 import "styles/form/inputs.css";
 import "styles/form/fieldset.css";
 import "styles/form/label.css";
+//#endregion
 
 //#region Components default styles
 import "styles/card.css";
@@ -17,9 +22,8 @@ import "styles/card.css";
 
 //#region Grouped components default styles
 //#endregion
-//#endregion
 
-// ***************************************************************************************************************
+//#endregion
 
 import ReactDOM from "react-dom/client";
 
