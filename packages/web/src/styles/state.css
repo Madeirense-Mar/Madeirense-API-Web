@@ -1,0 +1,31 @@
+/*#region Error =========================================== */
+[data-state="error"] {
+    border: 1px solid var(--error-element-border-color, var(--accent));
+
+    background-color: var(--error-element-background-color, color-mix(in srgb, var(--accent), transparent 20%));
+}
+
+/*#region Theme variations*/
+[data-theme="LAND-DARK"] [data-state="error"] {
+    --error-element-border-color: initial;
+    --error-element-background-color: initial;
+}
+
+[data-theme="SEA-DARK"] [data-state="error"] {
+    --error-element-border-color: initial;
+    --error-element-background-color: initial;
+}
+
+[data-theme="LAND-LIGHT"] [data-state="error"] {
+    --error-element-border-color: initial;
+    --error-element-background-color: initial;
+}
+
+[data-theme="SEA-LIGHT"] [data-state="error"] {
+    --error-element-border-color: initial;
+    --error-element-background-color: initial;
+}
+
+/*#endregion*/
+
+/*#endregion*/
