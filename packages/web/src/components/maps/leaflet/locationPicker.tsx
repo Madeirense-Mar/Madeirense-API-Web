@@ -35,8 +35,13 @@ import Icon from "components/icon";
 import {
     MAP_DEFAULT_ZOOM,
     MAP_MARKERS,
-    MAP_MAX_ZOOM
+    MAP_MAX_ZOOM,
+    MAP_ROTATION_OPTIONS
 } from "./constants";
+
+import LeafletRotateControl from "./rotateControl";
+
+import "./plugins";
 
 import styles from "./locationPicker.module.css";
 
@@ -138,6 +143,7 @@ function LeafletLocationPicker(_props: IPropTypes) {
             </div>
 
             <MapContainer
+                {...MAP_ROTATION_OPTIONS}
                 ref={setMap}
                 center={[selectedLocation.latitude, selectedLocation.longitude]}
                 className={styles.map}
@@ -150,6 +156,8 @@ function LeafletLocationPicker(_props: IPropTypes) {
                     maxZoom={MAP_MAX_ZOOM}
                     url={env.MAP_TILE_URL}
                 />
+
+                <LeafletRotateControl />
 
                 <MapClickHandler onClick={selectLocation} />
 

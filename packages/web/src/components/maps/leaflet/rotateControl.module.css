@@ -1,0 +1,35 @@
+/* Matches Leaflet's zoom control (.leaflet-bar a). */
+.control {
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.control button {
+    @apply flex justify-center items-center;
+
+    width: 30px;
+    height: 30px;
+
+    font-size: 18px;
+    color: #333;
+
+    background-color: #fff;
+    border: none;
+    border-bottom: 1px solid #ccc;
+
+    cursor: pointer;
+}
+
+.control button:last-child {
+    border-bottom: none;
+}
+
+.control button:hover {
+    background-color: #f4f4f4;
+}
+
+.compass svg {
+    transition: transform 0.15s ease-out;
+}

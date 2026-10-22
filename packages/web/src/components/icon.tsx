@@ -139,6 +139,7 @@ import {
     MdLightMode,
     MdLocalDrink,
     MdMyLocation,
+    MdNavigation,
     MdNotificationsActive,
     MdOndemandVideo,
     MdOutlineAccessTime,
@@ -152,6 +153,8 @@ import {
     MdOutlineWork,
     MdPendingActions,
     MdPhone,
+    MdRotateLeft,
+    MdRotateRight,
     MdShapeLine,
     MdUpdate
 } from "react-icons/md";
@@ -309,6 +312,7 @@ const registry = {
     //#endregion
 
     //#region N --------------------------------------------
+    Navigation: MdNavigation,
     NoDrinks: MdOutlineNoDrinks,
     Notes: MdOutlineNotes,
     Notification: IoNotifications,
@@ -345,6 +349,8 @@ const registry = {
     //#region R --------------------------------------------
     Recycle: FaRecycle,
     Restaurant: MdFoodBank,
+    RotateLeft: MdRotateLeft,
+    RotateRight: MdRotateRight,
     Report: IoDocumentTextOutline,
     Running: PiSneakerMoveBold,
     //#endregion

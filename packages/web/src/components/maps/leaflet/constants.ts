@@ -1,4 +1,5 @@
 import L, {
+    type MapOptions,
     type PathOptions,
     type PointTuple
 } from "leaflet";
@@ -68,3 +69,17 @@ export const ROUTE_PATH_OPTIONS: PathOptions = {
 
 /** Courier pings closer than this to the last known position don't trigger a new route request. */
 export const MIN_REROUTE_DISTANCE_METERS = 20;
+
+/**
+ * leaflet-rotate options shared by every map (requires `./plugins` to be imported).
+ * Rotate with the on-map control, two fingers on touch screens, or Shift + mouse wheel.
+ */
+export const MAP_ROTATION_OPTIONS: MapOptions = {
+    rotate: true,
+    bearing: 0,
+    touchRotate: true,
+    shiftKeyRotate: true,
+    rotateControl: false
+};
+
+export const MAP_ROTATION_STEP_DEGREES = 15;

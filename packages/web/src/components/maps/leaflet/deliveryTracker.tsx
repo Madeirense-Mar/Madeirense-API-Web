@@ -39,9 +39,12 @@ import {
     MAP_DEFAULT_ZOOM,
     MAP_MARKERS,
     MAP_MAX_ZOOM,
+    MAP_ROTATION_OPTIONS,
     MIN_REROUTE_DISTANCE_METERS,
     ROUTE_PATH_OPTIONS
 } from "./constants";
+
+import LeafletRotateControl from "./rotateControl";
 
 import {
     fetchDrivingRoute,
@@ -59,6 +62,8 @@ import type {
 } from "@Madeirense/database/browser";
 
 import type { variantType } from "components/types";
+
+import "./plugins";
 
 import "leaflet/dist/leaflet.css";
 
@@ -216,6 +221,7 @@ const LeafletDeliveryTracker = ({
 
     return <div data-component="delivery-tracker" className={resolveClassNames(styles[variant], className)} {...props}>
         <MapContainer
+            {...MAP_ROTATION_OPTIONS}
             ref={setMap}
             center={initialCenter}
             className={styles.map}
@@ -227,6 +233,8 @@ const LeafletDeliveryTracker = ({
                 maxZoom={MAP_MAX_ZOOM}
                 url={env.MAP_TILE_URL}
             />
+
+            <LeafletRotateControl />
 
             {route && <Polyline pathOptions={ROUTE_PATH_OPTIONS} positions={route.path} />}
 
