@@ -12,6 +12,7 @@ import {
 
 import {
     DEFAULT_APP_SETTINGS,
+    Madeirense$Enumerators,
     ORDERS_PREPARATION_STATUS,
     calculateTravel,
     formatMinutes,
@@ -135,16 +136,14 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
     const orderPageLink = useMemo(() => {
         switch (true) {
-            case (!order): return "";
-
             case (location.pathname.includes("back-office")): switch (true) {
                 case (location.pathname.includes("deliveries")):
-                    return `/back-office/deliveries/${order?.order_id}`;
+                    return `${Madeirense$Enumerators.Pages.BackOffice.Deliveries}/${order?.order_id}`;
 
-                default: return `/back-office/requests/${order?.order_id}`;
+                default: return `${Madeirense$Enumerators.Pages.BackOffice.Requests}/${order?.order_id}`;
             }
 
-            default: return `/orders/${order?.order_id}`;
+            default: return `${Madeirense$Enumerators.Pages.App.Order}/${order?.order_id}`;
         }
     }, [location, order]);
 
@@ -235,7 +234,6 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
     const $paymentTagVariant: variantType = useMemo(() => (
         ["refunded"].includes(order?.Payments[0].status ?? "") ? "warning" :
-            ["pending"].includes(order?.Payments[0].status ?? "") ? "primary" :
                 ["completed"].includes(order?.Payments[0].status ?? "") ? "success" :
                     ["failed"].includes(order?.Payments[0].status ?? "") ? "danger" : "secondary"
     ), [order?.Payments]);
@@ -304,7 +302,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
                 </span>
             </Tag>}
 
-            <Tag variant={$computedVariant}>
+            <Tag variant="secondary">
                 {localOrderStatus === "pending" && type === "delivery" ? <Icon name="Loading" className="animate-spin" /> : null}
                 {localOrderStatus === "cancelled" && <Icon name="Close" />}
                 {localOrderStatus === "assigned" && <Icon name="Running" />}
@@ -313,23 +311,25 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             </Tag>
 
             {(type === "ticket") ? null : <>
-                {(["pending", "confirmed", "preparing"] as $Enums.Orders_status[]).includes(localOrderStatus as $Enums.Orders_status) && <Tag>
+                {(["pending", "confirmed", "preparing"] as $Enums.Orders_status[]).includes(localOrderStatus as $Enums.Orders_status) && <Tag variant="secondary">
                     <Icon name="Time" />
 
                     {!preparationETA ? "Sem tempo determinado" : formatMinutes(preparationETA)}
                 </Tag>}
 
-                {(["assigned"] as $Enums.Orders_status[]).includes(localOrderStatus as $Enums.Orders_status) && <Tag>
+                {(["assigned"] as $Enums.Orders_status[]).includes(localOrderStatus as $Enums.Orders_status) && <Tag variant="secondary">
                     <Icon name="MapMarked" />
 
                     {formatMinutes(deliveryETA)}
                 </Tag>}
             </>}
 
-            {(order?.status === "assigned") && <Tag>
+            {(order?.status === "assigned") && <Tag variant="success">
                 <Icon name="Delivery" />
 
                 {order?.Users_Orders_courier_idToUsers?.name}
+
+                <Icon name="Circle" className="animate-pulse" />
             </Tag>}
 
             {(mode === "admin") && ORDERS_PREPARATION_STATUS.filter(s => s !== "assigned").includes(localOrderStatus as any) && <Button
@@ -363,7 +363,7 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
         />
 
         <div className="max-h-[32px] min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
-            {mode === "admin" && <Tag>
+            {mode === "admin" && <Tag variant="secondary">
                 <Icon name="User" />
 
                 {order?.Users_Orders_user_idToUsers?.name}
