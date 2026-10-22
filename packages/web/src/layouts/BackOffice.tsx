@@ -21,7 +21,7 @@ import OrderPanel from "pages/BackOffice/panels/Order";
 import ProductPanel from "pages/BackOffice/panels/Product";
 import ResortPanel from "pages/BackOffice/panels/Resort";
 import RestaurantPanel from "pages/BackOffice/panels/Restaurant";
-import UserPanel from "pages/BackOffice/panels/User";
+import StaffPanel from "pages/BackOffice/panels/Staff";
 
 import {
     Root$Enumerators
@@ -70,7 +70,7 @@ const BackOfficeLayout = () => {
             {(type === "requests") && <OrderPanel {...{ id }} />}
             {(type === "resorts") && <ResortPanel {...{ id }} />}
             {(type === "restaurants") && <RestaurantPanel {...{ id }} />}
-            {(type === "staff") && <UserPanel {...{ id }} />}
+            {(type === "staff") && <StaffPanel {...{ id }} />}
         </BackOfficePanel>}
     </>
 };
