@@ -25,7 +25,7 @@ import RestaurantForm from "components/forms/add/restaurant";
 import RestaurantEventList from "components/lists/restaurantEvents";
 
 import DeletionForm from "components/modals/forms/delete";
-import AddRestaurantEventForm from "components/modals/forms/add/restaurantEvent";
+import AddRestaurantEventForm from "components/modals/forms/event/add";
 
 import styles from "./Restaurant.module.css";
 
