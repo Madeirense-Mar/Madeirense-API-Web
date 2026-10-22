@@ -1,31 +1,60 @@
-/*#region Error =========================================== */
-[data-state="error"] {
-    border: 1px solid var(--error-element-border-color, var(--accent));
+/*#region Default =========================================== */
+[data-state] {
+    border: var(--element-border-width, 1px) var(--element-border-style, solid) var(--element-border-color, transparent);
 
-    background-color: var(--error-element-background-color, color-mix(in srgb, var(--accent), transparent 20%));
-}
-
-/*#region Theme variations*/
-[data-theme="LAND-DARK"] [data-state="error"] {
-    --error-element-border-color: initial;
-    --error-element-background-color: initial;
-}
-
-[data-theme="SEA-DARK"] [data-state="error"] {
-    --error-element-border-color: initial;
-    --error-element-background-color: initial;
-}
-
-[data-theme="LAND-LIGHT"] [data-state="error"] {
-    --error-element-border-color: initial;
-    --error-element-background-color: initial;
-}
-
-[data-theme="SEA-LIGHT"] [data-state="error"] {
-    --error-element-border-color: initial;
-    --error-element-background-color: initial;
+    background-color: var(--element-background-color, transparent);
 }
 
 /*#endregion*/
 
+/*#region Error =========================================== */
+[data-state="error"] {
+    --element-border-style: dotted;
+}
+
+[data-theme="LAND-DARK"] [data-state="error"] {
+    --element-border-color: var(--accent);
+    --element-background-color: var(--accent);
+}
+
+[data-theme="SEA-DARK"] [data-state="error"] {
+    --element-border-color: var(--accent);
+    --element-background-color: var(--accent);
+}
+
+[data-theme="LAND-LIGHT"] [data-state="error"] {
+    --element-border-color: var(--accent);
+    --element-background-color: var(--accent);
+}
+
+[data-theme="SEA-LIGHT"] [data-state="error"] {
+    --element-border-color: var(--accent);
+    --element-background-color: var(--accent);
+}
+/*#endregion*/
+
+/*#region Warning =========================================== */
+[data-state="warning"] {
+    --element-border-style: dashed;
+}
+
+[data-theme="LAND-DARK"] [data-state="warning"] {
+    --element-border-color: var(--secondary);
+    --element-background-color: var(--secondary);
+}
+
+[data-theme="SEA-DARK"] [data-state="warning"] {
+    --element-border-color: var(--secondary);
+    --element-background-color: var(--secondary);
+}
+
+[data-theme="LAND-LIGHT"] [data-state="warning"] {
+    --element-border-color: var(--secondary);
+    --element-background-color: var(--secondary);
+}
+
+[data-theme="SEA-LIGHT"] [data-state="warning"] {
+    --element-border-color: var(--secondary);
+    --element-background-color: var(--secondary);
+}
 /*#endregion*/
