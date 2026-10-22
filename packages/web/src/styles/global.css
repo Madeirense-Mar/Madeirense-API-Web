@@ -1,6 +1,7 @@
 :root {
-    /*  Follows the tokens defined in the PenPot file:
-            - https://design.penpot.app/#/workspace?team-id=9529fedc-e097-80ce-8008-648354c60462&file-id=9529fedc-e097-80ce-8008-6483893adb97&page-id=9529fedc-e097-80ce-8008-6483893adb98&board-id=8f2f5877-217e-8035-8008-6d98d44c3027&layout=tokens
+    /*  
+    Follows the tokens defined in the PenPot file:
+        - https://design.penpot.app/#/workspace?team-id=9529fedc-e097-80ce-8008-648354c60462&file-id=9529fedc-e097-80ce-8008-6483893adb97&page-id=9529fedc-e097-80ce-8008-6483893adb98&board-id=8f2f5877-217e-8035-8008-6d98d44c3027&layout=tokens
     */
 
     /*#region Colors*/
@@ -44,6 +45,7 @@
     /*#endregion*/
 }
 
+/*#region Global stylings ================================= */
 /* *:not(div:has(.uc-visual-drop-area) *) { */
 * {
     z-index: 0;
@@ -80,18 +82,15 @@ body {
 
     background-color: var(--background-color);
 }
+/*#endregion*/
 
-/*#region Theme specifications*/
+/*#region Theme specifications ============================ */
+
+/*#region Dark */
 body[data-theme*="DARK"] {
     --base-text-color: var(--neutral-light);
 
     --text-contrast-color: var(--neutral-light);
-}
-
-body[data-theme*="LIGHT"] {
-    --base-text-color: var(--neutral-dark);
-
-    --text-contrast-color: var(--neutral-dark);
 }
 
 body[data-theme="LAND-DARK"] {
@@ -101,10 +100,6 @@ body[data-theme="LAND-DARK"] {
     --background-color: var(--secondary-dark);
 }
 
-body[data-theme="LAND-LIGHT"] {
-    --background-color: color-mix(in srgb, var(--secondary-light), white 70%);
-}
-
 body[data-theme="SEA-DARK"] {
     --base-border-color: var(--primary-light);
     --base-background-color: var(--primary);
@@ -112,8 +107,18 @@ body[data-theme="SEA-DARK"] {
     --background-color: var(--primary-dark);
 }
 
+/*#endregion*/
+
+/*#region Light */
 body[data-theme*="LIGHT"] {
     --base-border-color: var(--primary-dark);
+    --base-text-color: var(--neutral-dark);
+
+    --text-contrast-color: var(--neutral-dark);
+}
+
+body[data-theme="LAND-LIGHT"] {
+    --background-color: color-mix(in srgb, var(--secondary-light), white 70%);
 }
 
 body[data-theme="SEA-LIGHT"] {
@@ -123,6 +128,10 @@ body[data-theme="SEA-LIGHT"] {
 }
 
 /*#endregion*/
+
+/*#endregion*/
+
+/*#region General ========================================= */
 
 body * {
     color: var(--text-color, var(--base-text-color));
@@ -134,33 +143,9 @@ code {
         monospace;
 }
 
-div[data-type="thumbnail"] {
-    --height: var(--thumbnail-height, 400px);
+/*#endregion*/
 
-    height: var(--height);
-    max-height: var(--height);
-    min-height: var(--height);
-
-    width: 100%;
-    
-    border-radius: 10px;
-    
-    background-color: gray;
-    background-position: center center;
-    background-size: cover;
-}
-
-h2,
-h3 {
-    @apply font-black;
-}
-
-h4,
-h5,
-h6 {
-    @apply font-bold;
-}
-
+/*#region Headings ======================================== */
 h1,
 [data-element="header"] {
     font-family: "Climate Crisis", sans-serif;
@@ -194,10 +179,27 @@ h6 {
     font-size: 1rem;
 }
 
+h2,
+h3 {
+    @apply font-black;
+}
+
+h4,
+h5,
+h6 {
+    @apply font-bold;
+}
+
+/*#endregion*/
+
+/*#region Paragraph ======================================= */
 p {
     font-size: 1rem;
 }
 
+/*#endregion*/
+
+/*#region Anchor ========================================== */
 a[data-active="true"] {
     text-decoration: underline;
 }
@@ -210,7 +212,9 @@ a:visited:hover {
     text-decoration: dotted;
 }
 
-/*#region Containers*/
+/*#endregion*/
+
+/*#region Containers ====================================== */
 main {
     grid-area: application-body;
 
@@ -230,7 +234,26 @@ main {
 
 /*#endregion*/
 
-/*#region Media*/
+/*#region Div stylings ==================================== */
+div[data-type="thumbnail"] {
+    --height: var(--thumbnail-height, 400px);
+
+    height: var(--height);
+    max-height: var(--height);
+    min-height: var(--height);
+
+    width: 100%;
+
+    border-radius: 10px;
+
+    background-color: gray;
+    background-position: center center;
+    background-size: cover;
+}
+
+/*#endregion*/
+
+/*#region Media =========================================== */
 @media only screen and (min-width: 344px) {
     body #root>main {
         --main-base-width: 95vw;
