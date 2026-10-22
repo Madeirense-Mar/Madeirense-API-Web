@@ -137,6 +137,10 @@ function TicketBuyersList(_props: IPropTypes) {
             return <ul {...$ulProps}>
                 <HeaderListItem disabled={list.length === 0} {...$liHeaderProps} />
 
+                <li>
+                    <hr />
+                </li>
+
                 {list.length === 0 && <li data-empty>
                     Sem bilhetes comprados
                 </li>}

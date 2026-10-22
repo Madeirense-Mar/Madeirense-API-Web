@@ -1,3 +1,5 @@
+import Icon from "components/icon";
+
 import type {
     ComponentProps
 } from "react";
@@ -19,7 +21,8 @@ export interface BaseLabelPropTypes extends ComponentProps<"label"> {
         | { element: 'select', props?: ComponentProps<"select">, options: keyValuePair<string, { data: (number | string), props?: ComponentProps<"option"> }>[] }
         | { element: 'textarea', props?: ComponentProps<"textarea"> }
     ) & {
-        icon?: iconNameType
+        icon?: iconNameType;
+        iconElement?: React.JSX.Element | null;
     };
     selectable?: boolean;
 };

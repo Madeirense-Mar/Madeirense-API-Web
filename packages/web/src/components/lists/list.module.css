@@ -34,6 +34,10 @@
 .list li[data-empty] {
     @apply flex flex-col justify-center items-center w-full gap-2;
 }
+
+.list li:nth-child(2) hr {
+    @apply w-full border-dashed;
+}
 /*#endregion*/
 
 /*#region Default list header ============================= */

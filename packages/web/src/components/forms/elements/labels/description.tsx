@@ -36,6 +36,7 @@ const DescriptionLabel = ({
     const {
         element,
         icon: inputIcon,
+        iconElement: inputIconElement,
         props: inputProps
     } = input;
 
@@ -80,6 +81,7 @@ const DescriptionLabel = ({
 
                 <div>
                     {inputIcon && <Icon name={inputIcon} />}
+                    {inputIconElement}
 
                     <Element {...inputProps}>
                         {input.options.map(op => <option key={op.value.data} value={op.value.data} {...op.value.props}>
@@ -95,6 +97,7 @@ const DescriptionLabel = ({
 
                 <div>
                     {inputIcon && <Icon name={inputIcon} />}
+                    {inputIconElement}
 
                     <Element {...inputProps} />
                 </div>

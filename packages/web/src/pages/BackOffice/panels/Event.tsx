@@ -26,6 +26,7 @@ import {
     formatUUID_UC_CDN_URL,
     getLabel,
     locales,
+    Madeirense$Enumerators,
     resolveClassNames,
     type restaurantEventType,
 } from "@Madeirense/shared";
@@ -42,6 +43,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tags";
 
+import DescriptionLabel from "components/forms/elements/labels/description";
 import RestaurantsSelect from "components/forms/elements/selects/restaurants";
 
 import TicketBuyersList from "components/lists/ticketBuyers";
@@ -49,13 +51,15 @@ import TicketBuyersList from "components/lists/ticketBuyers";
 import DeletionForm from "components/modals/forms/delete";
 import CancellationForm from "components/modals/forms/cancel";
 
+import panelStyles from "components/panels/BackOffice/index.module.css";
+import styles from "./Event.module.css";
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 import type {
     Restaurant_Events
 } from "@Madeirense/database/browser";
 
-import type { 
+import type {
     statusType
 } from "components/types";
 
@@ -111,10 +115,9 @@ function EventPanel({ id }: { id: number }) {
     ], [data]);
 
     function getUpdaterStatusIndicator(...properties: (keyof Restaurant_Events)[]) {
-        if (properties.includes(updater as keyof Restaurant_Events)) return assertions.isLoading
-            ? <Icon name="Check" />
-            : <Icon name="Loading" className="animate-spin" />
-            ;
+        if (properties.includes(updater as keyof Restaurant_Events)) return (assertions.isLoading)
+            ? <Icon name="Loading" className="animate-spin" />
+            : <Icon name="Check" />
 
         return null;
     };
@@ -122,23 +125,28 @@ function EventPanel({ id }: { id: number }) {
     function handleEvent(e: any) { update(e.target); };
 
     function handleCancellation() {
+        const callback = () => {
+            fetch("Restaurant_Events");
+        };
+
         show(<CancellationForm
             item="event"
             itemId={data?.event_id as number}
-            callback={() => {
-                fetch("Restaurant_Events");
-            }}
+            {...{ callback }}
         />, { title: `Cancelar evento` });
     };
 
     function handleDeletion() {
+        const callback = async () => {
+            await fetch("Restaurant_Events");
+
+            navigate(Madeirense$Enumerators.Pages.BackOffice.Restaurant, { replace: true });
+        };
+
         show(<DeletionForm
             item="event"
             itemId={data?.event_id as number}
-            callback={async () => {
-                await fetch("Restaurant_Events");
-                navigate(`/back-office/restaurants`, { replace: true });
-            }}
+            {...{ callback }}
         />, { title: `Eliminar evento` });
     };
 
@@ -291,7 +299,33 @@ function EventPanel({ id }: { id: number }) {
         };
 
         default: {
-            return <>
+            return <section className={styles.section}>
+                {data.status === "ongoing" ? null : <ul className={panelStyles.actions}>
+                    <li>
+                        <span>Acções</span>
+                    </li>
+
+                    <li>
+                        <hr />
+                    </li>
+
+                    {data.status === "upcoming" && <li>
+                        <Button variant="warning" onClick={handleCancellation}>
+                            <Icon name="Close" />
+
+                            Cancelar o evento
+                        </Button>
+                    </li>}
+
+                    {data.status === "cancelled" && <li>
+                        <Button variant="danger" onClick={handleDeletion}>
+                            <Icon name="Trash" />
+
+                            Eliminar o evento
+                        </Button>
+                    </li>}
+                </ul>}
+
                 <section className="w-full flex flex-col justify-start items-start gap-5">
                     <ScrollToSection
                         event_id={id as number}
@@ -300,118 +334,179 @@ function EventPanel({ id }: { id: number }) {
                         hasExpired={assertions.hasPassed}
                     />
 
-                    <div className="w-full flex flex-row justify-start items-center">
-                        <Tag>
-                            {getLabel(data.status)}
+                    <Tag>
+                        {getLabel(data.status)}
 
-                            {data.status === "cancelled" && <Icon name="OutlinedTimes" />}
-                            {data.status === "expired" && <Icon name="History" />}
-                            {data.status === "ongoing" && <Icon name="OutlinedDot" />}
-                            {data.status === "upcoming" && <Icon name="OutlinedCircle" />}
-                        </Tag>
-                    </div>
+                        {data.status === "cancelled" && <Icon name="OutlinedTimes" />}
+                        {data.status === "expired" && <Icon name="History" />}
+                        {data.status === "ongoing" && <Icon name="OutlinedDot" />}
+                        {data.status === "upcoming" && <Icon name="OutlinedCircle" />}
+                    </Tag>
 
-                    <div className="w-full flex flex-row justify-between items-center gap-9">
-                        <label className="flex flex-row justify-start items-center gap-2 w-full">
-                            {getUpdaterStatusIndicator("name")}
+                    <DescriptionLabel
+                        className="w-full"
+                        title="Nome"
+                        description={<>
+                            Como se identifica o evento.
+                        </>}
+                        input={{
+                            element: "input",
+                            iconElement: getUpdaterStatusIndicator("name"),
+                            props: {
+                                className: "w-full text-center",
+                                name: "name",
+                                title: "Nome do restaurant",
+                                type: "text",
+                                defaultValue: data?.name,
+                                onKeyDown: handleKeyDown,
+                                onBlur: assertions.hasPassed ? undefined : handleEvent,
+                                readOnly: assertions.hasPassed
+                            }
+                        }}
+                    />
 
-                            <input className="w-full" name="name" title="Nome do restaurant" data-element="h1" type="text" defaultValue={data?.name} onKeyDown={handleKeyDown} onBlur={assertions.hasPassed ? undefined : handleEvent} readOnly={assertions.hasPassed} />
-                        </label>
+                    <label className="flex flex-row justify-start items-center w-full">
+                        <div className="flex flex-col justify-start items-start mr-auto">
+                            <span className="font-extrabold">
+                                Local
+                            </span>
 
-                        <label className="flex flex-row justify-start items-center gap-2 opacity-35 hover:opacity-100">
-                            {getUpdaterStatusIndicator("restaurant_id")}
+                            <span>
+                                Em que resturante irá decorrer o evento
+                            </span>
+                        </div>
 
-                            <Icon name="Store" className="text-lg" />
+                        <div className="flex flex-row justify-start items-center gap-2 opacity-35 hover:opacity-100">
+                            {(updater === "restaurant_id")
+                                ? getUpdaterStatusIndicator("restaurant_id")
+                                : <Icon name="Store" className="text-lg" />
+                            }
 
                             <RestaurantsSelect title="Restaurante" id="restaurant_id" data-element="h1" name="restaurant_id" defaultOptionLabel="Local do evento" defaultValue={""} onChange={handleEvent} withoutDefaultOption disabled={assertions.hasPassed} />
-                        </label>
-                    </div>
+                        </div>
+                    </label>
 
-                    <div className="w-full flex flex-col justify-start items-center gap-2 border rounded-md p-2">
-                        <form onSubmit={PATCH_EVENTS} className="flex flex-row justify-start items-center gap-2 w-full text-lg">
-                            {getUpdaterStatusIndicator("event_date", "start_time", "end_time")}
+                    <form onSubmit={PATCH_EVENTS} className={resolveClassNames(styles["datetime-form"], "w-full")}>
+                        <div className="flex flex-col justify-start items-start mr-auto">
+                            <span className="font-extrabold inline-flex items-center">
+                                {getUpdaterStatusIndicator("event_date", "start_time", "end_time")}
 
-                            <Icon name="Calendar1" />
+                                Data do evento
+                            </span>
 
-                            <span className="mr-auto text-lg">Data do evento (começo/fim)</span>
+                            <span>
+                                Data, hora (abertura e fecho)
+                            </span>
+                        </div>
 
+                        <div className="p-2">
                             <input className="text-center" name="event_date" title="Data do evento" type="date" defaultValue={new Date(data?.event_date as Date).toISOString().split('T')[0]} onChange={handleSubmitOnChange} required readOnly={assertions.hasPassed} />
+                        </div>
 
+                        <hr />
+
+                        <div className="flex flex-row justify-center items-center gap-3 p-2">
                             <input id="start_time" type="time" name="start_time" placeholder="Início" defaultValue={`${sHours}:${sMinutes}`} onChange={handleSubmitOnChange} required readOnly={assertions.hasPassed} />
 
                             <Icon name="ArrowRight" />
 
                             <input id="end_time" type="time" name="end_time" placeholder="Fim" defaultValue={`${eHours}:${eMinutes}`} onChange={handleSubmitOnChange} required readOnly={assertions.hasPassed} />
-                        </form>
+                        </div>
+                    </form>
 
-                        <hr />
-
-                        <label className="flex flex-row justify-start items-center gap-2 w-full text-lg">
-                            {getUpdaterStatusIndicator("spots")}
-
-                            <Icon name="User" />
-
-                            <span className="mr-auto text-lg">Nº de ingressos</span>
-
-                            <div className="flex flex-row justify-start items-center gap-3">
-                                <Tag variant="warning">
-                                    <Icon name="Warning" className="text-lg" />
-
-                                    <span className="text-sm">Nº de ingressos não pode baixar os vendidos</span>
-                                </Tag>
-                            </div>
-
-                            {(freeSpots)
-                                ? <input className="text-right" name="spots" title="Nº de ingressos" data-element="p" type="text" value="Sem limite" onClick={() => toggleFreeSpots()} readOnly />
-                                : <input className="text-right" name="spots" title="Nº de ingressos (editável)" data-element="p" min={(data?.spots ?? 0) as number} type="number" defaultValue={(data?.spots ?? 0) as number} onKeyDown={handleKeyDown} onBlur={assertions.hasPassed ? undefined : handleEvent} readOnly={assertions.hasPassed} />
+                    <DescriptionLabel
+                        className="w-full"
+                        title="Nº de ingressos"
+                        alerts={{
+                            warning: "Nº de ingressos não pode baixar os vendidos"
+                        }}
+                        icon="User"
+                        description={<>
+                            Nº limite de pessoas aceite para o evento.
+                        </>}
+                        input={{
+                            element: "input",
+                            iconElement: getUpdaterStatusIndicator("spots"),
+                            props: {
+                                className: "w-full text-center",
+                                name: "spots",
+                                title: `Nº de ingressos${(!freeSpots) ? " (editável)" : ""}`,
+                                ...(freeSpots)
+                                    ? {
+                                        readOnly: true,
+                                        type: "text",
+                                        value: "Sem limite",
+                                        onClick: () => toggleFreeSpots(),
+                                    }
+                                    : {
+                                        defaultValue: data?.spots ?? 0,
+                                        min: data?.spots ?? 0,
+                                        readOnly: assertions.hasPassed,
+                                        type: "number",
+                                        onBlur: assertions.hasPassed ? undefined : handleEvent,
+                                        onKeyDown: handleKeyDown,
+                                    }
                             }
-                        </label>
+                        }}
+                    />
 
-                        <label className="flex flex-row justify-start items-center gap-2 w-full text-lg">
-                            {getUpdaterStatusIndicator("price")}
-
-                            <Icon name="Money" />
-
-                            <span className="mr-auto text-lg">Ingresso</span>
-
-                            <div className="flex flex-row justify-start items-center gap-3">
-                                <Tag variant="warning">
-                                    <Icon name="Warning" className="text-lg" />
-
-                                    <span className="text-sm">Alteração do só afetará os ingressos que não foram vendidos</span>
-                                </Tag>
-                            </div>
-
-                            {(freePricing)
-                                ? <input className="text-right" name="price" title="Preço do ingresso" data-element="p" type="text" value="Grátis" onClick={() => toggleFreePricing()} readOnly />
-                                : <input className="text-right" name="price" title="Preço do ingresso (editável)" data-element="p" type="number" min={0} defaultValue={parseFloat(`${data?.price}`)} onKeyDown={handleKeyDown} onBlur={assertions.hasPassed ? undefined : handleEvent} readOnly={assertions.hasPassed} />
+                    <DescriptionLabel
+                        className="w-full"
+                        title="Ingresso"
+                        alerts={{
+                            warning: "Alteração do só afetará os ingressos que não foram vendidos"
+                        }}
+                        icon="Money"
+                        description={<>
+                            Preço dos ingressos.
+                        </>}
+                        input={{
+                            element: "input",
+                            iconElement: getUpdaterStatusIndicator("price"),
+                            props: {
+                                className: "w-full text-center",
+                                name: "spots",
+                                title: `Preço do ingresso${(!freeSpots) ? " (editável)" : ""}`,
+                                ...(freeSpots)
+                                    ? {
+                                        readOnly: true,
+                                        type: "text",
+                                        value: "Grátis",
+                                        onClick: () => toggleFreePricing(),
+                                    }
+                                    : {
+                                        defaultValue: parseFloat(`${data?.price}`),
+                                        min: 0,
+                                        readOnly: assertions.hasPassed,
+                                        type: "number",
+                                        onBlur: assertions.hasPassed ? undefined : handleEvent,
+                                        onKeyDown: handleKeyDown,
+                                    }
                             }
-                        </label>
-                    </div>
+                        }}
+                    />
 
-                    <label htmlFor="description" className="flex flex-row justify-start items-center gap-2 text-base">
-                        {getUpdaterStatusIndicator("description")}
-
-                        <Icon name="Notes" />
-
-                        Sobre
-                    </label>
-
-                    <textarea title="Descrição" id="description" data-element="p" name="description" defaultValue={data?.description ?? ""} onChange={handleEvent} className="w-full" readOnly={assertions.hasPassed} />
-
-                    {data.status === "ongoing" ? null : <>
-                        {data.status === "upcoming" && <Button className="w-full flex flex-row justify-start items-center" variant="warning" onClick={handleCancellation}>
-                            <Icon name="Close" />
-
-                            Cancelar o evento
-                        </Button>}
-
-                        {data.status === "cancelled" && <Button className="w-full flex flex-row justify-start items-center" variant="danger" onClick={handleDeletion}>
-                            <Icon name="Trash" />
-
-                            Eliminar o evento
-                        </Button>}
-                    </>}
+                    <DescriptionLabel
+                        className="w-full"
+                        layout="column"
+                        title="Nome"
+                        description={<>
+                            Informação sobre o evento.
+                        </>}
+                        icon="Notes"
+                        input={{
+                            element: "textarea",
+                            iconElement: getUpdaterStatusIndicator("description"),
+                            props: {
+                                className: "w-full",
+                                name: "description",
+                                title: "Descrição",
+                                defaultValue: data?.description ?? "",
+                                onChange: handleEvent,
+                                readOnly: assertions.hasPassed
+                            }
+                        }}
+                    />
                 </section>
 
                 <section className="w-full flex flex-col justify-start items-start gap-2">
@@ -419,12 +514,12 @@ function EventPanel({ id }: { id: number }) {
 
                     <TicketBuyersList
                         mode="admin"
-                        className="w-full flex flex-col gap-3"
+                        className={resolveClassNames(styles["tickets-list"], "w-full")}
                         defaultEvent={data?.event_id}
                         defaultRestaurant={data?.restaurant_id}
                     />
                 </section>
-            </>
+            </section>
         };
     };
 };

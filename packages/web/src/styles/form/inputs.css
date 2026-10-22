@@ -68,7 +68,7 @@ textarea {
 
 /*#region DARK*/
 [data-theme*="DARK"] textarea {
-    border: 1px solid var(--input-border-color, var(--base-textarea-border-color, var(--neutral-light)));
+    border: 1px solid var(--input-border-color, var(--base-textarea-border-color, var(--base-border-color)));
 }
 
 [data-theme*="DARK"] input,
@@ -76,22 +76,16 @@ textarea {
     border-bottom: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-light)));
 }
 
-[data-theme="LAND-DARK"] input,
-[data-theme="LAND-DARK"] select,
-[data-theme="LAND-DARK"] textarea {
-    --base-input-border-color: var(--secondary);
+[data-theme*="DARK"] input,
+[data-theme*="DARK"] select,
+[data-theme*="DARK"] textarea {
+    --base-input-border-color: var(--base-border-color);
 }
 
 [data-theme="LAND-DARK"] input:hover,
 [data-theme="LAND-DARK"] select:hover,
 [data-theme="LAND-DARK"] textarea:hover {
     --base-input-background-color: color-mix(in srgb, var(--secondary-light), var(--neutral-dark) 75%);
-}
-
-[data-theme="SEA-DARK"] input,
-[data-theme="SEA-DARK"] select,
-[data-theme="SEA-DARK"] textarea {
-    --base-input-border-color: var(--primary-light);
 }
 
 [data-theme="SEA-DARK"] input:hover,

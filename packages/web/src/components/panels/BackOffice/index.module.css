@@ -64,6 +64,43 @@
 }
 /*#endregion*/
 
+/*#region Actions ========================================= */
+.actions {
+    @apply flex flex-col justify-start items-start;
+
+    position: sticky;
+    
+    height: min-content;
+    
+    border: 1px solid var(--div-border-color);
+    border-radius: 12px;
+
+    gap: 12px;
+    padding: 12px;
+
+    background-color: var(--div-background-color, transparent);
+}
+
+.actions li,
+.actions li button {
+    width: 100%;
+}
+
+.actions li:nth-child(1) span {
+    @apply font-extrabold text-lg;
+}
+
+.actions li:nth-child(2) hr {
+    width: 100%;
+}
+
+[data-theme*="DARK"] .actions {
+    --div-border-color: color-mix(in srgb, var(--neutral-light), black 80%);
+    --div-background-color: color-mix(in srgb, var(--neutral-dark), black 50%);
+}
+
+/*#endregion*/
+
 /*#region Media =========================================== */
 @media only screen and (min-width: 344px) {
 }
