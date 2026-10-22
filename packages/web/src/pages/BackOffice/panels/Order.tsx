@@ -42,6 +42,8 @@ import OrderHistoryList from "components/lists/order/history";
 import DriversPicker from "components/pickers/drivers";
 import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
 
+import styles from "./Order.module.css";
+
 import type {
     $Enums,
     Users
@@ -117,7 +119,7 @@ function OrderPanel({ id }: { id: number }) {
                     Cliente
                 </h4>
 
-                <ProfileHeaderCard user={(data as restaurantOrderType).Users as Users} disableLink className="w-full mb-2" />
+                <ProfileHeaderCard user={(data as restaurantOrderType).Users_Orders_user_idToUsers as Users} disableLink className="w-full mb-2" />
 
                 <h4 className="w-full flex flex-row justify-start items-center gap-2">
                     <Icon name="Food" />

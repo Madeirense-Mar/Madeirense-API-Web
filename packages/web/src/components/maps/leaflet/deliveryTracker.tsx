@@ -278,20 +278,20 @@ const LeafletDeliveryTracker = ({
             </Marker>}
         </MapContainer>
 
-        <div className="mt-2 flex flex-wrap gap-2 text-sm">
-            <Tag className={styles[Tags.restaurant]}>
+        <div className="flex flex-row justify-center items-center py-1 gap-2">
+            <Tag>
                 Restaurante
 
                 <Icon name="Store" />
             </Tag>
 
-            <Tag className={styles[Tags.address]}>
+            <Tag variant="warning">
                 Endereço de entrega
 
                 <Icon name="MapMarker" />
             </Tag>
 
-            {(order.status === "assigned") && <Tag className={styles[Tags.courier]}>
+            {(order.status === "assigned") && <Tag variant="success">
                 Estafeta
 
                 <Icon name="Delivery" />
@@ -303,19 +303,21 @@ const LeafletDeliveryTracker = ({
                 Erro ao calcular rota: {error.message}
             </Tag>}
 
-            {route && <>
-                <Tag className="ml-auto">
+            {route && <div className="flex flex-row flex-nowrap justify-center items-center">
+                <Tag variant="secondary">
                     <Icon name="MapMarked" />
 
                     {`Distância - ${formatDistance(route.distanceMeters)}`}
                 </Tag>
 
-                <Tag>
+                <hr className="w-[50px]" />
+
+                <Tag variant="secondary">
                     <Icon name="Time" />
 
                     {`Duração - ${formatDuration(route.durationSeconds)}`}
                 </Tag>
-            </>}
+            </div>}
         </div>
     </div>
 };

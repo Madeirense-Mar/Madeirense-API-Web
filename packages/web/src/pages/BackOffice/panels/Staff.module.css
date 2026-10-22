@@ -1,12 +1,58 @@
+/*#region Main section ==================================== */
+.section {
+    display: grid;
+
+    gap: 24px;
+
+    width: 100%;
+}
+
+.actions {
+    grid-area: actions;
+}
+
+.body {
+    @apply flex flex-col justify-start items-start;
+
+    gap: 24px;
+
+    grid-area: body;
+}
+
+/*#endregion*/
+
+/*#region Tracker ========================================= */
 .order-tracker {
     @apply w-full flex flex-col justify-start items-start;
-
+    
     --border-radius: 12px;
     
     --card-border-radius: var(--border-radius) var(--border-radius) 0 0;
     --tracker-border-radius: 0 0 var(--border-radius) var(--border-radius);
+
+    --map-border-radius: 0;
 }
 
-.order-tracker >div:first-child {
+.order-tracker>div:first-child {
     border-bottom: none;
 }
+
+/*#endregion*/
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    .section {
+        grid-template-columns: 1fr 400px;
+        grid-template-areas:
+            "body actions"
+        ;
+    }
+}
+
+@media only screen and (min-width: 1366px) {}
+
+/*#endregion*/

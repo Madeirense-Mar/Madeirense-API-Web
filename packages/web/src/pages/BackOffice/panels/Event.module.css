@@ -1,11 +1,6 @@
 /*#region Main section ==================================== */
 .section {
     display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-        "event      actions"
-        "tickets    ."
-    ;
 
     gap: 24px;
 
@@ -28,8 +23,8 @@
 
 /*#region Tickets list ==================================== */
 .tickets-list {
-    --ul-gap: 0px; 
-    
+    --ul-gap: 0px;
+
     border: 1px solid var(--ul-border-color, var(--base-border-color));
     border-radius: 12px;
 }
@@ -37,6 +32,7 @@
 .tickets-list li {
     --li-border-radius: 0px;
 }
+
 /*#endregion*/
 
 /*#region Datetime form =================================== */
@@ -65,5 +61,24 @@
     --div-border-color: color-mix(in srgb, var(--neutral-light), transparent 90%);
     --div-background-color: color-mix(in srgb, var(--neutral-dark), transparent 50%);
 }
+
+/*#endregion*/
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    .section {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "event      actions"
+            "tickets    ."
+        ;
+    }
+}
+
+@media only screen and (min-width: 1366px) {}
 
 /*#endregion*/

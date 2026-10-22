@@ -216,7 +216,7 @@ function UserPanel({ id }: { id: number }) {
         isFetching
     ]);
 
-    return <>
+    return <section className={styles.section}>
         <ul className={panelStyles.actions}>
             <li>
                 <span>Acções</span>
@@ -247,62 +247,64 @@ function UserPanel({ id }: { id: number }) {
                 </li>)
             }
         </ul>
-        
-        {(assertions.userWasBlocked) && <div data-state="warning" className="rounded-md border flex flex-col justify-start items-center p-4 gap-2 w-full">
-            <div className="w-full flex flex-row justify-start items-center gap-3">
-                <Icon name="Warning" className="text-lg" />
 
-                {user?.Users.Blocked_Users[0].expires_at
-                    ? <span>
-                        A conta deste utilizador está bloqueada até <span className="italic underline">{new Date(user?.Users.Blocked_Users[0].expires_at).toLocaleString()}</span>
-                    </span>
+        <section className={styles.body}>
+            {(assertions.userWasBlocked) && <div data-state="warning" className="flex flex-col justify-start items-center p-4 gap-2 w-full">
+                <div className="w-full flex flex-row justify-start items-center gap-3">
+                    <Icon name="Warning" className="text-lg" />
 
-                    : "A conta deste utilizador foi bloqueada"
-                }
-            </div>
+                    {user?.Users.Blocked_Users[0].expires_at
+                        ? <span>
+                            A conta deste utilizador está bloqueada até <span className="italic underline">{new Date(user?.Users.Blocked_Users[0].expires_at).toLocaleString()}</span>
+                        </span>
 
-            <div className="w-full flex flex-row justify-start items-center p-3 border border-yellow-950 border-dashed">
-                <span className="italic">{user?.Users.Blocked_Users[0].reason}</span>
-            </div>
-        </div>}
-
-        <ProfileHeaderCard user={user?.Users as Users} className="w-full" />
-
-        <section className="w-full">
-            <header>
-                <h4>Posto de trabalho</h4>
-            </header>
-
-            <RestaurantCard restaurant={user?.Restaurants as restaurantType} className="w-full" />
-        </section>
-
-        {user?.Users.user_role === "Driver" && <section className="w-full">
-            {(assertions.isLoading)
-                ? <div className="w-full flex flex-col justify-center items-center p-6">
-                    <Icon name="Loading" className="animate-spin" />
+                        : "A conta deste utilizador foi bloqueada"
+                    }
                 </div>
-                : <>
-                    {currentDelivery && <>
-                        <h4>Entrega a decorrer</h4>
 
-                        <div className={styles["order-tracker"]}>
-                            <OrderCard order={currentDelivery} className="w-full" />
+                <div className="w-full flex flex-row justify-start items-center p-3 border border-yellow-950 border-dashed">
+                    <span className="italic">{user?.Users.Blocked_Users[0].reason}</span>
+                </div>
+            </div>}
 
-                            <LeafletDeliveryTracker order={currentDelivery} />
-                        </div>
+            <ProfileHeaderCard user={user?.Users as Users} className="w-full" />
+
+            <section className="w-full">
+                <header>
+                    <h4>Posto de trabalho</h4>
+                </header>
+
+                <RestaurantCard restaurant={user?.Restaurants as restaurantType} className="w-full" />
+            </section>
+
+            {user?.Users.user_role === "Driver" && <section className="w-full">
+                {(assertions.isLoading)
+                    ? <div className="w-full flex flex-col justify-center items-center p-6">
+                        <Icon name="Loading" className="animate-spin" />
+                    </div>
+                    : <>
+                        {currentDelivery && <>
+                            <h4>Entrega a decorrer</h4>
+
+                            <div className={styles["order-tracker"]}>
+                                <OrderCard order={currentDelivery} className="w-full" />
+
+                                <LeafletDeliveryTracker order={currentDelivery} />
+                            </div>
+                        </>}
+
+                        {Boolean(filteredOrders.length) && <>
+                            <h4>Histórico de entregas</h4>
+
+                            {filteredOrders
+                                .filter(o => o.order_id !== (currentDelivery?.order_id ?? -1))
+                                .map(o => <OrderCard key={o.order_id} order={o} disableLink />)
+                            }
+                        </>}
                     </>}
-
-                    {Boolean(filteredOrders.length) && <>
-                        <h4>Histórico de entregas</h4>
-
-                        {filteredOrders
-                            .filter(o => o.order_id !== (currentDelivery?.order_id ?? -1))
-                            .map(o => <OrderCard key={o.order_id} order={o} disableLink />)
-                        }
-                    </>}
-                </>}
-        </section>}
-    </>
+            </section>}
+        </section>
+    </section>
 };
 
 export default UserPanel;

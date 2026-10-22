@@ -1,6 +1,7 @@
 /*#region Default =========================================== */
 [data-state] {
     border: var(--element-border-width, 1px) var(--element-border-style, solid) var(--element-border-color, transparent);
+    border-radius: var(--element-border-radius, 12px);
 
     background-color: var(--element-background-color, transparent);
 }
