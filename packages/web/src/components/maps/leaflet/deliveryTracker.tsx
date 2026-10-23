@@ -279,24 +279,6 @@ const LeafletDeliveryTracker = ({
         </MapContainer>
 
         <div className="flex flex-row justify-center items-center py-1 gap-2">
-            <Tag>
-                Restaurante
-
-                <Icon name="Store" />
-            </Tag>
-
-            <Tag variant="warning">
-                Endereço de entrega
-
-                <Icon name="MapMarker" />
-            </Tag>
-
-            {(order.status === "assigned") && <Tag variant="success">
-                Estafeta
-
-                <Icon name="Delivery" />
-            </Tag>}
-
             {error && <Tag variant="danger">
                 <Icon name="ExclamationCircle" />
 

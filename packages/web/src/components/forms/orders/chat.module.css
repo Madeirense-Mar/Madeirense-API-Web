@@ -78,7 +78,7 @@
     max-width: 65%;
     min-width: 7%;
     padding: 4px 10px;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 .form fieldset ul li[data-type="me"] {

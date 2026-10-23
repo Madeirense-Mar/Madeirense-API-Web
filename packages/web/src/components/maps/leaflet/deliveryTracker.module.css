@@ -10,7 +10,7 @@
 
     width: 100%;
 
-    border: 1px var(--tracker-border-style, solid) var(--tracker-border-color, var(--primary-light));
+    border: 1px var(--tracker-border-style, solid) var(--tracker-border-color, var(--base-border-color));
     border-radius: var(--tracker-border-radius, 12px);
 
     background-color: var(--tracker-background-color, var(--primary));
@@ -19,7 +19,7 @@
 /* z-index: 0 gives Leaflet's panes (z 400–1000) their own stacking context,
    so the map never paints over headers, panels or modals. */
 .map {
-    @apply border overflow-hidden w-full;
+    @apply overflow-hidden w-full;
 
     z-index: 0;
 

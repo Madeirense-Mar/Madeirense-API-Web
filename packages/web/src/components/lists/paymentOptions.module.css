@@ -1,6 +1,4 @@
 .list {
-    composes: list from "./list.module.css";
-
     display: grid;
     grid-template-columns: repeat(2, minmax(12px, 100%));
     gap: 4px;
@@ -10,7 +8,7 @@
     overflow: hidden;
     border: var(--border-width) solid var(--border-color);
     border-radius: 12px;
-    padding: 15px;
+    padding: 16px;
 }
 
 .list li:hover {
@@ -23,5 +21,5 @@
 
 .list li label {
     @apply flex flex-row justify-start items-center gap-2 w-full;
-    padding: 15px;
+    padding: 16px;
 }

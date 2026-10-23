@@ -1,5 +1,7 @@
 .x-scroll-section {
-    @apply flex flex-col justify-start items-start flex-nowrap gap-3;
+    @apply flex flex-col justify-start items-start flex-nowrap;
+
+    gap: var(--section-gap, 12px);
 }
 
 .x-scroll-section>header {

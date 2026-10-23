@@ -4,7 +4,8 @@ import {
     useMemo,
     useState,
     type SubmitEvent,
-    type MouseEvent
+    type MouseEvent,
+    ComponentProps
 } from "react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ import {
     Madeirense$Types,
     type appPreferencesType,
     type restaurantOrderType,
+    resolveClassNames,
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
@@ -30,7 +32,6 @@ import { useApp } from "contexts/App";
 import Button from "components/buttons";
 
 import OrderCard from "components/cards/order";
-import RestaurantCard from "components/cards/restaurant";
 import ProfileHeaderCard from "components/cards/profileHeader";
 
 import OrderChatForm from "components/forms/orders/chat";
@@ -43,6 +44,7 @@ import DriversPicker from "components/pickers/drivers";
 import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
 
 import styles from "./Order.module.css";
+import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 import type {
     $Enums,
@@ -94,44 +96,6 @@ function OrderPanel({ id }: { id: number }) {
     const restaurant = get("Restaurants")?.find(r => r.restaurant_id === (data)?.restaurant_id);
     const settings = get("Global_Settings") ?? DEFAULT_APP_SETTINGS;
 
-    const getViewHeader = useCallback(() => {
-        return <>
-            {restaurant && <RestaurantCard className="w-full" {...{ restaurant }} />}
-
-            <section className="w-full">
-                <header className="flex flex-row justify-start items-center gap-2">
-                    <Icon name="Order" />
-
-                    <h4>Pedido #{data?.order_id}</h4>
-                </header>
-
-                {(data?.status === "cancelled") && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-4 gap-2 w-full">
-                    <Icon name="Warning" className="text-lg" />
-
-                    Este pedido foi cancelado
-                </div>}
-
-                <OrderCard order={data as restaurantOrderType} disableLink className="w-full mb-2" />
-
-                <h4 className="w-full flex flex-row justify-start items-center gap-2">
-                    <Icon name="User" />
-
-                    Cliente
-                </h4>
-
-                <ProfileHeaderCard user={(data as restaurantOrderType).Users_Orders_user_idToUsers as Users} disableLink className="w-full mb-2" />
-
-                <h4 className="w-full flex flex-row justify-start items-center gap-2">
-                    <Icon name="Food" />
-
-                    Produtos
-                </h4>
-
-                <OrderItemsList items={[...(data as restaurantOrderType).Order_Items]} className="w-full flex flex-col justify-start items-start gap-2" />
-            </section>
-        </>
-    }, [data, restaurant]);
-
     const assertions = {
         "wasFinalized": ([
             "cancelled",
@@ -173,14 +137,45 @@ function OrderPanel({ id }: { id: number }) {
 
     switch (true) {
         case (assertions.wasFinalized === true): {
-            return <>
-                {getViewHeader()}
+            return <section className={styles.finalized}>
+                <section className={resolveClassNames(styles.order, "w-full")}>
+                    <header>
+                        <h4>Pedido #{data?.order_id}</h4>
+                    </header>
+
+                    {(data?.status === "cancelled") && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-4 gap-2 w-full">
+                        <Icon name="Warning" className="text-lg" />
+
+                        Este pedido foi cancelado
+                    </div>}
+
+                    <OrderCard order={data as restaurantOrderType} disableLink className="w-full mb-2" />
+
+                </section>
+
+                <section className={resolveClassNames(styles.client, "w-full")}>
+                    <h4 className="w-full flex flex-row justify-start items-center gap-2">
+                        <Icon name="User" />
+
+                        Cliente
+                    </h4>
+
+                    <ProfileHeaderCard user={(data as restaurantOrderType).Users_Orders_user_idToUsers as Users} disableLink className="w-full mb-2" />
+
+                    <h4 className="w-full flex flex-row justify-start items-center gap-2">
+                        <Icon name="Food" />
+
+                        Produtos
+                    </h4>
+
+                    <OrderItemsList items={[...(data as restaurantOrderType).Order_Items]} className="w-full flex flex-col justify-start items-start gap-2" />
+                </section>
 
                 <ScrollToSection
                     order_id={(data as restaurantOrderType).order_id}
                     disableChat
                 />
-            </>
+            </section>
         };
 
         default: {
@@ -303,9 +298,7 @@ function OrderPanel({ id }: { id: number }) {
             };
 
             return <>
-                {getViewHeader()}
-
-                {["pending", "confirmed", "preparing", "ready"].includes(data?.status ?? "pending") && <section className="w-full">
+                {["pending", "confirmed", "preparing", "ready"].includes(data?.status ?? "pending") && <section className={resolveClassNames(styles.actions, "w-full")}>
                     <header className="flex flex-row justify-start items-center gap-2">
                         <Icon name="Settings" />
 
@@ -392,22 +385,48 @@ function OrderPanel({ id }: { id: number }) {
                     </form>
                 </section>}
 
-                <section id="delivery-map" className="w-full">
-                    <header className="flex flex-row justify-start items-center gap-2">
-                        <Icon name="MapMarker" />
+                <section className={styles.section}>
+                    <section className={resolveClassNames(styles.order, "w-full")}>
+                        <header>
+                            <h4>Pedido #{data?.order_id}</h4>
+                        </header>
 
-                        <h4>Mapa de entrega</h4>
-                    </header>
+                        {(data?.status === "cancelled") && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-4 gap-2 w-full">
+                            <Icon name="Warning" className="text-lg" />
 
-                    {["assigned", "delivered"].includes(data?.status ?? "pending") && <ProfileHeaderCard
-                        user={(data as restaurantOrderType).Users_Orders_courier_idToUsers as Users}
-                        mode="admin"
-                    />}
+                            Este pedido foi cancelado
+                        </div>}
 
-                    <LeafletDeliveryTracker order={data as restaurantOrderType} />
+                        <div>
+                            <OrderCard
+                                order={data as restaurantOrderType}
+                                data-component="order-card"
+                                disableLink
+                            />
+
+                            <LeafletDeliveryTracker
+                                order={data as restaurantOrderType}
+                            />
+                        </div>
+                    </section>
+
+                    <section className={resolveClassNames(styles.client, "w-full")}>
+                        <div>
+                            <ProfileHeaderCard
+                                user={(data as restaurantOrderType).Users_Orders_user_idToUsers as Users}
+                                disableLink
+                            />
+
+                            <OrderItemsList
+                                items={[...(data as restaurantOrderType).Order_Items]}
+                            />
+                        </div>
+
+                        <ScrollToSection
+                            order_id={(data as restaurantOrderType).order_id}
+                        />
+                    </section>
                 </section>
-
-                <ScrollToSection order_id={(data as restaurantOrderType).order_id} />
             </>
         };
     }
@@ -419,12 +438,13 @@ type sectionType = (
 );
 
 const ScrollToSection = ({
+    className,
     disableChat: disable_chat = false,
     order_id
 }: {
     disableChat?: boolean;
     order_id: number;
-}) => {
+} & ComponentProps<"section">) => {
     const [pickedSection, setPickedSection] = useState<`order-${sectionType}`>("order-chat");
 
     const sections = [
@@ -444,7 +464,7 @@ const ScrollToSection = ({
         setPickedSection(value as any);
     }
 
-    return <section className="HORIZONTAL_SCROLLTO_SECTION w-full">
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)}>
         <header>
             {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                 {kvp.icon}
@@ -455,11 +475,18 @@ const ScrollToSection = ({
 
         <div data-type="container">
             <section id="order-chat">
-                <OrderChatForm className="w-full" disabled={disable_chat} {...{ order_id }} />
+                <OrderChatForm 
+                    className="w-full" 
+                    disabled={disable_chat} 
+                    {...{ order_id }}
+                />
             </section>
 
             <section id="order-history">
-                <OrderHistoryList className="w-full" {...{ order_id }} />
+                <OrderHistoryList 
+                    className="w-full" 
+                    {...{ order_id }}
+                />
             </section>
         </div>
     </section>

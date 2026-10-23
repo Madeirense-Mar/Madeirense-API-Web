@@ -1,0 +1,71 @@
+/*#region Main sections =================================== */
+.finalized {
+    @apply flex flex-col justify-start items-start;
+
+    gap: 12px;
+}
+
+.section {
+    @apply flex flex-row justify-start items-start;
+
+    gap: 24px;
+
+    width: 100%;
+}
+
+.client,
+.order {
+    --radius-indent: 8px;
+
+    @apply flex flex-col justify-start items-start;
+
+    gap: 12px;
+}
+
+/*#region Client*/
+.client>div,
+.client>ul,
+.client>section {
+    width: 100%;
+}
+
+.client>div>div {
+    --card-border-radius: var(--radius-indent) var(--radius-indent) 0 0;
+
+    border-bottom: none;
+}
+
+.client>div>ul {
+    --list-border-radius: 0 0 var(--radius-indent) var(--radius-indent);
+
+    border-top: none;
+}
+
+.client>section {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+
+    --section-gap: 0px;
+}
+
+/*#endregion*/
+
+/*#region Order*/
+.order>div,
+.order>div:last-of-type>* {
+    width: 100%;
+}
+
+.order>div:last-of-type>div[data-component="order-card"] {
+    --card-border-radius: var(--radius-indent) var(--radius-indent) 0 0;
+
+    border-bottom: none;
+}
+
+.order>div:last-of-type>div[data-component="delivery-tracker"] {
+    --tracker-border-radius: 0 0 var(--radius-indent) var(--radius-indent);
+    --map-border-radius: 0px;
+}
+
+/*#endregion*/
+/*#endregion*/

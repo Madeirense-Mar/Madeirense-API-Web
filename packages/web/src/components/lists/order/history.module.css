@@ -1,10 +1,8 @@
 .list {
-    composes: list from "../list.module.css";
-
     --error-height: 40px;
 
     @apply flex flex-col justify-start items-start gap-1;
-    max-height: 300px;
+    
     position: relative;
     overflow-y: auto;
 }

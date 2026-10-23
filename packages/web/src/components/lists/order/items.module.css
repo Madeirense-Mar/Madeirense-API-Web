@@ -1,17 +1,22 @@
+/*#region List ============================================ */
 .list {
+    --img-size: 152px;
+
+    @apply flex flex-col justify-start items-start;
+
+    padding: var(--list-padding, 4px);
+
+    border: 1px solid var(--list-border-color, var(--base-border-color));
+    border-radius: var(--list-border-radius, 8px);
+}
+/*#endregion*/
+
+.list li {
     --list-item-border-radius: 8px;
     --list-item-padding: 4px;
 
-    composes: list from "../list.module.css";
+    --thumbnail-height: 100px;
 
-    --img-size: 152px;
-
-    padding: var(--list-item-padding);
-
-    border-radius: var(--list-item-border-radius);
-}
-
-.list li {
     @apply flex flex-row justify-start items-center gap-3;
 
     border-radius: inherit;
