@@ -333,10 +333,11 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
             </Tag>}
 
             {(mode === "admin") && ORDERS_PREPARATION_STATUS.filter(s => s !== "assigned").includes(localOrderStatus as any) && <Button
-                className="ml-auto"
-                onClick={localOrderStatus === "ready" ? (settings.auto_assign_driver) ? undefined : openAssignationModal : updateStatus}
-                variant={!error ? "secondary" : "danger"}
                 disabled={assertions.isStatusConfirmationDisabled}
+                className="ml-auto"
+                size="s"
+                variant={!error ? "primary" : "danger"}
+                onClick={localOrderStatus === "ready" ? (settings.auto_assign_driver) ? undefined : openAssignationModal : updateStatus}
             >
                 {(status === "error") && <Icon name="ExclamationCircle" />}
 
