@@ -20,7 +20,7 @@
 
     align-content: flex-end;
     column-gap: var(--card-column-gap, var(--card-gap, 12px));
-    row-gap: var(--card-row-gap, var(--card-gap, 5px));
+    row-gap: var(--card-row-gap, var(--card-gap, 4px));
     grid-template-rows: 36px 32px;
 
     height: var(--card-height);
@@ -135,6 +135,6 @@
 }
 
 .page {
-    row-gap: 5px;
+    row-gap: 4px;
     column-gap: 12px;
 }

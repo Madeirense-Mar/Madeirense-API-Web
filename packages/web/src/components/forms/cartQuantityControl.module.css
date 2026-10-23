@@ -23,7 +23,7 @@
 }
 
 .action-button {
-    --spacing: 5px;
+    --spacing: 4px;
     
     padding-left: var(--spacing);
     padding-right: var(--spacing);

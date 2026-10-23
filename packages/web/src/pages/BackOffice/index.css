@@ -101,7 +101,7 @@ section#top-statistics section:has(section) {
 section#top-statistics ul {
     @apply w-full flex justify-start items-start;
     
-    --gap: 5px;
+    --gap: 4px;
     
     gap: var(--gap);
     overflow: hidden;
@@ -132,20 +132,20 @@ section#top-selling-statistics ul {
     
     --visible-items: 2;
     
-    max-height: calc(calc(255px * var(--visible-items)) + calc(var(--gap, 5px) * calc(var(--visible-items) - 1)));
+    max-height: calc(calc(255px * var(--visible-items)) + calc(var(--gap, 4px) * calc(var(--visible-items) - 1)));
     overflow-y: auto;
 }
 
 section#top-selling-statistics ul li {
     --col: 1;
-    --padding: 5px;
+    --padding: 4px;
     --remainder: calc(0 * calc(var(--gap) - var(--padding) - var(--border-width)));
     --width: calc(calc(100% / var(--col)) - var(--remainder));
     
     background-color: var(--base-background);
     position: relative;
     border: var(--border-width) solid var(--border-color);
-    border-radius: 5px;
+    border-radius: 4px;
     padding: var(--padding);
     width: var(--width);
     max-width: var(--width);

@@ -42,7 +42,7 @@ main[data-view="product-table"] table {
 }
 
 main[data-view="product-table"] table tbody[data-section] {
-    row-gap: 5px;
+    row-gap: 4px;
 }
 
 main[data-view="product-table"] table tbody tr td > div {
@@ -76,11 +76,11 @@ main[data-view="product-table"] table tbody td form input {
     padding: 12px;
     border-width: var(--border-width);
     border-style: solid;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 main[data-view="product-table"] thead[data-section="error"] th {
-    padding: 5px 7px;
+    padding: 4px 7px;
 }
 
 main[data-view="product-table"] ul[class*="selector"] {
