@@ -53,6 +53,7 @@
 .borderless {
     --button-border-width: 0px;
 }
+
 /*#endregion*/
 
 /*#region Shape =========================================== */
@@ -76,8 +77,6 @@
 .m,
 .l,
 .xl {
-    composes: button;
-
     background-size: cover;
 }
 
@@ -104,6 +103,8 @@
 /*#endregion*/
 
 /*#region Variants ======================================== */
+
+/*#region Danger*/
 .danger {
     composes: button;
 
@@ -117,9 +118,14 @@
     --text-color: var(--neutral-light);
 }
 
+/*#endregion*/
+
+/*#region Important*/
 .important {
     composes: button;
 }
+
+/*#endregion*/
 
 /*#region Primary*/
 .primary {
@@ -217,6 +223,7 @@
 
 /*#endregion*/
 
+/*#region Success*/
 .success {
     composes: button;
 
@@ -232,6 +239,8 @@
 .tag {
     composes: tag from "../tags/tag.module.css";
 }
+
+/*#endregion*/
 
 /*#region Text*/
 .text {
@@ -285,6 +294,7 @@
 
 /*#endregion*/
 
+/*#region Warning*/
 .warning {
     composes: button;
 
@@ -300,6 +310,9 @@
     --text-color: var(--secondary);
 }
 
+/*#endregion*/
+
+/*#region Receipt*/
 .receipt-primary {
     composes: button;
 
@@ -322,4 +335,7 @@
     --button-background-color: color-mix(in srgb, var(--neutral-dark), white 20%);
 }
 
+/*#endregion*/
+
+/*#region Appearance ====================================== */
 /*#endregion*/
