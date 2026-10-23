@@ -1,47 +1,49 @@
 import {
-    useCallback,
     useEffect,
     useMemo,
     useState,
-    type SubmitEvent,
+    type ComponentProps,
     type MouseEvent,
-    ComponentProps
+    type SubmitEvent
 } from "react";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+    useSuspenseQuery
+} from "@tanstack/react-query";
 
 import {
     DEFAULT_APP_PREFERENCES,
     DEFAULT_APP_SETTINGS,
     getOrderStatusActionLabel,
     getNextOrderStatus,
-    Madeirense$Types,
+    resolveClassNames,
+    type Madeirense$Types,
     type appPreferencesType,
     type restaurantOrderType,
-    resolveClassNames,
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
 
 import ApplicationQueries, {
-    Queries$Types
+    type Queries$Types
 } from "configurations/queries";
 
 import { useApp } from "contexts/App";
 
 import Button from "components/buttons";
+import Icon from "components/icon";
 
 import OrderCard from "components/cards/order";
 import ProfileHeaderCard from "components/cards/profileHeader";
 
 import OrderChatForm from "components/forms/orders/chat";
-import Icon from "components/icon";
+import DescriptionLabel from "components/forms/elements/labels/description";
 
 import OrderItemsList from "components/lists/order/items";
 import OrderHistoryList from "components/lists/order/history";
 
-import DriversPicker from "components/pickers/drivers";
 import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
+import DriversPicker from "components/pickers/drivers";
 
 import styles from "./Order.module.css";
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
@@ -51,7 +53,9 @@ import type {
     Users
 } from "@Madeirense/database/browser";
 
-import type { variantType } from "components/types";
+import type {
+    variantType
+} from "components/types";
 
 import "./Order.css";
 
@@ -63,6 +67,7 @@ function OrderPanel({ id }: { id: number }) {
         get
     } = useApp();
 
+    const [canManuallyAssignDriver, toggleManualAssignation] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
     const [inAction, setInAction] = useState<(
@@ -73,7 +78,10 @@ function OrderPanel({ id }: { id: number }) {
         | "status-update"
     )>("idle");
 
-    const { Base, Storage } = useMemo(() => MXP$App, []);
+    const {
+        Base,
+        Storage
+    } = useMemo(() => MXP$App, []);
 
     const {
         orders,
@@ -186,18 +194,31 @@ function OrderPanel({ id }: { id: number }) {
                 ),
 
                 "hasCancellationError": (error && inAction === "cancelling"),
+
                 "hasPaymentConfirmationError": (error && inAction === "payment-confirmation"),
+
                 "hasUpdateError": (error && [
                     "assign-order",
                     "status-update"
                 ].includes(inAction)),
 
                 "isCancelling": (!error && ["cancelling"].includes(inAction)),
+
                 "isConfirmingPayment": !error && ["payment-confirmation"].includes(inAction),
+
                 "isReadyToBeAssigned": ["ready"].includes(data?.status ?? "pending"),
+
                 "isUpdating": [
-                    !error && ["assign-order", "status-update"].includes(inAction),
-                ]
+                    !error,
+                    ["assign-order", "status-update"].includes(inAction)
+                ].every(v => v),
+
+                "showActionsSection": ([
+                    "pending",
+                    "confirmed",
+                    "preparing",
+                    "ready"
+                ] as $Enums.Orders_status[]).includes(data?.status ?? "pending"),
             };
 
             const areActionsDisabled = [
@@ -207,7 +228,7 @@ function OrderPanel({ id }: { id: number }) {
                 renderAssertions.isUpdating
             ].includes(true);
 
-            const buttonVariant = ((status: $Enums.Orders_status | null | undefined): variantType => {
+            const $buttonVariant = ((status: $Enums.Orders_status | null | undefined): variantType => {
                 switch (status) {
                     case "pending":
                         return "warning";
@@ -227,6 +248,10 @@ function OrderPanel({ id }: { id: number }) {
                 }
             })(data?.status);
 
+            function handleManualAssignationToggle() {
+                toggleManualAssignation(c => !c);
+            };
+
             async function PATCH(e: SubmitEvent<HTMLFormElement>) {
                 e.preventDefault();
 
@@ -234,19 +259,18 @@ function OrderPanel({ id }: { id: number }) {
                 const $submitter = (e.nativeEvent as any).submitter as HTMLButtonElement;
                 const $form_data = new FormData($form);
 
+                setError(null);
+
+                setInAction($submitter.value as any);
+
                 try {
-                    setError(null);
-
-                    setInAction($submitter.value as any);
-
                     switch ($submitter.value as (typeof inAction)) {
                         case "assign-order":
                             await orders.assignOrderToDriver(
                                 id,
                                 {
                                     restaurant_id: data?.restaurant_id as number,
-                                    courier_id: parseInt($form_data.get("courier_id") as string),
-                                    notes: $form_data.get("notes") as string
+                                    courier_id: parseInt($form_data.get("courier_id") as string)
                                 }
                             );
 
@@ -261,10 +285,7 @@ function OrderPanel({ id }: { id: number }) {
                                 throw new Error("Notas são obrigatórias para o cancelamento do pedido");
                             }
 
-                            await orders.cancel(
-                                id,
-                                $form_data.get("notes") as string
-                            );
+                            await orders.cancel(id, $form_data.get("notes") as string);
 
                             break;
 
@@ -284,106 +305,22 @@ function OrderPanel({ id }: { id: number }) {
                             });
 
                             break;
-
-                        default:
-                            break;
                     }
-                } catch (error) {
-                    setError(new Error((error as Error).message));
-                } finally {
+
                     await refetch();
 
                     setInAction("idle");
+                } catch (error) {
+                    setError(new Error((error as Error).message));
                 }
             };
 
             return <>
-                {["pending", "confirmed", "preparing", "ready"].includes(data?.status ?? "pending") && <section className={resolveClassNames(styles.actions, "w-full")}>
-                    <header className="flex flex-row justify-start items-center gap-2">
-                        <Icon name="Settings" />
+                {(settings.auto_assign_driver && !canManuallyAssignDriver) && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-2 gap-2 w-full">
+                    <Icon name="Warning" className="text-3xl" />
 
-                        <h4>Informação</h4>
-                    </header>
-
-                    <form onSubmit={PATCH} className="w-full flex flex-col justify-start items-center gap-1">
-                        {["ready"].includes(data?.status ?? "pending") && <DriversPicker restaurant_id={restaurant?.restaurant_id} className="w-full" mode="radio" required />}
-
-                        <label className="w-full flex flex-col justify-start items-start">
-                            <div className="w-full flex flex-row justify-between items-center">
-                                <span className="text-base">
-                                    <Icon name="Notes" className="inline mr-2" />
-
-                                    Notas?
-                                </span>
-
-                                {(renderAssertions.hasCancellationError) && <div data-state="error" className="text-base flex flex-row justify-start items-center gap-2 rounded-md px-2">
-                                    <Icon name="Error" className="inline mr-2" />
-
-                                    {error?.message}
-                                </div>}
-                            </div>
-
-                            <textarea
-                                className="w-full mt-1"
-                                name="notes"
-                                title="Notas sobre o pedido? Algum reparo, aviso..."
-                                placeholder="Notas sobre o pedido? Algum reparo, aviso..."
-                            />
-                        </label>
-
-                        {(data?.status === "ready" && settings.auto_assign_driver) && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-4 gap-2 w-full">
-                            <Icon name="Warning" className="text-lg" />
-
-                            A funcionalidade de associação automática está habilitada, terá de aguardar pela confirmação de um estafeta para fazer a re-alocação
-                        </div>}
-
-                        <div
-                            className="w-full flex flex-row justify-start items-center gap-2"
-                            {...{ ...(areActionsDisabled) ? { "data-state": "disabled" } : {} }}
-                        >
-                            {renderAssertions.allowPaymentConfirmation && <Button
-                                type="submit"
-                                variant={renderAssertions.hasPaymentConfirmationError ? "danger" : "secondary"}
-                                value="payment-confirmation"
-                                className="w-full"
-                            >
-                                {(renderAssertions.hasPaymentConfirmationError)
-                                    ? error?.message
-                                    : <>
-                                        Confirmar pagamento
-
-                                        {renderAssertions.isConfirmingPayment && <Icon name="Loading" className="animate-spin" />}
-                                    </>}
-                            </Button>}
-
-                            <Button
-                                type={settings.auto_assign_driver ? "button" : "submit"}
-                                className="w-full"
-                                variant={renderAssertions.hasUpdateError ? "danger" : buttonVariant}
-                                value={renderAssertions.isReadyToBeAssigned ? "assign-order" : "status-update"}
-                                disabled={(settings.auto_assign_driver && data?.status === "ready") ?? false}
-                            >
-                                {(settings.auto_assign_driver)
-                                    ? "A confirmar estafeta..."
-                                    : (renderAssertions.hasUpdateError)
-                                        ? error?.message
-
-                                        : <>
-                                            {getOrderStatusActionLabel(data?.status ?? "pending")}
-
-                                            {renderAssertions.isUpdating && <Icon name="Loading" className="animate-spin" />}
-                                        </>
-                                }
-                            </Button>
-
-                            <Button type="submit" variant="danger" value="cancelling">
-                                Cancelar
-
-                                {renderAssertions.isCancelling && <Icon name="Loading" className="animate-spin" />}
-                            </Button>
-                        </div>
-                    </form>
-                </section>}
+                    A funcionalidade de associação automática está habilitada, terá de aguardar pela confirmação de um estafeta para fazer a re-alocação
+                </div>}
 
                 <section className={styles.section}>
                     <section className={resolveClassNames(styles.order, "w-full")}>
@@ -411,6 +348,117 @@ function OrderPanel({ id }: { id: number }) {
                     </section>
 
                     <section className={resolveClassNames(styles.client, "w-full")}>
+                        {renderAssertions.showActionsSection && <section className={resolveClassNames(styles.actions, "w-full")}>
+                            <header className="w-full flex flex-row justify-between items-start">
+                                <h5>Acções</h5>
+
+                                {(settings.auto_assign_driver) && <Button
+                                    variant={(!canManuallyAssignDriver) ? "primary" : "secondary"}
+                                    onClick={handleManualAssignationToggle}
+                                >
+                                    {!canManuallyAssignDriver
+                                        ? "Escolher estafeta manualmente"
+                                        : <>
+                                            <Icon name="Close" />
+
+                                            Cancelar
+                                        </>
+                                    }
+                                </Button>}
+                            </header>
+
+                            {(data?.status === "ready") && <>
+                                {(settings.auto_assign_driver && !canManuallyAssignDriver) && <div data-state="info" className="flex flex-row justify-between items-center p-2 w-full">
+                                    <Icon name="Circle" className="animate-bounce" />
+
+                                    <span>A aguardar pela confirmação do estafeta...</span>
+                                </div>}
+
+                                {canManuallyAssignDriver && <>
+                                    <form onSubmit={PATCH}>
+                                        <DriversPicker
+                                            className="w-full"
+                                            mode="radio"
+                                            restaurant_id={restaurant?.restaurant_id}
+                                            required
+                                        />
+
+                                        <Button type="submit" className="w-full">
+                                            <Icon name="Delivery" />
+
+                                            Associar e marcar para entrega
+                                        </Button>
+                                    </form>
+                                </>}
+                            </>}
+
+                            {(data?.status !== "ready") && <form onSubmit={PATCH}>
+                                <DescriptionLabel
+                                    alerts={(renderAssertions.hasCancellationError) ? undefined : {
+                                        error: error?.message || ""
+                                    }}
+                                    className="w-full"
+                                    description={<>Notas sobre o pedido? Algum reparo ou aviso.</>}
+                                    icon="Notes"
+                                    layout="column"
+                                    title="Notas?"
+                                    input={{
+                                        element: "textarea",
+                                        props: {
+                                            className: "w-full",
+                                            name: "notes",
+                                            title: "Notas sobre o pedido",
+                                            placeholder: "Notas..."
+                                        }
+                                    }}
+                                />
+
+                                <ul className="w-full flex flex-col justify-start items-center gap-2" {...{ ...(areActionsDisabled) ? { "data-state": "disabled" } : {} }}>
+                                    {renderAssertions.allowPaymentConfirmation && <li>
+                                        <Button
+                                            value="payment-confirmation"
+                                            variant={renderAssertions.hasPaymentConfirmationError ? "danger" : "secondary"}
+                                            type="submit"
+                                        >
+                                            {(renderAssertions.hasPaymentConfirmationError)
+                                                ? error?.message
+                                                : <>
+                                                    Confirmar pagamento
+
+                                                    {renderAssertions.isConfirmingPayment && <Icon name="Loading" className="animate-spin" />}
+                                                </>
+                                            }
+                                        </Button>
+                                    </li>}
+
+                                    <li>
+                                        <Button
+                                            value="status-update"
+                                            variant={renderAssertions.hasUpdateError ? "danger" : $buttonVariant}
+                                            type="submit"
+                                        >
+                                            {(renderAssertions.hasUpdateError)
+                                                ? error?.message
+                                                : <>
+                                                    {getOrderStatusActionLabel(data?.status ?? "pending")}
+
+                                                    {renderAssertions.isUpdating && <Icon name="Loading" className="animate-spin" />}
+                                                </>
+                                            }
+                                        </Button>
+                                    </li>
+
+                                    <li>
+                                        <Button type="submit" variant="danger" value="cancelling">
+                                            Cancelar
+
+                                            {renderAssertions.isCancelling && <Icon name="Loading" className="animate-spin" />}
+                                        </Button>
+                                    </li>
+                                </ul>
+                            </form>}
+                        </section>}
+
                         <div>
                             <ProfileHeaderCard
                                 user={(data as restaurantOrderType).Users_Orders_user_idToUsers as Users}
@@ -426,7 +474,7 @@ function OrderPanel({ id }: { id: number }) {
                             order_id={(data as restaurantOrderType).order_id}
                         />
                     </section>
-                </section>
+                </section >
             </>
         };
     }
@@ -475,16 +523,16 @@ const ScrollToSection = ({
 
         <div data-type="container">
             <section id="order-chat">
-                <OrderChatForm 
-                    className="w-full" 
-                    disabled={disable_chat} 
+                <OrderChatForm
+                    className="w-full"
+                    disabled={disable_chat}
                     {...{ order_id }}
                 />
             </section>
 
             <section id="order-history">
-                <OrderHistoryList 
-                    className="w-full" 
+                <OrderHistoryList
+                    className="w-full"
                     {...{ order_id }}
                 />
             </section>

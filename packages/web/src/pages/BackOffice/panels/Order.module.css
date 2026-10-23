@@ -13,6 +13,7 @@
     width: 100%;
 }
 
+.actions,
 .client,
 .order {
     --radius-indent: 8px;
@@ -21,6 +22,44 @@
 
     gap: 12px;
 }
+
+/*#region Actions*/
+.actions {
+    padding: 12px;
+
+    border: 1px solid var(--base-neutral-border-color);
+    border-radius: 8px;
+
+    background-color: var(--div-background-color, color-mix(in srgb, var(--neutral-dark), black 50%));
+}
+
+[data-theme="LAND-LIGHT"] .actions {
+    --div-background-color: color-mix(in srgb, var(--secondary-light), black 8%);
+}
+
+[data-theme="SEA-LIGHT"] .actions {
+    --div-background-color: color-mix(in srgb, var(--primary-light), black 5%);
+}
+
+.actions>form {
+    @apply flex flex-col justify-start items-start w-full;
+    
+    gap: 24px;
+}
+
+.actions>form>ul {
+    @apply flex flex-col justify-start items-start w-full;
+}
+
+.actions>form>ul>li {
+    width: 100%;
+}
+
+.actions>form>ul>li>button {
+    width: inherit;
+}
+
+/*#endregion*/
 
 /*#region Client*/
 .client>div,
@@ -68,4 +107,5 @@
 }
 
 /*#endregion*/
+
 /*#endregion*/

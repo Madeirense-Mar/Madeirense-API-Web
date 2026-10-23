@@ -278,14 +278,14 @@ const LeafletDeliveryTracker = ({
             </Marker>}
         </MapContainer>
 
-        <div className="flex flex-row justify-center items-center py-1 gap-2">
+        {route && <div className="flex flex-row justify-center items-center py-1 gap-2">
             {error && <Tag variant="danger">
                 <Icon name="ExclamationCircle" />
 
                 Erro ao calcular rota: {error.message}
             </Tag>}
 
-            {route && <div className="flex flex-row flex-nowrap justify-center items-center">
+            <div className="flex flex-row flex-nowrap justify-center items-center">
                 <Tag variant="secondary">
                     <Icon name="MapMarked" />
 
@@ -299,8 +299,8 @@ const LeafletDeliveryTracker = ({
 
                     {`Duração - ${formatDuration(route.durationSeconds)}`}
                 </Tag>
-            </div>}
-        </div>
+            </div>
+        </div>}
     </div>
 };
 

@@ -1,6 +1,7 @@
 import {
     useMemo,
     useState,
+    type ChangeEvent,
     type ComponentProps
 } from "react";
 
@@ -23,15 +24,15 @@ interface IDriversPickerProps extends ComponentProps<"ul"> {
 };
 
 function DriversPicker(_props: IDriversPickerProps) {
-    const { 
+    const {
         className,
-        mode = "radio", 
-        required = false, 
-        restaurant_id, 
+        mode = "radio",
+        required = false,
+        restaurant_id,
         ...props
     } = _props;
 
-    const { 
+    const {
         get,
         state
     } = useApp();
@@ -40,7 +41,7 @@ function DriversPicker(_props: IDriversPickerProps) {
 
     const assertions = {
         "isLoading": [
-            "fetching-Drivers", 
+            "fetching-Drivers",
             "updating-Drivers"
         ].includes(state)
     };
@@ -62,60 +63,70 @@ function DriversPicker(_props: IDriversPickerProps) {
         $input.focus();
     };
 
+    function handleSearch(e: ChangeEvent<HTMLInputElement>) {
+        setSearch(e.target.value);
+    };
+
     return <ul className={resolveClassNames(styles.picker, className)} {...props}>
-        <li className="mb-3 w-full flex flex-row justify-start items-center gap-2">
+        <li>
             <Icon name="Delivery" />
 
             <span className="italic font-bold">Escolha o estafeta para a entrega do pedido:</span>
         </li>
 
-        <li className="w-full flex flex-row justify-center items-center">
-            <Icon name="Search" className="mr-2" />
+        <li>
+            <input
+                className="w-full"
+                type="text"
+                name="search_couriers"
+                title="Pesquisar por: nome, telefone, ou e-mail"
+                placeholder="nome, telefone, ou e-mail..."
+                onChange={handleSearch}
+            />
 
-            <input className="w-full" type="text" name="search_couriers" title="Pesquisar por: nome, telefone, ou e-mail" placeholder="nome, telefone, ou e-mail..." onChange={(e) => setSearch(e.target.value)} />
-
-            <Button variant="secondary" title="Limpar campo" onClick={clearSearch} disabled={search === ""}>
+            <Button variant={search === "" ? "secondary" : "primary"} title="Limpar campo" onClick={clearSearch} disabled={search === ""}>
                 <Icon name="Close" />
             </Button>
         </li>
 
-        {!Boolean(drivers.length) && <li className="p-3 w-full flex flex-col justify-start items-center gap-2">
+        {!Boolean(drivers.length) && <li>
             {(search !== "")
-                ? <div className="flex flex-row justify-start items-center gap-2">
-                    <span className="italic opacity-40">Nenhum estafeta corresponde à chave:</span>
+                ? <span className="italic inline-flex justify-center items-center gap-2">
+                    Nenhum estafeta corresponde à chave:
 
-                    <Tag>{search}</Tag>
-                </div>
+                    <Tag variant="warning">{search}</Tag>
+                </span>
 
-                : assertions.isLoading ? null : <span className="italic opacity-40">Não tem estafetas disponíveis de momento</span>
+                : (assertions.isLoading)
+                    ? null
+                    : <span className="italic opacity-40">Não tem estafetas disponíveis de momento</span>
             }
         </li>}
 
         {(assertions.isLoading)
-            ? <li className="p-3 w-full flex flex-col justify-start items-center gap-2">
+            ? <li>
                 <Icon name="Loading" className="animate-spin" />
             </li>
 
-            : drivers.map(driver => <li
-                key={driver.user_id}
-                className="w-full"
-            >
-                <label className="flex flex-row justify-start items-center gap-2 w-full">
-                    <input type={mode} name="courier_id" value={driver.user_id} title={`Estafeta: ${driver.name}`} {...{ required }} />
+            : drivers.map(driver => <li key={driver.user_id} className="w-full">
+                <label>
+                    <input
+                        type={mode}
+                        name="courier_id"
+                        value={driver.user_id}
+                        title={`Estafeta: ${driver.name}`}
+                        {...{ required }}
+                    />
 
-                    <span className="mr-auto">{driver.name}</span>
-
-                    <span className="flex flex-row justify-start items-center gap-2">
-                        <Icon name="Email" />
-
-                        {driver.email}
+                    <span className="mr-auto">
+                        {driver.name}
                     </span>
 
-                    <span className="flex flex-row justify-start items-center gap-2">
+                    <Tag variant="secondary">
                         <Icon name="Phone" />
 
                         {driver.phone}
-                    </span>
+                    </Tag>
                 </label>
             </li>)
         }

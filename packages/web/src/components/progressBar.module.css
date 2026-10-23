@@ -93,6 +93,9 @@
 /*#region Secondary*/
 .secondary {
     composes: progress;
+
+    --progress-background-color: color-mix(in srgb, var(--secondary), white 80%);
+    --value-background-color: var(--primary);
 }
 /*#endregion*/
 

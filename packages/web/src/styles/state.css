@@ -34,28 +34,42 @@
 }
 /*#endregion*/
 
+/*#region Info =========================================== */
+[data-state="info"] {
+    --element-border-style: solid;
+}
+
+[data-theme*="DARK"] [data-state="info"] {
+    --element-border-color: var(--primary);
+    --element-background-color: var(--primary-dark);
+
+    --text-color: var(--primary-light);
+}
+
+[data-theme*="LIGHT"] [data-state="info"] {
+    --element-border-color: var(--secondary-dark);
+    --element-background-color: var(--secondary-light);
+
+    --text-color: var(--secondary-dark);
+}
+/*#endregion*/
+
 /*#region Warning =========================================== */
 [data-state="warning"] {
     --element-border-style: dashed;
 }
 
-[data-theme="LAND-DARK"] [data-state="warning"] {
+[data-theme*="DARK"] [data-state="warning"] {
     --element-border-color: var(--secondary);
-    --element-background-color: var(--secondary);
+    --element-background-color: var(--secondary-dark);
+
+    --text-color: var(--secondary);
 }
 
-[data-theme="SEA-DARK"] [data-state="warning"] {
-    --element-border-color: var(--secondary);
-    --element-background-color: var(--secondary);
-}
+[data-theme*="LIGHT"] [data-state="warning"] {
+    --element-border-color: var(--secondary-dark);
+    --element-background-color: var(--secondary-light);
 
-[data-theme="LAND-LIGHT"] [data-state="warning"] {
-    --element-border-color: var(--secondary);
-    --element-background-color: var(--secondary);
-}
-
-[data-theme="SEA-LIGHT"] [data-state="warning"] {
-    --element-border-color: var(--secondary);
-    --element-background-color: var(--secondary);
+    --text-color: var(--secondary-dark);
 }
 /*#endregion*/

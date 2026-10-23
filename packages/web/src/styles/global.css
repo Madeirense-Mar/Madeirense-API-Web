@@ -88,6 +88,7 @@ body {
 
 /*#region Dark */
 body[data-theme*="DARK"] {
+    --base-neutral-border-color: color-mix(in srgb, var(--neutral-light), black 80%);
     --base-text-color: var(--neutral-light);
 
     --text-contrast-color: var(--neutral-light);
@@ -112,6 +113,7 @@ body[data-theme="SEA-DARK"] {
 /*#region Light */
 body[data-theme*="LIGHT"] {
     --base-border-color: var(--primary-dark);
+    --base-neutral-border-color: color-mix(in srgb, var(--neutral-dark), white 12%);
     --base-text-color: var(--neutral-dark);
 
     --text-contrast-color: var(--neutral-dark);

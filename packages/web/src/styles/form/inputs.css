@@ -50,12 +50,12 @@ textarea {
 /*#region LIGHT*/
 
 [data-theme*="LIGHT"] textarea {
-    border: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-dark)));
+    border: var(--input-border-width, 1px) solid var(--input-border-color, var(--base-input-border-color, var(--neutral-dark)));
 }
 
 [data-theme*="LIGHT"] input,
 [data-theme*="LIGHT"] select {
-    border-bottom: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-dark)));
+    border-bottom: var(--input-border-width, 1px) solid var(--input-border-color, var(--base-input-border-color, var(--neutral-dark)));
 }
 
 [data-theme*="LIGHT"] input:hover,
@@ -68,12 +68,12 @@ textarea {
 
 /*#region DARK*/
 [data-theme*="DARK"] textarea {
-    border: 1px solid var(--input-border-color, var(--base-textarea-border-color, var(--base-border-color)));
+    border: var(--input-border-width, 1px) solid var(--input-border-color, var(--base-textarea-border-color, var(--base-border-color)));
 }
 
 [data-theme*="DARK"] input,
 [data-theme*="DARK"] select {
-    border-bottom: 1px solid var(--input-border-color, var(--base-input-border-color, var(--neutral-light)));
+    border-bottom: var(--input-border-width, 1px) solid var(--input-border-color, var(--base-input-border-color, var(--neutral-light)));
 }
 
 [data-theme*="DARK"] input,

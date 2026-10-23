@@ -5,6 +5,7 @@
 
     @apply flex flex-col justify-center items-center;
 
+    overflow: hidden;
     height: auto;
     min-height: var(--default-height);
 
