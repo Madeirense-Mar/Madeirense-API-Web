@@ -4,11 +4,11 @@
 }
 
 .settings>section>header {
-    @apply flex flex-row justify-start items-center font-black text-3xl pb-2 w-full mb-2;
+    @apply flex flex-row justify-start items-center w-full mb-2;
 }
 
 .settings>section>header>h2 {
-    @apply font-black text-3xl;
+    @apply font-black;
 }
 
 .settings>section>form>fieldset {
