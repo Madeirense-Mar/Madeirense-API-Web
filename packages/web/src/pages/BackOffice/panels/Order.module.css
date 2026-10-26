@@ -2,7 +2,7 @@
 .finalized {
     @apply flex flex-col justify-start items-start;
 
-    gap: 12px;
+    gap: var(--gap-m);
 }
 
 .section {
@@ -20,7 +20,7 @@
 
     @apply flex flex-col justify-start items-start;
 
-    gap: 12px;
+    gap: var(--gap-m);
 }
 
 /*#region Actions*/

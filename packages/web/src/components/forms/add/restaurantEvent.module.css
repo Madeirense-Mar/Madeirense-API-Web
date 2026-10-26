@@ -10,7 +10,7 @@
 
     @apply flex flex-col justify-start items-start w-full;
 
-    gap: 20px;
+    gap: var(--gap-xl);
 }
 
 .form>fieldset>legend {

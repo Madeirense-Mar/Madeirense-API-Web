@@ -7,7 +7,7 @@
 }
 
 .page main a:hover {
-    column-gap: 16px;
+    column-gap: var(--gap-l);
     text-decoration: underline;
 }
 

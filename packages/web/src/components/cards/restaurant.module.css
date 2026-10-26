@@ -67,7 +67,7 @@
 .card ul {
     @apply flex flex-row justify-start items-start;
 
-    gap: 8px;
+    gap: var(--gap-s);
 }
 
 /*#endregion*/

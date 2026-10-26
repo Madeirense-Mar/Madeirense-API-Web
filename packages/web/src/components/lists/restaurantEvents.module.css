@@ -8,7 +8,7 @@
 .list-item {
     @apply flex flex-row justify-start items-center;
 
-    gap: 12px;
+    gap: var(--gap-m);
 }
 /*#endregion*/
 

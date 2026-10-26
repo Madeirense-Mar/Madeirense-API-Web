@@ -1,7 +1,7 @@
 .list {
     display: grid;
     grid-template-columns: repeat(2, minmax(12px, 100%));
-    gap: 4px;
+    gap: var(--gap-xs);
 }
 
 .list li {

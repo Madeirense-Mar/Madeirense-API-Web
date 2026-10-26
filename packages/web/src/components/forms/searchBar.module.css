@@ -2,7 +2,7 @@
     @apply flex flex-row justify-start items-center;   
     
     border-radius: 1px solid var(--form-border-color);
-    gap: 8px;
+    gap: var(--gap-s);
     border-radius: 8px;
 }
 

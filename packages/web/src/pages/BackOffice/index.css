@@ -20,7 +20,7 @@ section#kpi-statistics ul li span:last-of-type:not(span[data-text], span[data-te
 
 section#order-statistics {
     --container-height: 400px;
-    --gap: 12px;
+    --gap: var(--gap-m);
 
     display: grid;
     column-gap: var(--gap);
@@ -95,13 +95,13 @@ section#top-statistics section {
 }
 
 section#top-statistics section:has(section) {
-    row-gap: 20px;
+    row-gap: var(--gap-xl);
 }
 
 section#top-statistics ul {
     @apply w-full flex justify-start items-start;
     
-    --gap: 4px;
+    --gap: var(--gap-xs);
     
     gap: var(--gap);
     overflow: hidden;

@@ -1,7 +1,7 @@
 .horizontal {
     @apply flex flex-row flex-wrap items-center justify-start;
 
-    gap: 4px;
+    gap: var(--gap-xs);
 
     height: var(--height);
     max-height: var(--height);

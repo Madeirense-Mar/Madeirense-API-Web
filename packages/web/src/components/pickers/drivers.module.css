@@ -40,7 +40,7 @@
 .picker>li:not(:nth-child(2)) {
     @apply flex flex-row justify-start items-center;
 
-    gap: 8px;
+    gap: var(--gap-s);
     padding: 12px;
 }
 
@@ -71,7 +71,7 @@
 
     width: 100%;
 
-    gap: 8px;
+    gap: var(--gap-s);
 }
 
 .picker>li>label>*:last-child {

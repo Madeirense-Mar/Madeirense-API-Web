@@ -6,7 +6,7 @@
         "profile    name    tag"
         "profile    email   tag"
     ;
-    gap: 8px;
+    gap: var(--gap-s);
 
     align-items: center;
 }

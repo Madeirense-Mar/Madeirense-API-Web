@@ -14,7 +14,7 @@
     position: relative;
     z-index: 11;
     
-    gap: 12px;
+    gap: var(--gap-m);
 
     background-color: var(--nav-background-color, var(--default-nav-color));
 

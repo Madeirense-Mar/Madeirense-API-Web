@@ -9,7 +9,7 @@
 .checkout > header {
     @apply flex flex-row justify-between items-center flex-nowrap w-full;
 
-    gap: 12px;
+    gap: var(--gap-m);
 }
 
 .checkout form {

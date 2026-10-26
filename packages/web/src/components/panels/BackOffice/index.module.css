@@ -75,7 +75,7 @@
     border: 1px solid var(--div-border-color);
     border-radius: 12px;
 
-    gap: 12px;
+    gap: var(--gap-m);
     padding: 12px;
 
     background-color: var(--div-background-color, transparent);
