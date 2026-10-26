@@ -16,7 +16,6 @@ import {
     generateRandomNumbers,
     resolveClassNames,
     type appPreferencesType,
-    type keyValuePair,
     type parsedAddressObjectType
 } from "@Madeirense/shared";
 
@@ -32,30 +31,29 @@ import { useApp } from 'contexts/App';
 import { useFlasher } from "contexts/Flasher";
 import { useModal } from "contexts/Modal";
 import { useNotifications } from "contexts/Notifications";
-import { useOrders } from "contexts/Orders";
 import { useProfile } from "contexts/Profile";
+
+import { Root$Enumerators } from "styles/enumerators";
 
 import Button from "components/buttons";
 import ProfilePictureButton from "components/buttons/profile";
 import ProductCard from "components/cards/product";
 import Icon from "components/icon";
-import SliderPicker from "components/pickers/slider";
 import Tag from "components/tags";
 
 import DropOffFieldset from "components/forms/elements/fieldsets/dropOff";
+import DescriptionLabel from "components/forms/elements/labels/description";
+
 import productGridStyles from "components/grids/products/menu.module.css";
 import DeletionForm from "components/modals/forms/delete";
 
-import { Root$Enumerators } from "styles/enumerators";
+import styles from "./Profile.module.css";
 
 import type {
     Delivery_Locations
 } from "@Madeirense/database/browser";
 
 import type { IPageState } from "components/interface";
-
-
-import "./Profile.css";
 
 // ***************************************************************************************************************
 
@@ -110,8 +108,6 @@ function ProfilePage() {
 
     const { flash } = useFlasher();
 
-    const { orders } = useOrders();
-
     const {
         removeDeliveryLocation,
         requestLocationPermission,
@@ -124,7 +120,7 @@ function ProfilePage() {
     const { show } = useModal();
     const { push } = useNotifications();
 
-    const [searchParams, updateSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
     const profileMenu = (searchParams.get("menu") ?? "profile") as menuType;
 
@@ -181,14 +177,6 @@ function ProfilePage() {
     function hideMap() {
         toggleDeliveryLocationMap(false);
         setPickedDeliveryLocation(null);
-    };
-
-    function handleMenuChange(type: string) {
-        updatePage(p => ({ ...p, data: ({ ...p.data, menu: type as menuType } as stateType) }));
-
-        searchParams.delete("menu");
-
-        updateSearchParams(searchParams);
     };
 
     async function handleLocationPermissionUpdate({ target }: MouseEvent<HTMLButtonElement>) {
@@ -484,41 +472,6 @@ function ProfilePage() {
         user
     ]);
 
-    const menuList = [
-        {
-            key: "Perfil", value: {
-                value: "profile",
-                icon: (page.status === "saving-profile")
-                    ? <Icon name="Loading" className="animate-spin" />
-                    : <Icon name="User" />
-            }
-        },
-        {
-            key: "Pontos de entrega", value: {
-                value: "locations",
-                icon: (page.status === "saving-locations")
-                    ? <Icon name="Loading" className="animate-spin" />
-                    : <Icon name="MapMarker" />
-            }
-        },
-        {
-            key: "Favoritos", value: {
-                value: "favorites",
-                icon: (page.status === "saving-favorites")
-                    ? <Icon name="Loading" className="animate-spin" />
-                    : <Icon name="HeartFilled" />
-            }
-        },
-        {
-            key: "Definições", value: {
-                value: "settings",
-                icon: (page.status === "saving-settings")
-                    ? <Icon name="Loading" className="animate-spin" />
-                    : <Icon name="Settings" />
-            }
-        }
-    ] as keyValuePair<string, { value: menuType, icon: any }>[];
-
     switch (user) {
         case undefined: {
             return <main className="flex flex-col justify-center items-center">
@@ -527,47 +480,75 @@ function ProfilePage() {
         }
 
         default: {
-            return <main className="flex flex-col justify-start items-start gap-6">
+            return <main className={styles.page}>
                 <ProfilePictureButton src={user.profile_photo ?? "#"} size="xl" className="mx-auto" enableUpload />
 
-                <SliderPicker defaultValue={profileMenu} list={menuList} onPick={handleMenuChange} />
+                <section>
+                    <form onSubmit={PATCH} onReset={handleFormReset} data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
+                        <fieldset>
+                            <legend>
+                                <Tag>
+                                    <Icon name="User" />
 
-                {(menu === "profile") && <section id={menu}>
-                    <form onSubmit={PATCH} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
-                        <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                            <legend className="flex flex-row justify-start items-center gap-2 text-2xl pb-2">
-                                <Icon name="User" />
+                                    Conta
+                                </Tag>
 
-                                Conta
+                                <hr />
                             </legend>
 
-                            <label className="flex flex-col justify-between items-start w-full">
-                                <span>Nome</span>
 
-                                <input name="name" type="text" data-element="h2" defaultValue={user.name} className="w-full" />
-                            </label>
+                            <DescriptionLabel
+                                className="w-full"
+                                title="Nome"
+                                description={"Como lhe vamos chamar e o nome que será mostrados nas facturas e comunicações."}
+                                input={{
+                                    element: "input",
+                                    props: {
+                                        name: "name",
+                                        type: "text",
+                                        defaultValue: user.name,
+                                        className: "w-full"
+                                    }
+                                }}
+                            />
                         </fieldset>
 
-                        <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                            <legend className="flex flex-row justify-start items-center gap-2 text-2xl pb-2">
-                                <Icon name="Phone" />
+                        <fieldset>
+                            <legend>
+                                <Tag>
+                                    <Icon name="Phone" />
 
-                                Contato
+                                    Contacto
+                                </Tag>
+
+                                <hr />
                             </legend>
 
-                            <label className="flex flex-col justify-between items-start w-full">
-                                <span>E-mail</span>
 
-                                <input name="e-mail" type="email" data-element="h2" defaultValue={user.email} className="w-full" />
-                            </label>
+                            <DescriptionLabel
+                                className="w-full"
+                                title="E-mail"
+                                description={"Endereço para onde serão enviados e-mails e algumas notificações."}
+                                input={{
+                                    element: "input",
+                                    props: {
+                                        name: "e-mail",
+                                        type: "email",
+                                        defaultValue: user.email,
+                                        className: "w-full"
+                                    }
+                                }}
+                            />
 
-                            <div className="w-full flex flex-col justify-between items-start">
-                                <label htmlFor="phone">
-                                    <span>Nº do telefone</span>
+                            <div className={styles["contact-fields"]}>
+                                <label className="flex flex-col justify-start items-start" htmlFor="phone">
+                                    <span className="font-extrabold">Nº do telefone</span>
+
+                                    <span>Contacto passado por defeito para o Multicaixa express e também mantido como ponto principal para ligações ou envio de mensagens</span>
                                 </label>
 
-                                <div className="flex flex-row justify-start items-center w-full gap-2">
-                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" data-element="h2" defaultValue={defaultPhoneCode} required className="text-center">
+                                <div className="flex flex-row justify-start items-center">
+                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={defaultPhoneCode} required>
                                         <option hidden value="">Seleciona um código</option>
 
                                         {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
@@ -575,33 +556,9 @@ function ProfilePage() {
                                         </option>)}
                                     </select>
 
-                                    <input defaultValue={user.phone.substring(defaultPhoneCode.length)} id="phone" className="w-full" type="tel" data-element="h2" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
+                                    <input defaultValue={user.phone.substring(defaultPhoneCode.length)} id="phone" type="tel" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
                                 </div>
                             </div>
-                        </fieldset>
-
-                        <fieldset className="flex flex-col justify-start items-start gap-3 w-full">
-                            <legend className="flex flex-row justify-start items-center gap-2 text-2xl pb-2">
-                                <Icon name="Lock" />
-
-                                Privacidade
-                            </legend>
-
-                            <ul className="w-full flex flex-col justify-start items-start">
-                                <li className="w-full flex flex-row justify-between items-center gap-2">
-                                    <div>
-                                        <span className="font-medium">Eliminar os meus dados</span>
-
-                                        <p className="opacity-70">Esta ação é irreversível.</p>
-                                    </div>
-
-                                    <Button type="button" value={menu} variant="danger" className="w-1/3" onClick={handleDeletion}>
-                                        {page.status === "deleting-profile" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Close" />}
-
-                                        Eliminar a minha conta
-                                    </Button>
-                                </li>
-                            </ul>
                         </fieldset>
 
                         <div className="w-full flex flex-row justify-between items-center">
@@ -618,70 +575,77 @@ function ProfilePage() {
                             </Button>
                         </div>
                     </form>
-                </section>}
+                </section>
 
-                {(menu === "locations") && <section id={menu} className="flex flex-col w-full justify-start items-start gap-10">
-                    <section>
-                        <header>
-                            <Icon name="MapMarked" />
+                <section>
+                    <fieldset>
+                        <legend>
+                            <Tag>
+                                <Icon name="MapMarked" />
 
-                            Permissões
-                        </header>
+                                Permissões
+                            </Tag>
 
-                        <div>
-                            <p>
-                                <span className="font-medium">Partilhar a minha localização</span>
+                            <hr />
+                        </legend>
 
-                                <br />
+                        <DescriptionLabel
+                            className="w-full"
+                            title="Partilhar a minha localização"
+                            description={<span className="opacity-70">
+                                Nós precisamos da tua localização para saber onde envair os motoristas com os teus pedidos, sem esta permissão terás de especificar a tua localização sempre que fizeres um pedido.
 
-                                <span className="opacity-70">
-                                    Nós precisamos da tua localização para saber onde envair os motoristas com os teus pedidos, sem esta permissão terás de especificar a tua localização sempre que fizeres um pedido.
-
-                                    <span className="italic underline ml-1">
-                                        Para re-ativar/desativar a permissão da localização deve fazê-lo nas configurações de permissões do seu navegador.
-                                    </span>
+                                <span className="italic underline ml-1">
+                                    Para re-ativar/desativar a permissão da localização deve fazê-lo nas configurações de permissões do seu navegador.
                                 </span>
-                            </p>
+                            </span>}
+                            input={{
+                                element: "button",
+                                props: {
+                                    value: preferences.location,
+                                    className: "ml-auto",
+                                    onClick: ["default", "deferred"].includes(preferences.location) ? handleLocationPermissionUpdate : undefined,
+                                    variant: ["default", "deferred"].includes(preferences.location) ? "primary" : preferences.location === "allowed" ? "success" : "danger"
+                                },
+                                label: <>
+                                    {(preferences.location === "allowed") && <>
+                                        <Icon name="MapCheck" />
 
-                            <Button
-                                value={preferences.location}
-                                className="ml-auto"
-                                onClick={["default", "deferred"].includes(preferences.location) ? handleLocationPermissionUpdate : undefined}
-                                variant={["default", "deferred"].includes(preferences.location) ? "primary" : preferences.location === "allowed" ? "success" : "danger"}
-                            >
-                                {(preferences.location === "allowed") && <>
-                                    <Icon name="MapCheck" />
+                                        A partilhar
+                                    </>}
 
-                                    A partilhar
-                                </>}
+                                    {["default", "deferred"].includes(preferences.location) && <>
+                                        <Icon name="MapCheck" />
 
-                                {["default", "deferred"].includes(preferences.location) && <>
-                                    <Icon name="MapCheck" />
+                                        Partilhar
+                                    </>}
 
-                                    Partilhar
-                                </>}
+                                    {(preferences.location === "denied") && <>
+                                        <Icon name="MapOff" />
 
-                                {(preferences.location === "denied") && <>
-                                    <Icon name="MapOff" />
+                                        Desativado
+                                    </>}
+                                </>
+                            }}
+                        />
+                    </fieldset>
 
-                                    Desativado
-                                </>}
-                            </Button>
-                        </div>
-                    </section>
+                    <fieldset>
+                        <legend>
+                            <Tag>
+                                <Icon name="MapMarker" />
 
-                    <section>
-                        <header className="w-full">
-                            <Icon name="MapMarker" />
+                                Pontos de entrega
+                            </Tag>
 
-                            Pontos de entrega
+                            <hr />
+                        </legend>
 
-                            {["default", "deferred", "denied"].includes(preferences.location) && <Tag variant="warning" className="ml-auto">
-                                <Icon name="Warning" />
+                        {["default", "deferred", "denied"].includes(preferences.location) && <div data-state="warning" className="w-full flex flex-row justify-center items-center gap-3 p-3">
+                            <Icon name="Warning" />
 
-                                <p>Para usares esta funcionalidade precisas de partilhar a tua localização</p>
-                            </Tag>}
-                        </header>
+                            <p>Para usares esta funcionalidade precisas de partilhar a tua localização</p>
+                        </div>}
 
                         {!showDeliveryLocationMap && <ul className="w-full flex flex-col justify-start items-start gap-1" data-state={["default", "deferred", "denied"].includes(preferences.location) ? "disabled" : "idle"}>
                             {deliveryLocations.map(d => {
@@ -770,65 +734,119 @@ function ProfilePage() {
                                 </Button>
                             </div>
                         </form>}
-                    </section>
-                </section>}
+                    </fieldset>
+                </section>
 
-                {(menu === "favorites") && <section id={menu}>
-                    {!favoriteProducts.length && <div data-state="empty">
-                        <span>Ainda não tens produtos favoritos</span>
-                    </div>}
+                <section>
+                    <fieldset>
+                        <legend>
+                            <Tag>
+                                <Icon name="Product" />
 
-                    <div className={resolveClassNames(productGridStyles.grid, "w-full")}>
-                        {favoriteProducts.map(p => <ProductCard key={p.product_id} product={p} />)}
-                    </div>
-                </section>}
+                                Lista dos favoritos
+                            </Tag>
 
-                {(menu === "settings") && <section id={menu}>
-                    <header className="flex flex-row justify-start items-center gap-2 text-2xl font-black pb-2">
-                        <Icon name="NotificationCircle" />
+                            <hr />
+                        </legend>
 
-                        Notificações
-                    </header>
+                        {!favoriteProducts.length && <div data-state="empty">
+                            <span>Ainda não tens produtos favoritos</span>
+                        </div>}
 
-                    <div>
-                        <p>
-                            <span className="font-medium">A minha subscrição</span> 
-                            
-                            <br/>
+                        <div className={resolveClassNames(productGridStyles.grid, "w-full")}>
+                            {favoriteProducts.map(p => <ProductCard key={p.product_id} product={p} />)}
+                        </div>
+                    </fieldset>
+                </section>
 
-                            <span className="opacity-70">
-                                Usamos subscrições para enviar notificações sobre os teus pedidos, novidades e avisos para o teu navegador. <span className="italic">Podes sempre rever a tua subscrição a qualquer altura.</span>
-                            </span>
-                        </p>
-
-                        <Button
-                            value={preferences.notifications}
-                            className="ml-auto"
-                            onClick={handleNotificationSubscriptionUpdate}
-                            variant={["default", "deferred"].includes(preferences.notifications) ? "primary" : preferences.notifications === "allowed" ? "danger" : "secondary"}
-                        >
-                            {(preferences.notifications === "allowed") && <>
-                                <Icon name="NotificationOff" />
-
-                                Terminar subscrição
-                            </>}
-
-                            {["default", "deferred"].includes(preferences.notifications) && <>
+                <section>
+                    <fieldset>
+                        <legend>
+                            <Tag>
                                 <Icon name="Notification" />
 
-                                Subscrever às notificações
-                            </>}
+                                Notificações
+                            </Tag>
 
-                            {(preferences.notifications === "denied") && <>
-                                <Icon name="NotificationActive" />
+                            <hr />
+                        </legend>
 
-                                Ativar subscrição
-                            </>}
-                        </Button>
-                    </div>
+                        <DescriptionLabel
+                            className="w-full"
+                            title="A minha subscrição"
+                            description={<span className="opacity-70">
+                                Usamos subscrições para enviar notificações sobre os teus pedidos, novidades e avisos para o teu navegador. <span className="italic">Podes sempre rever a tua subscrição a qualquer altura.</span>
+                            </span>}
+                            input={{
+                                element: "button",
+                                props: {
+                                    className: "w-full",
+                                    value: preferences.notifications,
+                                    onClick: handleNotificationSubscriptionUpdate,
+                                    variant: ["default", "deferred"].includes(preferences.notifications) ? "primary" : preferences.notifications === "allowed" ? "danger" : "secondary"
+                                },
+                                label: <>
+                                    {(preferences.notifications === "allowed") && <>
+                                        <Icon name="NotificationOff" />
 
-                </section>}
-            </main>
+                                        Terminar subscrição
+                                    </>}
+
+                                    {["default", "deferred"].includes(preferences.notifications) && <>
+                                        <Icon name="Notification" />
+
+                                        Subscrever às notificações
+                                    </>}
+
+                                    {(preferences.notifications === "denied") && <>
+                                        <Icon name="NotificationActive" />
+
+                                        Ativar subscrição
+                                    </>}
+                                </>
+                            }}
+                        />
+
+                    </fieldset>
+                </section>
+
+                <section className={styles["danger-zone"]}>
+                    <form onSubmit={PATCH} data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
+                        <fieldset>
+                            <legend>
+                                <Tag variant="danger">
+                                    <Icon name="Warning" />
+
+                                    Zona de perigo
+                                </Tag>
+                            </legend>
+
+                            <DescriptionLabel
+                                className="w-full"
+                                title="Eliminar conta"
+                                description={"Endereço para onde serão enviados e-mails e algumas notificações."}
+                                alerts={{
+                                    warning: "Esta ação é irreversível."
+                                }}
+                                input={{
+                                    element: "button",
+                                    iconElement: (page.status === "deleting-profile") ? <Icon name="Loading" className="animate-spin" /> : undefined,
+                                    label: <>
+                                        Eliminar a minha conta
+                                    </>,
+                                    props: {
+                                        value: menu,
+                                        variant: "danger",
+                                        onClick: handleDeletion,
+                                        type: "button",
+                                        className: "w-full"
+                                    }
+                                }}
+                            />
+                        </fieldset>
+                    </form>
+                </section>
+            </main >
         }
     };
 };

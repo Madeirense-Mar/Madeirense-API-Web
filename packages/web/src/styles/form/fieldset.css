@@ -1,7 +1,7 @@
 fieldset {
     padding: var(--fieldset-padding, 20px);
 
-    border: var(--fieldset-border-width, 1px) solid var(--fieldset-border-color, var(--base-fieldset-border-color, transparent));
+    border: var(--fieldset-border-width, 1px) var(--fieldset-border-style, solid) var(--fieldset-border-color, var(--base-fieldset-border-color, transparent));
     border-radius: 8px;
     
     background-color: var(--fieldset-background-color, var(--base-fieldset-background-color));

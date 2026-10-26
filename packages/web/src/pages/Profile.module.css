@@ -1,0 +1,112 @@
+/*#region Page ============================================ */
+.page {
+    @apply flex flex-col justify-start items-start gap-6;
+}
+
+/*#region Section*/
+.page>section {
+    width: 100%;
+}
+
+.page section {
+    @apply flex flex-col justify-start items-start;
+
+    gap: 32px;
+
+    height: auto;
+
+    overflow: visible;
+}
+
+[data-theme*="LIGHT"] .page section:not(.danger-zone) {
+    --section-border-width: 0px;
+    --section-padding: 0px;
+}
+
+/*#endregion*/
+
+/*#region Form*/
+.page form {
+    @apply w-full flex flex-col justify-start items-start gap-10;
+}
+
+/*#endregion*/
+
+/*#region Fieldsets*/
+.page fieldset {
+    @apply flex flex-col justify-start items-start w-full;
+
+    gap: 12px;
+}
+
+[data-theme*="DARK"] .page fieldset {
+    --fieldset-padding: 0px;
+    --fieldset-border-width: 0px;
+    --fieldset-background-color: transparent;
+}
+
+.page fieldset legend {
+    @apply flex flex-row justify-start items-center;
+
+    margin-bottom: 12px;
+
+    width: var(--legend-width, 100%);
+}
+
+.page fieldset legend span {
+    --tag-white-space: nowrap;
+}
+
+.page fieldset legend hr {
+    border-color: var(--hr-border-color, var(--base-border-color));
+}
+
+[data-theme*="DARK"] .page fieldset legend hr {
+    @apply w-full;
+}
+
+[data-theme*="LIGHT"] .page fieldset legend {
+    --legend-width: auto;
+}
+
+/*#endregion*/
+
+/*#endregion*/
+
+/*#region Contact fieldset ================================ */
+.contact-fields {
+    @apply w-full flex flex-row justify-between items-start;
+}
+
+.contact-fields>div {
+    width: 300px;
+}
+
+.contact-fields>div>input {
+    width: 100%;
+}
+
+.contact-fields>div>select {
+    width: 90px;
+}
+
+/*#endregion*/
+
+/*#region Danger zone ===================================== */
+.danger-zone {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+
+    --section-border-style: dotted;
+}
+
+[data-theme*="DARK"] .danger-zone {
+    --section-border-color: color-mix(in srgb, var(--accent), var(--neutral-light) 60%);
+    --section-background-color: color-mix(in srgb, var(--accent), var(--neutral-dark) 80%);
+}
+
+[data-theme*="LIGHT"] .danger-zone {
+    --section-background-color: color-mix(in srgb, var(--accent), var(--neutral-light) 80%);
+}
+
+/*#endregion*/

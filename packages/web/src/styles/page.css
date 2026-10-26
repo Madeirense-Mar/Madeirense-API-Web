@@ -1,7 +1,7 @@
 main>section {
     padding: var(--section-padding, 32px);
 
-    border: var(--section-border-width, 1px) solid var(--section-border-color, var(--base-section-border-color));
+    border: var(--section-border-width, 1px) var(--section-border-style, solid) var(--section-border-color, var(--base-section-border-color));
     border-radius: var(--section-border-radius, 12px);
 
     background-color: var(--section-background-color, var(--base-section-background-color));
