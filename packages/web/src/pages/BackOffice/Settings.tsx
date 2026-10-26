@@ -35,7 +35,9 @@ import type {
     Restaurants
 } from "@Madeirense/database/browser";
 
-import type { IPageState } from "components/interface";
+import type {
+    IPageState
+} from "components/interface";
 
 // ***************************************************************************************************************
 
@@ -318,9 +320,15 @@ function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">)
 
         <section>
             <header>
-                {page.status === "orders" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Order" />}
+                <h2>
+                    <Tag>
+                        {page.status === "orders" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Order" />}
 
-                <h2>Pedidos</h2>
+                        Pedidos
+                    </Tag>
+                </h2>
+
+                <hr className="w-full" />
             </header>
 
             <form id={"orders" as (typeof page.status)} onSubmit={PATCH_POST} onReset={handleFormReset} className="w-full flex flex-col justify-start items-start gap-10" data-state={page.status === "orders" ? "disabled" : "idle"}>
@@ -344,7 +352,7 @@ function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">)
                                 : undefined
                         }}
                         input={{
-                            icon: getUpdaterStatusIndicator("order_threshold"),
+                            iconElement: getUpdaterStatusIndicator("order_threshold"),
                             element: "input",
                             props: (appState === "loading")
                                 ? LOADING_INPUT
@@ -388,7 +396,7 @@ function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">)
                                 : undefined
                         }}
                         input={{
-                            icon: getUpdaterStatusIndicator("auto_assign_driver"),
+                            iconElement: getUpdaterStatusIndicator("auto_assign_driver"),
                             element: "input",
                             props: (appState === "loading")
                                 ? LOADING_INPUT
@@ -407,9 +415,15 @@ function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">)
 
         <section>
             <header>
-                {page.status === "time" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Time" />}
+                <h2>
+                    <Tag>
+                        {page.status === "time" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Time" />}
 
-                <h2>Tempo</h2>
+                        Tempo
+                    </Tag>
+                </h2>
+
+                <hr className="w-full" />
             </header>
 
             {(page.error && ((["time"] as (typeof page.status)[]).includes(page.status as (typeof page.status)))) && <span
@@ -440,7 +454,7 @@ function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">)
                                 : undefined
                         }}
                         input={{
-                            icon: getUpdaterStatusIndicator("prep_buffer"),
+                            iconElement: getUpdaterStatusIndicator("prep_buffer"),
                             element: "input",
                             props: (appState === "loading")
                                 ? LOADING_INPUT
@@ -558,9 +572,15 @@ function BackOfficeSettingsPage({ className, ...props }: ComponentProps<"main">)
 
         <section>
             <header>
-                {page.status === "payments" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Money" />}
+                <h2>
+                    <Tag>
+                        {page.status === "payments" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Money" />}
 
-                <h2>Pagamentos</h2>
+                        Pagamentos
+                    </Tag>
+                </h2>
+
+                <hr className="w-full" />
             </header>
 
             {(page.error && ((["payments"] as (typeof page.status)[]).includes(page.status as (typeof page.status)))) && <span

@@ -23,8 +23,11 @@ import styles from "./history.module.css";
 
 import type { 
     $Enums
-} from "@Madeirense/database";
-import { variantType } from "components/types";
+} from "@Madeirense/database/browser";
+
+import type { 
+    variantType
+} from "components/types";
 
 // ***************************************************************************************************************
 
