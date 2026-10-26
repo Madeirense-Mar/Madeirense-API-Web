@@ -108,7 +108,12 @@ function OrderPanel({ id }: { id: number }) {
         "wasFinalized": ([
             "cancelled",
             "delivered"
-        ]).includes(data?.status ?? "pending")
+        ]).includes(data?.status ?? "pending"),
+
+        "active": ([
+            "assigned",
+            "confirmed",
+        ] as $Enums.Orders_status[]).includes(data?.status ?? "pending"),
     };
 
     useEffect(() => {
@@ -316,7 +321,7 @@ function OrderPanel({ id }: { id: number }) {
             };
 
             return <>
-                {(settings.auto_assign_driver && !canManuallyAssignDriver) && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-2 gap-2 w-full">
+                {(settings.auto_assign_driver && !canManuallyAssignDriver && !(assertions.active || assertions.wasFinalized)) && <div data-state="warning" className="rounded-md border flex flex-row justify-start items-center p-2 gap-2 w-full">
                     <Icon name="Warning" className="text-3xl" />
 
                     A funcionalidade de associação automática está habilitada, terá de aguardar pela confirmação de um estafeta para fazer a re-alocação
@@ -383,7 +388,7 @@ function OrderPanel({ id }: { id: number }) {
                                             required
                                         />
 
-                                        <Button type="submit" className="w-full">
+                                        <Button value="assign-order" type="submit" className="w-full">
                                             <Icon name="Delivery" />
 
                                             Associar e marcar para entrega
