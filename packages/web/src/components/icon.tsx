@@ -78,10 +78,6 @@ import {
 } from "react-icons/fa6";
 
 import {
-    LiaUserPlusSolid
-} from "react-icons/lia";
-
-import {
     GiPartyPopper,
     GiSwipeCard,
     GiTakeMyMoney,
@@ -123,6 +119,10 @@ import {
     IoTicketSharp,
     IoSend
 } from "react-icons/io5";
+
+import {
+    LiaUserPlusSolid
+} from "react-icons/lia";
 
 import {
     LuDessert,
@@ -186,8 +186,8 @@ import {
 import {
     TbClock,
     TbClockOff,
-    TbMapCheck,
     TbMapCancel,
+    TbMapCheck,
     TbMapOff,
     TbMeat,
     TbPasswordMobilePhone,
@@ -419,19 +419,18 @@ const Icon = ({
 }: IPropTypes) => {
     const IconComponent = registry[name];
 
-    if (!IconComponent) {
-        const notFoundMessage = `Icon with name "${name}" not found`;
+    if (IconComponent)
+        return <IconComponent {...props} />;
 
-        if (env.MODE === 'development') {
-            console.warn(notFoundMessage)
+    const notFoundMessage = `Icon with name "${name}" not found`;
 
-            return null;
-        } else {
-            throw new Error(notFoundMessage);
-        }
-    };
+    if (env.MODE === 'development') {
+        console.warn(notFoundMessage)
 
-    return <IconComponent {...props} />;
+        return null;
+    }
+
+    throw new Error(notFoundMessage);
 };
 
 export default Icon;
