@@ -1,4 +1,4 @@
-import Icon from "components/icon";
+import Button from "components/buttons";
 
 import type {
     ComponentProps
@@ -20,6 +20,7 @@ export interface BaseLabelPropTypes extends ComponentProps<"label"> {
         | { element: 'input', props?: ComponentProps<"input"> }
         | { element: 'select', props?: ComponentProps<"select">, options: keyValuePair<string, { data: (number | string), props?: ComponentProps<"option"> }>[] }
         | { element: 'textarea', props?: ComponentProps<"textarea"> }
+        | { element: 'button', props?: ComponentProps<typeof Button>, label: React.JSX.Element }
     ) & {
         icon?: iconNameType;
         iconElement?: React.JSX.Element | null;

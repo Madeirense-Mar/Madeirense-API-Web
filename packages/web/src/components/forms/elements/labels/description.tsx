@@ -2,6 +2,7 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
+import Button from "components/buttons";
 import Tag from "components/tags";
 import Icon from "components/icon";
 
@@ -54,7 +55,7 @@ const DescriptionLabel = ({
 
             {alerts?.error && <Tag variant="danger">
                 <Icon name="Close" />
-                
+
                 {alerts?.error}
             </Tag>}
 
@@ -75,6 +76,20 @@ const DescriptionLabel = ({
     const Element = element as React.ElementType;
 
     switch (element) {
+        case "button":
+            return <label {...computedProps}>
+                {body}
+
+                <div>
+                    {inputIcon && <Icon name={inputIcon} />}
+                    {inputIconElement}
+
+                    <Button {...inputProps}>
+                        {input.label}
+                    </Button>
+                </div>
+            </label>
+
         case "select":
             return <label {...computedProps}>
                 {body}
