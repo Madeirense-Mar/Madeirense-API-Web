@@ -1,6 +1,6 @@
 /*#region Main ============================================ */
 .main {
-    --main-padding: 0px;
+    --main-padding-y: 0px;
     --main-width: 100vw;
 
     position: relative;

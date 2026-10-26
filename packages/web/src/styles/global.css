@@ -82,6 +82,7 @@ body {
 
     background-color: var(--background-color);
 }
+
 /*#endregion*/
 
 /*#region Theme specifications ============================ */
@@ -218,18 +219,25 @@ a:visited:hover {
 
 /*#region Containers ====================================== */
 main {
+    --default-margin-y: 0px;
+    --default-padding-x: 0px;
+
     grid-area: application-body;
 
     height: auto;
 
-    padding-bottom: var(--main-padding, var(--container-padding));
-    padding-top: var(--main-padding, var(--container-padding));
+    padding-bottom: var(--main-padding-y, var(--container-padding));
+    padding-left: var(--main-padding-x, var(--default-padding-x));
+    padding-right: var(--main-padding-x, var(--default-padding-x));
+    padding-top: var(--main-padding-y, var(--container-padding));
 
     overflow-x: hidden;
     overflow-y: auto;
 
+    margin-bottom: var(--main-margin-y, var(--default-margin-y));
     margin-left: var(--main-margin-x, auto);
     margin-right: var(--main-margin-x, auto);
+    margin-top: var(--main-margin-y, var(--default-margin-y));
 
     width: var(--main-width, var(--main-base-width));
 }
