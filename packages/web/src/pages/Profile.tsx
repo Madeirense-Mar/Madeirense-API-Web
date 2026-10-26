@@ -57,13 +57,15 @@ import type { IPageState } from "components/interface";
 
 // ***************************************************************************************************************
 
-type menuType = (
-    | "profile"
-    | "locations"
-    | "favorites"
-    | "orders"
-    | "settings"
-);
+enum Forms {
+    "profile" = "profile",
+    "locations" = "locations",
+    "favorites" = "favorites",
+    "orders" = "orders",
+    "settings" = "settings"
+};
+
+type forms = keyof typeof Forms;
 
 type partialDeliveryLocationType = Omit<Delivery_Locations, (
     | "latitude"
@@ -77,7 +79,7 @@ type partialDeliveryLocationType = Omit<Delivery_Locations, (
 
 type stateType = {
     deliveryLocations: (Partial<Delivery_Locations>)[],
-    menu: menuType,
+    menu: forms,
     preferences: appPreferencesType
 };
 
@@ -122,11 +124,11 @@ function ProfilePage() {
 
     const [searchParams] = useSearchParams();
 
-    const profileMenu = (searchParams.get("menu") ?? "profile") as menuType;
+    const profileMenu = (searchParams.get("menu") ?? "profile") as forms;
 
     const { Storage } = useMemo(() => MXP$App, []);
 
-    const [page, updatePage] = useState<IPageState<stateType, `${("deleting" | "saving")}-${menuType}`>>({
+    const [page, updatePage] = useState<IPageState<stateType, `${("deleting" | "saving")}-${forms}`>>({
         data: {
             menu: profileMenu,
             deliveryLocations: [],
@@ -335,9 +337,9 @@ function ProfilePage() {
         if (!user) return;
 
         try {
-            updatePage(p => ({ ...p, status: `saving-${$submitter.value as menuType}` }));
+            updatePage(p => ({ ...p, status: `saving-${$submitter.value as forms}` }));
 
-            switch ($submitter.value as menuType) {
+            switch ($submitter.value as forms) {
                 case "profile":
                     await update({
                         ...user,
@@ -362,20 +364,11 @@ function ProfilePage() {
 
                     break;
 
-                case "favorites":
-                    break;
-
-                case "orders":
-                    break;
-
-                case "settings":
-                    break;
-
                 default:
-                    break;
+                    throw new Error(`Unknown form submitter: ${$submitter.value}`);
             };
         } catch (error) {
-            switch ($submitter.value as menuType) {
+            switch ($submitter.value as forms) {
                 case "profile":
                     push({
                         id: "N#ERROR_UPDATING_PROFILE",
@@ -399,18 +392,6 @@ function ProfilePage() {
                         }
                     });
 
-                    break;
-
-                case "favorites":
-                    break;
-
-                case "orders":
-                    break;
-
-                case "settings":
-                    break;
-
-                default:
                     break;
             };
         } finally {
@@ -562,13 +543,13 @@ function ProfilePage() {
                         </fieldset>
 
                         <div className="w-full flex flex-row justify-between items-center">
-                            <Button type="reset" value={menu} variant="secondary" className="opacity-45 hover:opacity-100">
+                            <Button type="reset" value={Forms.profile} variant="secondary" className="opacity-45 hover:opacity-100">
                                 <Icon name="Clean" />
 
                                 Reverter alterações
                             </Button>
 
-                            <Button type="submit" value={menu} className="w-1/3">
+                            <Button type="submit" value={Forms.profile} className="w-1/3">
                                 {page.status === "saving-profile" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Save" />}
 
                                 Salvar
@@ -721,13 +702,13 @@ function ProfilePage() {
                             />
 
                             <div className="w-full flex flex-row justify-between items-center mt-4">
-                                <Button onClick={hideMap} value={menu} variant="secondary" className="opacity-45 hover:opacity-100" disabled={page.status === "saving-locations"}>
+                                <Button onClick={hideMap} variant="secondary" className="opacity-45 hover:opacity-100" disabled={page.status === "saving-locations"}>
                                     <Icon name="Close" />
 
                                     Cancelar
                                 </Button>
 
-                                <Button type="submit" value={menu} className="w-1/3" disabled={page.status === "saving-locations"}>
+                                <Button type="submit" value={Forms.locations} className="w-1/3" disabled={page.status === "saving-locations"}>
                                     {page.status === "saving-locations" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Save" />}
 
                                     Salvar
@@ -811,40 +792,38 @@ function ProfilePage() {
                 </section>
 
                 <section className={styles["danger-zone"]}>
-                    <form onSubmit={PATCH} data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
-                        <fieldset>
-                            <legend>
-                                <Tag variant="danger">
-                                    <Icon name="Warning" />
+                    <fieldset>
+                        <legend>
+                            <Tag variant="danger">
+                                <Icon name="Warning" />
 
-                                    Zona de perigo
-                                </Tag>
-                            </legend>
+                                Zona de perigo
+                            </Tag>
+                        </legend>
 
-                            <DescriptionLabel
-                                className="w-full"
-                                title="Eliminar conta"
-                                description={"Endereço para onde serão enviados e-mails e algumas notificações."}
-                                alerts={{
-                                    warning: "Esta ação é irreversível."
-                                }}
-                                input={{
-                                    element: "button",
-                                    iconElement: (page.status === "deleting-profile") ? <Icon name="Loading" className="animate-spin" /> : undefined,
-                                    label: <>
-                                        Eliminar a minha conta
-                                    </>,
-                                    props: {
-                                        value: menu,
-                                        variant: "danger",
-                                        onClick: handleDeletion,
-                                        type: "button",
-                                        className: "w-full"
-                                    }
-                                }}
-                            />
-                        </fieldset>
-                    </form>
+                        <DescriptionLabel
+                            className="w-full"
+                            title="Eliminar conta"
+                            description={"Endereço para onde serão enviados e-mails e algumas notificações."}
+                            alerts={{
+                                warning: "Esta ação é irreversível."
+                            }}
+                            input={{
+                                element: "button",
+                                iconElement: (page.status === "deleting-profile") ? <Icon name="Loading" className="animate-spin" /> : undefined,
+                                label: <>
+                                    Eliminar a minha conta
+                                </>,
+                                props: {
+                                    value: Forms.profile,
+                                    variant: "danger",
+                                    onClick: handleDeletion,
+                                    type: "button",
+                                    className: "w-full"
+                                }
+                            }}
+                        />
+                    </fieldset>
                 </section>
             </main >
         }
