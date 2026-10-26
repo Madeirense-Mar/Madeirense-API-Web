@@ -6,8 +6,13 @@
 
     padding: var(--list-padding, 4px);
 
-    border: 1px solid var(--list-border-color, var(--base-border-color));
+    border: var(--list-border-width, 1px) var(--list-border-style, solid) var(--list-border-color, var(--base-border-color));
     border-radius: var(--list-border-radius, 8px);
+}
+
+[data-theme*="LIGHT"] .list {
+    --list-border-width: 0px;
+    --list-padding: 0px;
 }
 /*#endregion*/
 

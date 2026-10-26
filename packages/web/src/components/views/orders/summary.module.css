@@ -1,0 +1,14 @@
+.summary[data-assigned] {
+    --radius: 12px;
+}
+
+.summary[data-assigned]>div:nth-child(1){
+    --card-border-radius: var(--radius) var(--radius) 0 0;
+
+    border-bottom: none;
+}
+
+.summary[data-assigned]>div:nth-child(2){
+    --tracker-border-radius: 0 0 var(--radius) var(--radius);
+    --map-border-radius: 0px;
+}

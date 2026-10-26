@@ -1,7 +1,8 @@
 import {
     useEffect,
     useState,
-    type ChangeEvent
+    type ChangeEvent,
+    type ComponentProps
 } from "react";
 
 import {
@@ -13,6 +14,7 @@ import {
 
 import {
     Madeirense$Enumerators,
+    resolveClassNames,
     type orderType
 } from "@Madeirense/shared";
 
@@ -24,6 +26,8 @@ import Orders from "components/tables/orders";
 
 import { Page$Enumerators } from "pages/enumerators";
 import { Root$Enumerators } from "styles/enumerators";
+
+import styles from "./Order.module.css";
 
 // ***************************************************************************************************************
 
@@ -48,6 +52,10 @@ const OrderPage = () => {
         "notFound": (order_id === 0)
             ? false
             : (state === "idle") && !orders.find((o) => o.order_id === order_id)
+    };
+
+    const $mainProps: ComponentProps<"main"> = {
+        className: resolveClassNames(styles.page)
     };
 
     function handleTypePick({ target }: ChangeEvent<HTMLSelectElement>) {
@@ -90,7 +98,7 @@ const OrderPage = () => {
 
     switch (order_id) {
         case 0: {
-            return <main>
+            return <main {...$mainProps}>
                 <section>
                     <header className="mb-5">
                         <select title="Tipo de pedidos" id="type" data-element="h1" name="type" defaultValue={type} onChange={handleTypePick}>
@@ -110,7 +118,7 @@ const OrderPage = () => {
 
             switch (state) {
                 case "loading": {
-                    return <main>
+                    return <main {...$mainProps}>
                         <div className="w-full h-full flex flex-row justify-center items-center p-10">
                             <Icon name="Loading" className="animate-spin" />
                         </div>
@@ -118,7 +126,7 @@ const OrderPage = () => {
                 }
 
                 default: {
-                    return <main>
+                    return <main {...$mainProps}>
                         <section>
                             <header className="mb-5 flex flex-row justify-start items-center gap-3">
                                 <Link to={"/orders"} className="Button" data-variant="secondary">

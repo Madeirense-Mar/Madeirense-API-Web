@@ -5,6 +5,10 @@ import {
     type SubmitEvent
 } from "react";
 
+import {
+    resolveClassNames
+} from "@Madeirense/shared";
+
 import { useOrders } from "contexts/Orders";
 
 import Button from "components/buttons";
@@ -12,6 +16,8 @@ import ProfileHeaderCard from "components/cards/profileHeader";
 import Icon from "components/icon";
 import OrderItemsList from "components/lists/order/items";
 import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
+
+import styles from "./summary.module.css";
 
 import type {
     Users
@@ -24,6 +30,7 @@ interface IPropTypes extends ComponentProps<"div"> {
 };
 
 function OrderSummaryView({
+    className,
     order_id,
     ...props
 }: IPropTypes) {
@@ -71,10 +78,24 @@ function OrderSummaryView({
 
     if (!selectedOrder) return null;
 
-    return <div {...props}>
-        {(selectedOrder.status === "assigned") && <ProfileHeaderCard user={selectedOrder.Users_Orders_courier_idToUsers as Users} className="w-full" />}
+    return <div
+        className={resolveClassNames(styles.summary, className)}
+        {...props}
+        {...{
+            ...(selectedOrder.status === "assigned") ? {
+                "data-assigned": ""
+            } : {}
+        }}
+    >
+        {(selectedOrder.status === "assigned") && <ProfileHeaderCard
+            className="w-full"
+            user={selectedOrder.Users_Orders_courier_idToUsers as Users}
+        />}
 
-        {!assertions.isFinalized && <LeafletDeliveryTracker order={selectedOrder} />}
+        {!assertions.isFinalized && <LeafletDeliveryTracker 
+            className="mb-6"
+            order={selectedOrder} 
+        />}
 
         {(isCancelling)
             ? <>
@@ -120,11 +141,14 @@ function OrderSummaryView({
             : <>
                 <h3>Pedido</h3>
 
-                <OrderItemsList items={[...selectedOrder.Order_Items]} className="w-full flex flex-col justify-start items-start gap-2" />
+                <OrderItemsList 
+                    className="w-full flex flex-col justify-start items-start gap-2"
+                    items={[...selectedOrder.Order_Items]} 
+                />
             </>
         }
 
-        {(!isCancelling && !assertions.isFinalized) && <Button variant="danger" className="mr-auto" onClick={handleCancellation}>
+        {(!isCancelling && !assertions.isFinalized) && <Button variant="danger" className="ml-auto mt-6" onClick={handleCancellation}>
             Cancelar o meu pedido
 
             <Icon name="Trash" />

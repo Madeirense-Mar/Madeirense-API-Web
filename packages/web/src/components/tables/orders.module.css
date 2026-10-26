@@ -3,6 +3,7 @@
     --img-size: 152px;
 
     --row-height: 40px;
+
     background-color: var(--table-background-color, var(--background-color));
 
 }
@@ -14,44 +15,15 @@
     max-height: var(--row-height);
 }
 
-.table tfoot tr:first-child {
-    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
-}
-
-.table tfoot tr:last-child {
-    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
-}
-
 .table tbody tr[data-row="restaurant"] {
     background-color: var(--secondary);
 }
 
 .table tbody tr[data-row="restaurant"] span {
     @apply font-bold;
-    color: var(--base-text-contrast-color);
+    
     font-size: 1.3em;
 }
-
-.table td,
-.table th {
-    --table-cell-px: 0px;
-}
-
-.table tr:has(div[class*="card"]) td:first-child {
-    border-right: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
-}
-
-.table td[data-section="summary"] {}
-
-.table td[data-section="summary"] div[data-type="thumbnail"] {
-    height: 52px;
-    width: var(--img-size);
-    border-radius: 12px;
-}
-
-.table td[data-section="chat"] {}
-
-.table td[data-section="history"] {}
 
 /*#endregion*/
 
@@ -81,7 +53,7 @@
 }
 
 .wrapper[data-visible] {
-    --wrapper-offsets: translateY(calc(-100% + 70px + var(--row-height)));
+    --wrapper-offsets: translateY(calc(-100% + 59px + var(--row-height)));
     --wrapper-max-height: calc(100% - var(--row-height));
 }
 
@@ -109,16 +81,37 @@
 
 /*#region Modes =========================================== */
 /*#region Order */
+.wrapper[data-expanded]>.order tfoot {
+    display: none;
+}
+
+.wrapper[data-expanded]>.order tbody tr:not(:first-child) {
+    --table-cell-padding-top: 12px;
+    --table-cell-px: 0px;
+}
+
 .order {
     composes: table;
+
+    --table-border-radius: 0px;
+    --table-border-width: 0px;
 }
 
-.order tfoot tr:first-child {
-    border-bottom: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
+.order tbody tr:not(:first-child) {
+    --table-cell-padding-top: 12px;
+    --table-cell-px: 0px;
 }
 
-.order tfoot tr:last-child {
-    border-top: var(--table-row-border-width, var(--border-width)) solid var(--border-color);
+[data-theme*="DARK"] .order tbody tr:first-child {
+    --text-color: var(--neutral-dark);
+}
+
+[data-theme="LAND-DARK"] .order tfoot tr:last-child {
+    background-color: var(--primary-dark);
+}
+
+[data-theme="SEA-DARK"] .order tfoot tr:last-child {
+    background-color: var(--secondary-dark);
 }
 
 /*#endregion*/
@@ -129,6 +122,11 @@
 
     --table-border-width: 0px;
     --table-overflow: visible;
+}
+
+.summary td,
+.summary th {
+    --table-cell-px: 0px;
 }
 
 .summary tfoot tr:last-of-type td {
@@ -155,6 +153,7 @@
 [data-theme*="LIGHT"] .summary tfoot tr:last-of-type td {
     --td-border-color: var(--base-border-color);
 }
+
 /*#endregion*/
 /*#endregion*/
 

@@ -1,0 +1,4 @@
+[data-theme*="LIGHT"] .page section {
+    --section-border-width: 0px;
+    --section-padding: 0px;
+}

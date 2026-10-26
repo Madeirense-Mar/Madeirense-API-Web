@@ -87,6 +87,9 @@ function Orders({
                 __orders
             ] = entry;
 
+            const restaurantOrders = __orders
+                .filter(({ status }) => ORDERS_PREPARATION_STATUS.includes(status as $Enums.Orders_status));
+
             return <Fragment key={restaurant_id}>
                 <tr data-row="restaurant">
                     <td colSpan={mode === "summary" ? 3 : undefined}>
@@ -94,13 +97,11 @@ function Orders({
                     </td>
                 </tr>
 
-                {__orders
-                    .filter(({ status }) => ORDERS_PREPARATION_STATUS.includes(status as $Enums.Orders_status))
-                    .map(_order => <tr key={_order.order_id}><td>
+                {restaurantOrders.map(_order => <tr key={_order.order_id}>
+                    <td>
                         <OrderCard order={_order} className="w-full" />
                     </td>
-                    </tr>)
-                }
+                </tr>)}
             </Fragment>;
         }), [ordersByRestaurants, restaurants, mode]
     );
@@ -132,7 +133,7 @@ function Orders({
             return <div
                 className={styles.wrapper}
                 onClick={show ? undefined : () => toggle(true)}
-                onMouseLeave={() => toggle(false)}
+                // onMouseLeave={() => toggle(false)}
                 {...{
                     ...(Boolean(ordersByRestaurants.length) ? { ["data-visible"]: "" } : {}),
                     ...(show ? { ["data-expanded"]: "" } : {})
@@ -142,10 +143,7 @@ function Orders({
                     <Icon name="Close" />
                 </Button>}
 
-                <table
-                    data-state={state}
-                    {...$tableProps}
-                >
+                <table {...$tableProps}>
                     <tfoot>
                         <tr>
                             <td>
@@ -200,15 +198,15 @@ function Orders({
                     </tr>
 
                     <tr>
-                        {(currentSection === "summary") && <td colSpan={sections.length} data-section={currentSection}>
-                            <OrderSummaryView className="flex flex-col justify-start items-start gap-3 w-full" {...{ order_id }} />
+                        {(currentSection === "summary") && <td colSpan={sections.length}>
+                            <OrderSummaryView className="flex flex-col justify-start items-start w-full" {...{ order_id }} />
                         </td>}
 
-                        {(currentSection === "chat") && <td colSpan={sections.length} data-section={currentSection}>
+                        {(currentSection === "chat") && <td colSpan={sections.length}>
                             <OrderChatForm {...{ order_id }} />
                         </td>}
 
-                        {(currentSection === "history") && <td colSpan={sections.length} data-section={currentSection}>
+                        {(currentSection === "history") && <td colSpan={sections.length}>
                             <OrderHistoryList {...{ order_id }} />
                         </td>}
                     </tr>

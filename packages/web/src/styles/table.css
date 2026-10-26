@@ -1,18 +1,21 @@
+/*#region Table =========================================== */
 table {
-    border: var(--table-border-width, 1px) solid var(--table-border-color);
-    border-collapse: separate;
-    border-radius: 12px;
-    border-spacing: 0;
+    border: var(--table-border-width, 1px) var(--table-border-style, solid) var(--table-border-color);
+    border-collapse: var(--table-border-collapse, separate);
+    border-radius: var(--table-border-radius, 12px);
+    border-spacing: var(--table-border-spacing, 0);
 
     overflow: var(--table-overflow, hidden);
 }
+/*#endregion*/
 
+/*#region Table cells ===================================== */
 table th,
 table td {
-    padding-bottom: var(--table-cell-py, 0px);
-    padding-top: var(--table-cell-py, 0px);
-    padding-left: var(--table-cell-px, 12px);
-    padding-right: var(--table-cell-px, 12px);
+    padding-bottom: var(--table-cell-padding-bottom, var(--table-cell-py, 0px));
+    padding-top: var(--table-cell-padding-top, var(--table-cell-py, 0px));
+    padding-left: var(--table-cell-padding-left, var(--table-cell-px, 12px));
+    padding-right: var(--table-cell-padding-right, var(--table-cell-px, 12px));
 
     border-color: var(--table-cell-border-color, var(--base-table-cell-border-color));
     border-style: var(--table-cell-border-style, solid);
@@ -22,41 +25,34 @@ table td:hover {
     background-color: var(--table-cell-hovered-background-color, var(--base-table-cell-hovered-background-color), transparent);
 }
 
-
 table th {
     border-bottom-width: 1px;
 }
+/*#endregion*/
 
+/*#region Table rows ====================================== */
 table tr:hover {
     background-color: var(--table-row-hovered-background-color, var(--base-table-row-hovered-background-color), transparent);
 }
 
 table tfoot tr td {
-    border-top-width: 1px;
-}
-
-/*#region Theme specifications ============================ */
-/*#region DARK*/
-[data-theme*="LIGHT"] table {
-    --processed-color: color-mix(in srgb, var(--primary-dark), black 40%);
-
-    --table-border-color: var(--processed-color);
-    --base-table-cell-border-color: var(--processed-color);
+    border-top-width: var(--table-cell-border-top-width, 1px);
 }
 /*#endregion*/
 
-/*#region LIGHT*/
+/*#region Theme specifications ============================ */
+/*#region DARK*/
 [data-theme="LAND-DARK"] table {
     --table-border-color: var(--secondary);
     --base-table-cell-border-color: var(--secondary);
 }
 
 [data-theme="LAND-DARK"] table td:hover {
-    --table-cell-hovered-background-color: color-mix(in srgb,var(--secondary-light), var(--secondary-dark) 90%);
+    --table-cell-hovered-background-color: color-mix(in srgb, var(--secondary-light), var(--secondary-dark) 90%);
 }
 
 [data-theme="LAND-DARK"] table tr:hover {
-    --table-row-hovered-background-color: color-mix(in srgb,var(--secondary-light), var(--secondary-dark) 70%);
+    --table-row-hovered-background-color: color-mix(in srgb, var(--secondary-light), var(--secondary-dark) 70%);
 }
 
 [data-theme="SEA-DARK"] table {
@@ -64,13 +60,23 @@ table tfoot tr td {
     --base-table-cell-border-color: var(--primary-light);
 }
 
-
 [data-theme="SEA-DARK"] table td:hover {
-    --table-cell-hovered-background-color: color-mix(in srgb,var(--primary-light), var(--primary-dark) 90%);
+    --table-cell-hovered-background-color: color-mix(in srgb, var(--primary-light), var(--primary-dark) 90%);
 }
 
 [data-theme="SEA-DARK"] table tr:hover {
-    --table-row-hovered-background-color: color-mix(in srgb,var(--primary-light), var(--primary-dark) 70%);
+    --table-row-hovered-background-color: color-mix(in srgb, var(--primary-light), var(--primary-dark) 70%);
 }
+
+/*#endregion*/
+
+/*#region LIGHT*/
+[data-theme*="LIGHT"] table {
+    --processed-color: color-mix(in srgb, var(--primary-dark), black 40%);
+
+    --table-border-color: var(--processed-color);
+    --base-table-cell-border-color: var(--processed-color);
+}
+
 /*#endregion*/
 /*#region Theme specifications ============================ */

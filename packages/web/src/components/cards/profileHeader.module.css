@@ -1,7 +1,5 @@
 /*#region Cards =========================================== */
 .card {
-    composes: card from "./card.module.css";
-    
     --padding: 12px;
 
     @apply justify-center items-center;
@@ -15,7 +13,7 @@
     ;
 
     border-color: var(--card-border-color, var(--base-border-color));
-    border-radius: var(--card-border-radius, 7px);
+    border-radius: var(--card-border-radius, 8px);
     border-style: var(--card-border-style, solid);
     border-width: var(--card-border-width, var(--border-width));
 
