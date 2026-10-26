@@ -234,8 +234,8 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
 
     const $paymentTagVariant: variantType = useMemo(() => (
         ["refunded"].includes(order?.Payments[0].status ?? "") ? "warning" :
-                ["completed"].includes(order?.Payments[0].status ?? "") ? "success" :
-                    ["failed"].includes(order?.Payments[0].status ?? "") ? "danger" : "secondary"
+            ["completed"].includes(order?.Payments[0].status ?? "") ? "success" :
+                ["failed"].includes(order?.Payments[0].status ?? "") ? "danger" : "secondary"
     ), [order?.Payments]);
 
     async function updateStatus() {
@@ -302,13 +302,20 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
                 </span>
             </Tag>}
 
-            <Tag variant="secondary">
-                {localOrderStatus === "pending" && type === "delivery" ? <Icon name="Loading" className="animate-spin" /> : null}
-                {localOrderStatus === "cancelled" && <Icon name="Close" />}
-                {localOrderStatus === "assigned" && <Icon name="Running" />}
+            {(localOrderStatus != "assigned") && <Tag variant="secondary">
+                {localOrderStatus == "pending" && type === "delivery" ? <Icon name="Loading" className="animate-spin" /> : null}
+                {localOrderStatus == "cancelled" && <Icon name="Close" />}
 
                 {`${getLabel(localOrderStatus as $Enums.Orders_status)}${localOrderStatus === "pending" && type === "ticket" ? " (Por confirmar)" : ""}`}
-            </Tag>
+            </Tag>}
+
+            {(order?.status === "assigned") && <Tag variant="success" className="ml-auto">
+                <Icon name="Delivery" />
+
+                {order?.Users_Orders_courier_idToUsers?.name}
+
+                <Icon name="Circle" className="animate-pulse" />
+            </Tag>}
 
             {(type === "ticket") ? null : <>
                 {(["pending", "confirmed", "preparing"] as $Enums.Orders_status[]).includes(localOrderStatus as $Enums.Orders_status) && <Tag variant="secondary">
@@ -323,14 +330,6 @@ const OrderCard = (_props: withVariant<IPropTypes>) => {
                     {formatMinutes(deliveryETA)}
                 </Tag>}
             </>}
-
-            {(order?.status === "assigned") && <Tag variant="success">
-                <Icon name="Delivery" />
-
-                {order?.Users_Orders_courier_idToUsers?.name}
-
-                <Icon name="Circle" className="animate-pulse" />
-            </Tag>}
 
             {(mode === "admin") && ORDERS_PREPARATION_STATUS.filter(s => s !== "assigned").includes(localOrderStatus as any) && <Button
                 disabled={assertions.isStatusConfirmationDisabled}
