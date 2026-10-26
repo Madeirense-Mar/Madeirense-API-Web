@@ -85,7 +85,7 @@ import {
     GiPartyPopper,
     GiSwipeCard,
     GiTakeMyMoney,
-    GiWheat 
+    GiWheat
 } from "react-icons/gi";
 
 import {
@@ -112,6 +112,8 @@ import {
 
 import {
     IoChatboxEllipsesOutline,
+    IoChevronDownSharp,
+    IoChevronUpSharp,
     IoDocumentTextOutline,
     IoFishSharp,
     IoHourglassOutline,
@@ -124,7 +126,7 @@ import {
 
 import {
     LuDessert,
-    LuVegan 
+    LuVegan
 } from "react-icons/lu";
 
 import {
@@ -220,8 +222,10 @@ const registry = {
     Chat: IoChatboxEllipsesOutline,
     CheckList: GoChecklist,
     Check: MdCheck,
+    ChevronDown: IoChevronDownSharp,
     ChevronLeft: MdChevronLeft,
     ChevronRight: MdChevronRight,
+    ChevronUp: IoChevronUpSharp,
     Circle: FaCircle,
     Clean: MdCleaningServices,
     Clock: TbClock,
@@ -392,7 +396,7 @@ const registry = {
     //#endregion
 
     //#region V --------------------------------------------
-    Vegan: LuVegan, 
+    Vegan: LuVegan,
     Video: MdOndemandVideo,
     //#endregion
 

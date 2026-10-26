@@ -1,6 +1,7 @@
 export namespace Root$Enumerators {
     export enum Identifiers {
-        "#root" = "root"
+        "#root" = "root",
+        "#backoffice-side-menu" = "backoffice-side-menu"
     }
 
     export namespace Attributes {
@@ -10,6 +11,7 @@ export namespace Root$Enumerators {
 
         export enum Context {
             "page" = "data-page",
+            "style" = "data-style",
         }
 
         export enum Pages {

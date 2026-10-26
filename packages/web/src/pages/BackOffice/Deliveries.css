@@ -1,0 +1,7 @@
+#root:has(#backoffice-side-menu)>main>div:first-child[data-component="deliveries-tracker"] {
+    width: calc(100% - var(--side-menu-min-width));
+}
+
+#root:has(#backoffice-side-menu[data-toggled])>main>div:first-child[data-component="deliveries-tracker"] {
+    width: calc(100% - var(--side-menu-max-width));
+}

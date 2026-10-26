@@ -1,10 +1,8 @@
 import {
     ComponentProps,
-    useCallback,
     useEffect,
     useMemo,
-    useState,
-    type MouseEvent
+    useState
 } from "react";
 
 import {
@@ -25,102 +23,32 @@ import ApplicationQueries, {
     Queries$Types
 } from "configurations/queries";
 
-import Button from "components/buttons";
-
-import OrderCard from "components/cards/order";
-import OrderChatForm from "components/forms/orders/chat";
-
 import Icon from "components/icon";
-
-import {
-    nextPageTriggerSetup
-} from "components/lists/utilities/functions";
-
-import OrderHistoryList from "components/lists/order/history";
-import OrderItemsList from "components/lists/order/items";
-
-import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
-
 import Tag from "components/tags";
 
-import xScrollSectionStyles from "styles/xScrollSection.module.css";
+import OrderChatForm from "components/forms/orders/chat";
+import OrderItemsList from "components/lists/order/items";
+import OrderHistoryList from "components/lists/order/history";
+
+import LeafletDeliveriesTracker from "components/maps/leaflet/deliveriesTracker";
+
+import styles from "./Deliveries.module.css";
 
 import type {
     $Enums
 } from "@Madeirense/database/browser";
 
+import "./Deliveries.css";
+import Button from "components/buttons";
+
 // ***************************************************************************************************************
 
-interface ISectionPropTypes extends ComponentProps<"section"> {
-    isFetching?: boolean;
-    order: restaurantOrderType;
-};
-
-type sectionType = (
-    | "chat"
-    | "map"
-);
-
-const ScrollSection = (
-    {
-        className,
-        order,
-        isFetching = false,
-        ...props
-    }: ISectionPropTypes
-) => {
-    const [pickedSection, setPickedSection] = useState<sectionType>("map");
-
-    const sections = [
-        { key: `Entrega`, value: "map", icon: <Icon name="MapMarked" /> },
-        { key: `Chat`, value: "chat", icon: <Icon name="Chat" /> }
-    ];
-
-    function pickSection(value: string) {
-        return (e: MouseEvent<HTMLButtonElement>) => {
-            setPickedSection(value as any);
-        }
-    };
-
-    useEffect(() => {
-        const $section = document.getElementById(pickedSection);
-
-        if (!$section) return;
-
-        $section.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }, [pickedSection]);
-
-    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], "HORIZONTAL_SCROLLTO_SECTION", className)} {...props}>
-        <header>
-            {sections.map(kvp => <Button key={kvp.key} onClick={pickSection(kvp.value)} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
-                {(kvp.value === pickedSection && isFetching) ? <Icon name="Loading" className="animate-spin" /> : kvp.icon}
-
-                {kvp.key}
-            </Button>)}
-        </header>
-
-        <div>
-            <section id="map" className="gap-2 w-full">
-                <LeafletDeliveryTracker {...{ order }} />
-            </section>
-
-            <section id="chat" className="gap-2 w-full">
-                <OrderChatForm order_id={order.order_id} className="w-full" />
-            </section>
-        </div>
-    </section>;
-};
-
-function BackOfficeDeliveriesPage(props: ComponentProps<"main">) {
+function BackOfficeDeliveriesPage({ className, ...props }: ComponentProps<"main">) {
     const { Storage } = useMemo(() => MXP$App, []);
 
     const {
         data,
         error,
-        fetchNextPage,
-        hasNextPage,
-        isFetching,
-        isFetchingNextPage,
         refetch,
     } = useInfiniteQuery({
         queryKey: ([
@@ -140,68 +68,12 @@ function BackOfficeDeliveriesPage(props: ComponentProps<"main">) {
         initialPageParam: 1
     });
 
-    const lastElementRef = useCallback(
-        nextPageTriggerSetup({
-            fetchNextPage,
-            hasNextPage,
-            isFetchingNextPage,
-            isFetching
-        }),
-        [fetchNextPage, hasNextPage, isFetchingNextPage, isFetching]
-    );
-
     const deliveries = useMemo(() => (data?.pages.flatMap(page => page.data) || []), [data]);
 
+    const [toggled, setToggled] = useState(true);
     const [order, setOrder] = useState<restaurantOrderType | null>(null);
 
-    const pickOrder = ({ target }: MouseEvent<HTMLButtonElement>) => {
-        let index = deliveries.findIndex(d => d?.order_id === order?.order_id);
-
-        switch ((target as HTMLButtonElement).value as ("next" | "prev")) {
-            case "next":
-                index += 1
-                break;
-
-            case "prev":
-                index -= 1
-
-                break;
-
-            default:
-                break;
-        }
-
-        setOrder(deliveries[index]);
-    };
-
-    useEffect(() => {
-        if (order || !deliveries.length) return;
-
-        setOrder(deliveries[0]);
-    }, [deliveries, order]);
-
-    useEffect(() => {
-        if (!order) return;
-
-        const index = deliveries.findIndex(d => d?.order_id === order?.order_id);
-
-        const $prevButton = document.getElementById("prev") as (HTMLButtonElement | null);
-        const $nextButton = document.getElementById("next") as (HTMLButtonElement | null);
-
-        if ([$prevButton, $nextButton].includes(null)) return;
-
-        ($prevButton as HTMLButtonElement).disabled = index === 0;
-        ($nextButton as HTMLButtonElement).disabled = index === (deliveries.length - 1);
-
-        const $section = document.getElementById(`delivery-${order.order_id}`);
-
-        if (!$section) return;
-
-        $section.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }, [
-        deliveries,
-        order
-    ]);
+    const pickOrder = (order: restaurantOrderType | null) => setOrder(order);
 
     useEffect(() => {
         if (!('serviceWorker' in navigator)) return;
@@ -230,14 +102,16 @@ function BackOfficeDeliveriesPage(props: ComponentProps<"main">) {
         return () => {
             navigator.serviceWorker.removeEventListener('message', triggerRefetch);
         }
-    }, [
-        refetch,
-        Storage
-    ]);
+    }, [refetch, Storage]);
+
+    const $mainProps = {
+        className: resolveClassNames(styles.main, className),
+        ...props
+    };
 
     switch (true) {
         case (error instanceof Error): {
-            return <main {...props}>
+            return <main {...$mainProps}>
                 <section data-state="error" className="w-full min-h-[300px] flex flex-col justify-center items-center rounded-lg gap-4">
                     <Tag variant="danger">
                         <Icon name="ExclamationCircle" />
@@ -251,59 +125,55 @@ function BackOfficeDeliveriesPage(props: ComponentProps<"main">) {
         };
 
         default: {
-            return <main {...props}>
-                <header>
-                    <h1>Entregas</h1>
-                </header>
+            return <main {...$mainProps}>
+                {deliveries && <LeafletDeliveriesTracker
+                    className={styles.tracker}
+                    orders={deliveries as restaurantOrderType[]}
+                    onOrderSelect={pickOrder}
+                />}
 
-                <section className="w-full flex flex-row justify-center items-center gap-2 mb-5">
-                    {order && <Button id="prev" variant="secondary" onClick={pickOrder} value="prev">
-                        <Icon name="ChevronLeft" />
-                    </Button>}
+                {order && <section className={styles.info} {...{ ...(toggled) ? { "data-toggled": "" } : {} }}>
+                    <Button onClick={() => setToggled(t => !t)}>
+                        <Icon name={(toggled) ? "ChevronUp" : "ChevronDown"} />
+                    </Button>
 
-                    <ul className="w-full flex flex-row justify-start items-center gap-1 overflow-hidden">
-                        {deliveries.map((d, idx) => {
-                            if (!d) return null;
+                    {!toggled
+                        ? <h5 className="inline-flex justify-start items-center gap-4">
+                            Pedido <Tag>{order.order_id}#</Tag>
+                        </h5>
 
-                            return <li
-                                key={d.order_id}
-                                className={`w-full min-w-full${order?.order_id === d.order_id ? "" : " pointer-events-none"}`}
-                                id={`delivery-${d.order_id.toString()}`}
-                                ref={(idx === (deliveries.length - 1)) ? lastElementRef : undefined}
-                            >
-                                <OrderCard order={d} className="w-full" />
-                            </li>
-                        })}
-                    </ul>
+                        : <section>
+                            <section>
+                                <header>
+                                    <Icon name="Chat" />
 
-                    {order && <Button id="next" variant="secondary" onClick={pickOrder} value="next">
-                        <Icon name="ChevronRight" />
-                    </Button>}
-                </section>
-                
-                <section className={resolveClassNames(
-                    "w-full min-h-[300px] flex flex-col justify-center items-center rounded-lg gap-4",
-                    (isFetching && !data) ? "bg-gray-300 animate-pulse" : ""
-                )}>
-                    {(isFetching && !data)
-                        ? null
-                        : (deliveries.length === 0)
-                            ? <>
-                                <Icon name="Delivery" className="text-6xl opacity-45" />
+                                    <h5>Chat</h5>
+                                </header>
 
-                                <h2 className="opacity-45">Sem entregas de momento</h2>
-                            </>
-                            : order && <ScrollSection className="w-full" isFetching={isFetching || isFetchingNextPage} {...{ order }} />
-                    }
-                </section>
+                                <OrderChatForm order_id={order.order_id} />
+                            </section>
 
-                <section>
-                    {order && <OrderItemsList items={[...order?.Order_Items]} />}
-                </section>
+                            <section>
+                                <header>
+                                    <Icon name="Product" />
 
-                <section>
-                    {order && <OrderHistoryList order_id={order?.order_id} />}
-                </section>
+                                    <h5>Lista do pedido</h5>
+                                </header>
+
+                                <OrderItemsList items={[...order.Order_Items]} />
+                            </section>
+
+                            <section>
+                                <header>
+                                    <Icon name="History" />
+
+                                    <h5>Histórico</h5>
+                                </header>
+
+                                <OrderHistoryList order_id={order?.order_id} />
+                            </section>
+                        </section>}
+                </section>}
             </main>
         }
     }

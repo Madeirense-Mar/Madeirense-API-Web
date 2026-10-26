@@ -1,0 +1,75 @@
+/*#region Main ============================================ */
+.main {
+    --main-padding: 0px;
+    --main-width: 100vw;
+
+    position: relative;
+}
+
+/*#endregion*/
+
+/*#region Info ============================================ */
+.info {
+    --info-padding: 10px;
+    --info-height: 90px;
+
+    @apply flex flex-row justify-start items-start;
+
+    position: absolute;
+    left: calc(0px + var(--info-padding));
+    top: calc(100% - var(--info-height) - var(--info-padding));
+
+    gap: 24px;
+
+    max-height: var(--info-height);
+}
+
+.info[data-toggled] {
+    --info-height: calc(100% / 2);
+}
+
+.info>section,
+.info>section>section {
+    width: 100%;
+}
+
+.info>section {
+    @apply flex flex-col justify-start items-start;
+    
+    gap: 24px;
+}
+
+.info>section>section {
+    @apply flex flex-col justify-start items-start;
+}
+
+.info>section>section>* {
+    width: 100%;
+}
+
+.info>section>section>header {
+    @apply flex flex-row justify-start items-center gap-3;
+}
+
+/*#endregion*/
+
+/*#region Tracker ========================================= */
+.tracker {
+    --tracker-border-radius: 0px;
+    --tracker-border-width: 0px;
+    --tracker-gap: 0px;
+    --tracker-padding: 0px;
+
+    --list-padding: 8px;
+
+    --map-border-radius: 0px;
+    --map-border-width: 0px;
+
+    height: 100%;
+}
+
+.tracker>div:first-child {
+    height: 100%;
+}
+
+/*#endregion*/

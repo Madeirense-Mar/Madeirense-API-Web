@@ -1,4 +1,5 @@
 import L, {
+    type FitBoundsOptions,
     type MapOptions,
     type PathOptions,
     type PointTuple
@@ -83,3 +84,23 @@ export const MAP_ROTATION_OPTIONS: MapOptions = {
 };
 
 export const MAP_ROTATION_STEP_DEGREES = 15;
+
+export const FIT_BOUNDS_OPTIONS: FitBoundsOptions = {
+    padding: [50, 50],
+    maxZoom: 16
+};
+
+/**
+ * Distinct, legible-on-OSM colours to tell orders apart on the multi-order tracker.
+ * Picked by `order_id % length`, so an order keeps its colour as others come and go.
+ */
+export const ORDER_COLORS = [
+    "#2563EB", // blue
+    "#DC2626", // red
+    "#059669", // green
+    "#D97706", // amber
+    "#7C3AED", // violet
+    "#DB2777", // pink
+    "#0891B2", // cyan
+    "#65A30D", // lime
+] as const;

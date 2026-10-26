@@ -1,8 +1,10 @@
 /*#region Menu ============================================ */
-.menu {
-    --menu-max-width: 200px;
-    --menu-min-width: 52px;
+:root {
+    --side-menu-max-width: 200px;
+    --side-menu-min-width: 52px;
+}
 
+.menu {
     @apply flex flex-col justify-start;
 
     gap: 24px;
@@ -13,8 +15,8 @@
 
     border-right: calc(var(--border-width) * 2) solid var(--border-right-color);
 
-    max-width: var(--menu-max-width);
-    min-width: var(--menu-min-width);
+    max-width: var(--side-menu-max-width);
+    min-width: var(--side-menu-min-width);
 
     padding-top: 70px;
     padding-bottom: var(--base-padding);
@@ -76,7 +78,7 @@
 
 /*#region Anchor ========================================== */
 .menu ul li a {
-    --size: var(--menu-min-width);
+    --size: var(--side-menu-min-width);
 
     height: var(--size);
     max-height: var(--size);

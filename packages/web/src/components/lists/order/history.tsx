@@ -21,6 +21,11 @@ import MXP$App from "configurations";
 
 import styles from "./history.module.css";
 
+import type { 
+    $Enums
+} from "@Madeirense/database";
+import { variantType } from "components/types";
+
 // ***************************************************************************************************************
 
 interface IPropTypes extends ComponentProps<"ul"> {
@@ -52,6 +57,18 @@ const OrderHistoryList = ({
         queryKey: ["OrderHistoryList$History", order_id],
         queryFn: async ({ queryKey }) => await orders.getHistory(queryKey[1] as number)
     });
+
+    function getTagVariant (status: $Enums.Order_History_status): variantType {
+        switch (status) {
+            case "assigned": return "primary";
+            case "cancelled": return "danger";
+            case "delivered": return "success";
+            case "pending": return "warning";
+            case "preparing": return "secondary";
+        
+            default: return "secondary";
+        }
+    };
 
     useEffect(() => {
         if (!('serviceWorker' in navigator)) return;
@@ -108,7 +125,7 @@ const OrderHistoryList = ({
 
         default: return (<ul {...props}>
             {(history ?? []).map(h => <li key={h.history_id}>
-                <Tag>{getLabel(h.status)}</Tag>
+                <Tag variant={getTagVariant(h.status)}>{getLabel(h.status)}</Tag>
 
                 <span className="italic">{h.notes}</span>
 

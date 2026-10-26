@@ -106,7 +106,7 @@ function SideMenu({ className, ...props }: ComponentProps<"aside">) {
         user
     } = useProfile();
 
-    return <aside className={resolveClassNames(styles.menu, className)} {...props}>
+    return <aside id={Root$Enumerators.Identifiers["#backoffice-side-menu"]} className={resolveClassNames(styles.menu, className)} {...props}>
         <ul className="flex flex-col justify-start items-start w-full">
             {linkList.map((link, index) => {
                 if (!(link.role).includes(user?.user_role ?? "Ghost"))

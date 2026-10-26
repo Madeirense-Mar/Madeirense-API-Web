@@ -21,26 +21,21 @@ import {
 
 import {
     Coordinates,
-    DEFAULT_APP_PREFERENCES,
     resolveClassNames,
-    type appPreferencesType,
-    type Madeirense$Types,
     type restaurantOrderType
 } from "@Madeirense/shared";
 
 import env from "env";
 
-import MXP$App from "configurations";
-
 import Icon from "components/icon";
 import Tag from "components/tags";
 
 import {
+    FIT_BOUNDS_OPTIONS,
     MAP_DEFAULT_ZOOM,
     MAP_MARKERS,
     MAP_MAX_ZOOM,
     MAP_ROTATION_OPTIONS,
-    MIN_REROUTE_DISTANCE_METERS,
     ROUTE_PATH_OPTIONS
 } from "./constants";
 
@@ -53,13 +48,17 @@ import {
     type routeType
 } from "./routing";
 
+import { useCourierPositionPings } from "./useCourierPositionPings";
+
+import {
+    isLatLng,
+    keepUnlessMoved,
+    toLatLng
+} from "./utilities";
+
 import styles from "./deliveryTracker.module.css";
 
 import { Tags } from "../enumerators";
-
-import type {
-    Courier_Positions
-} from "@Madeirense/database/browser";
 
 import type { variantType } from "components/types";
 
@@ -75,25 +74,6 @@ interface IPropTypes extends ComponentProps<"div"> {
     variant?: variantType;
 };
 
-type coordinateValueType = ({ toString(): string } | null | undefined);
-
-/** Prisma `Decimal`/string/number coordinates → Leaflet point, or `null` when missing/invalid. */
-const toLatLng = (latitude: coordinateValueType, longitude: coordinateValueType): LatLngLiteral | null => {
-    if (latitude == null || longitude == null) return null;
-
-    const lat = parseFloat(latitude.toString());
-    const lng = parseFloat(longitude.toString());
-
-    return (Number.isFinite(lat) && Number.isFinite(lng)) ? { lat, lng } : null;
-};
-
-const isLatLng = (point: LatLngLiteral | null): point is LatLngLiteral => point !== null;
-
-const FIT_BOUNDS_OPTIONS: L.FitBoundsOptions = {
-    padding: [50, 50],
-    maxZoom: 16
-};
-
 const LeafletDeliveryTracker = ({
     className,
     onMapReady,
@@ -101,8 +81,6 @@ const LeafletDeliveryTracker = ({
     variant = "primary",
     ...props
 }: IPropTypes) => {
-    const { Storage } = MXP$App;
-
     const {
         Delivery_Locations,
         Users_Orders_courier_idToUsers: courier,
@@ -178,46 +156,12 @@ const LeafletDeliveryTracker = ({
     }, [map, route, restaurant, destination, courierPosition]);
 
     // Live courier pings pushed through the service worker.
-    useEffect(() => {
-        if (!("serviceWorker" in navigator)) return;
+    useCourierPositionPings(({ orderId, position }) => {
+        if (orderId !== order.order_id) return;
 
-        async function updateCourierPosition(event: MessageEvent) {
-            const preferences = await Storage.getItem<appPreferencesType>("L_APP$PREFERENCES") ?? DEFAULT_APP_PREFERENCES;
-
-            if (preferences.notifications !== "allowed") return;
-
-            const {
-                notificationId,
-                data
-            } = event.data as Madeirense$Types.pushNotification<Partial<Courier_Positions> & { order_id: number }>;
-
-            if (data.order_id !== order.order_id) return;
-
-            switch (notificationId) {
-                case "MXP$COURIER_POSITION$PING": {
-                    const nextPosition = toLatLng(data.latitude, data.longitude);
-
-                    if (!nextPosition) return;
-
-                    // Returning `previous` unchanged skips the re-render and the route request.
-                    setCourierPosition((previous) => (previous && L.latLng(previous).distanceTo(nextPosition) < MIN_REROUTE_DISTANCE_METERS)
-                        ? previous
-                        : nextPosition
-                    );
-
-                    break;
-                }
-
-                default: break;
-            }
-        }
-
-        navigator.serviceWorker.addEventListener("message", updateCourierPosition);
-
-        return () => {
-            navigator.serviceWorker.removeEventListener("message", updateCourierPosition);
-        };
-    }, [Storage, order.order_id]);
+        // Returning `previous` unchanged skips the re-render and the route request.
+        setCourierPosition((previous) => keepUnlessMoved(previous, position));
+    });
 
     return <div data-component="delivery-tracker" className={resolveClassNames(styles[variant], className)} {...props}>
         <MapContainer

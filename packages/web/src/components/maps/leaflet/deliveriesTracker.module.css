@@ -1,0 +1,193 @@
+/*#region Tracker ========================================= */
+/* Map + order list side by side; the list drops below the map on narrow screens. */
+.tracker {
+    --tracker-height: min(75vh, 760px);
+
+    --text-color: var(--neutral-dark);
+
+    @apply grid;
+
+    grid-template-columns: var(--map-column-width, minmax(0, 1fr)) var(--list-column-width, 300px);
+    grid-template-areas: "map list";
+    gap: var(--tracker-gap, 12px);
+
+    padding: var(--tracker-padding, 8px);
+
+    border: var(--tracker-border-width, 1px) var(--tracker-border-style, solid) var(--tracker-border-color, var(--primary-light));
+    border-radius: var(--tracker-border-radius, 12px);
+}
+
+/* z-index: 0 gives Leaflet's panes (z 400–1000) their own stacking context. */
+.map {
+    @apply overflow-hidden w-full;
+
+    grid-area: map;
+    z-index: 0;
+
+    height: var(--tracker-height);
+    min-height: 360px;
+
+    border-width: var(--map-border-width, 1px);
+    border-radius: var(--map-border-radius, 8px);
+}
+
+/*#endregion*/
+
+/*#region Order list ====================================== */
+.list {
+    --text-color: var(--base-text-color);
+
+    @apply flex flex-col gap-2 overflow-y-auto;
+
+    grid-area: list;
+
+    padding: var(--list-padding, 0px);
+}
+
+.list header {
+    @apply flex flex-row justify-between items-center gap-2 text-sm;
+}
+
+.list header h3 {
+    @apply flex flex-row items-center gap-2 font-bold;
+}
+
+.list header button {
+    @apply text-sm underline;
+}
+
+.list ul {
+    @apply flex flex-col gap-1;
+}
+
+.list li button {
+    --radius: 8px;
+
+    @apply flex flex-col items-start gap-0.5 w-full text-left text-sm px-3 py-2;
+
+    border-left: 4px solid var(--order-color);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    
+    background-color: var(--button-background-color);
+}
+
+[data-theme*="DARK"] .list li button {
+    --button-background-color: color-mix(in srgb, var(--order-color), black 52%);
+}
+
+[data-theme*="LIGHT"] .list li button {
+    --button-background-color: color-mix(in srgb, var(--order-color), white 60%);
+}
+
+.list li button:hover {
+    --button-background-color: color-mix(in srgb, var(--order-color), transparent 85%);
+}
+
+.list li button[aria-pressed="true"] {
+    --button-background-color: color-mix(in srgb, var(--order-color), transparent 75%);
+
+    outline: 2px solid var(--order-color);
+}
+
+.list li button small {
+    opacity: 0.8;
+}
+
+.list li button small[data-state="error"] {
+    color: var(--accent);
+    opacity: 1;
+}
+
+[data-theme*=]
+/*#endregion*/
+
+/*#region Markers & popups ================================ */
+/* Drop-off badge (L.divIcon): Leaflet adds .leaflet-div-icon's white box unless className is set, which it is. */
+.badge {
+    @apply flex justify-center items-center;
+}
+
+.badge span {
+    padding: 2px 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+    white-space: nowrap;
+    color: #fff;
+
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background-color: var(--order-color);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+
+    cursor: pointer;
+}
+
+.badgeSelected span {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 3px var(--order-color), 0 2px 6px rgb(0 0 0 / 0.4);
+}
+
+.courierPopup {
+    @apply flex flex-col items-start gap-2;
+}
+
+.orderChip {
+    padding: 0 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+
+    border-radius: 999px;
+    background-color: var(--order-color);
+}
+
+/*#endregion*/
+
+/*#region Variants ======================================== */
+.danger {
+    composes: tracker;
+
+    --tracker-border-style: dotted;
+    --tracker-border-color: color-mix(in srgb, var(--accent), var(--neutral-light) 75%);
+    --tracker-background-color: color-mix(in srgb, var(--accent), var(--neutral-dark) 75%);
+}
+
+[data-theme*="LIGHT"] .danger {
+    --tracker-border-color: var(--accent);
+    --tracker-background-color: color-mix(in srgb, var(--accent), var(--neutral-light) 45%);
+}
+
+/* TODO: Unimplemented style > important */
+.important {
+    composes: tracker;
+}
+
+/* TODO: Unimplemented style > primary */
+.primary {
+    composes: tracker;
+}
+
+/* TODO: Unimplemented style > secondary */
+.secondary {
+    composes: tracker;
+}
+
+/* TODO: Unimplemented style > selected */
+.selected {
+    composes: tracker;
+}
+
+/* TODO: Unimplemented style > success */
+.success {
+    composes: tracker;
+}
+
+/* TODO: Unimplemented style > warning */
+.warning {
+    composes: tracker;
+}
+
+/*#endregion*/

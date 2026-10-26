@@ -1,4 +1,6 @@
 .form fieldset {
+    --fieldset-padding: 0px;
+    
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas:
