@@ -157,6 +157,7 @@ import {
     MdPhone,
     MdRotateLeft,
     MdRotateRight,
+    MdRemoveShoppingCart,
     MdShapeLine,
     MdUpdate
 } from "react-icons/md";
@@ -250,6 +251,7 @@ const registry = {
     Edit: HiPencil,
     Email: MdEmail,
     Empty: GrEmptyCircle,
+    EmptyCart: MdRemoveShoppingCart,
     Error: MdOutlineReportGmailerrorred,
     Eye: FaRegEye,
     ExclamationCircle: FaExclamationCircle,

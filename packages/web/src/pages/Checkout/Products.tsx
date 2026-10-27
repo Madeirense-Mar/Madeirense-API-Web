@@ -112,6 +112,7 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                 "ordering"
             ].includes(page.status)
         ].includes(true),
+
         "hasSuccessfullySubmitted": (page.status === "success")
     };
 
@@ -245,162 +246,172 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
         return () => { };
     }, [currentLocation, getAppProperties]);
 
-    return <>
-        <section className={styles.info}>
-            <header>
-                <h2>Pedido</h2>
-            </header>
+    switch (cart.deliveryCart.length) {
+        case 0: {
+            return <div data-state="warning" className="w-full flex flex-col justify-center items-center h-full gap-12">
+                <Icon name="EmptyCart" className="text-9xl opacity-20" />
 
-            {restaurant
-                ? <RestaurantCard className="w-full" {...{ restaurant }} />
-                : <Tag variant="danger" className="m-auto">
-                    Não estamos a aceiter pedidos por agora, tente mais tarde
-                </Tag>
-            }
+                Não tem productos no carrinho para fazer checkout.
+            </div>
+        }
 
-            <Cart className="w-full" mode="order" type="delivery" />
-        </section>
+        default: {
+            return <>
+                <section className={styles.info}>
+                    <header>
+                        <h2>Pedido</h2>
+                    </header>
 
-        <section className={styles["contact-payment"]}>
-            <header>
-                <h2>Contacto e endereço</h2>
-            </header>
-
-            <form onSubmit={POST} className={styles.form}>
-                <fieldset>
-                    <legend>
-                        <Tag variant="secondary">
-                            <Icon name="Phone" />
-
-                            Contacto
+                    {restaurant
+                        ? <RestaurantCard className="w-full" {...{ restaurant }} />
+                        : <Tag variant="danger" className="m-auto">
+                            Não estamos a aceiter pedidos por agora, tente mais tarde
                         </Tag>
-                    </legend>
-
-                    <div className={styles["contact-fields"]}>
-                        <label className="flex flex-col justify-start items-start" htmlFor="phone">
-                            <span className="font-extrabold">Nº do telefone</span>
-
-                            <span>Contacto passado por defeito para o Multicaixa express e também mantido como ponto principal para ligações ou envio de mensagens</span>
-                        </label>
-
-                        <div className="flex flex-row justify-start items-center">
-                            <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""} required>
-                                <option hidden value="">Seleciona um código</option>
-
-                                {PHONE_CODES.map(({ code }) => <option key={code} value={code}>
-                                    {code}
-                                </option>)}
-                            </select>
-
-                            <input
-                                className="w-full text-center"
-                                defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""}
-                                name="phone"
-                                id="phone"
-                                pattern={stringRegularExpressions.get("PhoneNumber")}
-                                placeholder="Nº do telefone com WhatsApp"
-                                type="tel"
-                                required
-                                onChange={selectPhoneCode($selectRef)}
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-
-                {(showMap)
-                    ? <div className="flex flex-col justify-start items-start w-full">
-                        {Boolean((user?.Delivery_Locations ?? []).length) && <Button
-                            className="ml-auto"
-                            variant="secondary"
-                            onClick={() => toggleMap(t => !t)}
-                        >
-                            Fechar o mapa
-                        </Button>}
-
-                        <DropOffFieldset
-                            className="w-full"
-                            initialLocation={(!currentLocation)
-                                ? undefined
-                                : {
-                                    latitude: currentLocation.latitude,
-                                    longitude: currentLocation.longitude
-                                }
-                            }
-                            onLocationSelect={handleLocationUpdate}
-                        />
-                    </div>
-
-                    : <fieldset>
-                        <legend>
-                            <Tag variant="secondary">
-                                <Icon name="MapMarked" />
-
-                                Seleccionar ponto de entrega
-                            </Tag>
-                        </legend>
-
-                        <div className={styles["location-fields"]}>
-                            <label className="flex flex-col justify-start items-start" htmlFor="location_id">
-                                <span className="font-extrabold">Endereços salvos</span>
-
-                                <span>Seleccionar o endereço pre-definido de entrega. O seu endereço mais próximo do restaurante já foi escolhido por defeito</span>
-                            </label>
-
-                            {user?.Delivery_Locations && <DeliveryLocationsSelector
-                                locations={user.Delivery_Locations}
-                                defaultLocationId={preferredLocation}
-                                name="location_id"
-                                id="location_id"
-                            />}
-                        </div>
-
-                        <Button className="ml-auto" variant="secondary" onClick={handleMapToggle}>
-                            <Icon name="MapMarker" />
-
-                            Seleccionar endereço alternativo no mapa
-                        </Button>
-                    </fieldset>
-                }
-
-                <fieldset className="w-full">
-                    <legend>
-                        <Tag variant="secondary">
-                            <Icon name="Money" />
-
-                            Pagamento
-                        </Tag>
-                    </legend>
-
-                    <PaymentTypesList
-                        mode="eligible"
-                        selectionMode="radio"
-                        className="w-full"
-                        required
-                        selectable
-                    />
-                </fieldset>
-
-                <Button
-                    type={(assertions.hasSuccessfullySubmitted) ? "button" : "submit"}
-                    variant={(assertions.hasSuccessfullySubmitted) ? "success" : page.error ? "danger" : "primary"}
-                    className="w-full"
-                    disabled={assertions.isLoading}
-                >
-                    {page.error && <Icon name="ExclamationCircle" />}
-
-                    {(assertions.isLoading)
-                        ? <Icon name="Loading" className="animate-spin" />
-                        : (assertions.hasSuccessfullySubmitted)
-                            ? "Pedido feito"
-                            : page.error
-                                ? page.error.message
-                                : `Fazer pedido (${formatNumber(summary.totalPrice)})`
                     }
 
-                    {page.error && <Icon name="ExclamationCircle" />}
-                </Button>
+                    <Cart className="w-full" mode="order" type="delivery" />
+                </section>
 
-                {/* 
+                <section className={styles["contact-payment"]}>
+                    <header>
+                        <h2>Contacto e endereço</h2>
+                    </header>
+
+                    <form onSubmit={POST} className={styles.form}>
+                        <fieldset>
+                            <legend>
+                                <Tag variant="secondary">
+                                    <Icon name="Phone" />
+
+                                    Contacto
+                                </Tag>
+                            </legend>
+
+                            <div className={styles["contact-fields"]}>
+                                <label className="flex flex-col justify-start items-start" htmlFor="phone">
+                                    <span className="font-extrabold">Nº do telefone</span>
+
+                                    <span>Contacto passado por defeito para o Multicaixa express e também mantido como ponto principal para ligações ou envio de mensagens</span>
+                                </label>
+
+                                <div className="flex flex-row justify-start items-center">
+                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""} required>
+                                        <option hidden value="">Seleciona um código</option>
+
+                                        {PHONE_CODES.map(({ code }) => <option key={code} value={code}>
+                                            {code}
+                                        </option>)}
+                                    </select>
+
+                                    <input
+                                        className="w-full text-center"
+                                        defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""}
+                                        name="phone"
+                                        id="phone"
+                                        pattern={stringRegularExpressions.get("PhoneNumber")}
+                                        placeholder="Nº do telefone com WhatsApp"
+                                        type="tel"
+                                        required
+                                        onChange={selectPhoneCode($selectRef)}
+                                    />
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        {(showMap)
+                            ? <div className="flex flex-col justify-start items-start w-full">
+                                {Boolean((user?.Delivery_Locations ?? []).length) && <Button
+                                    className="ml-auto"
+                                    variant="secondary"
+                                    onClick={() => toggleMap(t => !t)}
+                                >
+                                    Fechar o mapa
+                                </Button>}
+
+                                <DropOffFieldset
+                                    className="w-full"
+                                    initialLocation={(!currentLocation)
+                                        ? undefined
+                                        : {
+                                            latitude: currentLocation.latitude,
+                                            longitude: currentLocation.longitude
+                                        }
+                                    }
+                                    onLocationSelect={handleLocationUpdate}
+                                />
+                            </div>
+
+                            : <fieldset>
+                                <legend>
+                                    <Tag variant="secondary">
+                                        <Icon name="MapMarked" />
+
+                                        Seleccionar ponto de entrega
+                                    </Tag>
+                                </legend>
+
+                                <div className={styles["location-fields"]}>
+                                    <label className="flex flex-col justify-start items-start" htmlFor="location_id">
+                                        <span className="font-extrabold">Endereços salvos</span>
+
+                                        <span>Seleccionar o endereço pre-definido de entrega. O seu endereço mais próximo do restaurante já foi escolhido por defeito</span>
+                                    </label>
+
+                                    {user?.Delivery_Locations && <DeliveryLocationsSelector
+                                        locations={user.Delivery_Locations}
+                                        defaultLocationId={preferredLocation}
+                                        name="location_id"
+                                        id="location_id"
+                                    />}
+                                </div>
+
+                                <Button className="ml-auto" variant="secondary" onClick={handleMapToggle}>
+                                    <Icon name="MapMarker" />
+
+                                    Seleccionar endereço alternativo no mapa
+                                </Button>
+                            </fieldset>
+                        }
+
+                        <fieldset className="w-full">
+                            <legend>
+                                <Tag variant="secondary">
+                                    <Icon name="Money" />
+
+                                    Pagamento
+                                </Tag>
+                            </legend>
+
+                            <PaymentTypesList
+                                mode="eligible"
+                                selectionMode="radio"
+                                className="w-full"
+                                required
+                                selectable
+                            />
+                        </fieldset>
+
+                        <Button
+                            type={(assertions.hasSuccessfullySubmitted) ? "button" : "submit"}
+                            variant={(assertions.hasSuccessfullySubmitted) ? "success" : page.error ? "danger" : "primary"}
+                            className="w-full"
+                            disabled={assertions.isLoading}
+                        >
+                            {page.error && <Icon name="ExclamationCircle" />}
+
+                            {(assertions.isLoading)
+                                ? <Icon name="Loading" className="animate-spin" />
+                                : (assertions.hasSuccessfullySubmitted)
+                                    ? "Pedido feito"
+                                    : page.error
+                                        ? page.error.message
+                                        : `Fazer pedido (${formatNumber(summary.totalPrice)})`
+                            }
+
+                            {page.error && <Icon name="ExclamationCircle" />}
+                        </Button>
+
+                        {/* 
             TODO: Implement bill splitting trigger
             <footer>
             <Button className="w-1/4" variant="secondary" onClick={splitBill} disabled={isLoading}>
@@ -408,9 +419,11 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
             </Button> 
             </footer>
             */}
-            </form >
-        </section>
-    </>
+                    </form >
+                </section>
+            </>
+        }
+    }
 };
 
 export default ProductsCheckoutPage;
