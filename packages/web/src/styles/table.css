@@ -48,11 +48,11 @@ table tfoot tr td {
 }
 
 [data-theme="LAND-DARK"] table td:hover {
-    --table-cell-hovered-background-color: color-mix(in srgb, var(--secondary-light), var(--secondary-dark) 90%);
+    --base-table-cell-hovered-background-color: color-mix(in srgb, var(--secondary-light), var(--secondary-dark) 90%);
 }
 
 [data-theme="LAND-DARK"] table tr:hover {
-    --table-row-hovered-background-color: color-mix(in srgb, var(--secondary-light), var(--secondary-dark) 70%);
+    --base-table-row-hovered-background-color: color-mix(in srgb, var(--secondary-light), var(--secondary-dark) 70%);
 }
 
 [data-theme="SEA-DARK"] table {
@@ -61,11 +61,11 @@ table tfoot tr td {
 }
 
 [data-theme="SEA-DARK"] table td:hover {
-    --table-cell-hovered-background-color: color-mix(in srgb, var(--primary-light), var(--primary-dark) 90%);
+    --base-table-cell-hovered-background-color: color-mix(in srgb, var(--primary-light), var(--primary-dark) 90%);
 }
 
 [data-theme="SEA-DARK"] table tr:hover {
-    --table-row-hovered-background-color: color-mix(in srgb, var(--primary-light), var(--primary-dark) 70%);
+    --base-table-row-hovered-background-color: color-mix(in srgb, var(--primary-light), var(--primary-dark) 70%);
 }
 
 /*#endregion*/
