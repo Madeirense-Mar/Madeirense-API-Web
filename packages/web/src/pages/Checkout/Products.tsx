@@ -293,7 +293,7 @@ const ProductsCheckoutPage = ({ className, ...props }: ComponentProps<"section">
                             </select>
 
                             <input
-                                className="w-full"
+                                className="w-full text-center"
                                 defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""}
                                 name="phone"
                                 id="phone"
