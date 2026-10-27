@@ -14,10 +14,11 @@ import {
 
 import useLocationPermission from "hooks/useLocationPermission";
 
+import { AppContextProvider } from "contexts/utilities/providers";
 import { useCart } from "contexts/Cart";
 import { ModalProvider } from "contexts/Modal";
 import { useOrders } from "contexts/Orders";
-import { AppContextProvider } from "contexts/utilities/providers";
+import { RedirectorProvider } from "contexts/Redirector";
 
 import Cart from "components/tables/cart";
 import Orders from "components/tables/orders";
@@ -31,7 +32,6 @@ import styles from "./Layout.module.css";
 import type {
     $Enums
 } from "@Madeirense/database/browser";
-import { RedirectorProvider } from "contexts/Redirector";
 
 // ***************************************************************************************************************
 
