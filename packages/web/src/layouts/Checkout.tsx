@@ -50,12 +50,6 @@ function CheckoutLayout() {
             </Button>
 
             <h1>Checkout</h1>
-
-            <h1 className="ml-auto opacity-30">
-                Evento
-                Entrega
-                Resort
-            </h1>
         </header>
 
         <Outlet />
