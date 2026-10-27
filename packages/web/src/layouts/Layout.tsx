@@ -27,8 +27,6 @@ import AppNav from "components/navigation/application";
 
 import { Root$Enumerators } from "styles/enumerators";
 
-import styles from "./Layout.module.css";
-
 import type {
     $Enums
 } from "@Madeirense/database/browser";
@@ -146,8 +144,8 @@ const Layout = () => {
     return <AppContextProvider {...{ providers }}>
         <RedirectorProvider>
             {(!assertions.allowPatterns) ? null : <>
-                <div className={styles.pattern} data-position="left"></div>
-                <div className={styles.pattern} data-position="right"></div>
+                <div data-position="left"></div>
+                <div data-position="right"></div>
             </>}
 
             {assertions.allowCartOverlay && <Cart type="delivery" />}
