@@ -13,8 +13,8 @@
 }
 
 .table div[data-type="thumbnail"] {
-    height: 100px;
-    width: var(--img-size);
+    --thumbnail-height: 100px;
+    --thumbnail-width: var(--img-size);
 }
 
 .table tbody tr:first-child,
@@ -34,40 +34,40 @@
     --border-dotted-width: 4px;
 }
 
-.table tr[data-section="eta"] {
+.table tr[data-row="eta"] {
     border-top: var(--table-row-border-width, var(--border-width)) var(--table-row-border-style, solid) var(--table-row-border-color, var(--border-color));
 }
 
-.table tr[data-section="summary"] {
+.table tr[data-row="summary"] {
     border-top: var(--table-row-border-width, var(--border-width)) dashed var(--table-row-border-color, var(--border-color));
 }
 
-.table tr[data-section="summary"] div[data-row] {
+.table tr[data-row="summary"] div[data-row] {
     @apply w-full flex flex-row items-center justify-between gap-2;
 }
 
-.table tr[data-section="summary"] div[data-row="original"] {
+.table tr[data-row="summary"] div[data-row="original"] {
     @apply mb-3;
 
     border-bottom: calc(var(--border-width) + 2px) dotted var(--border-color);
 }
 
-.table tr[data-section="summary"] div[data-row="coupon"],
-.table tr[data-section="summary"] div[data-row="discount"] {
+.table tr[data-row="summary"] div[data-row="coupon"],
+.table tr[data-row="summary"] div[data-row="discount"] {
     padding: 0 12px;
 }
 
-.table tr[data-section="summary"] div[data-row="coupon"] *,
-.table tr[data-section="summary"] div[data-row="discount"] * {
+.table tr[data-row="summary"] div[data-row="coupon"] *,
+.table tr[data-row="summary"] div[data-row="discount"] * {
     @apply italic;
 }
 
-.table tr[data-section="summary"] div[data-row="coupon"] {
+.table tr[data-row="summary"] div[data-row="coupon"] {
     color: var(--text-contrast-color);
     background-color: var(--secondary);
 }
 
-.table tr[data-section="summary"]:has(div[data-row="original"]) div[data-row="total"] {
+.table tr[data-row="summary"]:has(div[data-row="original"]) div[data-row="total"] {
     @apply mt-3;
     border-top: var(--border-width) solid var(--border-color);
 }
@@ -144,12 +144,12 @@
     font-weight: 600;
 }
 
-.wrapper table tbody tr:not([data-section]) {
+.wrapper table tbody tr:not([data-row]) {
     border-color: var(--table-row-border-color);
     border-bottom-width: var(--table-row-border-width);
 }
 
-.wrapper table tbody tr:not([data-section]) td:nth-child(2) {
+.wrapper table tbody tr:not([data-row]) td:nth-child(2) {
     border-color: var(--table-row-border-color);
     border-left-width: var(--table-row-border-width);
     border-right-width: var(--table-row-border-width);
@@ -159,11 +159,11 @@
     --table-cell-padding-x: 0px;
 }
 
-.wrapper table tfoot tr[data-section="summary"] {
+.wrapper table tfoot tr[data-row="summary"] {
     --wrapper-font-weight: 700;
 }
 
-.wrapper table tbody tr[data-section="eta"] {
+.wrapper table tbody tr[data-row="eta"] {
     --text-color: var(--neutral-light);
 
     background-color: var(--neutral-dark);
@@ -216,23 +216,51 @@
     composes: table;
 }
 
-[data-theme="SEA-DARK"] .order {
-    --input-element-border-color: var(--secondary);
-    --table-row-border-color: var(--secondary);
+.order tbody tr[data-row="product"]>td {
+    --px: var(--padding-s);
+
+    padding-bottom: var(--px);
+    padding-top: var(--px);
 }
 
-.order tbody tr td:first-child div>form>div>button {
+.order tbody tr[data-row="eta"] {
+    background-color: var(--table-row-background-color, color-mix(in srgb, var(--primary-dark), black 0%));
+}
+
+.order tbody tr[data-row="coupon"] {
+    background-color: var(--table-row-background-color, var(--primary));
+}
+
+.order tbody tr[data-row="coupon"]>td>div>form>button {
     --button-border-radius: 0 9999px 9999px 0;
 }
 
-.order tbody tr[data-section="instructions"] td {
+.order tbody tr[data-row="instructions"] td {
     --table-cell-padding-x: 0px;
+    border-top: 1px solid var(--base-border-color);
 }
 
-.order tfoot tr[data-section="summary"] {
+.order tbody tr[data-row="instructions"] td fieldset {
+    --fieldset-border-width: 0px;
+}
+
+.order tfoot tr[data-row="summary"] {
     --text-color: var(--neutral-dark);
 
     background-color: var(--secondary);
+}
+
+[data-theme*="LIGHT"] .order tbody tr[data-row="coupon"] {
+    --table-row-background-color: var(--primary-light);
+}
+
+[data-theme*="LIGHT"] .order tbody tr[data-row="eta"] {
+    --text-color: var(--neutral-light);
+}
+
+[data-theme="SEA-DARK"] .order {
+    --input-element-border-color: var(--secondary);
+    --table-row-border-color: var(--secondary);
 }
 
 /*#endregion*/

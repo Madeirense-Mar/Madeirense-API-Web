@@ -7,6 +7,8 @@
 }
 
 .picker div[data-section="map"] {
+    --text-color: var(--neutral-dark);
+    
     @apply border rounded-lg overflow-hidden w-full;
 
     position: relative;

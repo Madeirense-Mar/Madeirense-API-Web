@@ -6,15 +6,19 @@ import {
 
 import {
     getAddressFromCoordinates,
+    resolveClassNames,
     type distanceVectorType,
     type parsedAddressObjectType,
 } from "@Madeirense/shared";
 
 import env from "env";
 
+import Icon, { type iconNameType } from "components/icon";
+import Tag from "components/tags";
+
 import LeafletLocationPicker from "components/maps/leaflet/locationPicker";
 
-import Icon from "components/icon";
+import styles from "./dropOff.module.css";
 
 // ***************************************************************************************************************
 
@@ -29,6 +33,7 @@ interface IPropTypes extends ComponentProps<"fieldset"> {
     hideLegend?: boolean;
     initialLocation?: distanceVectorType;
     legendLabel?: string;
+    legendIcon?: iconNameType;
     onLocationSelect?: (address: DropOffFieldset$Types.location) => void;
     presetName?: string;
     save?: boolean;
@@ -48,12 +53,14 @@ const coordinatesAsAddress = ({ latitude, longitude }: distanceVectorType): pars
 
 function DropOffFieldset(_props: IPropTypes) {
     const {
+        className,
         DEBUG = false,
         defaultName = undefined,
         defaultSpecialInstructions = undefined,
         hideLegend = false,
         initialLocation,
         legendLabel = "Localização",
+        legendIcon = "MapMarker",
         onLocationSelect,
         presetName = undefined,
         save = false,
@@ -102,8 +109,14 @@ function DropOffFieldset(_props: IPropTypes) {
         }
     };
 
-    return <fieldset {...props}>
-        {!hideLegend && <legend>{legendLabel}</legend>}
+    return <fieldset className={resolveClassNames(styles.fieldset, className)} {...props}>
+        {!hideLegend && <legend>
+            <Tag>
+                <Icon name={legendIcon} />
+
+                {legendLabel}
+            </Tag>
+        </legend>}
 
         <LeafletLocationPicker
             DEBUG={DEBUG}

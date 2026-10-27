@@ -7,38 +7,39 @@
         "aside application-body";
 }
 
-#root[data-page="back-office"]>main {
+/*#region Main ============================================ */
+main {
     transition: padding 1s ease-in-out;
 }
 
-#root[data-page="back-office"]>main>section {
+main>section {
     border-radius: 12px;
 
     padding: var(--base-padding);
 }
 
-[data-theme="LAND-DARK"] #root[data-page="back-office"]>main>section {}
-
-[data-theme="LAND-LIGHT"] #root[data-page="back-office"]>main>section {}
-
-[data-theme="SEA-DARK"] #root[data-page="back-office"]>main>section {
-    background-color: color-mix(in srgb, var(--primary-dark), black 40%);
-}
-
-[data-theme="SEA-LIGHT"] #root[data-page="back-office"]>main>section {}
-
-#root[data-page="back-office"] main>section:not(:last-of-type) {
+main>section:not(:last-of-type) {
     @apply mb-5;
 }
 
-#root[data-page="back-office"] section:not([class]) header {
+[data-theme="SEA-DARK"] main>section {
+    background-color: color-mix(in srgb, var(--primary-dark), black 40%);
+}
+
+/*#endregion*/
+
+/*#region Section ========================================= */
+section:not([class]) header {
     @apply mb-3;
 }
 
-#root[data-page="back-office"] section header select {
+section header select {
     background-color: transparent;
 }
 
+/*#endregion*/
+
+/*#region Media =========================================== */
 @media only screen and (min-width: 344px) {}
 
 @media only screen and (min-width: 428px) {}
@@ -50,3 +51,5 @@
 }
 
 @media only screen and (min-width: 1366px) {}
+
+/*#endregion*/

@@ -1,4 +1,5 @@
 import {
+    ChangeEvent,
     useEffect,
     useMemo,
     type ComponentProps,
@@ -38,6 +39,7 @@ interface IPropTypes extends ComponentProps<"ul"> {
     selectable?: boolean;
     selectedItems?: $Enums.Payments_payment_method[];
     selectionMode?: selectionModeType;
+    onItemSelect?: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 type selectionModeType = "checkbox" | "radio";
@@ -60,6 +62,7 @@ function PaymentTypesList(_props: IPropTypes) {
         disconsiderPreferredMethod = false,
         hiddenItems = [],
         mode = "default",
+        onItemSelect,
         required = false,
         selectable,
         selectedItems = [],
@@ -70,7 +73,9 @@ function PaymentTypesList(_props: IPropTypes) {
 
     const { Storage } = MXP$App;
 
-    const { Global_Settings_Eligible_Payment_Types } = get("Global_Settings") ?? DEFAULT_APP_SETTINGS;
+    const { 
+        Global_Settings_Eligible_Payment_Types
+    } = get("Global_Settings") ?? DEFAULT_APP_SETTINGS;
 
     const eligiblePaymentTypes = useMemo(() => Global_Settings_Eligible_Payment_Types.map(({ payment_method }) => payment_method), [Global_Settings_Eligible_Payment_Types]);
 
@@ -145,6 +150,7 @@ function PaymentTypesList(_props: IPropTypes) {
                         type={selectionMode}
                         value={type}
                         onClick={(selectionMode === "checkbox" || disconsiderPreferredMethod) ? undefined : setAsPreferred}
+                        onChange={onItemSelect}
                     />
 
                     {getIcon(type)}

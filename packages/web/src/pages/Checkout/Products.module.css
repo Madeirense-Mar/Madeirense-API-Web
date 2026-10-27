@@ -1,0 +1,85 @@
+/*#region Info section ==================================== */
+.info {
+    --section-gap: 0px;
+}
+
+.info>header {
+    margin-bottom: var(--margin-xl);
+}
+
+.info>div,
+.info>table {
+    --radius: 12px;
+}
+
+.info>div{
+    --card-border-radius: var(--radius) var(--radius) 0 0;
+
+    border-bottom: 0px;
+}
+
+.info>table {
+    --table-border-radius: 0 0 var(--radius) var(--radius);
+
+    border-top: 0px;
+}
+/*#endregion*/
+
+/*#region Contact and payment section ===================== */
+[data-theme*="LIGHT"] .contact-payment fieldset {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+}
+/*#endregion*/
+
+/*#region Contact fieldset ================================ */
+.contact-fields {
+    @apply w-full flex flex-row justify-between items-start;
+}
+
+.contact-fields>div {
+    width: 300px;
+}
+
+.contact-fields>div>input {
+    width: 100%;
+}
+
+.contact-fields>div>select {
+    width: 90px;
+}
+
+/*#endregion*/
+
+/*#region Location fieldset =============================== */
+.location-fields {
+    @apply w-full flex flex-row justify-between items-center;
+}
+
+.location-fields>select {
+    width: 300px;
+}
+/*#endregion*/
+
+/*#region Form ============================================ */
+.form {
+    @apply flex flex-col justify-start items-start;
+
+    width: 100%;
+
+    gap: var(--gap-xl);
+}
+
+.form fieldset {
+    width: inherit;
+}
+
+.form fieldset legend {
+    margin-bottom: 12px;
+}
+
+[data-theme*="DARK"] .form fieldset {
+    --fieldset-padding: 0px;
+    --fieldset-background-color: transparent;
+}
+/*#endregion*/

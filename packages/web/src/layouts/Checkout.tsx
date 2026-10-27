@@ -12,10 +12,12 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
+import {
+    Root$Enumerators
+} from "styles/enumerators";
+
 import Button from "components/buttons";
 import Icon from "components/icon";
-
-import { Root$Enumerators } from "styles/enumerators";
 
 import styles from "./Checkout.module.css";
 
@@ -43,7 +45,7 @@ function CheckoutLayout() {
         }
     }, []);
 
-    return <main className={resolveClassNames(styles.checkout)}>
+    return <main className={resolveClassNames(styles.layout)}>
         <header>
             <Button shape="circle" variant="secondary" onClick={handleReturn}>
                 <Icon name="ArrowLeft" />

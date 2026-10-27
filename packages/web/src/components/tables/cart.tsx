@@ -146,7 +146,7 @@ function Cart({
         </td>
     </tr>;
 
-    const TABLE_ETA_ROW = (preparationETA === 0) ? null : <tr data-section="eta">
+    const TABLE_ETA_ROW = (preparationETA === 0) ? null : <tr data-row="eta">
         <td colSpan={4}>
             <div className="flex flex-row items-center justify-start gap-2 w-full">
                 <Icon name="Time" />
@@ -160,9 +160,9 @@ function Cart({
         </td>
     </tr>;
 
-    const TABLE_SUMMARY_FOOTER = !Boolean(cart.length) ? null : <tr data-section="summary">
+    const TABLE_SUMMARY_FOOTER = !Boolean(cart.length) ? null : <tr data-row="summary">
         <td colSpan={4}>
-            <div className="w-full flex flex-col items-start justify-start px-4">
+            <div className="w-full flex flex-col items-start justify-start">
                 {(summary.coupon || Boolean(summary.totalDiscount)) && <div data-row="original" className="mb-2 opacity-40">
                     <span className="font-black text-2xl">Preço</span>
 
@@ -315,28 +315,6 @@ function Cart({
                 </tfoot>
 
                 <tbody>
-                    <tr>
-                        <td colSpan={4}>
-                            <div className="flex flex-row items-center justify-start gap-2 w-full">
-                                <Icon name="Order" />
-
-                                <span className="mr-auto">O seu pedido</span>
-
-                                {(summary.totalPrice > 0) && <form onSubmit={applyCouponCode} className="min-w-[300px]" data-state={!cart.length ? "disabled" : "idle"}>
-                                    <div className="ml-auto flex flex-row items-center justify-start flex-nowrap w-full">
-                                        <input type="text" name="coupon_code" placeholder="Aplicar cupom de desconto" className="w-full font-semibold" required />
-
-                                        <Button type="submit" disabled={["applying-coupon"].includes(state)}>
-                                            {state === "applying-coupon" ? <Icon name="Loading" className="animate-spin" /> : "Aplicar"}
-
-                                            <Icon name="Coupon" />
-                                        </Button>
-                                    </div>
-                                </form>}
-                            </div>
-                        </td>
-                    </tr>
-
                     {TABLE_ERROR_ROW}
 
                     {!cart.length && <tr>
@@ -352,7 +330,11 @@ function Cart({
                         const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
                         const isInQueue = whileQuantityIncreases || whileQuantityDecreases;
 
-                        return <tr key={product_id} data-hasdiscount={discount > 0}>
+                        return <tr
+                            key={product_id}
+                            data-hasdiscount={discount > 0}
+                            data-row="product"
+                        >
                             <td>
                                 <div data-type="thumbnail" style={{ backgroundImage: `url(${thumbnail})` }}></div>
                             </td>
@@ -389,19 +371,50 @@ function Cart({
                         </tr>
                     })}
 
-                    {!hideTTP && TABLE_ETA_ROW}
-
-                    {!hideInstructions && <tr data-section="instructions">
+                    {!hideInstructions && <tr data-row="instructions">
                         <td colSpan={4}>
-                            <fieldset className="w-full flex flex-col justify-start items-start gap-2 my-4">
-                                <legend className="flex flex-row justify-start items-center gap-2">
-                                    <Icon name="Notes" />
+                            <fieldset className="w-full flex flex-col justify-start items-start gap-2 mt-4">
+                                <legend>
+                                    <label htmlFor="special_instructions">
+                                        <Tag variant="secondary">
+                                            <Icon name="Notes" />
 
-                                    Instruções (Opcional)
+                                            Instruções (Opcional)
+                                        </Tag>
+                                    </label>
                                 </legend>
 
-                                <textarea placeholder="Tem alergias? Quer substituir ingredientes?" title="Instruções de preparo" name="special_instructions" className="w-full" rows={3}></textarea>
+                                <textarea id="special_instructions" placeholder="Tem alergias? Quer substituir ingredientes?" title="Instruções de preparo" name="special_instructions" className="w-full" rows={3}></textarea>
                             </fieldset>
+                        </td>
+                    </tr>}
+
+                    {!hideTTP && TABLE_ETA_ROW}
+
+                    {(summary.totalPrice > 0) && <tr data-row="coupon">
+                        <td colSpan={4}>
+                            <div className="flex flex-row items-center justify-start gap-2 w-full">
+                                <Icon name="Discount" />
+
+                                <span className="mr-auto">Cupon de desconto</span>
+
+                                <form
+                                    className="ml-auto flex flex-row items-center justify-start flex-nowrap min-w-[300px]"
+                                    data-state={!cart.length ? "disabled" : "idle"}
+                                    onSubmit={applyCouponCode}
+                                >
+                                    <input type="text" name="coupon_code" placeholder="Aplicar cupom de desconto" className="w-full font-semibold text-center uppercase" required />
+
+                                    <Button type="submit" disabled={["applying-coupon"].includes(state)}>
+                                        {(state === "applying-coupon")
+                                            ? <Icon name="Loading" className="animate-spin" />
+                                            : <Icon name="Coupon" />
+                                        }
+
+                                        Aplicar
+                                    </Button>
+                                </form>
+                            </div>
                         </td>
                     </tr>}
                 </tbody>
