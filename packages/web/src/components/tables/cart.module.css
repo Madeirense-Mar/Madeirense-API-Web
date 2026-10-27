@@ -2,6 +2,7 @@
     --cart-height-offset: 60px;
 }
 
+/*#region Table =========================================== */
 .table {
     --img-size: 252px;
     --row-height: var(--cart-height-offset);
@@ -89,7 +90,7 @@
 }
 
 .table tr td[data-cell="price"] {
-    
+
     border-left: var(--border-dotted-width) dotted var(--border-dotted-color);
 }
 
@@ -111,6 +112,9 @@
     text-transform: uppercase;
 }
 
+/*#endregion*/
+
+/*#region Wrapper ========================================= */
 .wrapper {
     --cart-top-position: 100%;
 
@@ -196,11 +200,18 @@
     --cart-top-position: 0%;
 }
 
+/*#endregion*/
+
+/*#region Cart ============================================ */
 .cart {
     composes: table;
+
+    --table-cell-hovered-background-color: transparent;
 }
 
+/*#endregion*/
 
+/*#region Order =========================================== */
 .order {
     composes: table;
 }
@@ -224,7 +235,9 @@
     background-color: var(--secondary);
 }
 
+/*#endregion*/
 
+/*#region Media =========================================== */
 @media only screen and (min-width: 344px) {}
 
 @media only screen and (min-width: 428px) {}
@@ -236,3 +249,5 @@
 }
 
 @media only screen and (min-width: 1366px) {}
+
+/*#endregion*/
