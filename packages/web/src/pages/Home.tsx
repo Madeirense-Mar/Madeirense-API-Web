@@ -1,18 +1,5 @@
-import { 
-    useEffect, 
-    useState
-} from "react";
-
 import { useSearchParams } from "react-router-dom";
 
-import { 
-    findNearestRestaurantWithLocation,
-    type restaurantType, 
-} from "@Madeirense/shared";
-
-import { useApp } from "contexts/App";
-
-import Icon from "components/icon";
 import MenuProductsGrid from "components/grids/products/menu";
 
 import type { 
