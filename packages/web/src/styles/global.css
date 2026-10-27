@@ -231,6 +231,7 @@ a:visited:hover {
 
 /*#region Containers ====================================== */
 main {
+    --default-margin-x: auto;
     --default-margin-y: 0px;
     --default-padding-x: 0px;
 
@@ -247,8 +248,8 @@ main {
     overflow-y: auto;
 
     margin-bottom: var(--main-margin-y, var(--default-margin-y));
-    margin-left: var(--main-margin-x, auto);
-    margin-right: var(--main-margin-x, auto);
+    margin-left: var(--main-margin-x, var(--default-margin-x));
+    margin-right: var(--main-margin-x, var(--default-margin-x));
     margin-top: var(--main-margin-y, var(--default-margin-y));
 
     width: var(--main-width, var(--main-base-width));
