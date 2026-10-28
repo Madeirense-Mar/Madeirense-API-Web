@@ -365,15 +365,15 @@ function ProfilePage() {
             try {
                 switch (target.name) {
                     case UniqueFields.email:
-                        if ((target as HTMLInputElement).value === "") break;
-                        
-                        searchKey = (target as HTMLInputElement).name;
+                        const $inputValue = (target as HTMLInputElement).value;
+
+                        if ($inputValue === "") break;
+
+                        searchKey = target.name;
 
                         setValidationStates(vs => ({ ...vs, [searchKey]: true }));
 
-                        foundUser = await usersAPI.search({
-                            [(target as HTMLInputElement).name]: (target as HTMLInputElement).value
-                        });
+                        foundUser = await usersAPI.search({ [target.name]: $inputValue });
 
                         break;
 
@@ -384,11 +384,11 @@ function ProfilePage() {
                         const $formData = new FormData($accountFormRef.current);
 
                         if ($formData.get("phone") as string == "") break;
-                        
+
                         searchKey = "phone";
 
                         setValidationStates(vs => ({ ...vs, [searchKey]: true }));
-                        
+
                         foundUser = await usersAPI.search({
                             "phone": [
                                 $formData.get("code") as string,
@@ -415,7 +415,7 @@ function ProfilePage() {
                 updatePage(p => ({ ...p, error: error as Error }));
             } finally {
                 if (searchKey === "") return;
-                
+
                 setValidationStates(vs => ({ ...vs, [searchKey]: false }));
             }
         }, 5000);
