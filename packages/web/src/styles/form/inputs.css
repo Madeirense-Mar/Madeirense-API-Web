@@ -76,6 +76,11 @@ textarea {
     border-bottom: var(--input-border-width, 1px) solid var(--input-border-color, var(--base-input-border-color, var(--neutral-light)));
 }
 
+[data-theme*="DARK"] select:active,
+[data-theme*="DARK"] select:focus {
+    --base-input-background-color: var(--neutral-dark);
+}
+
 [data-theme*="DARK"] input,
 [data-theme*="DARK"] select,
 [data-theme*="DARK"] textarea {

@@ -17,9 +17,9 @@ main[data-view="product-table"] > header {
     @apply flex flex-row justify-start items-center gap-2;
     z-index: 20;
     position: absolute;
-    top: var(--container-padding);
+    top: var(--container-padding-s);
     left: 100%;
-    transform: translate(calc(-100% - var(--container-padding) - 20px), 20px);
+    transform: translate(calc(-100% - var(--container-padding-s) - 20px), 20px);
 }
 
 main[data-view="product-table"] > header span {
@@ -51,8 +51,8 @@ main[data-view="product-table"] table tbody tr td > div {
 }
 
 main[data-view="product-table"] table tbody tr td {
-    --py: calc(var(--container-padding) * 1);
-    --px: calc(var(--container-padding) * 3);
+    --py: calc(var(--container-padding-s) * 1);
+    --px: calc(var(--container-padding-s) * 3);
 
     padding-left: var(--px);
     padding-right: var(--px);

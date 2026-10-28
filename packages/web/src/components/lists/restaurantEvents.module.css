@@ -44,7 +44,7 @@
     padding-top: 0px;
     padding-left: 0px;
     padding-right: 0px;
-    padding-bottom: var(--container-padding);
+    padding-bottom: var(--container-padding-s);
     height: var(--h);
     max-height: var(--h);
     min-height: var(--h);
@@ -54,7 +54,7 @@
 }
 
 .viewport .card div[data-area]:not([data-area="video"]) {
-    padding-left: var(--container-padding);
-    padding-right: var(--container-padding);
+    padding-left: var(--container-padding-s);
+    padding-right: var(--container-padding-s);
 }
 /*#endregion*/

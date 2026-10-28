@@ -25,20 +25,23 @@
     --success-dark: #1a3404;
     /*#endregion*/
 
+    /*#region Base border sizes*/
+    --border-width: 1px;
+    /*#endregion*/
+
     /*#region Base element sizes*/
     --base-notification-height: 70px;
     /*#endregion*/
 
     /*#region Spacing*/
-    --base-padding: 24px;
-    --container-padding: 32px;
-
     --gap-xl: 20px;
     --gap-l: 16px;
     --gap-m: 12px;
     --gap-s: 8px;
     --gap-xs: 4px;
 
+    --container-padding-s: 32px;
+    --container-padding-xs: 24px;
     --padding-xl: 20px;
     --padding-l: 16px;
     --padding-m: 12px;
@@ -50,10 +53,6 @@
     --margin-m: 12px;
     --margin-s: 8px;
     --margin-xs: 4px;
-
-    --border-width: 1px;
-
-    --page-margin: 12px;
     /*#endregion*/
 }
 
@@ -239,10 +238,10 @@ main {
 
     height: auto;
 
-    padding-bottom: var(--main-padding-y, var(--container-padding));
+    padding-bottom: var(--main-padding-y, var(--container-padding-s));
     padding-left: var(--main-padding-x, var(--default-padding-x));
     padding-right: var(--main-padding-x, var(--default-padding-x));
-    padding-top: var(--main-padding-y, var(--container-padding));
+    padding-top: var(--main-padding-y, var(--container-padding-s));
 
     overflow-x: hidden;
     overflow-y: auto;

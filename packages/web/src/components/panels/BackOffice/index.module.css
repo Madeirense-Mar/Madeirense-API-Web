@@ -11,7 +11,7 @@
     height: calc(100% - 70px);
     width: calc(100% - 52px);
 
-    padding: var(--base-padding) 10vw;
+    padding: var(--container-padding-xs) 10vw;
 
     background-color: var(--panel-background-color, var(--base-section-background-color));
 

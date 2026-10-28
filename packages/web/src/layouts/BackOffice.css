@@ -15,7 +15,7 @@
 #root[data-page="back-office"]>main>section {
     border-radius: 12px;
 
-    padding: var(--base-padding);
+    padding: var(--container-padding-xs);
 }
 
 #root[data-page="back-office"]>main>section:not(:last-of-type) {
@@ -29,12 +29,8 @@
 /*#endregion*/
 
 /*#region Section ========================================= */
-section:not([class]) header {
+#root[data-page="back-office"] section:not([class]) header {
     @apply mb-3;
-}
-
-section header select {
-    background-color: transparent;
 }
 
 /*#endregion*/
