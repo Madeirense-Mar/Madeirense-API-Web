@@ -59,6 +59,7 @@ import type {
 
 // ***************************************************************************************************************
 
+//#region Enumerators and types ---------------------------
 enum Forms {
     "profile" = "profile",
     "locations" = "locations",
@@ -89,8 +90,10 @@ type stateType = {
     preferences: appPreferencesType,
     alerts?: Partial<Record<keyof typeof UniqueFields, string>>
 };
+//#endregion
 
-const defaultData: partialDeliveryLocationType = {
+//#region Default values ----------------------------------
+const DEFAULT_DELIVERY_LOCATION_DATA: partialDeliveryLocationType = {
     address: "",
     city: "",
     country: "Angola",
@@ -107,8 +110,10 @@ const defaultData: partialDeliveryLocationType = {
     latitude: 0,
     longitude: 0,
 };
+//#endregion
 
 function ProfilePage() {
+    //#region Hooks and state declarations ----------------
     const $accountFormRef = useRef<HTMLFormElement | null>(null);
     const $accountSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const $selectRef = useRef<HTMLSelectElement | null>(null);
@@ -162,7 +167,9 @@ function ProfilePage() {
     const [validationStates, setValidationStates] = useState<Record<UniqueFields, boolean>>(Object.fromEntries([
         ...Object.values(UniqueFields).map(v => [v, false])
     ]));
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const favoriteProducts = useMemo(() => (get("Products") ?? []).filter(({ product_id }) => user?.Favorites?.map(p => p.product_id).includes(product_id)), [user, get]);
 
     const defaultPhoneCode = PHONE_CODES.find(pc => (user?.phone || "").includes(pc.code))?.code ?? "";
@@ -178,7 +185,9 @@ function ProfilePage() {
             ...Object.values(validationStates)
         ].includes(true)
     };
+    //#endregion
 
+    //#region Functions -----------------------------------
     function handleDeletion() {
         show(<DeletionForm
             item="profile"
@@ -282,7 +291,7 @@ function ProfilePage() {
 
     function addLocation({ target }: MouseEvent<HTMLButtonElement>) {
         setPickedDeliveryLocation({
-            ...defaultData as any,
+            ...DEFAULT_DELIVERY_LOCATION_DATA as any,
             name: (target as HTMLButtonElement).id,
             location_id: parseInt((target as HTMLButtonElement).value),
             latitude: currentLocation?.latitude as number,
@@ -297,7 +306,7 @@ function ProfilePage() {
         const { longitude, latitude, ...location } = deliveryLocations.find(({ location_id }) => location_id?.toString() === (target as HTMLButtonElement).value) ?? {};
 
         setPickedDeliveryLocation({
-            ...defaultData as any,
+            ...DEFAULT_DELIVERY_LOCATION_DATA as any,
             ...location,
             latitude: parseFloat(`${latitude}`),
             longitude: parseFloat(`${longitude}`)
@@ -496,7 +505,9 @@ function ProfilePage() {
             }));
         }
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         const $root = document.getElementById("root");
 
@@ -528,8 +539,8 @@ function ProfilePage() {
     useEffect(() => {
         if (page.data?.deliveryLocations.length !== 0) return;
 
-        const home = user?.Delivery_Locations?.find(d => d.name === "Casa") ?? { ...defaultData, user_id: user?.user_id, location_id: generateRandomNumbers(6), name: "Casa" };
-        const work = user?.Delivery_Locations?.find(d => d.name === "Trabalho") ?? { ...defaultData, user_id: user?.user_id, location_id: generateRandomNumbers(6), name: "Trabalho" };
+        const home = user?.Delivery_Locations?.find(d => d.name === "Casa") ?? { ...DEFAULT_DELIVERY_LOCATION_DATA, user_id: user?.user_id, location_id: generateRandomNumbers(6), name: "Casa" };
+        const work = user?.Delivery_Locations?.find(d => d.name === "Trabalho") ?? { ...DEFAULT_DELIVERY_LOCATION_DATA, user_id: user?.user_id, location_id: generateRandomNumbers(6), name: "Trabalho" };
 
         updatePage(p => ({
             ...p,
@@ -546,6 +557,7 @@ function ProfilePage() {
         page.data?.deliveryLocations,
         user
     ]);
+    //#endregion
 
     switch (user) {
         case undefined: {

@@ -18,13 +18,15 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
+import { useApp } from "contexts/App";
+import { useNotifications } from "contexts/Notifications";
+import { useProfile } from "contexts/Profile";
+
 import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import { useApp } from "contexts/App";
-import { useNotifications } from "contexts/Notifications";
-import { useProfile } from "contexts/Profile";
+import CartQuantityControlForm from "components/forms/cartQuantityControl";
 
 import styles from './product.module.css';
 
@@ -32,8 +34,10 @@ import type {
     Products
 } from "@Madeirense/database/browser";
 
-import type { variantType, withVariant } from "components/types";
-import CartQuantityControlForm from "components/forms/cartQuantityControl";
+import type { 
+    variantType,
+    withVariant
+} from "components/types";
 
 // ***************************************************************************************************************
 

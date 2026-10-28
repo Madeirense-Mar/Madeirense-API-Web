@@ -26,7 +26,7 @@
 /*#endregion*/
 
 /*#region Form*/
-.page form {
+.page>section>form {
     @apply w-full flex flex-col justify-start items-start gap-10;
 }
 
