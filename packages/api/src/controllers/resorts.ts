@@ -1432,9 +1432,7 @@ export namespace properties {
         }
     }
 
-    type addBedTypesBodyType = ({
-        name: number
-    })[]
+    type addBedTypesBodyType = Pick<Resort_Bed_Types, 'name' | 'sleeps'>[]
 
     export async function addBedTypes(
         req: Request<any, any, addBedTypesBodyType>,
@@ -1442,9 +1440,9 @@ export namespace properties {
     ) {
         try {
             await prisma.resort_Bed_Types.createMany({
-                data: req.body.map(bed => ({
-                    name: Object.entries(bed)[0] as unknown as string,
-                    sleeps: Object.entries(bed)[1] as unknown as number,
+                data: req.body.map(({ name, sleeps }) => ({
+                    name,
+                    sleeps
                 }))
             });
 

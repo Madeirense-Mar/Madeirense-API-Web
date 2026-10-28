@@ -366,7 +366,8 @@ v1.post(
     [
         body().isArray({ min: 1 }).withMessage('Must be an array'),
         body('*').isObject({ strict: true }).withMessage('Bed item must be an object'),
-        body('*.name').isInt({ min: 1 }).withMessage('The number represents the amount of people that fit on this bed'),
+        body('*.name').isString().trim().isLength({ min: 1, max: 50 }).withMessage('Bed type name is required and cannot exceed 50 characters'),
+        body('*.sleeps').isInt({ min: 1 }).withMessage('The number represents the amount of people that fit on this bed'),
         Validate.Handle.error
     ],
     controller.properties.addBedTypes as any
