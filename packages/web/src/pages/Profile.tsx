@@ -354,7 +354,7 @@ function ProfilePage() {
         }
     };
 
-    function validateUniqueFields({ target }: ChangeEvent<HTMLElement>) {
+    function validateUniqueFields({ target }: ChangeEvent<HTMLElement & { name: string }>) {
         if ($accountSearchTimeoutRef.current)
             clearTimeout($accountSearchTimeoutRef.current);
 
@@ -363,8 +363,8 @@ function ProfilePage() {
             let searchKey: string = "";
 
             try {
-                switch (target.tagName.toLowerCase()) {
-                    case "input":
+                switch (target.name) {
+                    case UniqueFields.email:
                         if ((target as HTMLInputElement).value === "") break;
                         
                         searchKey = (target as HTMLInputElement).name;
@@ -377,7 +377,8 @@ function ProfilePage() {
 
                         break;
 
-                    case "select":
+                    case "code":
+                    case UniqueFields.phone:
                         if (!$accountFormRef.current) break;
 
                         const $formData = new FormData($accountFormRef.current);
@@ -398,6 +399,8 @@ function ProfilePage() {
                         break;
                 }
 
+                if (searchKey === "") return;
+
                 updatePage(p => ({
                     ...p,
                     data: {
@@ -411,6 +414,8 @@ function ProfilePage() {
             } catch (error) {
                 updatePage(p => ({ ...p, error: error as Error }));
             } finally {
+                if (searchKey === "") return;
+                
                 setValidationStates(vs => ({ ...vs, [searchKey]: false }));
             }
         }, 5000);
