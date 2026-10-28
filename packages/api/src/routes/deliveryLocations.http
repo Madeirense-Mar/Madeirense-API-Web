@@ -1,0 +1,109 @@
+# =============================================================================
+# Madeirense API — /api/v1/delivery-locations
+# Source: packages/api/src/routes/deliveryLocations.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/delivery-locations
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All delivery locations — roles: Admin, System
+GET {{baseUrl}}/all?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Selected delivery locations by id — roles: Admin, System
+GET {{baseUrl}}/all?page=1&limit=10&selected=1&selected=2
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### My delivery locations
+GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Create a delivery location
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Casa",
+  "address": "Rua Major Kanhangulo 100",
+  "street_name": "Rua Major Kanhangulo",
+  "street_number": "100",
+  "city": "Luanda",
+  "state": "Luanda",
+  "country": "Angola",
+  "latitude": -8.8147,
+  "longitude": 13.2302,
+  "preferred": true,
+  "special_instructions": "Portão azul, 2.º andar"
+}
+
+### Delivery location by id
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Partially update a delivery location
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "preferred": false,
+  "special_instructions": "Ligar ao chegar"
+}
+
+### Replace a delivery location
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Trabalho",
+  "address": "Avenida 4 de Fevereiro 50",
+  "street_name": "Avenida 4 de Fevereiro",
+  "street_number": "50",
+  "city": "Luanda",
+  "state": "Luanda",
+  "country": "Angola",
+  "latitude": -8.8105,
+  "longitude": 13.2340,
+  "preferred": false
+}
+
+### Delete a delivery location
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

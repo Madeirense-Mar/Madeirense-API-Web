@@ -1,0 +1,91 @@
+# =============================================================================
+# Madeirense API — /api/v1/push-notifications
+# Source: packages/api/src/routes/pushNotifications.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/push-notifications
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Push to one user — roles: Admin
+# payload.notificationId must contain "MXP$" (e.g. MXP$ORDER_STATUS_UPDATE, MXP$BACK_OFFICE)
+POST {{baseUrl}}/push
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "user_id": 1,
+  "payload": {
+    "notificationId": "MXP$BACK_OFFICE",
+    "data": {
+      "title": "Teste",
+      "body": "Notificação de teste."
+    }
+  }
+}
+
+### Push to several users (2 or more) — roles: Admin
+POST {{baseUrl}}/batch/push
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "user_ids": [1, 2],
+  "payload": {
+    "notificationId": "MXP$BACK_OFFICE",
+    "data": {
+      "title": "Teste",
+      "body": "Notificação de teste."
+    }
+  }
+}
+
+### Subscribe to web push (browser PushSubscription JSON)
+POST {{baseUrl}}/subscribe
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "endpoint": "https://fcm.googleapis.com/fcm/send/REPLACE_WITH_ENDPOINT_ID",
+  "expirationTime": null,
+  "keys": {
+    "auth": "REPLACE_WITH_AUTH_KEY",
+    "p256dh": "REPLACE_WITH_P256DH_KEY"
+  }
+}
+
+### Remove one subscription
+DELETE {{baseUrl}}/unsubscribe/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Remove all subscriptions
+DELETE {{baseUrl}}/unsubscribe-all/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

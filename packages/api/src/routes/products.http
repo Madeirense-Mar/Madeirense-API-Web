@@ -1,0 +1,154 @@
+# =============================================================================
+# Madeirense API — /api/v1/products
+# Source: packages/api/src/routes/products.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/products
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All products (public)
+# product_composition: meat | fish | wheat | vegetable | alcoholic | non_alcoholic
+# product_type: starter | main | dessert | beverage | ticket
+# group: event | menu   ·   gt / lt: price range
+GET {{baseUrl}}?page=1&limit=10&group=menu&product_type=main&gt=1000&lt=20000
+x-api-key: {{apiKey}}
+
+### Product by id (public)
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+
+### Product comments (public)
+GET {{baseUrl}}/1/comments?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Delisted products — roles: Admin, Staff
+GET {{baseUrl}}/filtered/delisted?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Create a product — roles: Admin, Staff
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Calulu de peixe",
+  "price": 8500.00,
+  "restaurant_id": 1,
+  "thumbnail": "https://example.com/images/calulu.jpg",
+  "description": "Calulu tradicional de peixe seco com funge.",
+  "product_composition": "fish",
+  "product_type": "main",
+  "discount": 0,
+  "prep_time_minutes": 25
+}
+
+### Create products in batch — roles: System
+POST {{baseUrl}}/batch
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "products": [
+    {
+      "name": "Muamba de galinha",
+      "price": 9000.00,
+      "restaurant_id": 1,
+      "description": "Muamba de galinha com quiabos e funge.",
+      "product_composition": "meat",
+      "product_type": "main",
+      "prep_time_minutes": 30
+    },
+    {
+      "name": "Sumo de múcua",
+      "price": 1500.00,
+      "restaurant_id": 1,
+      "product_composition": "non_alcoholic",
+      "product_type": "beverage",
+      "prep_time_minutes": 3
+    }
+  ]
+}
+
+### Apply a discount (0–100 %) to several products — roles: Admin, Staff
+PATCH {{baseUrl}}/batch/discount
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "discount": 10,
+  "product_ids": [1, 2]
+}
+
+### Clear all discounts — roles: Admin, Staff
+PATCH {{baseUrl}}/batch/discount/clear
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Partially update a product — roles: Admin, Staff
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "price": 9000.00,
+  "prep_time_minutes": 20
+}
+
+### Recover a deleted product — roles: Admin, Staff
+PATCH {{baseUrl}}/1/recover
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Replace a product — roles: Admin, Staff
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Calulu de peixe",
+  "price": 8800.00,
+  "restaurant_id": 1,
+  "description": "Calulu tradicional de peixe seco com funge.",
+  "product_composition": "fish",
+  "product_type": "main",
+  "prep_time_minutes": 25
+}
+
+### Delete a product — roles: Admin, Staff
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

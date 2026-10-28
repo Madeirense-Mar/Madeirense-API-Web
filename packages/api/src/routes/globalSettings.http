@@ -1,0 +1,69 @@
+# =============================================================================
+# Madeirense API — /api/v1/global-settings
+# Source: packages/api/src/routes/globalSettings.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/global-settings
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Global settings (public)
+GET {{baseUrl}}
+x-api-key: {{apiKey}}
+
+### Restaurant theme (public)
+GET {{baseUrl}}/restaurant-theme/1
+x-api-key: {{apiKey}}
+
+### Settings version (public)
+GET {{baseUrl}}/version
+x-api-key: {{apiKey}}
+
+### Eligible payment types (public)
+GET {{baseUrl}}/eligible-payments
+x-api-key: {{apiKey}}
+
+### Update settings (at least one of avg_ttd, avg_ttp, auto_assign_driver, order_threshold, prep_buffer) — roles: Admin
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "avg_ttd": 30,
+  "avg_ttp": 20,
+  "auto_assign_driver": true,
+  "order_threshold": 15,
+  "prep_buffer": 5
+}
+
+### Set the eligible payment types — roles: Admin
+# Accepted: Bank_Transfer, Cash, Credit_Card, Debit_Card, Multicaixa_Express, PayPal, …
+POST {{baseUrl}}/1/eligible-payments
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "payments": ["Debit_Card", "Multicaixa_Express"]
+}

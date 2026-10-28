@@ -1,0 +1,78 @@
+# =============================================================================
+# Madeirense API — /api/v1/reviews
+# Source: packages/api/src/routes/reviews.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/reviews
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All reviews (public)
+GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Review by id (public)
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+
+### Review an order
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "order_id": 1,
+  "rating": 5,
+  "comment": "Entrega rápida e comida quente."
+}
+
+### My reviews
+GET {{baseUrl}}/mine?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Update my review
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "order_id": 1,
+  "rating": 4,
+  "comment": "Boa comida, entrega um pouco atrasada."
+}
+
+### Delete my review
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Delete any review — roles: Admin
+DELETE {{baseUrl}}/1/admin
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

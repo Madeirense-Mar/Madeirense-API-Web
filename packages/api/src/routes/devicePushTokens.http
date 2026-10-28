@@ -1,0 +1,44 @@
+# =============================================================================
+# Madeirense API — /api/v1/device-tokens
+# Source: packages/api/src/routes/devicePushTokens.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/device-tokens
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Register an FCM device token
+POST {{baseUrl}}/register
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "token": "REPLACE_WITH_FCM_DEVICE_TOKEN",
+  "platform": "android"
+}
+
+### Unregister a device token
+DELETE {{baseUrl}}/REPLACE_WITH_FCM_DEVICE_TOKEN
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

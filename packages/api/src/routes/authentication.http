@@ -1,0 +1,95 @@
+# =============================================================================
+# Madeirense API — /api/v1/auth
+# Source: packages/api/src/routes/authentication.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the tokens are read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/auth
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+@refreshToken = {{login.response.body.$.tokens.refreshToken}}
+
+### Log in (mobile) — tokens are returned in the response body
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Log in (web) — tokens are set as sessionToken / refreshToken cookies
+POST {{baseUrl}}/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Current user (passport JWT strategy)
+GET {{baseUrl}}/me
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Does the user have a password set? (e.g. accounts created via Google/Facebook)
+GET {{baseUrl}}/has-credentials
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Set a password (minimum length, at least 1 number and 1 symbol)
+POST {{baseUrl}}/set-credentials
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "password": "N3wP@ssword!"
+}
+
+### Who am I
+POST {{baseUrl}}/who-am-i
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Refresh the session token
+POST {{baseUrl}}/refresh
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Log out (clears the auth cookies)
+POST {{baseUrl}}/logout
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# OAuth — full-page browser redirects, exempt from x-api-key.
+# Open these URLs in a browser rather than sending them from here.
+# /google/callback and /facebook/callback are called by the providers.
+# -----------------------------------------------------------------------------
+
+### Google sign-in (open in a browser)
+GET {{baseUrl}}/google
+
+### Facebook sign-in (open in a browser)
+GET {{baseUrl}}/facebook

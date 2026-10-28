@@ -1,0 +1,151 @@
+# =============================================================================
+# Madeirense API — /api/v1/statistics
+# Source: packages/api/src/routes/statistics.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/statistics
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+# Every route here: roles Admin, Staff.
+# Shared optional queries: restaurant_id, from / to (ISO-8601), quantity (1–100), strict (true | false)
+
+### Overview
+GET {{baseUrl}}/overview?restaurant_id=1&from=2026-01-01&to=2026-10-31
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# GET /count/:table/per/:column
+# Supported: Orders/status · Products/product_type · Payments/payment_method ·
+#            Payments/status · Resort_Bookings/status
+# -----------------------------------------------------------------------------
+
+### Orders per status
+GET {{baseUrl}}/count/Orders/per/status?from=2026-01-01&to=2026-10-31
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Products per type
+GET {{baseUrl}}/count/Products/per/product_type
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Payments per method
+GET {{baseUrl}}/count/Payments/per/payment_method
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Resort bookings per status
+GET {{baseUrl}}/count/Resort_Bookings/per/status
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# GET /:table/:relation/count — Orders/Restaurants · Restaurants/Orders
+# -----------------------------------------------------------------------------
+
+### Orders per restaurant
+GET {{baseUrl}}/Orders/Restaurants/count?from=2026-01-01&to=2026-10-31
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Restaurants' order counts
+GET {{baseUrl}}/Restaurants/Orders/count
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# GET /:table/:relation/top
+# Users/Orders (user_role: Driver | Customer) ·
+# Delivery_Locations/Orders (group_by: neighborhood | city | state | country) ·
+# Products/Orders · Restaurants/Orders · Restaurant_Events/Tickets_Purchased
+# -----------------------------------------------------------------------------
+
+### Top customers by orders
+GET {{baseUrl}}/Users/Orders/top?user_role=Customer&quantity=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Top delivery areas
+GET {{baseUrl}}/Delivery_Locations/Orders/top?group_by=neighborhood&quantity=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Top products
+GET {{baseUrl}}/Products/Orders/top?quantity=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Top restaurants
+GET {{baseUrl}}/Restaurants/Orders/top?quantity=5
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Top events by tickets sold
+GET {{baseUrl}}/Restaurant_Events/Tickets_Purchased/top?quantity=5
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# GET /:table/:relation/:action/count — Coupons/Orders/use
+# -----------------------------------------------------------------------------
+
+### Coupon usage in orders
+GET {{baseUrl}}/Coupons/Orders/use/count
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# GET /:table/report/:fact — Orders · fact: revenue | delivery_time | peak_hours
+# interval: daily | monthly | yearly · month: 1–12 · year: 2025 – current
+# -----------------------------------------------------------------------------
+
+### Revenue report
+GET {{baseUrl}}/Orders/report/revenue?interval=monthly&year=2026
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Delivery time report
+GET {{baseUrl}}/Orders/report/delivery_time?interval=daily&year=2026&month=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Peak hours report
+GET {{baseUrl}}/Orders/report/peak_hours?from=2026-10-01&to=2026-10-31
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

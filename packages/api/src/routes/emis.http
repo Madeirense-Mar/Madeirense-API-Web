@@ -1,0 +1,23 @@
+# =============================================================================
+# Madeirense API — /api/v1/emis
+# Source: packages/api/src/routes/emis.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/emis
+@apiKey = REPLACE_WITH_API_KEY
+
+@callbackSecret = REPLACE_WITH_EMIS_CALLBACK_SECRET
+
+### EMIS payment callback (server-to-server; exempt from x-api-key)
+# status: completed | success → completed, failed | declined → failed
+POST {{baseUrl}}/callback
+Content-Type: application/json
+x-emis-callback-secret: {{callbackSecret}}
+
+{
+  "reference": "REPLACE_WITH_GATEWAY_REFERENCE",
+  "status": "completed"
+}

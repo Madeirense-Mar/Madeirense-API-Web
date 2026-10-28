@@ -1,0 +1,113 @@
+# =============================================================================
+# Madeirense API — /api/v1/coupons
+# Source: packages/api/src/routes/coupons.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/coupons
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All coupons (public)
+GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Validate a coupon code
+POST {{baseUrl}}/validate
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "code": "WELCOME10"
+}
+
+### Coupon by id
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Create a coupon — roles: Admin
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "code": "WELCOME10",
+  "discount": 10.00,
+  "expires_at": "2026-12-31T23:59:59.000Z"
+}
+
+### Expire coupons in batch — roles: Admin
+PATCH {{baseUrl}}/batch/expire
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "coupon_ids": [1, 2]
+}
+
+### Renew coupons in batch — roles: Admin
+PATCH {{baseUrl}}/batch/renew
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "coupon_ids": [1, 2],
+  "expires_at": "2027-03-31T23:59:59.000Z"
+}
+
+### Partially update a coupon (any of code, discount, expires_at) — roles: Admin
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "discount": 15.00
+}
+
+### Replace a coupon — roles: Admin
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "code": "WELCOME15",
+  "discount": 15.00,
+  "expires_at": "2026-12-31T23:59:59.000Z"
+}
+
+### Delete a coupon — roles: Admin
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

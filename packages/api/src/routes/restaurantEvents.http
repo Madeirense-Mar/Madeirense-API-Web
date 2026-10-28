@@ -1,0 +1,137 @@
+# =============================================================================
+# Madeirense API — /api/v1/restaurant-events
+# Source: packages/api/src/routes/restaurantEvents.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/restaurant-events
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All events (public)
+GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Event by id
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Bought tickets — roles: Admin
+GET {{baseUrl}}/bought-tickets?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### My tickets
+GET {{baseUrl}}/my-tickets?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### My ticket by id
+GET {{baseUrl}}/my-tickets/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Buy tickets for an event
+POST {{baseUrl}}/1/purchase
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 2
+}
+
+### Validate a ticket at the door — roles: Admin, Staff
+POST {{baseUrl}}/validate-ticket
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "token": "REPLACE_WITH_TICKET_TOKEN"
+}
+
+### Create an event — roles: Admin
+# event_date must not be in the past; start_time must be before end_time (HH:MM)
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "restaurant_id": 1,
+  "name": "Noite de Kizomba",
+  "event_date": "2026-12-12",
+  "start_time": "20:00",
+  "end_time": "23:30",
+  "description": "Música ao vivo e menu de degustação.",
+  "price": 15000.00,
+  "spots": 80
+}
+
+### Partially update an event (date, start_time and end_time go together) — roles: Admin
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "price": 12500.00,
+  "spots": 100
+}
+
+### Replace an event — roles: Admin
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "restaurant_id": 1,
+  "name": "Noite de Kizomba",
+  "event_date": "2026-12-19",
+  "start_time": "20:30",
+  "end_time": "23:59",
+  "description": "Música ao vivo e menu de degustação.",
+  "price": 15000.00,
+  "spots": 80
+}
+
+### Cancel an event — roles: Admin
+PATCH {{baseUrl}}/1/cancel
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Delete an event — roles: Admin
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

@@ -1,0 +1,73 @@
+# =============================================================================
+# Madeirense API — /api/v1/emails
+# Source: packages/api/src/routes/emails.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/emails
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Unsubscribe (link clicked from an e-mail; exempt from x-api-key)
+GET {{baseUrl}}/unsubscribe?token=REPLACE_WITH_UNSUBSCRIBE_TOKEN
+
+### One-click unsubscribe (RFC 8058, sent by Gmail/Outlook)
+POST {{baseUrl}}/unsubscribe?token=REPLACE_WITH_UNSUBSCRIBE_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+List-Unsubscribe=One-Click
+
+### List e-mail templates — roles: Admin
+GET {{baseUrl}}/templates
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Send a template to specific users (1–1000 ids) — roles: Admin
+POST {{baseUrl}}/send
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "user_ids": [1, 2],
+  "template": "welcome",
+  "variables": {
+    "name": "Cliente"
+  }
+}
+
+### Broadcast to an audience (customers | staff | drivers | everyone) — roles: Admin
+POST {{baseUrl}}/broadcast
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "audience": "customers",
+  "subject": "Novidades da semana",
+  "heading": "Novo menu de marisco",
+  "body": "Experimente os novos pratos de marisco disponíveis esta semana.",
+  "cta_label": "Ver menu",
+  "cta_url": "https://example.com/menu",
+  "image_url": "https://example.com/images/marisco.jpg"
+}

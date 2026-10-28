@@ -1,0 +1,142 @@
+# =============================================================================
+# Madeirense API — /api/v1/orders
+# Source: packages/api/src/routes/orders.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/orders
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All orders (type: delivery | ticket) — roles: Admin, Staff
+GET {{baseUrl}}?page=1&limit=10&type=delivery
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Create an order from the cart
+# cartType: all | delivery | event | resort
+# payment_method: Debit_Card | Multicaixa_Express | Offer
+# delivery_address: delivery location id
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "cartType": "delivery",
+  "restaurant_id": 1,
+  "payment_method": "Multicaixa_Express",
+  "delivery_address": 1,
+  "contact_phone": "+244923000000",
+  "special_instructions": "Sem cebola, por favor."
+}
+
+### My orders (type: delivery | ticket)
+GET {{baseUrl}}/mine?page=1&limit=10&type=delivery
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Order by id
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Order status history
+GET {{baseUrl}}/1/history
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Update order status (pending | confirmed | preparing | ready) — roles: Admin, Driver, Staff
+PATCH {{baseUrl}}/1/status
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "status": "preparing",
+  "notes": "Em preparação na cozinha."
+}
+
+### Order chat messages — roles: Admin, Customer, Driver, Staff
+GET {{baseUrl}}/1/chat-messages?page=1&limit=20
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Post a chat message — roles: Admin, Customer, Driver, Staff
+POST {{baseUrl}}/1/chat-messages
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "order_id": 1,
+  "message_text": "Estou a chegar, 5 minutos."
+}
+
+### Cancel an order — roles: Admin, Staff, Customer
+PATCH {{baseUrl}}/1/cancel
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "notes": "Cliente pediu o cancelamento por telefone."
+}
+
+### Assign a driver — roles: Admin, Staff
+POST {{baseUrl}}/1/assign
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "restaurant_id": 1,
+  "courier_id": 2,
+  "notes": "Entrega prioritária."
+}
+
+### Reallocate to another driver (notes: 10–500 chars) — roles: Admin, Staff
+POST {{baseUrl}}/1/reallocate
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "restaurant_id": 1,
+  "courier_id": 3,
+  "notes": "O motorista anterior teve uma avaria."
+}
+
+### Delete an order — roles: Admin
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

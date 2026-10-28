@@ -1,0 +1,51 @@
+# =============================================================================
+# Madeirense API — /api/v1/courier-positions
+# Source: packages/api/src/routes/courierPositions.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/courier-positions
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### My current position — roles: Driver
+GET {{baseUrl}}/me
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Courier position for an order
+GET {{baseUrl}}/order/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Ping a position (at least one of latitude, longitude, speed_kph) — roles: Admin, Driver
+PATCH {{baseUrl}}/ping/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "latitude": -8.8390,
+  "longitude": 13.2894,
+  "speed_kph": 32.5
+}

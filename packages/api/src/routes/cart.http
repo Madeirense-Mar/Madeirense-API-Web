@@ -1,0 +1,91 @@
+# =============================================================================
+# Madeirense API — /api/v1/cart
+# Source: packages/api/src/routes/cart.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/cart
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Add a product to the cart
+POST {{baseUrl}}/add
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "product_id": 1,
+  "quantity": 2
+}
+
+### My cart
+GET {{baseUrl}}/mine?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### My cart summary — :type is all | delivery | event | resort
+GET {{baseUrl}}/mine/delivery/summary
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### All cart items
+GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Cart item by id
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Remove several products from the cart
+PATCH {{baseUrl}}/product/remove-items
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "product_ids": [1, 2]
+}
+
+### Remove a product (optionally only part of its quantity)
+DELETE {{baseUrl}}/product/1?quantity=1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Remove a cart item by id
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Clear the cart — :type is all | delivery | event | resort
+DELETE {{baseUrl}}/clear/all
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

@@ -1,0 +1,324 @@
+# =============================================================================
+# Madeirense API — /api/v1/resorts
+# Source: packages/api/src/routes/resorts.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/resorts
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+# -----------------------------------------------------------------------------
+# Resorts
+# -----------------------------------------------------------------------------
+
+### All resorts (public) — withRooms: 0 | 1
+GET {{baseUrl}}?page=1&limit=10&withRooms=1
+x-api-key: {{apiKey}}
+
+### Resort by id (public)
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+
+### Resort rooms (public)
+# amenities / bed_types: repeat the key for an array of ids
+# statuses: Available | Limited | Sold_Out
+GET {{baseUrl}}/1/rooms?page=1&limit=10&amenities=1&amenities=2&bed_types=1&bed_types=2&statuses=Available
+x-api-key: {{apiKey}}
+
+### Create a resort — roles: Admin, Staff
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Madeirense Resort Mussulo",
+  "location": 1,
+  "thumbnail_url": "https://example.com/images/resort.jpg",
+  "video_url": "https://example.com/videos/resort.mp4"
+}
+
+### Update a resort (any of name, location, thumbnail_url, video_url) — roles: Admin, Staff
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Madeirense Resort Mussulo & Spa"
+}
+
+### Delete a resort — roles: Admin, Staff
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# Rooms
+# -----------------------------------------------------------------------------
+
+### Add a room to a resort — roles: Admin, Staff
+POST {{baseUrl}}/1/room
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Suite vista mar",
+  "price_per_night": 95000.00,
+  "quantity": 4,
+  "amenities": [1, 2],
+  "bedTypes": [
+    { "bed_type_id": 1, "quantity": 1 }
+  ],
+  "thumbnail_url_collection": ["https://example.com/images/suite-1.jpg"],
+  "video_url_collection": ["https://example.com/videos/suite-1.mp4"]
+}
+
+### Update several rooms (any of name, price_per_night, quantity) — roles: Admin, Staff
+PATCH {{baseUrl}}/rooms/batch/update
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "list": [1, 2],
+  "price_per_night": 90000.00
+}
+
+### Update a room (any of name, price_per_night, quantity) — roles: Admin, Staff
+PATCH {{baseUrl}}/rooms/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 3
+}
+
+### Add / remove room amenities (ids) — roles: Admin, Staff
+PATCH {{baseUrl}}/rooms/1/amenities
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "adding": [3],
+  "removing": [1]
+}
+
+### Add / remove room bed types — roles: Admin, Staff
+PATCH {{baseUrl}}/rooms/1/bed-types
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "adding": [
+    { "bed_type_id": 2, "quantity": 1 }
+  ],
+  "removing": [1]
+}
+
+### Add / remove room media (media_type: Thumbnail | Video) — roles: Admin, Staff
+PATCH {{baseUrl}}/rooms/1/media
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "adding": [
+    { "media_type": "Thumbnail", "media_url": "https://example.com/images/suite-2.jpg" }
+  ],
+  "removing": [1]
+}
+
+### Delete a room — roles: Admin, Staff
+DELETE {{baseUrl}}/rooms/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+# -----------------------------------------------------------------------------
+# Bookings
+# -----------------------------------------------------------------------------
+
+### Cancellation policies (public)
+GET {{baseUrl}}/bookings/cancellation-policies?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Book a room — roles: Admin, Customer, Staff
+# payment_method: Credit_Card | Debit_Card | PayPal | Cash | Bank_Transfer |
+#                 Payment_Reference | Multicaixa_Express | Offer
+# payment_status: pending | completed | failed | refunded
+POST {{baseUrl}}/1/book
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "room_id": 1,
+  "check_in": "2026-12-20",
+  "check_out": "2026-12-27",
+  "guests": 2,
+  "amount": 665000.00,
+  "payment_method": "Multicaixa_Express",
+  "payment_status": "pending"
+}
+
+### Resort bookings — statuses: pending | confirmed | cancelled | completed — roles: Admin, Customer, Staff
+GET {{baseUrl}}/1/bookings?page=1&limit=10&statuses=pending&statuses=confirmed
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### My bookings
+GET {{baseUrl}}/bookings/mine?page=1&limit=10&statuses=pending&statuses=confirmed
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Booking by id
+GET {{baseUrl}}/bookings/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Booking history
+GET {{baseUrl}}/bookings/1/history?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Update a booking (any of room_id, check_in, check_out, guests, amount, payment_method, status)
+PATCH {{baseUrl}}/bookings/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "check_in": "2026-12-21",
+  "check_out": "2026-12-28",
+  "guests": 3
+}
+
+### Cancel a booking — roles: Admin, Customer, Staff
+# reason_code: GUEST_NO_SHOW | BAD_WEATHER | PAYMENT_ISSUE | DOUBLE_BOOKING |
+#              PERSONAL_EMERGENCY | TRAVEL_RESTRICTIONS | PROPERTY_MAINTENANCE | OWNER_CANCELLATION
+POST {{baseUrl}}/bookings/1/cancel
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "reason_code": "PERSONAL_EMERGENCY"
+}
+
+### Change booking status (pending | confirmed; not cancelled/completed) — roles: Admin, Staff
+PATCH {{baseUrl}}/bookings/1/update/confirmed
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Booking chat messages — roles: Admin, Customer, Staff
+GET {{baseUrl}}/bookings/1/chat?page=1&limit=20
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Post a booking chat message — roles: Admin, Customer, Staff
+POST {{baseUrl}}/bookings/1/chat
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "booking_id": 1,
+  "message_text": "Podemos fazer o check-in mais cedo?"
+}
+
+# -----------------------------------------------------------------------------
+# Properties (amenities and bed types)
+# -----------------------------------------------------------------------------
+
+### Amenities
+GET {{baseUrl}}/properties/amenities?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Add amenities (array of names) — roles: Admin, Staff
+POST {{baseUrl}}/properties/amenities
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+["Wi-Fi", "Ar condicionado", "Piscina"]
+
+### Bed types
+GET {{baseUrl}}/properties/bed-types?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Add bed types (sleeps: how many people fit on the bed) — roles: Admin, Staff
+POST {{baseUrl}}/properties/bed-types
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+[
+  { "name": "Cama de casal", "sleeps": 2 },
+  { "name": "Cama de solteiro", "sleeps": 1 }
+]
+
+### Update a property — :property is amenity | bedType — roles: Admin, Staff
+PATCH {{baseUrl}}/properties/update/bedType/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Cama de casal",
+  "sleeps": 2
+}
+
+### Delete properties by id list — :property is amenity | bedType — roles: Admin, Staff
+DELETE {{baseUrl}}/properties/amenity?list=1&list=2
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

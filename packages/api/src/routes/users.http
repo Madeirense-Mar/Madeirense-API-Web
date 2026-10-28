@@ -1,0 +1,190 @@
+# =============================================================================
+# Madeirense API — /api/v1/users
+# Source: packages/api/src/routes/users.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/users
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Sign up (public)
+# password: minimum length, at least 1 number and 1 symbol
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+
+{
+  "name": "João Manuel",
+  "email": "joao.manuel@example.com",
+  "password": "Str0ng!Pass",
+  "phone": "+244923000000",
+  "user_role": "Customer"
+}
+
+### All users (filters: name, email, phone, roles[]) — roles: Admin
+GET {{baseUrl}}?page=1&limit=10&roles=Driver&roles=Staff
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### My profile
+GET {{baseUrl}}/profile
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Update my profile (PATCH)
+PATCH {{baseUrl}}/profile
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "João Manuel",
+  "email": "joao.manuel@example.com",
+  "phone": "+244923000000",
+  "profile_photo": "https://example.com/images/joao.jpg",
+  "user_role": "Customer"
+}
+
+### Update my profile (PUT)
+PUT {{baseUrl}}/profile
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "João Manuel",
+  "email": "joao.manuel@example.com",
+  "phone": "+244923000000",
+  "profile_photo": "https://example.com/images/joao.jpg",
+  "user_role": "Customer"
+}
+
+### My favorite products
+GET {{baseUrl}}/profile/favorites
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Favorite a product
+POST {{baseUrl}}/profile/favorites/save
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "product_id": 1
+}
+
+### Unfavorite a product
+DELETE {{baseUrl}}/profile/favorites/remove/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Delete my account
+DELETE {{baseUrl}}/profile
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Restaurant staff — roles: Admin
+GET {{baseUrl}}/staff?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Staff member by id — roles: Admin, Driver, Staff
+GET {{baseUrl}}/staff/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Create a staff member (a random password is generated) — roles: Admin
+POST {{baseUrl}}/staff
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Maria Fernanda",
+  "email": "maria.fernanda@example.com",
+  "phone": "+244924000000",
+  "user_role": "Driver",
+  "profile_photo": "https://example.com/images/maria.jpg",
+  "restaurant_id": 1
+}
+
+### User by id — roles: Admin, Customer
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Replace a user — roles: Admin
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "João Manuel",
+  "email": "joao.manuel@example.com",
+  "phone": "+244923000000",
+  "profile_photo": "https://example.com/images/joao.jpg",
+  "user_role": "Staff"
+}
+
+### Delete a user — roles: Admin
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Block a user (expires_at optional) — roles: Admin, Customer
+POST {{baseUrl}}/1/block
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "reason": "Comportamento abusivo no chat.",
+  "expires_at": "2026-12-31T23:59:59.000Z"
+}
+
+### Ongoing processes for a user (orders, bookings…)
+GET {{baseUrl}}/1/processes
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Unblock a user — roles: Admin, Customer
+DELETE {{baseUrl}}/1/unblock
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

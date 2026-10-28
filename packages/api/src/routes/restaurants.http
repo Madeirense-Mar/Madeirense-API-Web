@@ -1,0 +1,141 @@
+# =============================================================================
+# Madeirense API — /api/v1/restaurants
+# Source: packages/api/src/routes/restaurants.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# Run the "login" request first: the token is read from its response.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/restaurants
+@apiKey = REPLACE_WITH_API_KEY
+@email = admin@example.com
+@password = REPLACE_WITH_PASSWORD
+@token = {{login.response.body.$.tokens.sessionToken}}
+
+### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### All restaurants (public)
+GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Restaurant by id (public)
+GET {{baseUrl}}/1
+x-api-key: {{apiKey}}
+
+### Restaurant products (public)
+GET {{baseUrl}}/1/products?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Restaurant events (public)
+GET {{baseUrl}}/1/events?page=1&limit=10
+x-api-key: {{apiKey}}
+
+### Available drivers across all restaurants
+GET {{baseUrl}}/drivers/all?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Available drivers for a restaurant
+GET {{baseUrl}}/1/drivers?page=1&limit=10
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+### Create a restaurant — roles: Admin
+# ttp / ttd: time to prepare / time to destination, in minutes
+POST {{baseUrl}}
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Madeirense Ilha",
+  "ttp": 20,
+  "ttd": 30,
+  "thumbnail_url": "https://example.com/images/ilha.jpg",
+  "location": {
+    "name": "Ilha de Luanda",
+    "address": "Avenida Murtala Mohammed",
+    "city": "Luanda",
+    "country": "Angola",
+    "latitude": -8.7900,
+    "longitude": 13.2380
+  },
+  "schedule": [
+    { "day_of_week": "Monday", "opening_time": "11:00", "closing_time": "23:00", "is_closed": false },
+    { "day_of_week": "Tuesday", "opening_time": "11:00", "closing_time": "23:00", "is_closed": false },
+    { "day_of_week": "Wednesday", "opening_time": "11:00", "closing_time": "23:00", "is_closed": false },
+    { "day_of_week": "Thursday", "opening_time": "11:00", "closing_time": "23:00", "is_closed": false },
+    { "day_of_week": "Friday", "opening_time": "11:00", "closing_time": "23:59", "is_closed": false },
+    { "day_of_week": "Saturday", "opening_time": "11:00", "closing_time": "23:59", "is_closed": false },
+    { "day_of_week": "Sunday", "is_closed": true }
+  ]
+}
+
+### Update several restaurants (any of name, thumbnail_url, schedule, ttd, ttp) — roles: Admin
+PATCH {{baseUrl}}/batch
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "ttp": 25,
+  "ttd": 35
+}
+
+### Partially update a restaurant — roles: Admin
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Madeirense Ilha do Cabo",
+  "ttd": 25
+}
+
+### Replace a restaurant — roles: Admin
+PUT {{baseUrl}}/1
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "name": "Madeirense Ilha",
+  "ttp": 20,
+  "ttd": 30,
+  "location": {
+    "name": "Ilha de Luanda",
+    "address": "Avenida Murtala Mohammed",
+    "city": "Luanda",
+    "country": "Angola",
+    "latitude": -8.7900,
+    "longitude": 13.2380
+  },
+  "schedule": [
+    { "day_of_week": "Monday", "opening_time": "11:00", "closing_time": "23:00", "is_closed": false },
+    { "day_of_week": "Sunday", "is_closed": true }
+  ]
+}
+
+### Delete a restaurant — roles: Admin
+DELETE {{baseUrl}}/1
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}

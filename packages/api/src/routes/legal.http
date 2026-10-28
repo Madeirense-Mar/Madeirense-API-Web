@@ -1,0 +1,18 @@
+# =============================================================================
+# Madeirense API — /api/v1/legal
+# Source: packages/api/src/routes/legal.ts
+#
+# Works with VS Code REST Client, kulala.nvim and JetBrains HTTP Client.
+# =============================================================================
+
+@host = http://localhost:3001
+@baseUrl = {{host}}/api/v1/legal
+@apiKey = REPLACE_WITH_API_KEY
+
+### Terms and conditions (public)
+GET {{baseUrl}}/terms
+x-api-key: {{apiKey}}
+
+### Privacy policy (public)
+GET {{baseUrl}}/privacy
+x-api-key: {{apiKey}}
