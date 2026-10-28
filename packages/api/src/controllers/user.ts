@@ -671,6 +671,12 @@ export async function getUsers(
     try {
         const roles = ([] as $Enums.Users_user_role[]).concat((req.query[Madeirense$Enumerators.SearchQueries.roles] as $Enums.Users_user_role[]) || []);
 
+        const searchParameters = Object.fromEntries(Object.entries({
+            email: req.query["email"],
+            name: req.query["name"],
+            phone: req.query["phone"]
+        }).filter(([key, value]) => value != undefined));
+
         const page = parseInt((req.query[API$Enumerators.SearchQueries.page] as string) ?? '1');
         const limit = parseInt((req.query[API$Enumerators.SearchQueries.limit] as string) ?? DEFAULT_API_LIST_LIMIT.toString());
 
@@ -678,6 +684,7 @@ export async function getUsers(
 
         const where = {
             ...((roles.length > 0) && { user_role: { in: roles } }),
+            ...searchParameters,
             NOT: [
                 { user_role: "Ghost" }
             ]

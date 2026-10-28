@@ -1,12 +1,13 @@
 import { Router } from 'express';
 
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 import {
     $Enums
 } from '@Madeirense/database';
 
 import {
+    Madeirense$Enumerators,
     RANGES
 } from '@Madeirense/shared';
 
@@ -72,6 +73,14 @@ v1.get(
         'Admin'
     ]) as any,
     validatePagination,
+    [
+        param('name').optional({ values: 'falsy' }).isString().withMessage('Name is required'),
+        param('email').optional({ values: 'falsy' }).isEmail().withMessage('Valid email is required'),
+        param('phone').optional({ values: 'falsy' }).isMobilePhone('any', { strictMode: true }).withMessage('Valid phone number required, it must contain a + in the phone number'),
+        param(Madeirense$Enumerators.SearchQueries.roles).optional({ values: 'falsy' }).isArray({ min: 1 }),
+        param(`${Madeirense$Enumerators.SearchQueries.roles}.*`).isIn(Object.values($Enums.Users_user_role)).withMessage('A user only has 1 of the following roles: ' + Object.values($Enums.Users_user_role).join(', ')),
+        Validate.Handle.error
+    ],
     controller.getUsers
 );
 

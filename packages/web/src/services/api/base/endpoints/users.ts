@@ -41,6 +41,15 @@ class UsersEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
+    async favorite(id: number) {
+        const response = await this.client.post<
+            { product_id: typeof id },
+            ReadonlyArray<{ product_id: number }>
+        >(`/users/profile/favorites/save`, { product_id: id });
+
+        return response.data;
+    }
+
     async get(id: number) {
         const response = await this.client.get<Users>(`/users/${id}`);
 
@@ -95,13 +104,11 @@ class UsersEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
-    async favorite(id: number) {
-        const response = await this.client.post<
-            { product_id: typeof id },
-            ReadonlyArray<{ product_id: number }>
-        >(`/users/profile/favorites/save`, { product_id: id });
+    /** Searches the database for the first users matching with the supplied parameters. */
+    async search(params: Partial<Record<keyof Users, string>>) {
+        const response = await this.client.get<Users[]>(`/users`, params);
 
-        return response.data;
+        return response.data?.[0] ?? null;
     }
 
     async unblock(id: number) {

@@ -3,11 +3,10 @@ import {
     useMemo,
     useRef,
     useState,
-    type SubmitEvent,
-    type MouseEvent
+    type ChangeEvent,
+    type MouseEvent,
+    type SubmitEvent
 } from "react";
-
-import { useSearchParams } from "react-router-dom";
 
 import {
     APP_TTL_DEFAULT,
@@ -50,10 +49,13 @@ import DeletionForm from "components/modals/forms/delete";
 import styles from "./Profile.module.css";
 
 import type {
-    Delivery_Locations
+    Delivery_Locations,
+    Users
 } from "@Madeirense/database/browser";
 
-import type { IPageState } from "components/interface";
+import type {
+    IPageState
+} from "components/interface";
 
 // ***************************************************************************************************************
 
@@ -64,6 +66,11 @@ enum Forms {
     "orders" = "orders",
     "settings" = "settings"
 };
+
+enum UniqueFields {
+    email = "email",
+    phone = "phone"
+}
 
 type forms = keyof typeof Forms;
 
@@ -79,8 +86,8 @@ type partialDeliveryLocationType = Omit<Delivery_Locations, (
 
 type stateType = {
     deliveryLocations: (Partial<Delivery_Locations>)[],
-    menu: forms,
-    preferences: appPreferencesType
+    preferences: appPreferencesType,
+    alerts?: Partial<Record<keyof typeof UniqueFields, string>>
 };
 
 const defaultData: partialDeliveryLocationType = {
@@ -102,9 +109,12 @@ const defaultData: partialDeliveryLocationType = {
 };
 
 function ProfilePage() {
+    const $accountFormRef = useRef<HTMLFormElement | null>(null);
+    const $accountSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const $selectRef = useRef<HTMLSelectElement | null>(null);
 
     const { get } = useApp();
+    const { users: usersAPI } = MXP$App.Base.Business.endpoints;
 
     const currentLocation = useCurrentLocation();
 
@@ -122,15 +132,11 @@ function ProfilePage() {
     const { show } = useModal();
     const { push } = useNotifications();
 
-    const [searchParams] = useSearchParams();
-
-    const profileMenu = (searchParams.get("menu") ?? "profile") as forms;
-
     const { Storage } = useMemo(() => MXP$App, []);
 
     const [page, updatePage] = useState<IPageState<stateType, `${("deleting" | "saving")}-${forms}`>>({
         data: {
-            menu: profileMenu,
+            alerts: undefined,
             deliveryLocations: [],
             preferences: DEFAULT_APP_PREFERENCES
         },
@@ -139,9 +145,9 @@ function ProfilePage() {
     });
 
     const {
-        preferences = DEFAULT_APP_PREFERENCES,
-        deliveryLocations = [],
-        menu = profileMenu,
+        alerts,
+        deliveryLocations,
+        preferences
     } = page.data ?? {};
 
     const [pickedDeliveryLocation, setPickedDeliveryLocation] = useState<{
@@ -153,10 +159,25 @@ function ProfilePage() {
     } & parsedAddressObjectType | null>(null);
 
     const [showDeliveryLocationMap, toggleDeliveryLocationMap] = useState(false);
+    const [validationStates, setValidationStates] = useState<Record<UniqueFields, boolean>>(Object.fromEntries([
+        ...Object.values(UniqueFields).map(v => [v, false])
+    ]));
 
     const favoriteProducts = useMemo(() => (get("Products") ?? []).filter(({ product_id }) => user?.Favorites?.map(p => p.product_id).includes(product_id)), [user, get]);
 
     const defaultPhoneCode = PHONE_CODES.find(pc => (user?.phone || "").includes(pc.code))?.code ?? "";
+
+    const assertions = {
+        "cannotPerformAccountUpdate": [
+            ...Object.values(UniqueFields).map(v => alerts?.[v] != undefined),
+            ...Object.values(validationStates)
+        ].includes(true),
+
+        "isAccountFormDisabled": [
+            page.status === "saving-profile",
+            ...Object.values(validationStates)
+        ].includes(true)
+    };
 
     function handleDeletion() {
         show(<DeletionForm
@@ -249,6 +270,12 @@ function ProfilePage() {
         }
     };
 
+    function handlePhoneNumberChange(event: ChangeEvent<HTMLInputElement>) {
+        selectPhoneCode($selectRef)(event);
+
+        validateUniqueFields(event);
+    };
+
     function showMap() {
         toggleDeliveryLocationMap(true)
     };
@@ -327,6 +354,68 @@ function ProfilePage() {
         }
     };
 
+    function validateUniqueFields({ target }: ChangeEvent<HTMLElement>) {
+        if ($accountSearchTimeoutRef.current)
+            clearTimeout($accountSearchTimeoutRef.current);
+
+        $accountSearchTimeoutRef.current = setTimeout(async () => {
+            let foundUser: Users | null = null;
+            let searchKey: string = "";
+
+            try {
+                switch (target.tagName.toLowerCase()) {
+                    case "input":
+                        if ((target as HTMLInputElement).value === "") break;
+                        
+                        searchKey = (target as HTMLInputElement).name;
+
+                        setValidationStates(vs => ({ ...vs, [searchKey]: true }));
+
+                        foundUser = await usersAPI.search({
+                            [(target as HTMLInputElement).name]: (target as HTMLInputElement).value
+                        });
+
+                        break;
+
+                    case "select":
+                        if (!$accountFormRef.current) break;
+
+                        const $formData = new FormData($accountFormRef.current);
+
+                        if ($formData.get("phone") as string == "") break;
+                        
+                        searchKey = "phone";
+                        
+                        setValidationStates(vs => ({ ...vs, [searchKey]: true }));
+                        
+                        foundUser = await usersAPI.search({
+                            "phone": [
+                                $formData.get("code") as string,
+                                $formData.get("phone") as string
+                            ].join('')
+                        });
+
+                        break;
+                }
+
+                updatePage(p => ({
+                    ...p,
+                    data: {
+                        ...p.data,
+                        alerts: {
+                            [searchKey]: (foundUser && foundUser.user_id != user?.user_id) ? `Já existe uma conta com este ${searchKey}` : undefined
+                        }
+                    },
+                    error: null,
+                }));
+            } catch (error) {
+                updatePage(p => ({ ...p, error: error as Error }));
+            } finally {
+                setValidationStates(vs => ({ ...vs, [searchKey]: false }));
+            }
+        }, 5000);
+    };
+
     async function PATCH(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -344,7 +433,7 @@ function ProfilePage() {
                     await update({
                         ...user,
                         name: $form_data.get("name") as string,
-                        email: $form_data.get("e-mail") as string,
+                        email: $form_data.get("email") as string,
                         phone: [
                             $form_data.get("code") as string,
                             $form_data.get("phone") as string
@@ -465,7 +554,7 @@ function ProfilePage() {
                 <ProfilePictureButton src={user.profile_photo ?? "#"} size="xl" className="mx-auto" enableUpload />
 
                 <section>
-                    <form onSubmit={PATCH} onReset={handleFormReset} data-state={page.status === "saving-profile" ? "disabled" : "idle"}>
+                    <form ref={$accountFormRef} onSubmit={PATCH} onReset={handleFormReset} data-state={assertions.isAccountFormDisabled ? "disabled" : "idle"}>
                         <fieldset>
                             <legend>
                                 <Tag>
@@ -510,13 +599,19 @@ function ProfilePage() {
                                 className="w-full"
                                 title="E-mail"
                                 description={"Endereço para onde serão enviados e-mails e algumas notificações."}
+                                alerts={{
+                                    error: alerts?.[UniqueFields.email]
+                                }}
                                 input={{
                                     element: "input",
+                                    iconElement: validationStates[UniqueFields.email] ? <Icon name="Loading" className="animate-spin" /> : undefined,
                                     props: {
-                                        name: "e-mail",
-                                        type: "email",
+                                        className: "w-full",
                                         defaultValue: user.email,
-                                        className: "w-full"
+                                        id: UniqueFields.email,
+                                        name: UniqueFields.email,
+                                        type: "email",
+                                        onChange: validateUniqueFields
                                     }
                                 }}
                             />
@@ -526,18 +621,34 @@ function ProfilePage() {
                                     <span className="font-extrabold">Nº do telefone</span>
 
                                     <span>Contacto passado por defeito para o Multicaixa express e também mantido como ponto principal para ligações ou envio de mensagens</span>
+
+                                    {alerts?.[UniqueFields.phone] && <Tag variant="danger">
+                                        {alerts?.[UniqueFields.phone]}
+                                    </Tag>}
                                 </label>
 
                                 <div className="flex flex-row justify-start items-center">
-                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={defaultPhoneCode} required>
+                                    {validationStates[UniqueFields.phone] && <Icon name="Loading" className="animate-spin" />}
+
+                                    <select ref={$selectRef} title="Código do telefone" id="code" name="code" onChange={validateUniqueFields} defaultValue={defaultPhoneCode} required>
                                         <option hidden value="">Seleciona um código</option>
 
-                                        {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
+                                        {PHONE_CODES.map(({ code }) => <option key={code} value={code}>
                                             {code}
                                         </option>)}
                                     </select>
 
-                                    <input defaultValue={user.phone.substring(defaultPhoneCode.length)} id="phone" type="tel" name="phone" onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone" pattern="^(\+?\d{1,4}\s?)?\d{6,15}$" required />
+                                    <input
+                                        defaultValue={user.phone.substring(defaultPhoneCode.length)}
+                                        id={UniqueFields.phone}
+                                        name={UniqueFields.phone}
+                                        className="text-center"
+                                        onChange={handlePhoneNumberChange}
+                                        pattern="^(\+?\d{1,4}\s?)?\d{6,15}$"
+                                        placeholder="Nº do telefone"
+                                        type="tel"
+                                        required
+                                    />
                                 </div>
                             </div>
                         </fieldset>
@@ -549,8 +660,11 @@ function ProfilePage() {
                                 Reverter alterações
                             </Button>
 
-                            <Button type="submit" value={Forms.profile} className="w-1/3">
-                                {page.status === "saving-profile" ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Save" />}
+                            <Button type="submit" value={Forms.profile} className="w-1/3" disabled={assertions.cannotPerformAccountUpdate}>
+                                {page.status === "saving-profile"
+                                    ? <Icon name="Loading" className="animate-spin" />
+                                    : <Icon name="Save" />
+                                }
 
                                 Salvar
                             </Button>
