@@ -23,6 +23,7 @@ import type {
     Resort_Rooms_Media_media_type,
     Resorts,
     Resort_Amenities,
+    Resort_Bed_Types,
     Resort_Booking_Cancellation_Policies,
     Resort_Booking_Cancellations,
 } from "@Madeirense/database/browser";
@@ -36,7 +37,7 @@ class ResortsEndpoints extends BaseAPIAbstractEndpoint {
         return response.success;
     }
 
-    async addBedTypes(payload: ({ name: number })[]) {
+    async addBedTypes(payload: Pick<Resort_Bed_Types, 'name' | 'sleeps'>[]) {
         const response = await this.client.post<typeof payload, undefined>(`/resorts/properties/bed-types`, payload);
 
         return response.success;

@@ -2,7 +2,6 @@ import { Router } from 'express';
 
 import {
     body,
-    param,
     query
 } from 'express-validator';
 
@@ -20,6 +19,10 @@ import {
     validateId,
     validatePagination
 } from '../middlewares/validation';
+
+import {
+    API_MIN_ID_NUMBER
+} from '../utilities/constants';
 
 import * as controller from '../controllers/deliveryLocation';
 
@@ -54,7 +57,9 @@ v1.get(
     ]) as any,
     [
         ...Validate.Queries.pagination,
-        param('selected').isArray({ min: 0 }),
+        // Optional id filter: `?selected=1&selected=2` (a single `?selected=1` is normalised to an array).
+        query('selected').optional({ values: 'falsy' }).toArray(),
+        query('selected.*').isInt({ min: API_MIN_ID_NUMBER }).withMessage('Each selected delivery location must be a valid ID, meaning a positive integer'),
         Validate.Handle.error
     ],
     controller.getAll as any

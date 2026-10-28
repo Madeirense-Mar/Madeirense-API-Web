@@ -37,22 +37,16 @@ export const getAll = async (
 
         const skip = (page - 1) * limit;
 
-        const _selected = req.query.selected || undefined;
+        const selected = ([] as string[]).concat((req.query.selected as string | string[] | undefined) ?? []);
 
-        const selected = (
-            (_selected)
-                ? []
-                : (Array.isArray(_selected)
-                    ? _selected
-                    : [_selected]
-                ) as string[]
-        );
-
-        const where: Prisma.Delivery_LocationsWhereInput = {
-            location_id: {
-                in: selected.map(parseInt)
-            }
-        };
+        // No `selected` ids means no filter: every delivery location is listed.
+        const where: Prisma.Delivery_LocationsWhereInput = (selected.length === 0)
+            ? {}
+            : {
+                location_id: {
+                    in: selected.map(id => parseInt(id, 10))
+                }
+            };
 
         const [locations, total] = await Promise.all([
             prisma.delivery_Locations.findMany({
@@ -61,7 +55,7 @@ export const getAll = async (
                 take: limit,
                 orderBy: { created_at: 'desc' }
             }),
-            prisma.delivery_Locations.count({})
+            prisma.delivery_Locations.count({ where })
         ]);
 
         const totalPages = Math.ceil(total / limit);

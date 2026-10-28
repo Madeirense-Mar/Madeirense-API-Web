@@ -36,6 +36,17 @@ v1.get(
     controller.getAllComments
 );
 
+// `/mine` is registered before the public `GET /:id`: Express matches routes
+// in registration order, so "mine" would otherwise be parsed as an :id and
+// rejected by validateId. It carries its own validateJWT because the
+// router-wide `v1.use(validateJWT)` below only covers routes registered after it.
+v1.get(
+    '/mine',
+    validateJWT as any,
+    validatePagination,
+    controller.getUserComments as any
+);
+
 v1.get(
     '/:id',
     validateId,
@@ -48,12 +59,6 @@ v1.post(
     '/',
     commentPayloadValidation,
     controller.createComment as any
-);
-
-v1.get(
-    '/mine',
-    validatePagination,
-    controller.getUserComments as any
 );
 
 v1.put(
