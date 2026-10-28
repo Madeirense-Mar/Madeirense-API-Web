@@ -70,7 +70,7 @@ enum Forms {
 enum UniqueFields {
     email = "email",
     phone = "phone"
-}
+};
 
 type forms = keyof typeof Forms;
 
@@ -385,7 +385,7 @@ function ProfilePage() {
                         if ($formData.get("phone") as string == "") break;
                         
                         searchKey = "phone";
-                        
+
                         setValidationStates(vs => ({ ...vs, [searchKey]: true }));
                         
                         foundUser = await usersAPI.search({
