@@ -21,7 +21,7 @@
 }
 
 #root[data-hasorders] main {
-    margin-top: 52px;
+    margin-top: 39px;
 }
 
 #root[data-hascart]:has(table[data-visible][data-expanded]) nav {
