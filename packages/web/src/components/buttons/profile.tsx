@@ -1,5 +1,6 @@
 import {
     forwardRef,
+    useRef,
     useState,
     type MouseEvent
 } from "react";
@@ -43,8 +44,11 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
         size = 's',
         src = "#",
         style,
+        onClick,
         ...props
     } = _props;
+
+    const $inputRef = useRef<HTMLInputElement | null>(null);
 
     const {
         state,
@@ -56,8 +60,6 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
 
     const [uploading, setUploading] = useState(false);
 
-    const $inputId = `${user?.user_id}-uploader`;
-
     const assertions = {
         "isUploadEnabled": [
             !disabled,
@@ -67,6 +69,12 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
             (state === "updating-profile"),
             uploading
         ].includes(true)
+    }
+
+    function handleClick (event: MouseEvent<HTMLButtonElement>) {
+        if (enableUpload) $inputRef.current?.click();
+        
+        onClick?.(event);
     }
 
     async function handleUpload({ target }: { target: HTMLInputElement }) {
@@ -80,10 +88,8 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
             const base64Data = (await toBase64(files[0]));
             const blob = (await toBlob(base64Data, files[0].name.split('.')[1] ?? ""));
 
-            const pubKey = (env.UPLOAD_CARE_PUBLIC_KEY) as string;
-
             const formData = new FormData();
-            formData.append('UPLOADCARE_PUB_KEY', pubKey);
+            formData.append('UPLOADCARE_PUB_KEY', env.UPLOAD_CARE_PUBLIC_KEY);
             formData.append('file', blob);
             formData.append('filename', `USER_${user?.user_id}_${user?.name}_PROFILE_PICTURE`);
 
@@ -123,24 +129,21 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
         }
     };
 
-    function triggerUpload({ target }: MouseEvent<HTMLDivElement>) {
-        document.getElementById((target as HTMLDivElement).dataset.value as string)?.click();
-    };
-
     return <button
         className={resolveClassNames(styles[size], className)}
         style={(src) ? { backgroundImage: `url(${src})`, ...style } : style}
+        onClick={handleClick}
         {...props}
         {...{ disabled, ref }}
     >
         {assertions.isUploadEnabled && <>
-            <div data-value={$inputId} onClick={triggerUpload}>
+            <div>
                 {assertions.isUpdating ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Camera" />}
             </div>
 
             <input 
+                ref={$inputRef}
                 accept={APP_ACCEPTED_IMAGE_UPLOAD_MIMETYPES.join(',')} 
-                id={$inputId} 
                 title="upload file" 
                 type="file" 
                 className="hidden" 
