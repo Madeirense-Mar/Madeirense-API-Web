@@ -30,15 +30,16 @@ import { useOrders } from "contexts/Orders";
 import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
-
-import RestaurantCard from "components/cards/restaurant";
-import RestaurantEventCard from "components/cards/restaurantEvent";
-
 import Icon from "components/icon";
+import Tag from "components/tags";
+
+import RestaurantEventCard from "components/cards/restaurantEvent";
 
 import PaymentTypesList from "components/lists/paymentOptions";
 
 import Cart from "components/tables/cart";
+
+import styles from "./Events.module.css";
 
 import type {
     $Enums
@@ -75,9 +76,13 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
 
     const navigate = useNavigate();
 
-    const { create: createUserOrder } = useOrders();
+    const {
+        create: createUserOrder
+    } = useOrders();
 
-    const { user } = useProfile();
+    const {
+        user
+    } = useProfile();
 
     const [searchParams] = useSearchParams();
 
@@ -151,135 +156,153 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
         }
     };
 
-    const $sectionProps = {
-        "className": resolveClassNames(className),
-        ...props
-    };
-
     switch (true) {
         case (!event_id): {
-            return <section {...$sectionProps}>
-                <p data-state="error" className="p-2 w-full flex flex-row justify-start items-center gap-2">
-                    <Icon name="ExclamationCircle" />
+            return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
+                <Icon name="ExclamationCircle" />
 
-                    Não foi seleccionado um evento para fazer checkout
-                </p>
-            </section>
-        };
+                Não foi seleccionado um evento para fazer checkout
+            </div>
+        }
 
         default: {
             switch (state) {
                 case "loading": {
-                    const {
-                        className: cn,
-                        ...$sp
-                    } = $sectionProps;
-
-                    return <section className={resolveClassNames("w-full h-full", cn)} {...$sp}>
+                    return <section className={resolveClassNames("w-full h-full", className)} {...props}>
                         <div className="w-full h-full flex flex-col justify-center items-center gap-2">
                             <Icon name="Loading" className="animate-spin" />
                         </div>
                     </section>
-                };
+                }
 
                 default: {
                     return <>
-                        {restaurant_event && <section>
-                            <RestaurantEventCard className="w-full" restaurantEvent={restaurant_event} mode="default" type="component" disableLink disableVideo />
+                        {restaurant_event && <section className={styles.info}>
+                            <RestaurantEventCard
+                                className="w-full"
+                                restaurantEvent={restaurant_event}
+                                mode="default"
+                                type="component"
+                                disableLink
+                                disableVideo
+                            />
 
-                            <h2 className="mb-3 mt-6">
-                                <Icon name="Notes" className="inline-flex mr-1" />
-
-                                Sobre o evento
-                            </h2>
-
-                            <p className="w-full">{restaurant_event.description}</p>
+                            <p className="w-full">
+                                {restaurant_event.description}
+                            </p>
                         </section>}
 
-                        <section>
-                            <h2 className="mb-3 mt-6">
-                                <Icon name="Ticket" className="inline-flex mr-1" />
+                        {!Boolean(cart.length) && <div data-state="warning" className="w-full flex flex-row justify-center items-center gap-3 p-3">
+                            <Icon name="Warning" className="text-2xl" />
 
-                                Ingressos e outros
-                            </h2>
+                            <span>Precisa de adicionar pelo menos 1x ingresso no carrinho antes de fazer uma reserva</span>
+                        </div>}
 
-                            <ul className="w-full flex flex-col justify-start items-center rounded-lg border p-2 gap-2">
-                                {tickets.map(t => {
-                                    const quantity = cart.find(p => p.product_id === t.product_id)?.quantity ?? 0;
+                        <section className={styles.tickets}>
+                            <header>
+                                <h2>
+                                    Ingressos e outros
+                                </h2>
+                            </header>
 
-                                    const whileQuantityDecreases = queue.some(q => q.product_id === t.product_id && q.type === "removing");
-                                    const whileQuantityIncreases = queue.some(q => q.product_id === t.product_id && q.type === "adding");
+                            <div className="w-full flex flex-col justify-start items-start">
+                                <ul>
+                                    {tickets.map(t => {
+                                        const quantity = cart.find(p => p.product_id === t.product_id)?.quantity ?? 0;
 
-                                    const isInQueue = [
-                                        whileQuantityDecreases,
-                                        whileQuantityIncreases
-                                    ].includes(true);
+                                        const whileQuantityDecreases = queue.some(q => q.product_id === t.product_id && q.type === "removing");
+                                        const whileQuantityIncreases = queue.some(q => q.product_id === t.product_id && q.type === "adding");
 
-                                    return <li key={t.product_id} className="w-full flex flex-row justify-start items-center gap-3">
-                                        <span data-text="tag" className="mr-auto inline-flex items-center gap-1">
-                                            <Icon name="Ticket" />
+                                        const isInQueue = [
+                                            whileQuantityDecreases,
+                                            whileQuantityIncreases
+                                        ].includes(true);
 
-                                            {t.name}
-                                        </span>
+                                        return <li key={t.product_id} className="w-full flex flex-row justify-start items-center gap-3">
+                                            <span data-text="tag" className="mr-auto inline-flex items-center gap-1">
+                                                <Icon name="Ticket" />
 
-                                        <span className="font-extrabold">
-                                            <Icon name="Money" className="inline-flex mr-1" />
+                                                {t.name}
+                                            </span>
 
-                                            {Boolean(parseInt(t.price.toString())) ? formatNumber(parseFloat(t.price.toString())) : "Grátis"}
-                                        </span>
+                                            <span className="font-extrabold">
+                                                <Icon name="Money" className="inline-flex mr-1" />
 
-                                        <Button value={t.product_id} onClick={removeItem} data-shape="round" variant="secondary" disabled={isInQueue}>
-                                            {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
-                                        </Button>
+                                                {Boolean(parseInt(t.price.toString())) ? formatNumber(parseFloat(t.price.toString())) : "Grátis"}
+                                            </span>
 
-                                        <span className="w-[52px] text-center">{quantity}</span>
+                                            <Button value={t.product_id} onClick={removeItem} data-shape="round" variant="secondary" disabled={isInQueue}>
+                                                {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                            </Button>
 
-                                        <Button value={t.product_id} onClick={addItem} data-shape="round" disabled={isInQueue}>
-                                            {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
-                                        </Button>
-                                    </li>
-                                })}
-                            </ul>
-                        </section>
+                                            <span className="w-[52px] text-center">{quantity}</span>
 
-                        <section>
-                            <h2 className="mb-3 mt-6">
-                                <Icon name="ShoppingCart" className="inline-flex mr-1" />
+                                            <Button value={t.product_id} onClick={addItem} data-shape="round" disabled={isInQueue}>
+                                                {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                                            </Button>
+                                        </li>
+                                    })}
+                                </ul>
 
-                                Carrinho
-                            </h2>
+                                <Cart
+                                    className={resolveClassNames(styles.cart, "w-full")}
+                                    mode="order"
+                                    type="event"
+                                    hideQuantityControls
+                                    hideInstructions
+                                    hideTTP
+                                />
+                            </div>
 
-                            <Cart className="w-full" type="event" mode="order" hideInstructions hideTTP />
-                        </section>
-
-                        <section>
-                            <h2 className="mt-6">
-                                <Icon name="Phone" className="inline-flex mr-1" />
-
-                                {`Contacto${!summary.totalPrice ? "" : " e pagamento"}`}
-                            </h2>
-
-                            <form onSubmit={POST}>
+                            <form onSubmit={POST} className="w-full">
                                 <fieldset>
-                                    <legend>Contacto</legend>
+                                    <legend>
+                                        <Tag variant="secondary">
+                                            <Icon name="Phone" />
 
-                                    <label htmlFor="phone">Nº do telefone</label>
+                                            Contacto
+                                        </Tag>
+                                    </legend>
 
-                                    <div className="flex flex-row justify-start items-center w-full">
-                                        <select ref={$selectRef} title="Código do telefone" id="code" name="code" required defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""}>
-                                            <option hidden value="">Seleciona um código</option>
+                                    <div className={styles["contact-fields"]}>
+                                        <label className="flex flex-col justify-start items-start" htmlFor="phone">
+                                            <span className="font-extrabold">Nº do telefone</span>
 
-                                            {PHONE_CODES.map(({ country, code }) => <option key={code} value={code}>
-                                                {`(${code}) ${country}`}
-                                            </option>)}
-                                        </select>
+                                            <span>Contacto passado por defeito para o Multicaixa express e também mantido como ponto principal para ligações ou envio de mensagens</span>
+                                        </label>
 
-                                        <input id="phone" type="tel" name="phone" required onChange={selectPhoneCode($selectRef)} placeholder="Nº do telefone com WhatsApp" pattern={stringRegularExpressions.get("PhoneNumber")} defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""} className="w-full" />
+                                        <div className="flex flex-row justify-start items-center">
+                                            <select ref={$selectRef} title="Código do telefone" id="code" name="code" defaultValue={user?.phone ? parsePhoneCode(user?.phone) : ""} required>
+                                                <option hidden value="">Seleciona um código</option>
+
+                                                {PHONE_CODES.map(({ code }) => <option key={code} value={code}>
+                                                    {code}
+                                                </option>)}
+                                            </select>
+
+                                            <input
+                                                className="w-full text-center"
+                                                defaultValue={user?.phone ? parsePhoneNumber(user?.phone) : ""}
+                                                name="phone"
+                                                id="phone"
+                                                pattern={stringRegularExpressions.get("PhoneNumber")}
+                                                placeholder="Nº do telefone com WhatsApp"
+                                                type="tel"
+                                                required
+                                                onChange={selectPhoneCode($selectRef)}
+                                            />
+                                        </div>
                                     </div>
                                 </fieldset>
 
-                                {(summary.totalPrice > 0) && <fieldset>
-                                    <legend>Pagamento</legend>
+                                {(summary.totalPrice > 0) && <fieldset className="w-full">
+                                    <legend>
+                                        <Tag variant="secondary">
+                                            <Icon name="Money" />
+
+                                            Pagamento
+                                        </Tag>
+                                    </legend>
 
                                     <PaymentTypesList
                                         mode="eligible"
@@ -290,26 +313,26 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                                     />
                                 </fieldset>}
 
-                                {!Boolean(cart.length) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
-                                    <Icon name="Warning" />
+                                <Button
+                                    className="w-full"
+                                    disabled={isLoading || !Boolean(cart.length)}
+                                    type="submit"
+                                    variant={error ? "danger" : "primary"}
+                                >
+                                    {error && <Icon name="ExclamationCircle" />}
 
-                                    <span>Precisa de adicionar pelo menos 1x ingresso no carrinho antes de fazer uma reserva</span>
-                                </div>}
-
-                                <footer className="w-full">
-                                    <Button type="submit" variant={error ? "danger" : "primary"} className="w-full" disabled={isLoading || !Boolean(cart.length)}>
-                                        {error && <Icon name="ExclamationCircle" />}
-
-                                        {isLoading ? <Icon name="Loading" className="animate-spin" /> : error ? error.message : `Reservar ingressos (${!summary.totalPrice ? "Grátis" : formatNumber(summary.totalPrice)})`}
-
-                                        {error && <Icon name="ExclamationCircle" />}
-                                    </Button>
-                                </footer>
+                                    {isLoading
+                                        ? <Icon name="Loading" className="animate-spin" />
+                                        : (error)
+                                            ? error.message
+                                            : `Reservar ingressos (${!summary.totalPrice ? "Grátis" : formatNumber(summary.totalPrice)})`
+                                    }
+                                </Button>
                             </form>
                         </section>
                     </>
                 }
-            };
+            }
         }
     };
 };

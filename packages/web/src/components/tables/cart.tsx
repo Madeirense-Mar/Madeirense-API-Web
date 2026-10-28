@@ -29,6 +29,7 @@ import Tag from "components/tags";
 
 interface IPropTypes extends ComponentProps<"table"> {
     hideInstructions?: boolean;
+    hideQuantityControls?: boolean;
     hideTTP?: boolean;
     mode?: "cart" | "order";
     type: cartType;
@@ -41,6 +42,7 @@ type queueEntry = {
 
 function Cart({
     hideInstructions = false,
+    hideQuantityControls = false,
     hideTTP = false,
     mode = "cart",
     type,
@@ -343,7 +345,7 @@ function Cart({
                                 <span data-text="name" className="font-bold italic">{name}</span>
                             </td>
 
-                            <td>
+                            {!hideQuantityControls && <td>
                                 <div className="w-full flex flex-row items-center justify-end gap-3">
                                     <Button value={product_id} onClick={removeItem()} shape="circle" variant="secondary" disabled={isInQueue}>
                                         {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
@@ -355,7 +357,7 @@ function Cart({
                                         {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
                                     </Button>
                                 </div>
-                            </td>
+                            </td>}
 
                             <td data-cell="price">
                                 <div className="flex flex-row justify-end items-center gap-3">

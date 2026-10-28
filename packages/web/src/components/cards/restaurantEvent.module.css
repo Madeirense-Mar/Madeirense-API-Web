@@ -1,3 +1,4 @@
+/*#region Card ============================================ */
 .card {
     composes: card from "./card.module.css";
 
@@ -18,26 +19,28 @@
 .component {
     composes: card;
 
+    --text-color: var(--neutral-light);
+
     align-content: flex-end;
-    column-gap: var(--card-column-gap, var(--card-gap, 12px));
-    row-gap: var(--card-row-gap, var(--card-gap, 4px));
+    column-gap: var(--card-column-gap, var(--card-gap, var(--gap-m)));
+    row-gap: var(--card-row-gap, var(--card-gap, var(--gap-xs)));
     grid-template-rows: 36px 32px;
 
     height: var(--card-height);
     max-height: var(--card-height);
     min-height: var(--card-height);
 
-    padding: var(--card-padding, 12px);
+    padding: var(--card-padding, var(--padding-m));
 
-    background-color: var(--card-background-color, #000);
+    border-color: var(--card-border-color, var(--base-border-color));
+    border-radius: var(--card-border-radius, 12px);
+    border-style: var(--card-border-style, solid);
+    border-width: var(--card-border-width, var(--border-width));
+
+    background-color: var(--card-background-color, var(--neutral-dark));
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 100%;
-
-    border-color: var(--card-border-color, none);
-    border-radius: var(--card-border-radius, 12px);
-    border-style: solid;
-    border-width: var(--border-width);
 }
 
 .component div[data-area]:not([data-area="video"]) {
@@ -99,6 +102,7 @@
     background: linear-gradient(to top, black 10%, transparent 40%);
 }
 
+/*#region Theme variants */
 /* TODO: Unimplemented style > danger */
 .danger {
     composes: component;
@@ -134,7 +138,14 @@
     composes: component;
 }
 
+/*#endregion*/
+
+/*#endregion*/
+
+/*#region Page ============================================ */
 .page {
     row-gap: var(--gap-xs);
     column-gap: var(--gap-m);
 }
+
+/*#endregion*/

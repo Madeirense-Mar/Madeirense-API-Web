@@ -1,0 +1,92 @@
+/*#region Info section ==================================== */
+.info {}
+
+.info>div {
+    --card-border-width: 0px;
+}
+
+/*#endregion*/
+
+/*#region Tickets section ================================= */
+.tickets {
+    --section-gap: 30px;
+}
+
+.tickets header {
+    margin-bottom: var(--margin-xl);
+}
+
+.tickets form {
+    @apply flex flex-col justify-start items-start;
+
+    gap: var(--section-gap);
+}
+
+.tickets form fieldset {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+
+    width: 100%;
+}
+
+.tickets form fieldset legend {
+    margin-bottom: 12px;
+}
+
+.tickets ul,
+.tickets .cart {
+    --radius: 12px;
+}
+
+.tickets ul {
+    @apply w-full flex flex-col justify-start items-center p-2 gap-2;
+
+    border: var(--ul-border-width, 1px) var(--ul-border-style, solid) var(--ul-border-color, var(--base-border-color));
+    border-bottom: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.cart {
+    --table-border-radius: 0 0 var(--radius) var(--radius);
+}
+
+/*#endregion*/
+
+/*#region Contact-payment section ========================= */
+.contact-payment {}
+
+.contact-payment form {
+    @apply flex flex-col justify-start items-start w-full gap-2;
+}
+
+.contact-payment form fieldset {
+    --fieldset-padding: 0px;
+    --fieldset-border-width: 0px;
+
+    width: 100%;
+}
+
+.contact-payment form fieldset legend {
+    margin-bottom: var(--margin-m);
+}
+
+/*#endregion*/
+
+/*#region Contact fieldset ================================ */
+.contact-fields {
+    @apply w-full flex flex-row justify-between items-start;
+}
+
+.contact-fields>div {
+    width: 300px;
+}
+
+.contact-fields>div>input {
+    width: 100%;
+}
+
+.contact-fields>div>select {
+    width: 90px;
+}
+
+/*#endregion*/

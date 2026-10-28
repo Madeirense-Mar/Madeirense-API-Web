@@ -6,19 +6,19 @@
     height: calc(100% - 70px);
 }
 
-.layout > header {
+.layout>header {
     @apply flex flex-row justify-start items-center flex-nowrap w-full;
 
     gap: var(--gap-m);
 }
 
-.layout > section {
-    @apply flex flex-col justify-start items-start;
+.layout>section {
+    --section-overflow: visible;
 
-    overflow: visible;
+    @apply flex flex-col justify-start items-start;
 
     height: auto;
     width: 100%;
-    
+
     gap: var(--section-gap, var(--gap-xl));
 }

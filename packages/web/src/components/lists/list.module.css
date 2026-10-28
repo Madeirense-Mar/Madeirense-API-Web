@@ -12,7 +12,7 @@
 }
 
 .list li:not(:nth-child(2)) {
-    padding: 12px;
+    padding: var(--li-padding, 12px);
 
     border-radius: var(--li-border-radius, 12px);
     

@@ -8,21 +8,21 @@
 }
 
 /*#region Main ============================================ */
-main {
+#root[data-page="back-office"]>main {
     transition: padding 1s ease-in-out;
 }
 
-main>section {
+#root[data-page="back-office"]>main>section {
     border-radius: 12px;
 
     padding: var(--base-padding);
 }
 
-main>section:not(:last-of-type) {
+#root[data-page="back-office"]>main>section:not(:last-of-type) {
     @apply mb-5;
 }
 
-[data-theme="SEA-DARK"] main>section {
+[data-theme="SEA-DARK"] #root[data-page="back-office"]>main>section {
     background-color: color-mix(in srgb, var(--primary-dark), black 40%);
 }
 

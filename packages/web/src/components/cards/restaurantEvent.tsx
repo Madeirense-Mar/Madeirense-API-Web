@@ -165,7 +165,7 @@ function RestaurantEventCard(_props: withVariant<IPropTypes>) {
 
             {mode === "default" && <h3 className="font-extrabold">{name}</h3>}
 
-            <h3 className="ml-auto">
+            <h3 className="ml-auto inline-flex justify-start items-center gap-2">
                 <Icon name="Ticket" className="inline-flex" />
 
                 {Boolean(parseInt(`${price}`)) ? formatNumber(parseFloat(`${price}`)) : "Grátis"}

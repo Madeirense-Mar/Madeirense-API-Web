@@ -25,6 +25,7 @@
 
 .viewport li {
     --h: inherit;
+    --li-padding: 0px;
     
     height: var(--h);
     max-height: var(--h);
