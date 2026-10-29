@@ -450,7 +450,7 @@ const LeafletDeliveriesTracker = ({
             })}
         </MapContainer>
 
-        <aside className={styles.list}>
+        <aside className={styles["side-menu"]}>
             <header>
                 <h3>
                     <Icon name="Delivery" />

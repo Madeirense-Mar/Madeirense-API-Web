@@ -73,6 +73,8 @@ function BackOfficeDeliveriesPage({ className, ...props }: ComponentProps<"main"
     const [toggled, setToggled] = useState(true);
     const [order, setOrder] = useState<restaurantOrderType | null>(null);
 
+    const handleToggle = () => setToggled(t => !t);
+
     const pickOrder = (order: restaurantOrderType | null) => setOrder(order);
 
     useEffect(() => {
@@ -133,7 +135,7 @@ function BackOfficeDeliveriesPage({ className, ...props }: ComponentProps<"main"
                 />}
 
                 {order && <section className={styles.info} {...{ ...(toggled) ? { "data-toggled": "" } : {} }}>
-                    <Button onClick={() => setToggled(t => !t)}>
+                    <Button variant={(toggled) ? "secondary" : "primary"} shape="circle" onClick={handleToggle}>
                         <Icon name={(toggled) ? "ChevronUp" : "ChevronDown"} />
                     </Button>
 

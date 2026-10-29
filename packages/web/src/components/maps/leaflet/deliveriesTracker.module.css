@@ -34,7 +34,7 @@
 /*#endregion*/
 
 /*#region Order list ====================================== */
-.list {
+.side-menu {
     --text-color: var(--base-text-color);
 
     @apply flex flex-col gap-2 overflow-y-auto;
@@ -44,61 +44,66 @@
     padding: var(--list-padding, 0px);
 }
 
-.list header {
+/*#region Header*/
+.side-menu header {
     @apply flex flex-row justify-between items-center gap-2 text-sm;
 }
 
-.list header h3 {
+.side-menu header h3 {
     @apply flex flex-row items-center gap-2 font-bold;
 }
 
-.list header button {
+.side-menu header button {
     @apply text-sm underline;
 }
 
-.list ul {
+/*#endregion*/
+
+/*#region List */
+.side-menu ul {
     @apply flex flex-col gap-1;
 }
 
-.list li button {
+.side-menu li button {
     --radius: 8px;
 
     @apply flex flex-col items-start gap-0.5 w-full text-left text-sm px-3 py-2;
 
     border-left: 4px solid var(--order-color);
     border-radius: 0 var(--radius) var(--radius) 0;
-    
+
     background-color: var(--button-background-color);
 }
 
-[data-theme*="DARK"] .list li button {
+[data-theme*="DARK"] .side-menu li button {
     --button-background-color: color-mix(in srgb, var(--order-color), black 52%);
 }
 
-[data-theme*="LIGHT"] .list li button {
+[data-theme*="LIGHT"] .side-menu li button {
     --button-background-color: color-mix(in srgb, var(--order-color), white 60%);
 }
 
-.list li button:hover {
+.side-menu li button:hover {
     --button-background-color: color-mix(in srgb, var(--order-color), transparent 85%);
 }
 
-.list li button[aria-pressed="true"] {
+.side-menu li button[aria-pressed="true"] {
     --button-background-color: color-mix(in srgb, var(--order-color), transparent 75%);
 
     outline: 2px solid var(--order-color);
 }
 
-.list li button small {
+.side-menu li button small {
     opacity: 0.8;
 }
 
-.list li button small[data-state="error"] {
+.side-menu li button small[data-state="error"] {
     color: var(--accent);
     opacity: 1;
 }
 
-[data-theme*=]
+/*#endregion*/
+
 /*#endregion*/
 
 /*#region Markers & popups ================================ */
