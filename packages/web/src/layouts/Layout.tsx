@@ -34,7 +34,8 @@ import type {
 // ***************************************************************************************************************
 
 const providers = [
-    ModalProvider
+    ModalProvider,
+    RedirectorProvider
 ];
 
 const Layout = () => {
@@ -142,20 +143,18 @@ const Layout = () => {
     ]);
 
     return <AppContextProvider {...{ providers }}>
-        <RedirectorProvider>
-            {(!assertions.allowPatterns) ? null : <>
-                <div data-position="left"></div>
-                <div data-position="right"></div>
-            </>}
+        {(!assertions.allowPatterns) ? null : <>
+            <div data-position="left"></div>
+            <div data-position="right"></div>
+        </>}
 
-            {assertions.allowCartOverlay && <Cart type="delivery" />}
+        {assertions.allowCartOverlay && <Cart type="delivery" />}
 
-            {assertions.allowOrderOverlay && <Orders />}
+        {assertions.allowOrderOverlay && <Orders />}
 
-            {!assertions.disableNavigation && <AppNav />}
+        {!assertions.disableNavigation && <AppNav />}
 
-            <Outlet />
-        </RedirectorProvider>
+        <Outlet />
     </ AppContextProvider>
 };
 

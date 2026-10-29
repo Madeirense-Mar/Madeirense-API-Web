@@ -4,6 +4,7 @@ export namespace Madeirense$Enumerators {
         export enum App {
             "Layout" = "/",
             "Events" = "/events",
+            "Offline" = "/offline",
             "Order" = "/orders",
             "Product" = "/product",
             "Profile" = "/profile",

@@ -27,37 +27,42 @@ const RedirectorProvider = ({ children }: any) => {
         pathname
     } = useLocation();
 
-    const { 
+    const {
         state: profileState
     } = useProfile();
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!navigator.onLine) {
+            navigate(Madeirense$Enumerators.Pages.App.Offline);
+
+            return;
+        };
+
         switch (profileState) {
             case "guest": {
                 switch (true) {
                     case ([
                         AppSettings.Routing.protectedRoutes.some(endpoint => pathname.includes(endpoint))
                     ].every(Boolean)):
-                        navigate(
-                            Madeirense$Enumerators.Pages.App.Layout,
-                            {
-                                replace: true
-                            }
-                        );
+                        navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
 
                         break;
 
-                    default:
-                        break;
+                    default: break;
                 };
 
                 break;
             }
 
-            default:
-                break;
+            default: switch (true) {
+                case (pathname.includes(Madeirense$Enumerators.Pages.App.Offline)):
+                    navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
+                    break;
+
+                default: break;
+            };
         };
     }, [
         navigate,
@@ -66,7 +71,7 @@ const RedirectorProvider = ({ children }: any) => {
     ]);
 
     return <RedirectorContext.Provider value={{}}>
-        <>{children}</>
+        {children}
     </RedirectorContext.Provider>
 };
 

@@ -1,0 +1,7 @@
+body:has(#root[data-page="offline"]) {
+    --body-background-color: var(--secondary-dark);
+}
+
+#root[data-page="offline"] > *:not(main) {
+    display: none;
+}

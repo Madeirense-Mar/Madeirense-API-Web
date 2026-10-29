@@ -91,7 +91,7 @@ body {
     font-weight: 300;
     font-style: normal;
 
-    background-color: var(--background-color);
+    background-color: var(--body-background-color, var(--background-color));
 }
 
 /*#endregion*/

@@ -177,7 +177,8 @@ import {
     RiDiscountPercentFill,
     RiLink,
     RiMegaphoneLine,
-    RiTakeawayLine
+    RiTakeawayLine,
+    RiWifiOffLine
 } from "react-icons/ri";
 
 import {
@@ -328,6 +329,7 @@ const registry = {
     //#endregion
 
     //#region O --------------------------------------------
+    Offline: RiWifiOffLine,
     Order: PiNewspaperClipping,
     OutlinedCircle: FaRegCircle,
     OutlinedDot: FaRegDotCircle,

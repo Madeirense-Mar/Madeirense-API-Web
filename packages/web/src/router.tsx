@@ -5,7 +5,6 @@ import {
 
 import {
 	BrowserRouter,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	Outlet,
 	Routes,
 	Route
@@ -20,13 +19,16 @@ import { useProfile } from "contexts/Profile";
 
 import Layout from "layouts/Layout";
 
-import { Page$Enumerators } from "pages/enumerators";
+import {
+	Page$Enumerators
+} from "pages/enumerators";
 
 import NotFoundPage from "pages/404";
 
-import HomePage from "pages/Home";
 import AuthenticationSuccessPage from "pages/Authentication/success";
 import EventsPage from "pages/Events";
+import HomePage from "pages/Home";
+import OfflinePage from "pages/Offline";
 import OrderPage from "pages/Order";
 import ProductPage from "pages/Product";
 import ProfilePage from "pages/Profile";
@@ -159,20 +161,26 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 				element: <HomePage />
 			},
 			{
+				id: "offline",
+				path: Madeirense$Enumerators.Pages.App.Offline,
+				label: "Offline",
+				element: <OfflinePage />
+			},
+			{
 				id: "user-profile",
-				path: `${Madeirense$Enumerators.Pages.App.Profile}`,
+				path: Madeirense$Enumerators.Pages.App.Profile,
 				label: "OAuth callback",
 				element: <ProfilePage />,
 			},
 			{
 				id: "successful-authentication",
-				path: `${Madeirense$Enumerators.Pages.Authentication.Success}`,
+				path: Madeirense$Enumerators.Pages.Authentication.Success,
 				label: "OAuth callback",
 				element: <AuthenticationSuccessPage />,
 			},
 			{
 				id: "authentication-set-credentials",
-				path: `${Madeirense$Enumerators.Pages.Authentication["Set Credentials"]}`,
+				path: Madeirense$Enumerators.Pages.Authentication["Set Credentials"],
 				label: "Definir credenciais",
 				element: <SetCredentialsPage />,
 			},
@@ -185,19 +193,19 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 			{
 				id: "orders",
 				path: `${Madeirense$Enumerators.Pages.App.Order}/:order_id?`,
-				label: "my-order",
+				label: "Meus pedidos",
 				element: <OrderPage />,
 			},
 			{
 				id: "product",
 				path: `${Madeirense$Enumerators.Pages.App.Product}/:product_id`,
-				label: "menu",
+				label: "Perfil do producto",
 				element: <ProductPage />,
 			},
 			{
 				id: "resort",
-				path: `${Madeirense$Enumerators.Pages.App.Resort}`,
-				label: "resort",
+				path: Madeirense$Enumerators.Pages.App.Resort,
+				label: "Resort madeirense",
 				element: <ResortPage />,
 			},
 			{
@@ -307,7 +315,7 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 					},
 					{
 						id: "back-office-settings",
-						path: `${Madeirense$Enumerators.Pages.BackOffice.Settings}`,
+						path: Madeirense$Enumerators.Pages.BackOffice.Settings,
 						label: "settings",
 						element: <BackOfficeSettingsPage />,
 						userRoles: [
@@ -324,19 +332,19 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 				branches: [
 					{
 						id: "checkout-events",
-						path: `${Madeirense$Enumerators.Pages.Checkout.Events}`,
+						path: Madeirense$Enumerators.Pages.Checkout.Events,
 						label: "events",
 						element: <EventsCheckoutPage />,
 					},
 					{
 						id: "checkout-products",
-						path: `${Madeirense$Enumerators.Pages.Checkout.Products}`,
+						path: Madeirense$Enumerators.Pages.Checkout.Products,
 						label: "products",
 						element: <ProductsCheckoutPage />,
 					},
 					{
 						id: "checkout-resort",
-						path: `${Madeirense$Enumerators.Pages.Checkout.Resort}`,
+						path: Madeirense$Enumerators.Pages.Checkout.Resort,
 						label: "products",
 						element: <ResortCheckoutPage />
 					},
