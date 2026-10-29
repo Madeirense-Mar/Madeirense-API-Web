@@ -162,16 +162,15 @@ const SliderPicker = (_props: IPropTypes) => {
 
             const props = {
                 id: v,
-                key,
                 onClick: handlePick
             };
 
             switch (element) {
                 case 'Button':
-                    return <Button {...props} {...{ variant }}>{typeof value === "string" ? null : value.icon} {key}</Button>;
+                    return <Button key={key} {...props} {...{ variant }}>{typeof value === "string" ? null : value.icon} {key}</Button>;
 
                 case 'Tag':
-                    return <Tag {...props} {...{ variant }}>{typeof value === "string" ? null : value.icon} {key}</Tag>;
+                    return <Tag key={key} {...props} {...{ variant }}>{typeof value === "string" ? null : value.icon} {key}</Tag>;
 
                 default:
                     throw new Error(`In SliderPicker, unknown element: ${element}`);
