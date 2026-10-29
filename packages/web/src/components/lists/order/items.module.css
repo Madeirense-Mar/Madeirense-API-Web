@@ -29,6 +29,14 @@
     border-radius: inherit;
 }
 
+.list li div[data-type="thumbnail"] {
+    height: 52px;
+    width: var(--img-size);
+    
+    border-radius: var(--list-item-border-radius);
+}
+
+/*#region "Total" list item*/
 .list li:last-child {
     @apply font-bold p-3 text-lg mt-2;
 
@@ -59,10 +67,6 @@
     --base-text-contrast-color: var(--secondary);
 }
 
-.list li div[data-type="thumbnail"] {
-    height: 52px;
-    width: var(--img-size);
-    border-radius: var(--list-item-border-radius);
-}
+/*#endregion*/
 
 /*#endregion*/
