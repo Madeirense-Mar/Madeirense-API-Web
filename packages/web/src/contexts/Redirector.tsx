@@ -35,9 +35,20 @@ const RedirectorProvider = ({ children }: any) => {
 
     useEffect(() => {
         if (!navigator.onLine) {
-            navigate(Madeirense$Enumerators.Pages.App.Offline);
+            if (!(pathname.endsWith(Madeirense$Enumerators.Pages.App.Offline)))
+                navigate(Madeirense$Enumerators.Pages.App.Offline);
 
             return;
+        };
+
+        function branchToDefaultRedirections() {
+            switch (true) {
+                case (pathname.endsWith(Madeirense$Enumerators.Pages.App.Offline)):
+                    navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
+                    break;
+
+                default: break;
+            };
         };
 
         switch (profileState) {
@@ -50,19 +61,13 @@ const RedirectorProvider = ({ children }: any) => {
 
                         break;
 
-                    default: break;
+                    default: branchToDefaultRedirections(); break;
                 };
 
                 break;
             }
 
-            default: switch (true) {
-                case (pathname.includes(Madeirense$Enumerators.Pages.App.Offline)):
-                    navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
-                    break;
-
-                default: break;
-            };
+            default: branchToDefaultRedirections(); break;
         };
     }, [
         navigate,
