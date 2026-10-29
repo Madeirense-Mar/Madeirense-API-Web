@@ -14,6 +14,10 @@ import {
 
 import useLocationPermission from "hooks/useLocationPermission";
 
+import {
+    Root$Enumerators
+} from "styles/enumerators";
+
 import { AppContextProvider } from "contexts/utilities/providers";
 import { useCart } from "contexts/Cart";
 import { ModalProvider } from "contexts/Modal";
@@ -25,7 +29,7 @@ import Orders from "components/tables/orders";
 
 import AppNav from "components/navigation/application";
 
-import { Root$Enumerators } from "styles/enumerators";
+import styles from "./Layout.module.css";
 
 import type {
     $Enums
@@ -60,6 +64,7 @@ const Layout = () => {
 
     const assertions = useMemo(() => ({
         allowOverlays,
+
         "allowCartOverlay": (
             allowOverlays &&
             [
@@ -144,8 +149,8 @@ const Layout = () => {
 
     return <AppContextProvider {...{ providers }}>
         {(!assertions.allowPatterns) ? null : <>
-            <div data-position="left"></div>
-            <div data-position="right"></div>
+            <div data-position="left" className={styles.pattern}></div>
+            <div data-position="right" className={styles.pattern}></div>
         </>}
 
         {assertions.allowCartOverlay && <Cart type="delivery" />}

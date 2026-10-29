@@ -236,22 +236,21 @@ main {
 
     grid-area: application-body;
 
+    overflow-x: hidden;
+    overflow-y: auto;
+
     height: auto;
+    width: var(--main-width, var(--main-base-width));
 
     padding-bottom: var(--main-padding-y, var(--container-padding-s));
     padding-left: var(--main-padding-x, var(--default-padding-x));
     padding-right: var(--main-padding-x, var(--default-padding-x));
     padding-top: var(--main-padding-y, var(--container-padding-s));
 
-    overflow-x: hidden;
-    overflow-y: auto;
-
     margin-bottom: var(--main-margin-y, var(--default-margin-y));
     margin-left: var(--main-margin-x, var(--default-margin-x));
     margin-right: var(--main-margin-x, var(--default-margin-x));
     margin-top: var(--main-margin-y, var(--default-margin-y));
-
-    width: var(--main-width, var(--main-base-width));
 }
 
 /*#endregion*/
@@ -277,19 +276,19 @@ div[data-type="thumbnail"] {
 
 /*#region Media =========================================== */
 @media only screen and (min-width: 344px) {
-    body #root>main {
+    body>#root>main {
         --main-base-width: 95vw;
     }
 }
 
 @media only screen and (min-width: 428px) {
-    body #root>main {
+    body>#root>main {
         --main-base-width: 70vw;
     }
 }
 
 @media only screen and (min-width: 768px) {
-    body #root>main {
+    body>#root>main {
         --main-base-width: 80vw;
     }
 }

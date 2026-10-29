@@ -15,7 +15,6 @@ import {
 
 import {
     DEFAULT_APP_PREFERENCES,
-    getLabel,
     resolveClassNames,
     API$Enumerators,
     Madeirense$Types,
@@ -42,7 +41,6 @@ import {
 import SearchBar from "components/forms/searchBar";
 import ProductCard from "components/cards/product";
 import Icon from "components/icon";
-import Tag from "components/tags";
 
 import {
     nextPageTriggerSetup
@@ -60,9 +58,10 @@ import type {
 interface IPropTypes extends ComponentProps<"div"> {
     defaultRestaurant?: number;
     disableSearch?: boolean;
-    productType?: `${$Enums.Products_product_type}`;
-    mode?: "default" | "admin";
     group?: productGroupType;
+    mode?: "default" | "admin";
+    productComposition?: `${$Enums.Products_product_composition}`;
+    productType?: `${$Enums.Products_product_type}`;
     trackAppUpdates?: boolean;
     type?: "products" | "delisted-products",
 };
@@ -88,6 +87,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
         disableSearch = false,
         group,
         mode = "default",
+        productComposition,
         productType,
         trackAppUpdates = false,
         type = "products",
@@ -102,7 +102,10 @@ function ProductsMenuGrid(_props: IPropTypes) {
 
     const [search, setSearch] = useState("");
     const [listFilter, setListFilter] = useState<filterType>(productType ?? "all");
-    const [compositionFilters, setCompositionFilters] = useState<Record<$Enums.Products_product_composition, boolean>>(defaultCompositionFilters);
+    const [compositionFilters, setCompositionFilters] = useState<Record<$Enums.Products_product_composition, boolean>>({
+        ...defaultCompositionFilters,
+        ...(!productComposition ? {} : { [productComposition]: true })
+    });
 
     const { get } = useApp();
 
@@ -278,16 +281,16 @@ function ProductsMenuGrid(_props: IPropTypes) {
                         { key: "Farináceos", value: { value: "wheat", icon: <Icon name="Wheat" /> } },
                     ] as keyValuePair<string, { value: $Enums.Products_product_composition, icon: any }>[]
                 )
-                .filter(({ value }) => fullList.map(p => p?.product_composition).includes(value.value))
-                .filter(({ value }) => {
-                    switch (listFilter) {
-                        case 'beverage':
-                            return ['alcoholic', 'non_alcoholic'].includes(value.value);
-                            
-                        default:
-                            return !['alcoholic', 'non_alcoholic'].includes(value.value);
-                    }
-                }),
+                    .filter(({ value }) => fullList.map(p => p?.product_composition).includes(value.value))
+                    .filter(({ value }) => {
+                        switch (listFilter) {
+                            case 'beverage':
+                                return ['alcoholic', 'non_alcoholic'].includes(value.value);
+
+                            default:
+                                return !['alcoholic', 'non_alcoholic'].includes(value.value);
+                        }
+                    }),
                 onMultiplePick: handleCompositionPick
             };
 

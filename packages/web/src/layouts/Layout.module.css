@@ -1,0 +1,29 @@
+/*#region Patterns ======================================== */
+.pattern {
+    --h: 100vh;
+    --w: 80px;
+    
+    --default-padding: 60px;
+    
+    position: fixed;
+    inset: 0 var(--pattern-inset-right, 0) 0 var(--pattern-inset-left, 0);
+
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+
+    width: var(--w);
+    max-width: var(--w);
+    min-width: var(--w);
+
+    background-color: var(--pattern-background-color, var(--accent));
+}
+
+.pattern[data-position="left"] {
+    --pattern-inset-left: var(--padding-x, var(--default-padding));
+}
+
+.pattern[data-position="right"] {
+    --pattern-inset-left: calc(100% - var(--w) - var(--padding-x, var(--default-padding)));
+}
+/*#endregion*/
