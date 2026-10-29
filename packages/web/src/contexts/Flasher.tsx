@@ -19,12 +19,12 @@ import styles from './Flasher.module.css';
 
 // ***************************************************************************************************************
 
-type ordereventType = (
+type orderEventType = (
     | "DELIVERED"
     | "PLACED"
 );
 
-type requesteventType = (
+type requestEventType = (
     | "PUSH_NOTIFICATION"
 );
 
@@ -32,36 +32,36 @@ type restaurantEventType = (
     | "RESERVED"
 );
 
-type flashereventType = (
+type flasherEventType = (
     | "EMPTY"
     | "LOADING"
     | "GOODBYE"
-    | `${requesteventType}_REQUEST`
-    | `${ordereventType}_ORDER`
+    | `${requestEventType}_REQUEST`
+    | `${orderEventType}_ORDER`
     | `${restaurantEventType}_EVENT`
 );
 
 type FlasherContextType = {
     eject: () => void,
-    flash: (t: flashereventType) => void
+    flash: (t: flasherEventType) => void
 };
 
 const FlasherContext = createContext<FlasherContextType>({
     eject: () => { },
-    flash: (t: flashereventType) => { }
+    flash: (t: flasherEventType) => { }
 });
 
 const FlasherProvider = ({ children }: any) => {
     const $dialogRef = useRef<HTMLDialogElement | null>(null);
 
-    const [flasher, setFlasher] = useState<flashereventType>("EMPTY");
+    const [flasher, setFlasher] = useState<flasherEventType>("EMPTY");
 
     const assertions = {
         "allowManuelEjection": !([
             "GOODBYE",
             "LOADING",
             "PUSH_NOTIFICATION_REQUEST"
-        ] as flashereventType[]).includes(flasher)
+        ] as flasherEventType[]).includes(flasher)
     };
 
     const eject = () => {
@@ -72,7 +72,7 @@ const FlasherProvider = ({ children }: any) => {
         }, 2000);
     }
 
-    const flash = useCallback((t: flashereventType) => {
+    const flash = useCallback((t: flasherEventType) => {
         $dialogRef.current?.showModal();
 
         setFlasher("LOADING");
@@ -87,7 +87,7 @@ const FlasherProvider = ({ children }: any) => {
         "LOADING",
         "PLACED_ORDER",
         "RESERVED_EVENT"
-    ] as flashereventType[]).includes(flasher) ? "on" : "off";
+    ] as flasherEventType[]).includes(flasher) ? "on" : "off";
 
     return <FlasherContext.Provider value={{ eject, flash }}>
         <dialog ref={$dialogRef} className={styles.flasher} data-event={flasher}>

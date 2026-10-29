@@ -1,4 +1,8 @@
 import { 
+    type ComponentProps
+} from "react";
+
+import { 
     locales, 
     resolveClassNames 
 } from "@Madeirense/shared";
@@ -9,8 +13,6 @@ import { useProfile } from "contexts/Profile";
 import Button from "components/buttons";
 
 import styles from './goodbye.module.css';
-
-import type { ComponentProps } from "react";
 
 // ***************************************************************************************************************
 
@@ -27,7 +29,7 @@ function GOODBYE_FLASHER({ className, ...props }: ComponentProps<"main">) {
     const { state } = useProfile();
     const { eject } = useFlasher();
     
-    return <main className={resolveClassNames(styles.goodbye, className)} {...props}>
+    return <main className={resolveClassNames(styles.main, className)} {...props}>
         <h2 className="mx-auto mb-3">
             {GoodbyeTitle}
         </h2>

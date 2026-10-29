@@ -1,0 +1,24 @@
+.main {
+    @apply flex flex-col justify-start items-start;
+}
+
+.main p,
+.main ul li {
+    text-align: center;
+}
+
+.main ul {
+    @apply border p-2 rounded-lg my-2 w-full;
+    
+    border-color: var(--border-color);
+}
+
+.main ul li {
+    @apply font-bold py-3 w-full;
+    
+    border-color: inherit;
+}
+
+.main ul li:not(:last-of-type) {
+    border-bottom-width: var(--border-width);
+}

@@ -1,11 +1,11 @@
-.goodbye main {
+.main {
     @apply flex flex-col justify-start items-start gap-5;
 }
 
-.goodbye main > button {
+.main > button {
     font-size: 1.5rem !important;
 }
 
-.goodbye main > h2 {
+.main > h2 {
     @apply text-center;
 }

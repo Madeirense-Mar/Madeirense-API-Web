@@ -1,10 +1,12 @@
 import { 
-    useState
+    useState,
+    type ComponentPropsWithoutRef
 } from "react";
 
 import { 
     DEFAULT_APP_PREFERENCES, 
     locales,
+    resolveClassNames,
     type appPreferencesType
 } from "@Madeirense/shared";
 
@@ -16,7 +18,7 @@ import { useProfile } from "contexts/Profile";
 import Button from "components/buttons";
 import Icon from "components/icon";
 
-import './request.css';
+import styles from './request.module.css';
 
 // ***************************************************************************************************************
 
@@ -34,7 +36,7 @@ const {
 } = (locales.get("pt")?.strings ?? {});
 
 
-function PUSH_NOTIFICATION_PERMISSION_REQUEST_FLASHER() {
+function PUSH_NOTIFICATION_PERMISSION_REQUEST_FLASHER({ className, ...props }: ComponentPropsWithoutRef<"main">) {
     const { Storage } = MXP$App;
 
     const { eject } = useFlasher();
@@ -71,7 +73,7 @@ function PUSH_NOTIFICATION_PERMISSION_REQUEST_FLASHER() {
         eject();
     };
 
-    return <>
+    return <main className={resolveClassNames(styles.main, className)} {...props}>
         {(error)
             ? <Icon name="ExclamationCircle" className="text-7xl mx-auto" />
             : <Icon name="NotificationCircle" className="text-7xl mx-auto" />
@@ -117,7 +119,7 @@ function PUSH_NOTIFICATION_PERMISSION_REQUEST_FLASHER() {
         {(!error) && <Button onClick={handleEjection} className="mx-auto text-sm" variant="text" disabled={state === "subscribing" || (error !== null)}>
             {NotificationPermissionAlternative}
         </Button>}
-    </>;
+    </main>;
 }
 
 export default PUSH_NOTIFICATION_PERMISSION_REQUEST_FLASHER;
