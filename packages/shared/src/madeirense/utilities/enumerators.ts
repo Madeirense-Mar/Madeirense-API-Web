@@ -8,7 +8,6 @@ export namespace Madeirense$Enumerators {
             "Order" = "/orders",
             "Product" = "/product",
             "Profile" = "/profile",
-            "Policy" = "/policy",
             "Resort" = "/resort",
             "Welcome" = "/welcome",
             "Not Found" = "/404",
@@ -39,6 +38,12 @@ export namespace Madeirense$Enumerators {
             "Events" = "/checkout/events",
             "Products" = "/checkout/products",
             "Resort" = "/checkout/resort",
+        }
+
+        export enum Legal {
+            "Layout" = "/legal",
+            "Policy" = "/legal/privacy-policy",
+            "Terms" = "/legal/terms-and-conditions",
         }
     }
 

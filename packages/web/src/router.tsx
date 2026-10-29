@@ -15,17 +15,18 @@ import {
 	Madeirense$Enumerators,
 } from "@Madeirense/shared";
 
-import { useProfile } from "contexts/Profile";
-
-import Layout from "layouts/Layout";
-
 import {
 	Page$Enumerators
 } from "pages/enumerators";
 
+import {
+	useProfile
+} from "contexts/Profile";
+
+import Layout from "layouts/Layout";
+
 import NotFoundPage from "pages/404";
 
-import AuthenticationSuccessPage from "pages/Authentication/success";
 import EventsPage from "pages/Events";
 import HomePage from "pages/Home";
 import OfflinePage from "pages/Offline";
@@ -36,10 +37,7 @@ import ResortPage from "pages/Resort";
 import SetCredentialsPage from "pages/SetCredentials";
 import WelcomePage from "pages/Welcome";
 
-import CheckoutLayout from "layouts/Checkout";
-import EventsCheckoutPage from "pages/Checkout/Events";
-import ProductsCheckoutPage from "pages/Checkout/Products";
-import ResortCheckoutPage from "pages/Checkout/Resort";
+import AuthenticationSuccessPage from "pages/Authentication/success";
 
 import BackOfficeLayout from "layouts/BackOffice";
 import BackOfficeBookingsPage from "pages/BackOffice/Bookings";
@@ -51,6 +49,15 @@ import BackOfficeResortsPage from "pages/BackOffice/Resorts";
 import BackOfficeRestaurantPage from "pages/BackOffice/Restaurant";
 import BackOfficeSettingsPage from "pages/BackOffice/Settings";
 import BackOfficeStaffPage from "pages/BackOffice/Staff";
+
+import CheckoutLayout from "layouts/Checkout";
+import CheckoutEventsPage from "pages/Checkout/Events";
+import CheckoutProductsPage from "pages/Checkout/Products";
+import CheckoutResortPage from "pages/Checkout/Resort";
+
+import LegalLayout from "layouts/Legal";
+import LegalPrivacyPolicyPage from "pages/Legal/Policy";
+import LegalTermsAndConditionsPage from "pages/Legal/Terms";
 
 import type {
 	$Enums
@@ -334,22 +341,42 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 						id: "checkout-events",
 						path: Madeirense$Enumerators.Pages.Checkout.Events,
 						label: "events",
-						element: <EventsCheckoutPage />,
+						element: <CheckoutEventsPage />,
 					},
 					{
 						id: "checkout-products",
 						path: Madeirense$Enumerators.Pages.Checkout.Products,
 						label: "products",
-						element: <ProductsCheckoutPage />,
+						element: <CheckoutProductsPage />,
 					},
 					{
 						id: "checkout-resort",
 						path: Madeirense$Enumerators.Pages.Checkout.Resort,
 						label: "products",
-						element: <ResortCheckoutPage />
+						element: <CheckoutResortPage />
 					},
 				]
 			},
+			{
+				id: "legal",
+				path: Madeirense$Enumerators.Pages.Legal.Layout,
+				label: "Legal",
+				element: <LegalLayout />,
+				branches: [
+					{
+						id: "legal-privacy-policy",
+						path: Madeirense$Enumerators.Pages.Legal.Policy,
+						label: "Polícita de privacidade",
+						element: <LegalPrivacyPolicyPage />
+					},
+					{
+						id: "legal-terms-and-conditions",
+						path: Madeirense$Enumerators.Pages.Legal.Terms,
+						label: "Termos e condições",
+						element: <LegalTermsAndConditionsPage />
+					},
+				]
+			}
 		],
 		toNavigationLink,
 		toNavigationLinks

@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import {
+    Link,
     Outlet,
     useLocation
 } from "react-router-dom";
@@ -160,6 +161,18 @@ const Layout = () => {
         {!assertions.disableNavigation && <AppNav />}
 
         <Outlet />
+
+        <footer>
+            <ul>
+                <li>
+                    <Link to={Madeirense$Enumerators.Pages.Legal.Terms} target="_blank">Termos e condições</Link>
+                </li>
+
+                <li>
+                    <Link to={Madeirense$Enumerators.Pages.Legal.Policy} target="_blank">Politicas de privacidade</Link>
+                </li>
+            </ul>
+        </footer>
     </ AppContextProvider>
 };
 

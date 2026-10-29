@@ -262,6 +262,15 @@ main {
     margin-top: var(--main-margin-y, var(--default-margin-y));
 }
 
+#root>footer {
+    @apply flex flex-row justify-center items-center;
+
+    grid-area: application-footer;
+    gap: var(--gap-m);
+
+    background-color: var(--secondary);
+}
+
 /*#endregion*/
 
 /*#region Div stylings ==================================== */

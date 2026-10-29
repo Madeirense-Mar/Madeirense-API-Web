@@ -4,7 +4,8 @@
     grid-template-rows: 70px auto;
     grid-template-areas:
         "aside application-nav"
-        "aside application-body";
+        "aside application-body"
+        "aside application-footer";
 }
 
 /*#region Main ============================================ */
