@@ -7,3 +7,10 @@
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
 }
+
+#order-chat ul {
+    --radius: 0px;
+
+    --ul-border-tl-radius: var(--radius);
+    --ul-border-tr-radius: var(--radius);
+}

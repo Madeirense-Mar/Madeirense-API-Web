@@ -43,7 +43,7 @@
 
 .actions>form {
     @apply flex flex-col justify-start items-start w-full;
-    
+
     gap: 24px;
 }
 
@@ -68,10 +68,29 @@
     width: 100%;
 }
 
+[data-theme*="LIGHT"] .client>div {
+    padding: var(--padding-m);
+
+    border: 1px solid var(--base-border-color);
+    border-radius: 12px;
+}
+
 .client>div>div {
     --card-border-radius: var(--radius-indent) var(--radius-indent) 0 0;
 
     border-bottom: none;
+}
+
+[data-theme*="DARK"] .client>div>div {
+    --card-background-color: color-mix(in srgb, var(--base-border-color), transparent 85%);
+}
+
+[data-theme*="LIGHT"] .client>div>div {
+    --card-border-radius: 12px;
+    --card-border-width: 0px;
+    --card-background-color: color-mix(in srgb, var(--primary), transparent 85%);
+
+    margin-bottom: var(--margin-s);
 }
 
 .client>div>ul {

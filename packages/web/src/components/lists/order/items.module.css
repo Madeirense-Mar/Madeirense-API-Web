@@ -4,15 +4,15 @@
 
     @apply flex flex-col justify-start items-start;
 
-    padding: var(--list-padding, 4px);
+    padding: var(--list-padding, var(--base-list-padding, 4px));
 
-    border: var(--list-border-width, 1px) var(--list-border-style, solid) var(--list-border-color, var(--base-border-color));
+    border: var(--list-border-width, var(--base-list-border-width, 1px)) var(--list-border-style, solid) var(--list-border-color, var(--base-border-color));
     border-radius: var(--list-border-radius, 8px);
 }
 
 [data-theme*="LIGHT"] .list {
-    --list-border-width: 0px;
-    --list-padding: 0px;
+    --base-list-border-width: 0px;
+    --base-list-padding: 0px;
 }
 
 /*#endregion*/
@@ -30,11 +30,21 @@
 }
 
 .list li:last-child {
-    @apply font-bold p-3 text-lg;
+    @apply font-bold p-3 text-lg mt-2;
+
+    justify-content: space-between;
 
     border: 1px dashed var(--price-tag-border-color, var(--secondary));
 
-    justify-content: space-between;
+    background-color: var(--li-background-color, transparent);
+}
+
+[data-theme="LAND-LIGHT"] .list li:last-child {
+    --li-background-color: color-mix(in srgb, var(--secondary), transparent 50%);
+}
+
+[data-theme="SEA-LIGHT"] .list li:last-child {
+    --li-background-color: color-mix(in srgb, var(--primary), transparent 65%);
 }
 
 [data-theme*="LIGHT"] .list li:last-child {
@@ -43,6 +53,10 @@
 
 .list li:last-child * {
     color: var(--base-text-contrast-color);
+}
+
+[data-theme*="DARK"] .list li:last-child * {
+    --base-text-contrast-color: var(--secondary);
 }
 
 .list li div[data-type="thumbnail"] {

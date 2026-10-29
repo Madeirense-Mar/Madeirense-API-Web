@@ -31,8 +31,8 @@
 
     @apply w-full flex flex-col justify-start items-start gap-1;
     position: relative;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
+    border-top-right-radius: var(--ul-border-tr-radius, 10px);
+    border-top-left-radius: var(--ul-border-tl-radius, 10px);
     padding: var(--padding);
     min-height: var(--height);
     overflow-y: auto;
