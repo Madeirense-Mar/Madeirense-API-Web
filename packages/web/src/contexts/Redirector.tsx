@@ -12,11 +12,11 @@ import {
     Madeirense$Enumerators
 } from "@Madeirense/shared";
 
+import AppSettings from "settings";
+
 import {
     useProfile
 } from "./Profile";
-
-import AppSettings from "settings";
 
 // ***************************************************************************************************************
 
