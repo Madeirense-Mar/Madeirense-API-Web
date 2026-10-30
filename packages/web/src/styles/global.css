@@ -262,15 +262,6 @@ main {
     margin-top: var(--main-margin-y, var(--default-margin-y));
 }
 
-#root>footer {
-    @apply flex flex-row justify-center items-center;
-
-    grid-area: application-footer;
-    gap: var(--gap-m);
-
-    background-color: var(--secondary);
-}
-
 /*#endregion*/
 
 /*#region Div stylings ==================================== */
@@ -294,20 +285,32 @@ div[data-type="thumbnail"] {
 
 /*#region Media =========================================== */
 @media only screen and (min-width: 344px) {
+    body>#root>footer,
     body>#root>main {
-        --main-base-width: 95vw;
+        --body-width: 95vw;
+
+        --footer-base-width: var(--body-width);
+        --main-base-width: var(--body-width);
     }
 }
 
 @media only screen and (min-width: 428px) {
+    body>#root>footer,
     body>#root>main {
-        --main-base-width: 70vw;
+        --body-width: 70vw;
+
+        --footer-base-width: var(--body-width);
+        --main-base-width: var(--body-width);
     }
 }
 
 @media only screen and (min-width: 768px) {
+    body>#root>footer,
     body>#root>main {
-        --main-base-width: 80vw;
+        --body-width: 80vw;
+        
+        --footer-base-width: var(--body-width);
+        --main-base-width: var(--body-width);
     }
 }
 

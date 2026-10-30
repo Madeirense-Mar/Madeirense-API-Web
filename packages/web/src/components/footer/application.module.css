@@ -1,0 +1,48 @@
+/*#region Footer ========================================== */
+.footer {
+    --default-margin-x: auto;
+    
+    @apply flex flex-row justify-between items-center;
+
+    grid-area: application-footer;
+    gap: var(--gap-m);
+
+    width: var(--footer-width, var(--footer-base-width));
+
+    margin-left: var(--footer-margin-x, var(--default-margin-x));
+    margin-right: var(--footer-margin-x, var(--default-margin-x));
+}
+
+.footer * {
+    font-size: 0.8rem;
+}
+
+/*#endregion*/
+
+/*#region Legal =========================================== */
+.legal {
+    --py: var(--list-padding-y, var(--padding-xs));
+
+    @apply flex flex-row justify-center items-center gap-3;
+
+    padding: var(--py) 0;
+
+    opacity: var(--list-opacity, 0.5);
+}
+
+.legal:hover {
+    --list-opacity: 1;
+}
+
+/*#endregion*/
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {}
+
+@media only screen and (min-width: 1366px) {}
+
+/*#endregion*/

@@ -16,6 +16,10 @@
     flex-direction: column;
 }
 
+#root:not([data-page])>main {
+    flex-grow: 1;
+}
+
 #root[data-hascart] {
     padding-bottom: 60px;
 }
