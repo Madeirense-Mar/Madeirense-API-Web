@@ -25,7 +25,6 @@ import OrdersList from "components/lists/order";
 import Orders from "components/tables/orders";
 
 import { Page$Enumerators } from "pages/enumerators";
-import { Root$Enumerators } from "styles/enumerators";
 
 import styles from "./Order.module.css";
 
@@ -65,21 +64,6 @@ const OrderPage = () => {
 
         updateSearchParams(searchParams);
     };
-
-    useEffect(() => {
-        const $root = document.getElementById("root");
-
-        if (!$root) return;
-
-        $root.setAttribute(
-            Root$Enumerators.Attributes.Context.page,
-            Root$Enumerators.Attributes.Pages.order
-        );
-
-        return () => {
-            $root.removeAttribute(Root$Enumerators.Attributes.Context.page);
-        }
-    }, []);
 
     useEffect(() => {
         if (!assertions.notFound) return;

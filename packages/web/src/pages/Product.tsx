@@ -18,27 +18,32 @@ import {
 
 import MXP$App from "configurations";
 
+import { Page$Enumerators } from "pages/enumerators";
+
 import { useApp } from "contexts/App";
 import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
+import AnchorButton from "components/buttons/anchor";
+
 import ProductCard from "components/cards/product";
-import ProductCommentsList from "components/lists/productComments";
+
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import { Page$Enumerators } from "pages/enumerators";
-import { Root$Enumerators } from "styles/enumerators";
+import ProductCommentsList from "components/lists/productComments";
 
 import type {
     Users
 } from "@Madeirense/database/browser";
 
-import type { IPageState } from "components/interface";
-import type { workQueueStateType } from "components/types";
+import type { 
+    IPageState
+} from "components/interface";
 
-import "./Product.css";
-import AnchorButton from "components/buttons/anchor";
+import type {
+    workQueueStateType
+} from "components/types";
 
 // ***************************************************************************************************************
 
@@ -140,21 +145,6 @@ const ProductPage = () => {
     };
 
     useEffect(() => {
-        const $root = document.getElementById("root");
-
-        if (!$root) return;
-
-        $root.setAttribute(
-            Root$Enumerators.Attributes.Context.page,
-            Root$Enumerators.Attributes.Pages.product
-        );
-
-        return () => {
-            $root.removeAttribute(Root$Enumerators.Attributes.Context.page);
-        }
-    }, []);
-
-    useEffect(() => {
         const localComments = (page.data?.localComments ?? []);
 
         if (
@@ -216,7 +206,7 @@ const ProductPage = () => {
 
     switch (true) {
         case (assertions.isFetching): {
-            return <main className="w-full h-full flex flex-row justify-center items-center">
+            return <main className="flex flex-row justify-center items-center">
                 <Icon name="Loading" className="animate-spin" />
             </main>
         }
@@ -230,7 +220,7 @@ const ProductPage = () => {
                 LoginToCommentOnThisProduct
             } = locales.get("pt")?.strings ?? {};
 
-            return <main data-view="product-table">
+            return <main className="flex flex-col justify-start items-start gap-11">
                 {showNotification && <header>
                     <Tag>
                         <Icon name="Loading" className="animate-spin" />
@@ -241,15 +231,19 @@ const ProductPage = () => {
                     <Icon name="ArrowLeft" />
                 </AnchorButton>
 
-                <ProductCard {...{ product }} disableLink />
+                <ProductCard 
+                    className="w-full"
+                    disableLink
+                    {...{ product }} 
+                />
 
-                {(pageError) && <section>
+                {(pageError) && <div className="w-full flex flex-row justify-center items-center gap-5" data-state="error">
                     <Icon name="Error" className="mr-12px" />
 
                     {pageError.message}
-                </section>}
+                </div>}
 
-                <section className="flex flex-col justify-start items-start gap-2">
+                <section className="w-full flex flex-col justify-start items-start gap-2">
                     <section className="flex flex-col justify-start items-start gap-2">
                         <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
                             <Icon name="Notes" />
@@ -259,36 +253,7 @@ const ProductPage = () => {
 
                         <p>{product.description}</p>
                     </section>
-
-                    {/* <section className="flex flex-col justify-start items-start gap-2">
-                        <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
-                            <h2>Factos</h2>
-                        </header>
-                    </section> */}
                 </section>
-
-                {/* <section className="flex flex-col justify-start items-start gap-2">
-                    <header className="w-full flex flex-row justify-start items-center gap-3 mb-2">
-                        <Icon name="Comments" />
-
-                        <h2>Conversa</h2>
-                    </header>
-
-                    <form onSubmit={!user ? undefined : POST} data-state={!user ? "disabled" : "idle"}>
-                        {!user
-                            ? <input value={LoginToCommentOnThisProduct} name="comment" title="Campo para comentário" type="text" readOnly />
-                            : <input placeholder="Mensagem" name="comment" title="Campo para comentário" type="text" required />
-                        }
-
-                        <Button value={tableSection} data-shape="round" type="submit" disabled={!user} >
-                            <Icon name="Send" />
-                        </Button>
-                    </form>
-
-                    <hr />
-
-                    <ProductCommentsList product_id={id} localList={localComments} className="max-h-[416px] overflow-y-auto w-full" trackAppUpdates />
-                </section> */}
             </main>
         }
     };
