@@ -2,7 +2,7 @@
 .footer {
     --default-margin-x: auto;
     
-    @apply flex flex-row justify-between items-center;
+    @apply flex flex-row justify-start items-center;
 
     grid-area: application-footer;
     gap: var(--gap-m);

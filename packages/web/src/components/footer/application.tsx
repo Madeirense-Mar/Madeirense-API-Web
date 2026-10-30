@@ -4,7 +4,8 @@ import {
 } from "react";
 
 import {
-    Link
+    Link,
+    useLocation
 } from "react-router-dom";
 
 import {
@@ -15,10 +16,21 @@ import {
 import Icon from "components/icon";
 
 import styles from "./application.module.css";
+import { useApp } from "contexts/App";
 
 // ***************************************************************************************************************
 
 function AppFooter({ className, ...props }: ComponentPropsWithoutRef<"footer">) {
+    const location = useLocation();
+
+    const {
+        app
+    } = useApp();
+
+    const assertions = {
+        "isInBackOffice": location.pathname.includes(Madeirense$Enumerators.Pages.BackOffice.Layout)
+    };
+
     const year = new Date().getFullYear();
 
     const legalLinks = [
@@ -27,9 +39,13 @@ function AppFooter({ className, ...props }: ComponentPropsWithoutRef<"footer">) 
     ];
 
     return <footer className={resolveClassNames(className, styles.footer)} {...props}>
-        <span>
+        <span className={resolveClassNames(assertions.isInBackOffice ? "" : "mr-auto")}>
             Madeirense Mar © {year}
         </span>
+
+        {assertions.isInBackOffice && <span className="mr-auto italic opacity-10 hover:opacity-100">
+            {app.Global_Settings?.change_version}
+        </span>}
 
         <ul className={styles.legal}>
             {legalLinks.map((link, idx) => <Fragment key={link.key}>
