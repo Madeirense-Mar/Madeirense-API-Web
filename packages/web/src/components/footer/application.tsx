@@ -1,4 +1,5 @@
-import { 
+import {
+    Fragment,
     type ComponentPropsWithoutRef
 } from "react";
 
@@ -20,23 +21,26 @@ import styles from "./application.module.css";
 function AppFooter({ className, ...props }: ComponentPropsWithoutRef<"footer">) {
     const year = new Date().getFullYear();
 
+    const legalLinks = [
+        { label: "Termos e condições", to: Madeirense$Enumerators.Pages.Legal.Terms, key: "terms" },
+        { label: "Políticas de privacidade", to: Madeirense$Enumerators.Pages.Legal.Policy, key: "privacy" },
+    ];
+
     return <footer className={resolveClassNames(className, styles.footer)} {...props}>
         <span>
             Madeirense Mar © {year}
         </span>
 
         <ul className={styles.legal}>
-            <li>
-                <Link to={Madeirense$Enumerators.Pages.Legal.Terms} target="_blank">Termos e condições</Link>
-            </li>
+            {legalLinks.map((link, idx) => <Fragment key={link.key}>
+                <li>
+                    <Link to={link.to} target="_blank">{link.label}</Link>
+                </li>
 
-            <li>
-                <Icon name="Dot" />
-            </li>
-
-            <li>
-                <Link to={Madeirense$Enumerators.Pages.Legal.Policy} target="_blank">Politicas de privacidade</Link>
-            </li>
+                {(idx != (legalLinks.length - 1)) && <li>
+                    <Icon name="Dot" />
+                </li>}
+            </Fragment>)}
         </ul>
     </footer>
 };
