@@ -23,3 +23,7 @@ body:has(#root[data-page="events"]) main * {
 body:has(#root[data-page="events"]) main ul {
     gap: 0px;
 }
+
+body:has(#root[data-page="events"]) footer {
+    display: none;
+}
