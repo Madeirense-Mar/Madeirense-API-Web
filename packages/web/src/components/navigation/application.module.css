@@ -1,3 +1,4 @@
+/*#region Navigation bar ================================== */
 .nav {
     --h: 70px;
     --text-color: var(--default-nav-text-color, var(--neutral-dark));
@@ -7,13 +8,13 @@
     height: var(--h);
     max-height: var(--h);
     min-height: var(--h);
-    
+
     grid-area: application-nav;
     pointer-events: var(--nav-pointer-events, all);
 
     position: relative;
     z-index: 11;
-    
+
     gap: var(--gap-m);
 
     background-color: var(--nav-background-color, var(--default-nav-color));
@@ -35,6 +36,9 @@
     --nav-background-color: black;
 }
 
+/*#endregion*/
+
+/*#region Media =========================================== */
 @media only screen and (min-width: 344px) {}
 
 @media only screen and (min-width: 428px) {
@@ -51,6 +55,4 @@
 
 @media only screen and (min-width: 1366px) {}
 
-@media only screen and (max-width: 752px) {}
-
-@media only screen and (min-width: 751px) {}
+/*#endregion*/
