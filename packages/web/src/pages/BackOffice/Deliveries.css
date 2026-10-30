@@ -5,3 +5,7 @@
 #root:has(#backoffice-side-menu[data-toggled])>main>div:first-child[data-component="deliveries-tracker"] {
     width: calc(100% - var(--side-menu-max-width));
 }
+
+#root>footer {
+    --footer-width: 100%;
+}
