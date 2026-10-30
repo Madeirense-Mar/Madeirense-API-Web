@@ -76,7 +76,7 @@ const defaultCompositionFilters = {
     merchandise: false,
     mixed: false,
     non_alcoholic: false,
-    vegetable: false,
+    vegan: false,
     wheat: false
 };
 
@@ -277,7 +277,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
                         { key: "Peixe", value: { value: "fish", icon: <Icon name="FishSharp" /> } },
                         { key: "Carne", value: { value: "meat", icon: <Icon name="Meat" /> } },
                         { key: "Mistura", value: { value: "mixed", icon: <Icon name="Salad" /> } },
-                        { key: "Vegano", value: { value: "vegetable", icon: <Icon name="Vegan" /> } },
+                        { key: "Vegano", value: { value: "vegan", icon: <Icon name="Vegan" /> } },
                         { key: "Farináceos", value: { value: "wheat", icon: <Icon name="Wheat" /> } },
                     ] as keyValuePair<string, { value: $Enums.Products_product_composition, icon: any }>[]
                 )

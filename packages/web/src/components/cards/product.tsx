@@ -109,7 +109,7 @@ function ProductCard(_props: IProductCardProps) {
     const $additionButtonVariant = ((composition: typeof product_composition): variantType => {
         switch (composition) {
             case "wheat": return "success";
-            case "vegetable": return "warning";
+            case "vegan": return "warning";
 
             default: return "primary";
         }
@@ -119,7 +119,7 @@ function ProductCard(_props: IProductCardProps) {
         switch (composition) {
             case "meat": return "danger";
             case "wheat": return "success";
-            case "vegetable": return "warning";
+            case "vegan": return "warning";
 
             default: return "primary";
         }
@@ -241,7 +241,7 @@ function ProductCard(_props: IProductCardProps) {
                 {product_composition === "meat" && <Icon name="Meat" />}
                 {product_composition === "merchandise" && <Icon name="Product" />}
                 {product_composition === "mixed" && <Icon name="Salad" />}
-                {product_composition === "vegetable" && <Icon name="Vegan" />}
+                {product_composition === "vegan" && <Icon name="Vegan" />}
                 {product_composition === "wheat" && <Icon name="Wheat" />}
 
                 {getLabel(product_composition)}

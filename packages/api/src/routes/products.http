@@ -26,7 +26,7 @@ x-platform: mobile
 }
 
 ### All products (public)
-# product_composition: meat | fish | wheat | vegetable | alcoholic | non_alcoholic
+# product_composition: meat | fish | wheat | vegan | alcoholic | non_alcoholic
 # product_type: starter | main | dessert | beverage | ticket
 # group: event | menu   ·   gt / lt: price range
 GET {{baseUrl}}?page=1&limit=10&group=menu&product_type=main&gt=1000&lt=20000

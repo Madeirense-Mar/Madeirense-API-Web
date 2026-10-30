@@ -219,40 +219,40 @@
 }
 /*#endregion*/
 
-/*#region Vegetable*/
-.vegetable {
+/*#region vegan*/
+.vegan {
     composes: card;
 }
 
-[data-theme="SEA-DARK"] .vegetable {
+[data-theme="SEA-DARK"] .vegan {
     --card-border-color: var(--success);
     --card-background-color: color-mix(in srgb, var(--success), var(--success-dark) 45%);
 
     --text-color: var(--success-dark);
 }
 
-[data-theme="SEA-LIGHT"] .vegetable {
+[data-theme="SEA-LIGHT"] .vegan {
     --card-border-color: color-mix(in srgb, var(--success), black 10%);
     --card-background-color: color-mix(in srgb, var(--success), white 17%);
 
     --text-color: var(--success-dark);
 }
 
-[data-theme="LAND-DARK"] .vegetable {
+[data-theme="LAND-DARK"] .vegan {
     --card-border-color: var(--success);
     --card-background-color: color-mix(in srgb, var(--success-dark) 45%, var(--success) 50%);
 
     --text-color: color-mix(in srgb, var(--success), white 80%);
 }
 
-[data-theme="LAND-LIGHT"] .vegetable {
+[data-theme="LAND-LIGHT"] .vegan {
     --card-border-color: color-mix(in srgb, var(--success-dark), white 30%);
     --card-background-color: color-mix(in srgb, var(--success-dark) 50%, var(--success) 15%);
 
     --text-color: color-mix(in srgb, var(--success) 15%, white 95%);
 }
 
-.vegetable div[data-section="thumbnail"] {
+.vegan div[data-section="thumbnail"] {
     background-color: color-mix(in srgb, var(--success) 50%, white 30%);
 }
 /*#endregion*/
