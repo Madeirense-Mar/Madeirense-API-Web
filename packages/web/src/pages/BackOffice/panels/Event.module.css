@@ -2,23 +2,57 @@
 .section {
     display: grid;
 
-    gap: 24px;
+    column-gap: 24px;
+    gap: 40px;
 
     width: 100%;
 }
 
-.section *:nth-child(1) {
-    grid-area: actions;
-}
-
-.section *:nth-child(2) {
+.section>section:nth-of-type(1) {
     grid-area: event;
 }
 
-.section *:nth-child(3) {
+.section>section:nth-of-type(2) {
+    grid-area: merch;
+}
+
+.section>section:nth-of-type(3) {
     grid-area: tickets;
 }
 
+.section>section {
+    @apply w-full flex flex-col justify-start items-start gap-5;
+}
+
+/*#endregion*/
+
+/*#region Scroll section ================================== */
+.scroll {
+    --section-gap: 0px;
+}
+
+.scroll div[data-type="thumbnail"],
+.scroll video {
+    --radius: 12px;
+
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.scroll video {
+    width: 100%;
+    height: 300px;
+}
+/*#endregion*/
+
+/*#region Merchandise section ============================= */
+.merch {
+    padding: var(--padding-l);
+
+    border: 1px solid var(--section-border-color, color-mix(in srgb, var(--neutral-light), transparent 90%) );
+    border-radius: 12px;
+
+    background-color: var(--section-background-color, var(--neutral-dark));
+}
 /*#endregion*/
 
 /*#region Tickets list ==================================== */
@@ -74,6 +108,7 @@
         grid-template-columns: 1fr auto;
         grid-template-areas:
             "event      actions"
+            "merch      ."
             "tickets    ."
         ;
     }

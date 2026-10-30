@@ -4,9 +4,10 @@ import {
     useRef,
     useState,
     type ChangeEvent,
-    type SubmitEvent,
+    type ComponentPropsWithoutRef,
     type KeyboardEvent,
-    type MouseEvent
+    type MouseEvent,
+    type SubmitEvent
 } from "react";
 
 import {
@@ -75,6 +76,7 @@ const delayMS = 2500;
 const today = new Date();
 
 function EventPanel({ id }: { id: number }) {
+    //#region Hook and state declarations -----------------
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const {
@@ -89,17 +91,20 @@ function EventPanel({ id }: { id: number }) {
 
     const navigate = useNavigate();
 
-    const [updater, setUpdater] = useState<keyof Restaurant_Events | "">("");
-    const [freeSpots, setFreeSpots] = useState<boolean>(false);
     const [freePricing, setFreePricing] = useState<boolean>(false);
+    const [freeSpots, setFreeSpots] = useState<boolean>(false);
+    const [updater, setUpdater] = useState<keyof Restaurant_Events | "">("");
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const data = get("Restaurant_Events")?.find(({ event_id }) => event_id === id) as restaurantEventType;
-
-    //const ticket = (data?.Products ?? []).find(p => p.product_type === "ticket");
+    const tickets = useMemo(() => (data?.Products ?? []).filter(({ product_type }) => product_type === "ticket"), [data]);
 
     const {
         event_date,
-        status
+        status,
+        start_time = new Date(),
+        end_time = new Date()
     } = data ?? {};
 
     const [
@@ -108,12 +113,14 @@ function EventPanel({ id }: { id: number }) {
         eHours,
         eMinutes,
     ] = useMemo(() => [
-        String(new Date(data?.start_time as Date).getHours()).padStart(2, '0'),
-        String(new Date(data?.start_time as Date).getMinutes()).padStart(2, '0'),
-        String(new Date(data?.end_time as Date).getHours()).padStart(2, '0'),
-        String(new Date(data?.end_time as Date).getMinutes()).padStart(2, '0'),
+        String(new Date(start_time).getHours()).padStart(2, '0'),
+        String(new Date(start_time).getMinutes()).padStart(2, '0'),
+        String(new Date(end_time).getHours()).padStart(2, '0'),
+        String(new Date(end_time).getMinutes()).padStart(2, '0')
     ], [data]);
+    //#endregion
 
+    //#region Functions -----------------------------------
     function getUpdaterStatusIndicator(...properties: (keyof Restaurant_Events)[]) {
         if (properties.includes(updater as keyof Restaurant_Events)) return (assertions.isLoading)
             ? <Icon name="Loading" className="animate-spin" />
@@ -273,7 +280,9 @@ function EventPanel({ id }: { id: number }) {
             setUpdater("");
         }
     }
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => { const tRef = timeoutRef.current; return () => { if (tRef) clearTimeout(tRef); } }, []);
 
     useEffect(() => { setFreeSpots(((data?.spots ?? 0) as number) === 0); }, [data?.spots]);
@@ -290,6 +299,7 @@ function EventPanel({ id }: { id: number }) {
             (today > new Date(event_date))
         ].includes(true)
     };
+    //#endregion
 
     switch (appState) {
         case "loading": {
@@ -299,8 +309,10 @@ function EventPanel({ id }: { id: number }) {
         };
 
         default: {
-            return <section className={styles.section}>
-                {data.status === "ongoing" ? null : <ul className={panelStyles.actions}>
+            return <section
+                className={styles.section}
+            >
+                <ul className={panelStyles.actions}>
                     <li>
                         <span>Acções</span>
                     </li>
@@ -324,10 +336,11 @@ function EventPanel({ id }: { id: number }) {
                             Eliminar o evento
                         </Button>
                     </li>}
-                </ul>}
+                </ul>
 
-                <section className="w-full flex flex-col justify-start items-start gap-5">
+                <section>
                     <ScrollToSection
+                        className={resolveClassNames(styles.scroll, "w-full")}
                         event_id={id as number}
                         thumbnail_url={data?.thumbnail_url as string}
                         video_url={data?.video_url as string}
@@ -416,6 +429,39 @@ function EventPanel({ id }: { id: number }) {
 
                     <DescriptionLabel
                         className="w-full"
+                        title="Ingresso"
+                        description="Preço do ingresso base, o mínimo que qualquer cliente terá de pagar para aceder."
+                        alerts={{
+                            warning: "Alteração do só afetará os productos que não foram vendidos"
+                        }}
+                        input={{
+                            element: "input",
+                            iconElement: getUpdaterStatusIndicator("price"),
+                            props: {
+                                className: "w-full text-center",
+                                name: "spots",
+                                title: `Preço do ingresso${(!freePricing) ? " (editável)" : ""}`,
+                                ...(freePricing)
+                                    ? {
+                                        readOnly: true,
+                                        type: "text",
+                                        value: "Grátis",
+                                        onClick: () => toggleFreePricing(),
+                                    }
+                                    : {
+                                        defaultValue: parseFloat(`${data?.price}`),
+                                        min: 0,
+                                        readOnly: assertions.hasPassed,
+                                        type: "number",
+                                        onBlur: assertions.hasPassed ? undefined : handleEvent,
+                                        onKeyDown: handleKeyDown,
+                                    }
+                            }
+                        }}
+                    />
+
+                    <DescriptionLabel
+                        className="w-full"
                         title="Nº de ingressos"
                         alerts={{
                             warning: "Nº de ingressos não pode baixar os vendidos"
@@ -452,42 +498,6 @@ function EventPanel({ id }: { id: number }) {
 
                     <DescriptionLabel
                         className="w-full"
-                        title="Ingresso"
-                        alerts={{
-                            warning: "Alteração do só afetará os ingressos que não foram vendidos"
-                        }}
-                        icon="Money"
-                        description={<>
-                            Preço dos ingressos.
-                        </>}
-                        input={{
-                            element: "input",
-                            iconElement: getUpdaterStatusIndicator("price"),
-                            props: {
-                                className: "w-full text-center",
-                                name: "spots",
-                                title: `Preço do ingresso${(!freeSpots) ? " (editável)" : ""}`,
-                                ...(freeSpots)
-                                    ? {
-                                        readOnly: true,
-                                        type: "text",
-                                        value: "Grátis",
-                                        onClick: () => toggleFreePricing(),
-                                    }
-                                    : {
-                                        defaultValue: parseFloat(`${data?.price}`),
-                                        min: 0,
-                                        readOnly: assertions.hasPassed,
-                                        type: "number",
-                                        onBlur: assertions.hasPassed ? undefined : handleEvent,
-                                        onKeyDown: handleKeyDown,
-                                    }
-                            }
-                        }}
-                    />
-
-                    <DescriptionLabel
-                        className="w-full"
                         layout="column"
                         title="Nome"
                         description={<>
@@ -509,7 +519,31 @@ function EventPanel({ id }: { id: number }) {
                     />
                 </section>
 
-                <section className="w-full flex flex-col justify-start items-start gap-2">
+                <section className={styles.merch}>
+                    <h1>Merchandise</h1>
+
+                    <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                        Alteração do só afetará os productos que não foram vendidos
+                    </div>
+
+                    <ul className="w-full">
+                        {tickets.map(t => <li key={t.product_id} className="w-full">
+                            <form className="w-full">
+
+                            </form>
+                        </li>)}
+                        
+                        <li className="w-full flex flex-row justify-end items-start">
+                            <Button>
+                                <Icon name="Add" />
+
+                                Adicionar producto
+                            </Button>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
                     <h1>Ingressos comprados</h1>
 
                     <TicketBuyersList
@@ -528,13 +562,15 @@ type sectionType = "thumbnail" | "video";
 
 const ScrollToSection = ({
     callback,
+    className,
     event_id,
     hasExpired = false,
     onThumbnailUpdate,
     onVideoUpdate,
     thumbnail_url: dt,
     video_url: dv,
-}: {
+    ...props
+}: ComponentPropsWithoutRef<"section"> & {
     callback?: Function;
     event_id: number;
     hasExpired?: boolean;
@@ -623,7 +659,7 @@ const ScrollToSection = ({
         }
     };
 
-    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], "w-full")}>
+    return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
         <header>
             {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
                 {kvp.icon}
@@ -634,7 +670,7 @@ const ScrollToSection = ({
 
         <div data-type="container">
             <section id="event-thumbnail" className="gap-2">
-                <div data-type="thumbnail" style={{ height: "300px", backgroundImage: `url(${thumbnail_url})` }} className="w-full flex flex-col justify-center items-center rounded-md border">
+                <div data-type="thumbnail" style={{ height: "300px", backgroundImage: `url(${thumbnail_url})` }} className="w-full flex flex-col justify-center items-center">
                     {appState === "uploading-thumbnail" && <Icon name="Loading" className="animate-spin" />}
                 </div>
 
@@ -666,7 +702,6 @@ const ScrollToSection = ({
                         src={video_url}
                         width="100%"
                         height={300}
-                        className="rounded-md border"
                         playing
                         controls
                     />
