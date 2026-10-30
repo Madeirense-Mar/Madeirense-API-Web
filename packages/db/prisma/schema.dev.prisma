@@ -271,13 +271,13 @@ model Products {
   restaurant_id       Int?
   discount            Decimal                       @default(0.00) @db.Decimal(5, 2)
   thumbnail           String?                       @db.VarChar(255)
-  product_type        Products_product_type?
-  product_composition Products_product_composition?
   prep_time_minutes   Int                           @default(0)
   event_id            Int?
   delisted            Boolean?                      @default(false)
   created_at          DateTime?                     @default(now()) @db.Timestamp(0)
   updated_at          DateTime?                     @default(now()) @db.Timestamp(0)
+  product_type        Products_product_type?
+  product_composition Products_product_composition?
   Cart                Cart[]
   Favorites           Favorites[]
   Order_Items         Order_Items[]
@@ -796,27 +796,6 @@ enum Courier_Reallocation_Requests_status {
   cancelled
 }
 
-enum Products_product_type {
-  starter
-  garnish
-  main
-  dessert
-  beverage
-  ticket
-}
-
-enum Products_product_composition {
-  meat
-  fish
-  wheat
-  vegetable
-  alcoholic
-  non_alcoholic @map("non-alcoholic")
-  mixed
-  liquid
-  merchandise
-}
-
 enum Resort_Bookings_status {
   pending
   confirmed
@@ -838,4 +817,26 @@ enum Api_Keys_usage_type {
   shareholder
   service
   other
+}
+
+enum Products_product_type {
+  starter
+  garnish
+  main
+  dessert
+  beverage
+  ticket
+  merchandise
+}
+
+enum Products_product_composition {
+  meat
+  fish
+  wheat
+  vegan
+  alcoholic
+  non_alcoholic @map("non-alcoholic")
+  mixed
+  liquid
+  merchandise
 }
