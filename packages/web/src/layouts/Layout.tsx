@@ -4,7 +4,6 @@ import {
 } from "react";
 
 import {
-    Link,
     Outlet,
     useLocation
 } from "react-router-dom";
@@ -28,6 +27,7 @@ import { RedirectorProvider } from "contexts/Redirector";
 import Cart from "components/tables/cart";
 import Orders from "components/tables/orders";
 
+import AppFooter from "components/footer/application";
 import AppNav from "components/navigation/application";
 
 import styles from "./Layout.module.css";
@@ -162,17 +162,7 @@ const Layout = () => {
 
         <Outlet />
 
-        <footer>
-            <ul>
-                <li>
-                    <Link to={Madeirense$Enumerators.Pages.Legal.Terms} target="_blank">Termos e condições</Link>
-                </li>
-
-                <li>
-                    <Link to={Madeirense$Enumerators.Pages.Legal.Policy} target="_blank">Politicas de privacidade</Link>
-                </li>
-            </ul>
-        </footer>
+        {!assertions.disableNavigation && <AppFooter />}
     </ AppContextProvider>
 };
 

@@ -44,6 +44,7 @@ export type * from "./types/cart.js";
 export type * from "./types/comments.js";
 export type * from "./types/coupons.js";
 export type * from "./types/globalSettings.js";
+export type * from "./types/legal.js";
 export type * from "./types/orders.js";
 export type * from "./types/payments.js";
 export type * from "./types/products.js";

@@ -9,7 +9,9 @@ import path from 'path';
 import matter from 'gray-matter';
 
 import {
-    type API$Types
+    type API$Types,
+    type legalDocumentSlugType,
+    type legalDocumentType
 } from '@Madeirense/shared';
 
 import {
@@ -26,16 +28,13 @@ import {
  * comes from the file's own frontmatter rather than its filesystem
  * mtime — mtime resets on every deploy (fresh checkout), which would
  * make the document look "just updated" after every deploy regardless
- * of whether its content actually changed.
+ * of whether its content actually changed. The response shape lives in
+ * `@Madeirense/shared` (`legalDocumentType`) so the web client reads the
+ * exact same type.
  */
-export type legalDocument = {
-    content: string;
-    updated: string;
-};
-
 const LEGAL_CONTENT_DIR = path.resolve(process.cwd(), 'content', 'legal');
 
-const readLegalDocument = (slug: 'terms' | 'privacy'): legalDocument => {
+const readLegalDocument = (slug: legalDocumentSlugType): legalDocumentType => {
     const raw = fs.readFileSync(
         path.join(LEGAL_CONTENT_DIR, `${slug}.md`),
         'utf-8'
@@ -51,7 +50,7 @@ const readLegalDocument = (slug: 'terms' | 'privacy'): legalDocument => {
 
 export const getTerms = async (
     req: Request,
-    res: Response<API$Types.response<legalDocument | undefined>>
+    res: Response<API$Types.response<legalDocumentType | undefined>>
 ) => {
     try {
         return res.status(200).json({
@@ -69,7 +68,7 @@ export const getTerms = async (
 
 export const getPrivacyPolicy = async (
     req: Request,
-    res: Response<API$Types.response<legalDocument | undefined>>
+    res: Response<API$Types.response<legalDocumentType | undefined>>
 ) => {
     try {
         return res.status(200).json({

@@ -12,6 +12,7 @@ import CouponsEndpoints from "./endpoints/coupons";
 import CourierPositionsEndpoints from "./endpoints/courierPositions";
 import DeliveryLocationsEndpoints from "./endpoints/deliveryLocations";
 import GlobalSettingsEndpoints from "./endpoints/globalSettings";
+import LegalEndpoints from "./endpoints/legal";
 import OrdersEndpoints from "./endpoints/orders";
 import PaymentsEndpoints from "./endpoints/payments";
 import ProductsEndpoints from "./endpoints/products";
@@ -64,6 +65,7 @@ class BaseAPIService extends APIService {
             "courier-positions" : new CourierPositionsEndpoints(this.client, this.storage),
             "delivery-locations": new DeliveryLocationsEndpoints(this.client, this.storage),
             "global-settings"   : new GlobalSettingsEndpoints(this.client, this.storage),
+            "legal"             : new LegalEndpoints(this.client, this.storage),
             "orders"            : new OrdersEndpoints(this.client, this.storage),
             "payments"          : new PaymentsEndpoints(this.client, this.storage),
             "products"          : new ProductsEndpoints(this.client, this.storage),

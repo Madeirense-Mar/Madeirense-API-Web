@@ -5,6 +5,10 @@ import {
     Madeirense$Types
 } from "@Madeirense/shared";
 
+import type {
+    legalDocumentSlugType
+} from "@Madeirense/shared";
+
 import env from "env";
 
 import BaseAPIService from "services/api/base";
@@ -17,6 +21,7 @@ export namespace Queries$Types {
     export type item = (
         | "booking"
         | "event"
+        | "legal"
         | "order"
         | "product"
         | "resort"
@@ -84,6 +89,8 @@ export class Queries {
                     return (await this.businessEndpoints.resorts.getBooking(identifier as number)) as T;
                 case "event":
                     return (await this.businessEndpoints["restaurant-events"].get(identifier as number)) as T;
+                case "legal":
+                    return (await this.businessEndpoints.legal.get(identifier as legalDocumentSlugType)) as T;
                 case "order":
                     return (await this.businessEndpoints.orders.get(identifier as number)) as T;
                 case "product":

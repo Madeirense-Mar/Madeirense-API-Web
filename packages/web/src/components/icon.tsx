@@ -126,6 +126,7 @@ import {
 
 import {
     LuDessert,
+    LuDot,
     LuVegan
 } from "react-icons/lu";
 
@@ -245,6 +246,7 @@ const registry = {
     Delivery: RiTakeawayLine,
     Dessert: LuDessert,
     Discount: RiDiscountPercentFill,
+    Dot: LuDot,
     Drink: MdLocalDrink,
     //#endregion
 

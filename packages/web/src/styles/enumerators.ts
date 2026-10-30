@@ -17,6 +17,7 @@ export namespace Root$Enumerators {
         export enum Pages {
             "back-office" = "back-office",
             "checkout" = "checkout",
+            "contract" = "contract",
             "events" = "events",
             "order" = "order",
             "product" = "product",

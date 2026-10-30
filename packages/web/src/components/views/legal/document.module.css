@@ -1,0 +1,135 @@
+/*#region Document ======================================== */
+/* Long-form reading layout for markdown served by the API. Element
+   selectors are scoped under .document because react-markdown emits
+   plain, class-less HTML. */
+.document {
+    @apply flex flex-col;
+
+    width: 100%;
+    max-width: 72ch;
+    margin-inline: auto;
+    padding: var(--container-padding-xs) var(--padding-l);
+    gap: var(--gap-m);
+
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.document.status {
+    @apply items-center justify-center text-center;
+
+    min-height: 40vh;
+}
+
+.updated {
+    order: 1;
+
+    font-size: 0.875rem;
+    opacity: 0.75;
+}
+
+/* Keep the "last updated" line under the document's title. */
+.document > h1:first-of-type {
+    order: 0;
+}
+
+.document > :not(h1:first-of-type, .updated) {
+    order: 2;
+}
+
+.document h1 {
+    margin-bottom: var(--margin-s);
+
+    font-size: 1.8rem;
+    line-height: 1.25;
+}
+
+.document h2 {
+    margin-top: var(--margin-xl);
+
+    font-size: 1.36rem;
+    line-height: 1.3;
+}
+
+.document h3 {
+    margin-top: var(--margin-l);
+
+    font-size: 1.12rem;
+}
+
+.document h4,
+.document h5,
+.document h6 {
+    margin-top: var(--margin-m);
+
+    font-size: 1rem;
+}
+
+.document ul,
+.document ol {
+    @apply flex flex-col;
+
+    padding-left: var(--padding-xl);
+    gap: var(--gap-xs);
+}
+
+.document ul {
+    list-style: disc;
+}
+
+.document ol {
+    list-style: decimal;
+}
+
+.document a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.document strong {
+    @apply font-bold;
+}
+
+.document blockquote {
+    padding: var(--padding-m) var(--padding-l);
+
+    border-left: 4px solid var(--border-color, var(--base-border-color));
+    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--neutral) 15%, transparent);
+}
+
+.document hr {
+    margin-block: var(--margin-l);
+}
+
+.document table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
+
+    border-collapse: collapse;
+}
+
+.document th,
+.document td {
+    padding: var(--padding-s) var(--padding-m);
+
+    border: var(--border-width) solid var(--base-neutral-border-color, var(--neutral));
+    text-align: left;
+    vertical-align: top;
+}
+
+.document th {
+    @apply font-bold;
+}
+
+.document code {
+    padding: 0 var(--padding-xs);
+
+    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--neutral) 20%, transparent);
+    font-size: 0.9em;
+}
+
+/*#endregion*/
