@@ -245,10 +245,12 @@ export async function createRestaurantEventProduct(
         ...body
     } = req.body;
 
+    let event: Restaurant_Events | null = null;
+
     try {
         const event_id = parseInt(req.params.id);
 
-        const event = await prisma.restaurant_Events.findUnique({
+        event = await prisma.restaurant_Events.findUnique({
             where: { event_id }
         });
 
@@ -262,7 +264,7 @@ export async function createRestaurantEventProduct(
         }
 
         return res.status(201).json({
-            data: await prisma.products.create({
+            data: convertDecimals(await prisma.products.create({
                 data: {
                     ...body,
                     delisted,
@@ -273,7 +275,7 @@ export async function createRestaurantEventProduct(
                     restaurant_id: event.restaurant_id,
                     thumbnail
                 }
-            }),
+            })),
             message: 'Restaurant event merch product created successfully',
             success: true
         });
@@ -282,6 +284,11 @@ export async function createRestaurantEventProduct(
             res,
             error
         );
+    } finally {
+        if (!event) return;
+
+        req.events?.global_settings.SILENT$emit("global_settings.change_version.updated");
+        req.events?.restaurant_events.emit("restaurant_event.updated", event);
     }
 };
 
@@ -824,10 +831,12 @@ export async function updateRestaurantEventProduct(
         ...body
     } = req.body;
 
+    let event: Restaurant_Events | null = null;
+
     try {
         const event_id = parseInt(req.params.id);
 
-        const event = await prisma.restaurant_Events.findUnique({
+        event = await prisma.restaurant_Events.findUnique({
             where: { event_id }
         });
 
@@ -843,8 +852,8 @@ export async function updateRestaurantEventProduct(
         const product_id = parseInt(req.params.product_id);
 
         const product = await prisma.products.findUnique({
-            where: { 
-                product_id, 
+            where: {
+                product_id,
                 event_id,
                 restaurant_id: event.restaurant_id
             }
@@ -860,14 +869,14 @@ export async function updateRestaurantEventProduct(
         }
 
         return res.status(200).json({
-            data: await prisma.products.update({
+            data: convertDecimals(await prisma.products.update({
                 where: { product_id },
                 data: {
                     ...body,
                     ...(!thumbnail ? {} : { thumbnail }),
                     delisted
                 }
-            }),
+            })),
             message: 'Restaurant event merch product updated successfully',
             success: true
         });
@@ -876,6 +885,11 @@ export async function updateRestaurantEventProduct(
             res,
             error
         );
+    } finally {
+        if (!event) return;
+
+        req.events?.global_settings.SILENT$emit("global_settings.change_version.updated");
+        req.events?.restaurant_events.emit("restaurant_event.updated", event);
     }
 };
 
