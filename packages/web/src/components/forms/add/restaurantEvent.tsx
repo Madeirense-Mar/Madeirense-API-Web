@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     useState,
     type ComponentProps,
@@ -19,7 +20,9 @@ import {
 
 import env from "env";
 
-import { useApp } from "contexts/App";
+import {
+    useApp
+} from "contexts/App";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
@@ -27,6 +30,7 @@ import Tag from "components/tags";
 
 import AppSettings from "settings";
 
+import DescriptionLabel from "../elements/labels/description";
 import RestaurantsSelector from "../elements/selects/restaurants";
 
 import styles from "./restaurantEvent.module.css";
@@ -34,21 +38,26 @@ import styles from "./restaurantEvent.module.css";
 import type {
     IComponentState
 } from "components/interface";
-import DescriptionLabel from "../elements/labels/description";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interface and types -------------------------
 interface IPropTypes extends ComponentProps<"form"> {
     callback?: () => void;
     hideTitle?: boolean,
 };
 
-type AssetType = "thumbnail" | "video";
+type assetType = (
+    | "thumbnail"
+    | "video"
+);
 
-type ModalState = {
+type modalState = {
     uploadedThumbnailURL?: string
     uploadedVideoURL?: string
 };
+//#endregion
 
 const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
 
@@ -58,11 +67,15 @@ defineLocale('pt', async () => {
 
 const AddRestaurantEventForm = ({
     callback,
+    className,
     hideTitle = false,
+    onSubmit,
     ...props
 }: IPropTypes) => {
+    //#region Hooks and state declarations ----------------
     const { create } = useApp();
-    const [form, updateForm] = useState<IComponentState<ModalState, `uploading-${AssetType}`>>({
+
+    const [form, updateForm] = useState<IComponentState<modalState, `uploading-${assetType}`>>({
         data: {
             uploadedThumbnailURL: "",
             uploadedVideoURL: ""
@@ -70,14 +83,24 @@ const AddRestaurantEventForm = ({
         status: "idle",
         error: null
     });
+    //#endregion
 
-    const { data, error, status } = form;
+    //#region Variable declarations -----------------------
+    const {
+        data,
+        error,
+        status
+    } = form;
 
-    const isWorking = [
-        "uploading-thumbnail",
-        "uploading-video"
-    ].includes(status);
+    const assertions = {
+        "isWorking": [
+            "uploading-thumbnail",
+            "uploading-video"
+        ].includes(status)
+    };
+    //#endregion
 
+    //#region Functions -----------------------------------
     async function POST(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -116,21 +139,12 @@ const AddRestaurantEventForm = ({
             callback?.();
         } catch (error) {
             updateForm(p => { return { ...p, status: "error", error: new Error((error as Error).message) } });
+        } finally {
+            onSubmit?.(e);
         }
     };
 
-    function toggleUploadState(type: ("thumbnail" | "video")) {
-        return (e: any) => {
-            switch (type) {
-                case "thumbnail": updateForm(f => { return { ...f, status: "uploading-thumbnail", data: { ...f.data, uploadedThumbnailURL: "" } } }); break;
-                case "video": updateForm(f => { return { ...f, status: "uploading-video", data: { ...f.data, uploadedVideoURL: "" } } }); break;
-
-                default: throw new Error("Unknown upload type");
-            }
-        }
-    };
-
-    function handleUpload(type: ("thumbnail" | "video")) {
+    function handleUpload(type: assetType) {
         return ({ uuid, mimeType, errors }: any) => {
             if (!uuid) {
                 console.error(errors);
@@ -147,10 +161,23 @@ const AddRestaurantEventForm = ({
         }
     };
 
-    return <form onSubmit={POST} className={styles.form} {...props}>
+    function toggleUploadState(type: assetType) {
+        return (e: any) => {
+            switch (type) {
+                case "thumbnail": updateForm(f => { return { ...f, status: "uploading-thumbnail", data: { ...f.data, uploadedThumbnailURL: "" } } }); break;
+                case "video": updateForm(f => { return { ...f, status: "uploading-video", data: { ...f.data, uploadedVideoURL: "" } } }); break;
+
+                default: throw new Error("Unknown upload type");
+            }
+        }
+    };
+    //#endregion
+
+    //#region DOM -----------------------------------------
+    return <form onSubmit={POST} className={resolveClassNames(styles.form, className)} {...props}>
         {!hideTitle && <h2>Evento</h2>}
 
-        <fieldset data-state={isWorking ? "disabled" : "idle"}>
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"}>
             <legend>
                 <Tag variant="secondary">
                     <Icon name="Image" />
@@ -200,7 +227,7 @@ const AddRestaurantEventForm = ({
                 />}
         </fieldset>
 
-        <fieldset data-state={isWorking ? "disabled" : "idle"}>
+        <fieldset data-state={assertions.isWorking ? "disabled" : "idle"}>
             <legend>
                 <Tag variant="secondary">
                     <Icon name="Video" />
@@ -424,6 +451,7 @@ const AddRestaurantEventForm = ({
             {status === "loading" && <Icon name="Loading" className="animate-spin" />}
         </Button>
     </form>
+    //#endregion
 };
 
 export default AddRestaurantEventForm;
