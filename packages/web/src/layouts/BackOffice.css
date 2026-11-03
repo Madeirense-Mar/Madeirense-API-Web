@@ -19,6 +19,10 @@
     padding: var(--container-padding-xs);
 }
 
+#root[data-page="back-office"]>main>section>header {
+    margin-bottom: var(--margin-l);
+}
+
 #root[data-page="back-office"]>main>section:not(:last-of-type) {
     @apply mb-5;
 }

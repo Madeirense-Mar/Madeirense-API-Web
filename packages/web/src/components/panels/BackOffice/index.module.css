@@ -99,6 +99,11 @@
     --div-background-color: color-mix(in srgb, var(--neutral-dark), black 50%);
 }
 
+[data-theme*="LIGHT"] .actions {
+    --div-border-color: color-mix(in srgb, var(--neutral-dark), transparent 80%);
+    --div-background-color: var(--neutral-light);
+}
+
 /*#endregion*/
 
 /*#region Media =========================================== */

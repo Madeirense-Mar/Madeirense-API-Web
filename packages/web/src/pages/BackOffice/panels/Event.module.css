@@ -71,9 +71,8 @@
 }
 
 [data-theme*="LIGHT"] .merch {
-    --section-background-color: color-mix(in srgb, var(--neutral-dark), transparent 90%);
-
-    --section-border-color: var(--base-border-color);
+    --section-background-color: var(--neutral-light);
+    --section-border-color: color-mix(in srgb, var(--neutral-dark), transparent 80%);
 }
 /*#endregion*/
 
