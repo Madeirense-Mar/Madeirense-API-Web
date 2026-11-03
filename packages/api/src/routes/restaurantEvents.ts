@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 import {
     toDateISO
@@ -50,6 +50,8 @@ const eventPayloadValidation = [
     body('end_time').isTime({ hourFormat: "hour24", mode: "default" }).withMessage('Event ending time must be in HH:MM format'),
     body('description').isString().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description is a string that cannot exceed ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
     body('price').optional({ values: 'falsy' }).isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price required, use 0 to set a free price entry'),
+    body('thumbnail_url').isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+    body('video_url').isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`The video must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
     body('spots').optional({ values: 'falsy' }).isInt({ min: API_MIN_ID_NUMBER }).withMessage('The number of spots is a number, if you want an opened event don\'t send this property.'),
     body().custom(eventTimeValidation),
     Validate.Handle.error
@@ -84,13 +86,13 @@ v1.get(
 v1.get(
     '/my-tickets',
     validatePagination,
-    controller.getMyTickets
+    controller.getMyTickets as any
 );
 
 v1.get(
     '/my-tickets/:id',
     validateId,
-    controller.getMyTicketById
+    controller.getMyTicketById as any
 );
 
 // ADDED (2026-09-30): buys ticket(s) directly, independent of the
@@ -198,6 +200,24 @@ v1.patch(
     ]) as any,
     validateId,
     controller.cancelRestaurantEvent
+);
+
+v1.post(
+    '/:id/merch',
+    onlyAllowUserRoles([
+        'Admin',
+        'Staff',
+    ]) as any,
+    validateId,
+    [
+        body('delisted').optional({ values: 'falsy' }).isIn([true]).withMessage("The delisting decision is `false` by default, send it only when you need to specify that the product won't be shown"),
+        body('name').notEmpty().withMessage('Event name is required'),
+        body('description').isString().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description is a string that cannot exceed ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        body('price').isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price required, use 0 to set a free price entry'),
+        body('thumbnail_url').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        Validate.Handle.error
+    ],
+    controller.createRestaurantEventProduct as any
 );
 
 const eventRoutes = {

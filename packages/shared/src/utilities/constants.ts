@@ -140,6 +140,8 @@ export const MENU_PRODUCT_COMPOSITIONS = [
     "wheat"
 ] as ReadonlyArray<$Enums.Products_product_composition>;
 
+export const MOCK_PRODUCT_NAME = "PR";
+
 export const ORDERS_FINISHED_STATUS = [
     "cancelled",
     "delivered"

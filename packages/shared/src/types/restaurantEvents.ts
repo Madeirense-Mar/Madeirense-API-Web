@@ -61,3 +61,11 @@ export type restaurantEventPayloadType = {
     thumbnail_url: string | null,
     video_url: string | null
 };
+
+export type restaurantEventProductPayloadType = {
+    delisted?: boolean,
+    description: string,
+    name: string,
+    price: number,
+    thumbnail_url: string
+};

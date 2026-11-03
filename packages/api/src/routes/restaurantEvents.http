@@ -94,6 +94,22 @@ Authorization: Bearer {{token}}
   "spots": 80
 }
 
+### Create an event — roles: Admin, Staff
+POST {{baseUrl}}/merch
+Content-Type: application/json
+x-api-key: {{apiKey}}
+x-platform: mobile
+Authorization: Bearer {{token}}
+
+{
+  "event_id": 1,
+  "name": "Camisola estampada XL",
+  "description": "Camisola estampada com os designs do evento.",
+  "price": 15000.00,
+  "delisted": true,
+  "thumbnail_url": "https://ucarecdn.com/13fb2700-92e1-4144-ab5d-9f1e6cde7cf0/"
+}
+
 ### Partially update an event (date, start_time and end_time go together) — roles: Admin
 PATCH {{baseUrl}}/1
 Content-Type: application/json

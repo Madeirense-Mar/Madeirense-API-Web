@@ -3,7 +3,9 @@ import {
     type Response
 } from 'express';
 
-import { 
+import {
+    $Enums,
+    type Products,
     type Restaurant_Events
 } from '@Madeirense/database';
 
@@ -13,9 +15,10 @@ import {
     Madeirense$Enumerators,
     toDateISO,
     type API$Types,
-    type restaurantEventType,
     type boughtTicketType,
     type myTicketType,
+    type restaurantEventType,
+    type restaurantEventProductPayloadType
 } from '@Madeirense/shared';
 
 import {
@@ -132,12 +135,12 @@ export async function createRestaurantEvent(
             start_time: timeType,
             end_time: timeType,
             price?: number,
-            thumbnail_url?: string,
+            thumbnail_url: string,
             spots?: number,
             video_url: string
         }
     >,
-    res: Response<API$Types.response<any | undefined>>
+    res: Response<API$Types.response<restaurantEventType | undefined>>
 ) {
     const {
         restaurant_id,
@@ -231,6 +234,54 @@ export async function createRestaurantEvent(
         req.events?.restaurant_events.emit("restaurant_event.created", event);
     }
 };
+
+export async function createRestaurantEventProduct(
+    req: IEventfulRequest<{ id: string }, restaurantEventProductPayloadType>,
+    res: Response<API$Types.response<Products | undefined>>
+) {
+    const {
+        thumbnail_url: thumbnail,
+        ...body
+    } = req.body;
+
+    try {
+        const event_id = parseInt(req.params.id);
+
+        const event = await prisma.restaurant_Events.findUnique({
+            where: { event_id}
+        });
+
+        if (!event) {
+            return res.status(404).json({
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                data: undefined,
+                message: 'Event not found',
+                success: false
+            });
+        }
+
+        return res.status(201).json({
+            data: await prisma.products.create({
+                data: {
+                    ...body,
+                    event_id,
+                    prep_time_minutes: 0,
+                    product_composition: $Enums.Products_product_composition.merchandise,
+                    product_type: $Enums.Products_product_type.merchandise,
+                    restaurant_id: event.restaurant_id,
+                    thumbnail
+                }
+            }),
+            message: 'Restaurant event merch product created successfully',
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+}
 
 export async function deleteRestaurantEvent(
     req: IEventfulRequest<{ id: string }>,
