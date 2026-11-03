@@ -573,7 +573,7 @@ function EventPanel({ id }: { id: number }) {
                         title="Ingresso"
                         description="Preço do ingresso base, o mínimo que qualquer cliente terá de pagar para aceder."
                         alerts={{
-                            warning: "Alteração do só afetará os productos que não foram vendidos"
+                            warning: "Alteração do preço só afetará os productos que não foram vendidos"
                         }}
                         input={{
                             element: "input",
