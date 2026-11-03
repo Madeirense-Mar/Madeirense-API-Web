@@ -1,6 +1,7 @@
 import BaseAPIAbstractEndpoint from "./abstract";
 
 import type { 
+    Products,
     Restaurant_Events
 } from "@Madeirense/database/browser";
 
@@ -58,7 +59,7 @@ class RestaurantEventsEndpoints extends BaseAPIAbstractEndpoint {
     }
 
     async createProduct(event_id: number, payload: restaurantEventProductPayloadType) {
-        const response = await this.client.post<typeof payload, restaurantEventProductPayloadType>(`/restaurant-events/${event_id}/merch`, payload);
+        const response = await this.client.post<typeof payload, Products>(`/restaurant-events/${event_id}/merch`, payload);
 
         return response.data;
     }
