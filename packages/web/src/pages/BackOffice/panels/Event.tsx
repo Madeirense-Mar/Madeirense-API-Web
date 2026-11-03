@@ -1,3 +1,4 @@
+//#region Imports -------------------------------------
 import {
     useEffect,
     useMemo,
@@ -48,8 +49,9 @@ import RestaurantsSelect from "components/forms/elements/selects/restaurants";
 
 import TicketBuyersList from "components/lists/ticketBuyers";
 
-import DeletionForm from "components/modals/forms/delete";
 import CancellationForm from "components/modals/forms/cancel";
+import DeletionForm from "components/modals/forms/delete";
+import AddRestaurantEventMerchandiseForm from "components/modals/forms/event/addMerchandise";
 
 import panelStyles from "components/panels/BackOffice/index.module.css";
 import styles from "./Event.module.css";
@@ -62,7 +64,7 @@ import type {
 import type {
     statusType
 } from "components/types";
-import AddRestaurantEventMerchandiseForm from "components/modals/forms/event/addMerchandise";
+//#endregion
 
 // ***************************************************************************************************************
 
