@@ -150,7 +150,7 @@ function EventPanel({ id }: { id: number }) {
         const callback = async () => fetch("Restaurant_Events");
 
         show(<AddRestaurantEventMerchandiseForm {...{ callback, event_id }} />, {
-            title: `Registar merchandise`
+            title: `Adicionar merchandise`
         });
     };
 
@@ -576,6 +576,21 @@ function EventPanel({ id }: { id: number }) {
 };
 
 //#region Scroll section declarations ---------------------
+interface IScrollSectionPropTypes extends ComponentPropsWithoutRef<"section"> {
+    callback?: Function;
+    event_id: number;
+    hasExpired?: boolean;
+    onVideoUpdate?: (url: string) => void;
+    onThumbnailUpdate?: (url: string) => void;
+    thumbnail_url: string;
+    video_url: string;
+};
+
+type assetType = (
+    | "thumbnail"
+    | "video"
+);
+
 type sectionType = "thumbnail" | "video";
 
 const ScrollToSection = ({
@@ -588,15 +603,8 @@ const ScrollToSection = ({
     thumbnail_url: dt,
     video_url: dv,
     ...props
-}: ComponentPropsWithoutRef<"section"> & {
-    callback?: Function;
-    event_id: number;
-    hasExpired?: boolean;
-    onVideoUpdate?: (url: string) => void;
-    onThumbnailUpdate?: (url: string) => void;
-    thumbnail_url: string;
-    video_url: string;
-}) => {
+}: IScrollSectionPropTypes) => {
+    //#region Hook and state declarations -----------------
     const {
         update_PARTIAL
     } = useApp();
@@ -605,13 +613,17 @@ const ScrollToSection = ({
     const [pickedSection, setPickedSection] = useState<`event-${sectionType}`>("event-thumbnail");
     const [thumbnail_url, setThumbnailURL] = useState(dt);
     const [video_url, setVideoURL] = useState(dv);
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const sections = [
         { key: `Capa`, value: "event-thumbnail", icon: <Icon name="Image" /> },
         { key: "Vídeo", value: "event-video", icon: <Icon name="Video" /> },
     ];
+    //#endregion
 
-    function handleUpload(type: ("thumbnail" | "video")) {
+    //#region Functions -----------------------------------
+    function handleUpload(type: assetType) {
         return async ({ uuid, mimeType, errors }: any) => {
             if (!uuid) {
                 console.error(errors);
@@ -626,6 +638,7 @@ const ScrollToSection = ({
                     onThumbnailUpdate?.(url);
                     setThumbnailURL(url);
                     break;
+
                 case "video":
                     url = `${formatUUID_UC_CDN_URL(uuid)}${mimeType.split("/").join(".")}`;
                     onVideoUpdate?.(url);
@@ -664,9 +677,9 @@ const ScrollToSection = ({
         $section.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
         setPickedSection(value as any);
-    }
+    };
 
-    function toggleUploadState(type: ("thumbnail" | "video")) {
+    function toggleUploadState(type: assetType) {
         return (e: any) => {
             switch (type) {
                 case "thumbnail": setState("uploading-thumbnail"); break;
@@ -676,7 +689,9 @@ const ScrollToSection = ({
             }
         }
     };
+    //#endregion
 
+    //#region DOM -----------------------------------------
     return <section className={resolveClassNames(xScrollSectionStyles["x-scroll-section"], className)} {...props}>
         <header>
             {sections.map(kvp => <Button key={kvp.key} onClick={pickSection} value={kvp.value} variant={(pickedSection === kvp.value) ? "text-selected" : "text"}>
@@ -743,6 +758,7 @@ const ScrollToSection = ({
             </section>
         </div>
     </section>
+    //#endregion
 };
 //#endregion
 
