@@ -574,6 +574,7 @@ function EventPanel({ id }: { id: number }) {
     //#endregion
 };
 
+//#region Scroll section declarations -----------------
 type sectionType = "thumbnail" | "video";
 
 const ScrollToSection = ({
@@ -742,5 +743,6 @@ const ScrollToSection = ({
         </div>
     </section>
 };
+//#endregion
 
 export default EventPanel;
