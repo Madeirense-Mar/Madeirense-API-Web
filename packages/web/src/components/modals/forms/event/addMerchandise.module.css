@@ -1,0 +1,22 @@
+/*#region Form ============================================ */
+.form {
+    @apply w-full flex flex-col justify-start items-start;
+
+    gap: 32px;
+}
+
+.form fieldset {
+    --fieldset-border-width: 0px;
+    --fieldset-padding: 0px;
+
+    @apply w-full flex flex-col justify-start items-start;
+
+    gap: var(--gap-m);
+}
+
+.form fieldset legend {
+    @apply w-full flex flex-row justify-start items-center;
+
+    margin-bottom: var(--margin-m);
+}
+/*#endregion*/
