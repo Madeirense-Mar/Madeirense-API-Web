@@ -1,4 +1,6 @@
 [data-theme*="LIGHT"] .page section {
+    --section-background-color: transparent;
     --section-border-width: 0px;
+    
     --section-padding: 0px;
 }

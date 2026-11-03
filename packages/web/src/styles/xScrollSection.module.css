@@ -7,15 +7,7 @@
 .x-scroll-section>header {
     @apply overflow-x-auto flex flex-row justify-start items-center flex-nowrap w-full;
 
-    border-bottom: 1px solid var(--header-border-color);
-}
-
-[data-theme*="DARK"] .x-scroll-section>header {
-    --header-border-color: var(--secondary);
-}
-
-[data-theme*="LIGHT"] .x-scroll-section>header {
-    --header-border-color: var(--primary-dark);
+    border-bottom: 1px solid var(--base-border-color);
 }
 
 .x-scroll-section>div {

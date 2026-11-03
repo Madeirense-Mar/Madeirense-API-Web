@@ -43,8 +43,8 @@ table tfoot tr td {
 /*#region Theme specifications ============================ */
 /*#region DARK*/
 [data-theme="LAND-DARK"] table {
-    --table-border-color: var(--secondary);
-    --base-table-cell-border-color: var(--secondary);
+    --table-border-color: var(--base-border-color);
+    --base-table-cell-border-color: var(--base-border-color);
 }
 
 [data-theme="LAND-DARK"] table td:hover {
@@ -56,8 +56,8 @@ table tfoot tr td {
 }
 
 [data-theme="SEA-DARK"] table {
-    --table-border-color: var(--primary-light);
-    --base-table-cell-border-color: var(--primary-light);
+    --table-border-color: var(--base-border-color);
+    --base-table-cell-border-color: var(--base-border-color);
 }
 
 [data-theme="SEA-DARK"] table td:hover {
@@ -72,10 +72,8 @@ table tfoot tr td {
 
 /*#region LIGHT*/
 [data-theme*="LIGHT"] table {
-    --processed-color: color-mix(in srgb, var(--primary-dark), black 40%);
-
-    --table-border-color: var(--processed-color);
-    --base-table-cell-border-color: var(--processed-color);
+    --table-border-color: var(--base-border-color);
+    --base-table-cell-border-color: var(--base-border-color);
 }
 
 /*#endregion*/

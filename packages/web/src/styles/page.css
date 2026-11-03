@@ -21,8 +21,8 @@ main>section {
 }
 
 [data-theme*="LIGHT"] section {
-    --base-section-border-color: color-mix(in srgb, var(--primary-dark), black 40%);
-    --base-section-background-color: transparent;
+    --base-section-border-color: var(--base-border-color);
+    --base-section-background-color: var(--neutral-light);
 }
 /*#endregion*/
 

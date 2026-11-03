@@ -126,7 +126,7 @@ body[data-theme="SEA-DARK"] {
 
 /*#region Light */
 body[data-theme*="LIGHT"] {
-    --base-border-color: var(--primary-dark);
+    --base-border-color: color-mix(in srgb, var(--neutral-dark), transparent 80%);
     --base-neutral-border-color: color-mix(in srgb, var(--neutral-dark), white 12%);
     --base-text-color: var(--neutral-dark);
 
