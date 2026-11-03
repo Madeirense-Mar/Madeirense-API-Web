@@ -44,6 +44,7 @@ import type {
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ------------------------
 interface IPropTypes extends ComponentProps<"form"> {
     disableActions?: boolean;
     disableLink?: boolean;
@@ -74,7 +75,9 @@ const _defaultData: stateDataType = {
 type timeType = `${number}:${number}`;
 
 type locationType = NonNullable<stateDataType["address"]>;
+//#endregion
 
+//#region Manual location helpers ---------------------
 /** Optional text fields of the manual location editor, in display order. */
 const MANUAL_ADDRESS_FIELDS: { key: keyof parsedAddressObjectType, label: string, placeholder?: string }[] = [
     { key: "address", label: "Endereço completo", placeholder: "Se vazio, é composto a partir dos campos abaixo" },
@@ -126,7 +129,8 @@ function readManualLocation($form: HTMLFormElement): locationType {
         latitude,
         longitude
     };
-}
+};
+//#endregion
 
 function RestaurantForm(_props: IPropTypes) {
     const {
@@ -140,27 +144,43 @@ function RestaurantForm(_props: IPropTypes) {
         ...props
     } = _props;
 
+    //#region Hooks and state declarations ----------------
     const {
         get,
         create: createAppProperty,
         update: updateAppProperty
     } = useApp();
 
+    /** For places the map/geocoder doesn't know: coordinates + address typed in by the admin. */
+    const [manualLocation, toggleManualLocation] = useState<boolean>(false);
+
     const [form, updateForm] = useState<IComponentState<stateDataType, statusType>>({
         data: _defaultData,
         error: null,
         status: "idle"
     });
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const {
         data,
         error,
         status
     } = form;
     const settings = get("Global_Settings") ?? DEFAULT_APP_SETTINGS;
+    
+    const assertions = {
+        "isWorking": ([
+            "adding",
+            "loading",
+            "updating",
+            "uploading-thumbnail"
+        ] as (typeof form.status)[]).includes(status),
 
-    /** For places the map/geocoder doesn't know: coordinates + address typed in by the admin. */
-    const [manualLocation, toggleManualLocation] = useState<boolean>(false);
+        "hasThumbnail": [
+            data?.uploadedThumbnailURL
+        ].some(v => v !== null)
+    };
 
     const {
         name,
@@ -172,6 +192,13 @@ function RestaurantForm(_props: IPropTypes) {
         ttp
     } = restaurant;
 
+    const $formProps = {
+        ...((assertions.isWorking) ? { "data-status": "disabled" } : {}),
+        ...props
+    };
+    //#endregion
+
+    //#region Functions -----------------------------------
     async function PATCH$POST(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -371,7 +398,9 @@ function RestaurantForm(_props: IPropTypes) {
             }
         }
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         if (restaurant.restaurant_id === -1 || !enableEditing) return;
 
@@ -404,26 +433,10 @@ function RestaurantForm(_props: IPropTypes) {
                 }
             }
         });
-    }, [mode, restaurant, enableEditing])
+    }, [mode, restaurant, enableEditing]);
+    //#endregion
 
-    const assertions = {
-        "isWorking": ([
-            "adding",
-            "loading",
-            "updating",
-            "uploading-thumbnail"
-        ] as (typeof form.status)[]).includes(status),
-
-        "hasThumbnail": [
-            data?.uploadedThumbnailURL
-        ].some(v => v !== null)
-    };
-
-    const $formProps = {
-        ...((assertions.isWorking) ? { "data-status": "disabled" } : {}),
-        ...props
-    };
-
+    //#region DOM -----------------------------------------
     return <form
         className={resolveClassNames(styles.form, className)}
         onSubmit={PATCH$POST}
@@ -703,7 +716,8 @@ function RestaurantForm(_props: IPropTypes) {
                 </>
             }
         </Button>
-    </form >;
+    </form>
+    //#endregion
 };
 
 export default RestaurantForm;
