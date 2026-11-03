@@ -412,8 +412,7 @@ const AddRestaurantEventForm = ({
                         min: 0,
                         name: "price",
                         placeholder: "Preço",
-                        className: "w-full",
-                        required: true
+                        className: "w-full"
                     }
                 }}
             />
