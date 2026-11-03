@@ -48,10 +48,16 @@
 .merch {
     padding: var(--padding-l);
 
-    border: 1px solid var(--section-border-color, color-mix(in srgb, var(--neutral-light), transparent 90%) );
+    border: 1px solid var(--section-border-color, color-mix(in srgb, var(--neutral-light), transparent 90%));
     border-radius: 12px;
 
     background-color: var(--section-background-color, var(--neutral-dark));
+}
+
+[data-theme*="LIGHT"] .merch {
+    --section-background-color: color-mix(in srgb, var(--neutral-dark), transparent 90%);
+
+    --section-border-color: var(--base-border-color);
 }
 /*#endregion*/
 
@@ -88,12 +94,19 @@
     max-width: var(--w);
     min-width: var(--w);
 
-    border-color: var(--div-border-color);
+    border-color: var(--hr-border-color, var(--div-border-color));
 }
 
 [data-theme*="DARK"] .datetime-form {
     --div-border-color: color-mix(in srgb, var(--neutral-light), transparent 90%);
     --div-background-color: color-mix(in srgb, var(--neutral-dark), transparent 50%);
+}
+
+[data-theme*="LIGHT"] .datetime-form {
+    --div-border-color: color-mix(in srgb, var(--neutral-light), transparent 90%);
+    --div-background-color: color-mix(in srgb, var(--neutral-dark), transparent 50%);
+
+    --hr-border-color: var(--neutral-dark);
 }
 
 /*#endregion*/
