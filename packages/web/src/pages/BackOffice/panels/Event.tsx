@@ -104,6 +104,7 @@ function EventPanel({ id }: { id: number }) {
 
     const {
         event_date,
+        event_id,
         status,
         start_time = new Date(),
         end_time = new Date()
@@ -148,7 +149,7 @@ function EventPanel({ id }: { id: number }) {
     async function handleEventProductCreation() {
         const callback = async () => fetch("Restaurant_Events");
 
-        show(<AddRestaurantEventMerchandiseForm {...{ callback }}/>, {
+        show(<AddRestaurantEventMerchandiseForm {...{ callback, event_id }} />, {
             title: `Registar merchandise`
         });
     };
@@ -271,7 +272,7 @@ function EventPanel({ id }: { id: number }) {
         }, delay);
     };
 
-    async function PATCH_EVENTS(e: SubmitEvent<HTMLFormElement>) {
+    async function $PATCH(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         const elements = e.currentTarget.elements as HTMLFormControlsCollection;
@@ -410,7 +411,7 @@ function EventPanel({ id }: { id: number }) {
                         </div>
                     </label>
 
-                    <form onSubmit={PATCH_EVENTS} className={resolveClassNames(styles["datetime-form"], "w-full")}>
+                    <form onSubmit={$PATCH} className={resolveClassNames(styles["datetime-form"], "w-full")}>
                         <div className="flex flex-col justify-start items-start mr-auto">
                             <span className="font-extrabold inline-flex items-center">
                                 {getUpdaterStatusIndicator("event_date", "start_time", "end_time")}
