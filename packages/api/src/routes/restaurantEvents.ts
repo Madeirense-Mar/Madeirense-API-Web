@@ -212,12 +212,31 @@ v1.post(
     [
         body('delisted').optional({ values: 'falsy' }).isIn([true]).withMessage("The delisting decision is `false` by default, send it only when you need to specify that the product won't be shown"),
         body('description').isString().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description is a string that cannot exceed ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
-        body('name').notEmpty().withMessage('Event name is required'),
+        body('name').notEmpty().withMessage('Event merchandise product name is required'),
         body('price').isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price required, use 0 to set a free price entry'),
         body('thumbnail_url').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
         Validate.Handle.error
     ],
     controller.createRestaurantEventProduct as any
+);
+
+v1.patch(
+    '/:id/merchandise/:product_id',
+    onlyAllowUserRoles([
+        'Admin',
+        'Staff',
+    ]) as any,
+    validateId,
+    [
+        param('product_id').isInt({ min: API_MIN_ID_NUMBER }).withMessage('ID parameter is required and should be positive integer'),
+        body('delisted').optional({ values: 'falsy' }).isIn([true]).withMessage("The delisting decision is `false` by default, send it only when you need to specify that the product won't be shown"),
+        body('description').optional({ values: 'falsy' }).isString().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description is a string that cannot exceed ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        body('name').optional({ values: 'falsy' }).isString().withMessage('Pass a valid event product name'),
+        body('price').optional({ values: 'falsy' }).isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price required, use 0 to set a free price entry'),
+        body('thumbnail_url').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        Validate.Handle.error
+    ],
+    controller.updateRestaurantEventProduct as any
 );
 
 const eventRoutes = {

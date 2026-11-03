@@ -814,6 +814,67 @@ export async function updateRestaurantEvent(
     }
 };
 
+export async function updateRestaurantEventProduct(
+    req: IEventfulRequest<{ id: string, product_id: string }, Partial<restaurantEventProductPayloadType>>,
+    res: Response<API$Types.response<Products | undefined>>
+) {
+    const {
+        delisted = false,
+        thumbnail_url: thumbnail,
+        ...body
+    } = req.body;
+
+    try {
+        const event_id = parseInt(req.params.id);
+
+        const event = await prisma.restaurant_Events.findUnique({
+            where: { event_id }
+        });
+
+        if (!event) {
+            return res.status(404).json({
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                data: undefined,
+                message: 'Event not found',
+                success: false
+            });
+        }
+
+        const product_id = parseInt(req.params.product_id);
+
+        const product = await prisma.products.findUnique({
+            where: { product_id }
+        });
+
+        if (!product) {
+            return res.status(404).json({
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                data: undefined,
+                message: 'Event product not found',
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            data: await prisma.products.update({
+                where: { product_id },
+                data: {
+                    ...body,
+                    ...(!thumbnail ? {} : { thumbnail }),
+                    delisted
+                }
+            }),
+            message: 'Restaurant event merch product updated successfully',
+            success: true
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+};
+
 // RECONSTRUCTION NOTE (2026-09-30): getMyTickets, getMyTicketById and
 // validateTicket below were lost with the stolen laptop and never
 // reached GitHub — rebuilt against the Tickets_Purchased schema and the
