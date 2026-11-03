@@ -9,7 +9,8 @@ import type {
     restaurantEventType,
     restaurantEventPayloadType,
     unionBetween,
-    Madeirense$Types
+    Madeirense$Types,
+    restaurantEventProductPayloadType
 } from "@Madeirense/shared";
 
 // ***************************************************************************************************************
@@ -52,6 +53,12 @@ class RestaurantEventsEndpoints extends BaseAPIAbstractEndpoint {
 
     async create(payload: restaurantEventPayloadType) {
         const response = await this.client.post<typeof payload, restaurantEventType>(`/restaurant-events`, payload);
+
+        return response.data;
+    }
+
+    async createProduct(event_id: number, payload: restaurantEventProductPayloadType) {
+        const response = await this.client.post<typeof payload, restaurantEventProductPayloadType>(`/restaurant-events/${event_id}/merch`, payload);
 
         return response.data;
     }
