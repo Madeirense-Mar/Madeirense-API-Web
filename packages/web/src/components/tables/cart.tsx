@@ -6,8 +6,6 @@ import {
     type MouseEvent,
 } from "react";
 
-import { Link } from "react-router-dom";
-
 import {
     formatMinutes,
     formatNumber,
@@ -19,16 +17,17 @@ import {
 import { useCart } from "contexts/Cart";
 
 import Button from "components/buttons";
+import AnchorButton from "components/buttons/anchor";
 import Icon from "components/icon";
+import Tag from "components/tags";
 
 import styles from "./cart.module.css";
-import AnchorButton from "components/buttons/anchor";
-import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
 interface IPropTypes extends ComponentProps<"table"> {
     hideInstructions?: boolean;
+    hideProducts?: boolean;
     hideQuantityControls?: boolean;
     hideTTP?: boolean;
     mode?: "cart" | "order";
@@ -42,6 +41,7 @@ type queueEntry = {
 
 function Cart({
     hideInstructions = false,
+    hideProducts = false,
     hideQuantityControls = false,
     hideTTP = false,
     mode = "cart",
@@ -319,59 +319,61 @@ function Cart({
                 <tbody>
                     {TABLE_ERROR_ROW}
 
-                    {!cart.length && <tr>
-                        <td colSpan={4} className="text-center">
-                            <span className="italic opacity-40">Sem itens no carrinho</span>
-                        </td>
-                    </tr>}
-
-                    {cart.map(({ product_id, name, discount: _d, price: _p, thumbnail, quantity }) => {
-                        const discount = parseFloat(_d.toString());
-                        const price = parseFloat(_p.toString());
-                        const whileQuantityIncreases = queue.some(q => q.product_id === product_id && q.type === "adding");
-                        const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
-                        const isInQueue = whileQuantityIncreases || whileQuantityDecreases;
-
-                        return <tr
-                            key={product_id}
-                            data-hasdiscount={discount > 0}
-                            data-row="product"
-                        >
-                            <td>
-                                <div data-type="thumbnail" style={{ backgroundImage: `url(${thumbnail})` }}></div>
+                    {!hideProducts && <>
+                        {!cart.length && <tr>
+                            <td colSpan={4} className="text-center">
+                                <span className="italic opacity-40">Sem itens no carrinho</span>
                             </td>
+                        </tr>}
 
-                            <td>
-                                <span data-text="name" className="font-bold italic">{name}</span>
-                            </td>
+                        {cart.map(({ product_id, name, discount: _d, price: _p, thumbnail, quantity }) => {
+                            const discount = parseFloat(_d.toString());
+                            const price = parseFloat(_p.toString());
+                            const whileQuantityIncreases = queue.some(q => q.product_id === product_id && q.type === "adding");
+                            const whileQuantityDecreases = queue.some(q => q.product_id === product_id && q.type === "removing");
+                            const isInQueue = whileQuantityIncreases || whileQuantityDecreases;
 
-                            {!hideQuantityControls && <td>
-                                <div className="w-full flex flex-row items-center justify-end gap-3">
-                                    <Button value={product_id} onClick={removeItem()} shape="circle" variant="secondary" disabled={isInQueue}>
-                                        {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
-                                    </Button>
+                            return <tr
+                                key={product_id}
+                                data-hasdiscount={discount > 0}
+                                data-row="product"
+                            >
+                                <td>
+                                    <div data-type="thumbnail" style={{ backgroundImage: `url(${thumbnail})` }}></div>
+                                </td>
 
-                                    <span className="w-[52px] text-center">{quantity}</span>
+                                <td>
+                                    <span data-text="name" className="font-bold italic">{name}</span>
+                                </td>
 
-                                    <Button value={product_id} onClick={addItem()} shape="circle" variant="primary" disabled={isInQueue}>
-                                        {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
-                                    </Button>
-                                </div>
-                            </td>}
+                                {!hideQuantityControls && <td>
+                                    <div className="w-full flex flex-row items-center justify-end gap-3">
+                                        <Button value={product_id} onClick={removeItem()} shape="circle" variant="secondary" disabled={isInQueue}>
+                                            {whileQuantityDecreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Minus" />}
+                                        </Button>
 
-                            <td data-cell="price">
-                                <div className="flex flex-row justify-end items-center gap-3">
-                                    <span data-text="price">{!price ? "Grátis" : formatNumber(price)}</span>
+                                        <span className="w-[52px] text-center">{quantity}</span>
 
-                                    {(discount > 0) && <Tag variant="success">
-                                        <Icon name="Discount" />
+                                        <Button value={product_id} onClick={addItem()} shape="circle" variant="primary" disabled={isInQueue}>
+                                            {whileQuantityIncreases ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Plus" />}
+                                        </Button>
+                                    </div>
+                                </td>}
 
-                                        {discount}
-                                    </Tag>}
-                                </div>
-                            </td>
-                        </tr>
-                    })}
+                                <td data-cell="price">
+                                    <div className="flex flex-row justify-end items-center gap-3">
+                                        <span data-text="price">{!price ? "Grátis" : formatNumber(price)}</span>
+
+                                        {(discount > 0) && <Tag variant="success">
+                                            <Icon name="Discount" />
+
+                                            {discount}
+                                        </Tag>}
+                                    </div>
+                                </td>
+                            </tr>
+                        })}
+                    </>}
 
                     {!hideInstructions && <tr data-row="instructions">
                         <td colSpan={4}>

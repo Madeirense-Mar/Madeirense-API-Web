@@ -17,7 +17,8 @@ import {
 
 import {
     BsPaypal,
-    BsShieldLock
+    BsShieldLock,
+    BsStars
 } from "react-icons/bs";
 
 import {
@@ -375,6 +376,7 @@ const registry = {
     ShoppingCart: FaShoppingCart,
     SolidDrink: BiSolidDrink,
     Star: FaStar,
+    Stars: BsStars,
     Store: FaStore,
     SwipeCard: GiSwipeCard,
     //#endregion

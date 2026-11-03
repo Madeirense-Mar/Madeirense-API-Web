@@ -1,6 +1,4 @@
 /*#region Info section ==================================== */
-.info {}
-
 .info>div {
     --card-border-width: 0px;
 }
@@ -16,34 +14,57 @@
     margin-bottom: var(--margin-xl);
 }
 
-.tickets form {
+.tickets>form {
     @apply flex flex-col justify-start items-start;
 
     gap: var(--section-gap);
 }
 
-.tickets form fieldset {
+.tickets>form fieldset {
     --fieldset-border-width: 0px;
     --fieldset-padding: 0px;
 
     width: 100%;
 }
 
-.tickets form fieldset legend {
+.tickets>form fieldset legend {
     margin-bottom: 12px;
 }
 
-.tickets ul,
+.event-products,
 .tickets .cart {
     --radius: 12px;
 }
 
-.tickets ul {
-    @apply w-full flex flex-col justify-start items-center p-2 gap-2;
+.event-products {
+    @apply w-full flex flex-col justify-start items-center gap-2;
 
     border: var(--ul-border-width, 1px) var(--ul-border-style, solid) var(--ul-border-color, var(--base-border-color));
     border-bottom: none;
     border-radius: var(--radius) var(--radius) 0 0;
+
+    overflow: hidden;
+}
+
+.event-products li {
+    padding: var(--padding-m);
+
+    background-color: var(--li-background-color, transparent);
+}
+
+[data-theme*="DARK"] .event-products li:hover {
+    --li-background-color: color-mix(in srgb, var(--primary-dark), transparent 9%);
+}
+
+[data-theme*="LIGHT"] .event-products li:hover {
+    --li-background-color: color-mix(in srgb, var(--neutral-dark), transparent 95%);
+}
+
+.event-products li div[data-type="thumbnail"] {
+    --size: 80px;
+
+    --thumbnail-height: var(--size);
+    --thumbnail-width: var(--size);
 }
 
 .cart {
@@ -53,8 +74,6 @@
 /*#endregion*/
 
 /*#region Contact-payment section ========================= */
-.contact-payment {}
-
 .contact-payment form {
     @apply flex flex-col justify-start items-start w-full gap-2;
 }

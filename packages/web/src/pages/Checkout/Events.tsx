@@ -1,3 +1,4 @@
+//#region Imports -------------------------------------
 import {
     useMemo,
     useRef,
@@ -44,6 +45,7 @@ import styles from "./Events.module.css";
 import type {
     $Enums
 } from "@Madeirense/database/browser";
+//#endregion
 
 // ***************************************************************************************************************
 
@@ -53,6 +55,7 @@ type queueEntry = {
 };
 
 const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) => {
+    //#region Hook and state declarations -----------------
     const $selectRef = useRef<HTMLSelectElement | null>(null);
 
     const {
@@ -91,11 +94,15 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const [queue, setQueue] = useState<queueEntry[]>([]);
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const restaurant_event = useMemo(() => !event_id ? null : get("Restaurant_Events")?.find(event => event.event_id === parseInt(event_id)), [event_id, get]);
     const restaurant = useMemo(() => !restaurant_event ? null : get("Restaurants")?.find(r => r.restaurant_id === restaurant_event?.restaurant_id), [restaurant_event, get]);
-    const tickets = useMemo(() => (restaurant_event?.Products ?? []).filter(({ product_type }) => product_type === "ticket"), [restaurant_event]);
+    const tickets = useMemo(() => (restaurant_event?.Products ?? []).filter(({ product_composition }) => product_composition === "merchandise"), [restaurant_event]);
+    //#endregion
 
+    //#region Functions -----------------------------------
     async function addItem(e: MouseEvent<HTMLButtonElement>) {
         const product_id = parseInt((e.target as HTMLButtonElement).value);
 
@@ -155,7 +162,9 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
             setIsLoading(false);
         }
     };
+    //#endregion
 
+    //#region DOM -----------------------------------------
     switch (true) {
         case (!event_id): {
             return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
@@ -195,7 +204,9 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                         {!Boolean(cart.length) && <div data-state="warning" className="w-full flex flex-row justify-center items-center gap-3 p-3">
                             <Icon name="Warning" className="text-2xl" />
 
-                            <span>Precisa de adicionar pelo menos 1x ingresso no carrinho antes de fazer uma reserva</span>
+                            <span className="inline-flex gap-1 justify-start items-center">
+                                Precisa de adicionar pelo menos 1x <Tag>producto</Tag> no carrinho antes de fazer uma reserva
+                            </span>
                         </div>}
 
                         <section className={styles.tickets}>
@@ -206,7 +217,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                             </header>
 
                             <div className="w-full flex flex-col justify-start items-start">
-                                <ul>
+                                <ul className={styles["event-products"]}>
                                     {tickets.map(t => {
                                         const quantity = cart.find(p => p.product_id === t.product_id)?.quantity ?? 0;
 
@@ -219,15 +230,23 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                                         ].includes(true);
 
                                         return <li key={t.product_id} className="w-full flex flex-row justify-start items-center gap-3">
-                                            <span data-text="tag" className="mr-auto inline-flex items-center gap-1">
-                                                <Icon name="Ticket" />
+                                            {(t.product_type === "merchandise") && <div style={{ backgroundImage: `url(${t.thumbnail})` }} data-type="thumbnail">
+                                            </div>}
 
-                                                {t.name}
-                                            </span>
+                                            <div className="flex flex-col justify-start items-start gap-1 flex-grow">
+                                                <span className="inline-flex items-center gap-1 font-extrabold ">
+                                                    {(t.product_type === "ticket") && <Icon name="Ticket" />}
+                                                    {(t.product_type === "merchandise") && <Icon name="Stars" />}
 
-                                            <span className="font-extrabold">
-                                                <Icon name="Money" className="inline-flex mr-1" />
+                                                    {t.name}
+                                                </span>
 
+                                                <span className="italic opacity-40 hover:opacity-100">
+                                                    {t.description}
+                                                </span>
+                                            </div>
+
+                                            <span className="font-extrabold inline-flex justify-start items-center gap-2">
                                                 {Boolean(parseInt(t.price.toString())) ? formatNumber(parseFloat(t.price.toString())) : "Grátis"}
                                             </span>
 
@@ -248,6 +267,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                                     className={resolveClassNames(styles.cart, "w-full")}
                                     mode="order"
                                     type="event"
+                                    hideProducts
                                     hideQuantityControls
                                     hideInstructions
                                     hideTTP
@@ -335,6 +355,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
             }
         }
     };
+    //#endregion
 };
 
 export default EventsCheckoutPage;

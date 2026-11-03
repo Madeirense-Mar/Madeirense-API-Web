@@ -22,17 +22,21 @@ import {
     type Products
 } from '@Madeirense/database';
 
+import { 
+    convertDecimals
+} from 'utilities/converters';
+
 import {
     Messages
 } from './utilities/enumerators';
 
 import {
-    prisma
-} from '../lib/prisma';
-
-import {
     handleControllerError
 } from './utilities/handlers';
+
+import {
+    prisma
+} from '../lib/prisma';
 
 import {
     validateCoupon$Dry
@@ -41,7 +45,6 @@ import {
 import type {
     IAuthenticatedRequest
 } from '../interfaces';
-import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -208,6 +211,7 @@ export const clearCart = async (
                         {
                             product_type: {
                                 in: [
+                                    'merchandise',
                                     'ticket'
                                 ]
                             }
@@ -278,6 +282,7 @@ export const clearCart$Dry = async (
                         {
                             product_type: {
                                 in: [
+                                    'merchandise',
                                     'ticket'
                                 ]
                             }
@@ -461,6 +466,7 @@ export const getCartSummary$Dry = async (
             cartItems = cartItems.filter(p => (!p.Products.product_type)
                 ? false
                 : ([
+                    'merchandise',
                     'ticket'
                 ] as $Enums.Products_product_type[]).includes(p.Products.product_type)
             );
@@ -535,7 +541,7 @@ export const getCartSummary = async (
                 break;
 
             case 'event':
-                cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['ticket'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
+                cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['ticket', 'merchandise'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
                 break;
 
             default:
@@ -693,7 +699,7 @@ export const getUserCart$Dry = async (
             break;
 
         case 'event':
-            cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['ticket'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
+            cartItems = cartItems.filter(p => !p.Products.product_type ? false : (['ticket', 'merchandise'] as $Enums.Products_product_type[]).includes(p.Products.product_type));
             break;
 
         default:

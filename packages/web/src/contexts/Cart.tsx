@@ -18,13 +18,13 @@ import { statusType } from "components/types";
 import {
     DEFAULT_APP_PREFERENCES,
     DEFAULT_SUMMARY,
+    MENU_PRODUCT_TYPES,
     API$Enumerators,
     Madeirense$Types,
     type cartType,
     type appPreferencesType,
     type cartedProductType,
     type cartSummaryType,
-    MENU_PRODUCT_TYPES,
 } from "@Madeirense/shared";
 
 import type {
@@ -176,6 +176,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             const { Products: product } = (await clients.carts.addItem(product_id)) ?? {};
 
             switch (product?.product_type) {
+                case "merchandise":
                 case "ticket":
                     array = [...state.cart.eventCart];
                     type = "event";
@@ -287,7 +288,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             const deliveryCart = cart.filter(p => !p.product_type ? false : (MENU_PRODUCT_TYPES).includes(p.product_type));
             const deliverySummary = (await clients.carts.getSummary("delivery")) ?? DEFAULT_SUMMARY;
 
-            const eventCart = cart.filter(p => !p.product_type ? false : (["ticket"] as $Enums.Products_product_type[]).includes(p.product_type));
+            const eventCart = cart.filter(p => !p.product_type ? false : (["merchandise", "ticket"] as $Enums.Products_product_type[]).includes(p.product_type));
             const eventSummary = (await clients.carts.getSummary("event")) ?? DEFAULT_SUMMARY;
 
             dispatch({
@@ -320,6 +321,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             let type: cartType;
 
             switch (product.product_type) {
+                case "merchandise":
                 case "ticket":
                     array = [...state.cart.eventCart];
                     type = "event";
