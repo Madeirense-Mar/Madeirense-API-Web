@@ -843,7 +843,11 @@ export async function updateRestaurantEventProduct(
         const product_id = parseInt(req.params.product_id);
 
         const product = await prisma.products.findUnique({
-            where: { product_id }
+            where: { 
+                product_id, 
+                event_id,
+                restaurant_id: event.restaurant_id
+            }
         });
 
         if (!product) {
