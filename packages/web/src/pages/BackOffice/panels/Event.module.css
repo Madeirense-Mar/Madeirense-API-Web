@@ -26,6 +26,22 @@
 
 /*#endregion*/
 
+/*#region Expired section ================================= */
+.expired {
+    padding: var(--padding-m);
+
+    border: 1px dashed var(--section-border-color, var(--secondary));
+    border-radius: 12px;
+
+    background-color: var(--section-background-color, var(--secondary-dark));
+}
+
+[data-theme*="LIGHT"] .expired {
+    --section-background-color: color-mix(in srgb, var(--primary), transparent 80%);
+    --section-border-color: var(--primary);
+}
+/*#endregion*/
+
 /*#region Scroll section ================================== */
 .scroll {
     --section-gap: 0px;

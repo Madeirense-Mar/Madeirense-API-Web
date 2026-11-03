@@ -222,6 +222,8 @@ function EventPanel({ id }: { id: number }) {
     function toggleFreeSpots() { setFreeSpots(f => !f); }
 
     function update(element: any, delay: number = delayMS) {
+        if (assertions.hasPassed) return;
+
         const property = element.name as (keyof Restaurant_Events | keyof Products);
         const _value = element.value;
 
@@ -334,6 +336,8 @@ function EventPanel({ id }: { id: number }) {
 
     async function $PATCH(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
+
+        if (assertions.hasPassed) return;
 
         const elements = e.currentTarget.elements as HTMLFormControlsCollection;
 
@@ -463,7 +467,11 @@ function EventPanel({ id }: { id: number }) {
                     </li>}
                 </ul>
 
-                <section>
+                <section className={resolveClassNames(assertions.hasPassed ? styles.expired : "")}>
+                    {assertions.hasPassed && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                        O event já expirou, não o poderá editar
+                    </div>}
+
                     <ScrollToSection
                         className={resolveClassNames(styles.scroll, "w-full")}
                         event_id={id as number}
@@ -524,7 +532,15 @@ function EventPanel({ id }: { id: number }) {
                         </div>
                     </label>
 
-                    <form onSubmit={$PATCH} className={resolveClassNames(styles["datetime-form"], "w-full")}>
+                    <form
+                        className={resolveClassNames(styles["datetime-form"], "w-full")}
+                        onSubmit={$PATCH}
+                        {...{
+                            ...(assertions.hasPassed)
+                                ? { "data-disabled": "" }
+                                : {}
+                        }}
+                    >
                         <div className="flex flex-col justify-start items-start mr-auto">
                             <span className="font-extrabold inline-flex items-center">
                                 {getUpdaterStatusIndicator("event_date", "start_time", "end_time")}
@@ -571,7 +587,7 @@ function EventPanel({ id }: { id: number }) {
                                         readOnly: true,
                                         type: "text",
                                         value: "Grátis",
-                                        onClick: () => toggleFreePricing(),
+                                        onClick: assertions.hasPassed ? undefined : () => toggleFreePricing(),
                                     }
                                     : {
                                         defaultValue: parseFloat(`${data?.price}`),
@@ -607,7 +623,7 @@ function EventPanel({ id }: { id: number }) {
                                         readOnly: true,
                                         type: "text",
                                         value: "Sem limite",
-                                        onClick: () => toggleFreeSpots(),
+                                        onClick: assertions.hasPassed ? undefined : () => toggleFreeSpots(),
                                     }
                                     : {
                                         defaultValue: data?.spots ?? 0,
@@ -655,14 +671,9 @@ function EventPanel({ id }: { id: number }) {
                         </Button>}
                     </header>
 
-                    {assertions.hasPassed
-                        ? <div data-state="warning" className="w-full flex flex-row justify-center items-center">
-                            O event já expirou, não poderá editar os itens de merchandise
-                        </div>
-
-                        : (products.length > 0) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
-                            Alteração do só afetará os productos que não foram vendidos
-                        </div>}
+                    {(!assertions.hasPassed && (products.length > 0)) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                        Alteração do só afetará os productos que não foram vendidos
+                    </div>}
 
                     <ul
                         className={styles["products-list"]}
@@ -687,11 +698,11 @@ function EventPanel({ id }: { id: number }) {
                                 <div className="flex flex-row justify-between items-center gap-2">
                                     {getProductUpdaterStatusIndicator(p.product_id, "thumbnail")}
 
-                                    <FileUploaderRegular
+                                    {!assertions.hasPassed && <FileUploaderRegular
                                         {...fileUploaderRegularDefaultProps}
                                         onFileUploadStart={toggleProductThumbnailUpload(p.product_id)}
                                         onFileUploadSuccess={handleProductThumbnailUpload(p.product_id)}
-                                    />
+                                    />}
                                 </div>
                             </div>
 
@@ -707,9 +718,11 @@ function EventPanel({ id }: { id: number }) {
                                     defaultValue={p.name}
                                     id={`${p.product_id}-name`}
                                     name="name"
-                                    type="text"
                                     onBlur={handleEvent}
                                     onKeyDown={handleKeyDown}
+                                    readOnly={assertions.hasPassed}
+                                    type="text"
+                                    required
                                 />
                             </label>
 
@@ -725,9 +738,10 @@ function EventPanel({ id }: { id: number }) {
                                     defaultValue={p.price.toString()}
                                     id={`${p.product_id}-price`}
                                     name="price"
-                                    type="number"
                                     onBlur={handleEvent}
                                     onKeyDown={handleKeyDown}
+                                    readOnly={assertions.hasPassed}
+                                    type="number"
                                 />
                             </label>
                         </li>)}
@@ -799,6 +813,8 @@ const ScrollToSection = ({
 
     //#region Functions -----------------------------------
     function handleProductThumbnailUpload(type: assetType) {
+        if (hasExpired) return async ({ uuid, mimeType, errors }: any) => { };
+
         return async ({ uuid, mimeType, errors }: any) => {
             if (!uuid) {
                 console.error(errors);
@@ -807,6 +823,7 @@ const ScrollToSection = ({
             }
 
             let url = "";
+
             switch (type) {
                 case "thumbnail":
                     url = formatUUID_UC_CDN_URL(uuid);
