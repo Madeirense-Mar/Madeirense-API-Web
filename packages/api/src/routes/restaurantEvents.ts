@@ -211,8 +211,8 @@ v1.post(
     validateId,
     [
         body('delisted').optional({ values: 'falsy' }).isIn([true]).withMessage("The delisting decision is `false` by default, send it only when you need to specify that the product won't be shown"),
-        body('name').notEmpty().withMessage('Event name is required'),
         body('description').isString().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Description is a string that cannot exceed ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
+        body('name').notEmpty().withMessage('Event name is required'),
         body('price').isDecimal({ decimal_digits: '0,2' }).withMessage('Valid price required, use 0 to set a free price entry'),
         body('thumbnail_url').optional({ values: 'falsy' }).isURL().isLength({ max: API_MAX_TEXT_REQUEST_LENGTH }).withMessage(`Thumbnail must be a valid URL and can\'t be longer than ${API_MAX_TEXT_REQUEST_LENGTH} characters`),
         Validate.Handle.error

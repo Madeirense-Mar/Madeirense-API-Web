@@ -240,6 +240,7 @@ export async function createRestaurantEventProduct(
     res: Response<API$Types.response<Products | undefined>>
 ) {
     const {
+        delisted = false,
         thumbnail_url: thumbnail,
         ...body
     } = req.body;
@@ -248,7 +249,7 @@ export async function createRestaurantEventProduct(
         const event_id = parseInt(req.params.id);
 
         const event = await prisma.restaurant_Events.findUnique({
-            where: { event_id}
+            where: { event_id }
         });
 
         if (!event) {
@@ -264,6 +265,7 @@ export async function createRestaurantEventProduct(
             data: await prisma.products.create({
                 data: {
                     ...body,
+                    delisted,
                     event_id,
                     prep_time_minutes: 0,
                     product_composition: $Enums.Products_product_composition.merchandise,
@@ -281,7 +283,7 @@ export async function createRestaurantEventProduct(
             error
         );
     }
-}
+};
 
 export async function deleteRestaurantEvent(
     req: IEventfulRequest<{ id: string }>,
