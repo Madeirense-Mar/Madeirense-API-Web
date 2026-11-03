@@ -1,4 +1,4 @@
-//#region Imports -------------------------------------
+//#region Imports -----------------------------------------
 import {
     useEffect,
     useMemo,
@@ -574,7 +574,7 @@ function EventPanel({ id }: { id: number }) {
     //#endregion
 };
 
-//#region Scroll section declarations -----------------
+//#region Scroll section declarations ---------------------
 type sectionType = "thumbnail" | "video";
 
 const ScrollToSection = ({
