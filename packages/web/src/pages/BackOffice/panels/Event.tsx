@@ -23,7 +23,6 @@ import {
 
 import {
     APP_TTL_DEFAULT,
-    formatNumber,
     formatUUID_UC_CDN_URL,
     getLabel,
     locales,
@@ -63,6 +62,7 @@ import type {
 import type {
     statusType
 } from "components/types";
+import AddRestaurantEventMerchandiseForm from "components/modals/forms/event/addMerchandise";
 
 // ***************************************************************************************************************
 
@@ -98,7 +98,7 @@ function EventPanel({ id }: { id: number }) {
 
     //#region Variable declarations -----------------------
     const data = get("Restaurant_Events")?.find(({ event_id }) => event_id === id) as restaurantEventType;
-    const tickets = useMemo(() => (data?.Products ?? []).filter(({ product_type }) => product_type === "ticket"), [data]);
+    const products = useMemo(() => (data?.Products ?? []).filter(({ product_type }) => product_type === "merchandise"), [data]);
 
     const {
         event_date,
@@ -118,6 +118,18 @@ function EventPanel({ id }: { id: number }) {
         String(new Date(end_time).getHours()).padStart(2, '0'),
         String(new Date(end_time).getMinutes()).padStart(2, '0')
     ], [data]);
+
+    const assertions = {
+        "isLoading": [
+            "loading",
+            "fetching-Restaurant_Events",
+            "updating-Restaurant_Events"
+        ].includes(appState),
+        "hasPassed": [
+            (status === "expired"),
+            (today > new Date(event_date))
+        ].includes(true)
+    };
     //#endregion
 
     //#region Functions -----------------------------------
@@ -130,6 +142,14 @@ function EventPanel({ id }: { id: number }) {
     };
 
     function handleEvent(e: any) { update(e.target); };
+
+    async function handleEventProductCreation() {
+        const callback = async () => fetch("Restaurant_Events");
+
+        show(<AddRestaurantEventMerchandiseForm {...{ callback }}/>, {
+            title: `Registar merchandise`
+        });
+    };
 
     function handleCancellation() {
         const callback = () => {
@@ -287,26 +307,15 @@ function EventPanel({ id }: { id: number }) {
 
     useEffect(() => { setFreeSpots(((data?.spots ?? 0) as number) === 0); }, [data?.spots]);
     useEffect(() => { setFreePricing(parseInt(`${data?.price ?? '0'}`) === 0); }, [data?.price]);
-
-    const assertions = {
-        "isLoading": [
-            "loading",
-            "fetching-Restaurant_Events",
-            "updating-Restaurant_Events"
-        ].includes(appState),
-        "hasPassed": [
-            (status === "expired"),
-            (today > new Date(event_date))
-        ].includes(true)
-    };
     //#endregion
 
+    //#region DOM -----------------------------------------
     switch (appState) {
         case "loading": {
             return <div className="w-full h-full flex flex-row justify-center items-center">
                 <Icon name="Loading" className="animate-spin" />
             </div>
-        };
+        }
 
         default: {
             return <section
@@ -520,26 +529,30 @@ function EventPanel({ id }: { id: number }) {
                 </section>
 
                 <section className={styles.merch}>
-                    <h1>Merchandise</h1>
+                    <header className="w-full flex flex-row justify-between items-center">
+                        <h1>Merchandise</h1>
 
-                    <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                        <Button onClick={handleEventProductCreation}>
+                            <Icon name="Add" />
+
+                            Adicionar producto
+                        </Button>
+                    </header>
+
+                    {(products.length > 0) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
                         Alteração do só afetará os productos que não foram vendidos
-                    </div>
+                    </div>}
 
-                    <ul className="w-full">
-                        {tickets.map(t => <li key={t.product_id} className="w-full">
+                    <ul className="w-full flex flex-col justify-start items-start gap-3">
+                        {!products.length && <li className="border rounded-md opacity-10 p-3 flex w-full">
+                            <em className="m-auto">Sem products registados para o evento</em>
+                        </li>}
+
+                        {products.map(p => <li key={p.product_id} className="w-full">
                             <form className="w-full">
 
                             </form>
                         </li>)}
-                        
-                        <li className="w-full flex flex-row justify-end items-start">
-                            <Button>
-                                <Icon name="Add" />
-
-                                Adicionar producto
-                            </Button>
-                        </li>
                     </ul>
                 </section>
 
@@ -554,8 +567,9 @@ function EventPanel({ id }: { id: number }) {
                     />
                 </section>
             </section>
-        };
+        }
     };
+    //#endregion
 };
 
 type sectionType = "thumbnail" | "video";
