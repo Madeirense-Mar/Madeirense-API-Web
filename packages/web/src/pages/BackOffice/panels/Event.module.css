@@ -61,6 +61,66 @@
 }
 /*#endregion*/
 
+/*#region Products list =================================== */
+.products-list {
+    @apply w-full flex flex-col justify-start items-start gap-3;
+}
+
+.products-list li[data-empty] {
+    @apply border rounded-md opacity-10 p-3 flex w-full;
+}
+
+.products-list li {
+    @apply w-full flex flex-row justify-start items-center;
+
+    gap: var(--gap-m);
+
+    padding: var(--padding-s);
+
+    border: var(--border-width, 1px) solid var(--li-border-color, transparent);
+    border-radius: 12px;
+
+    background-color: var(--li-background-color, transparent);
+}
+
+[data-theme*="DARK"] .products-list li:hover {
+    --li-border-color: var(--primary-light);
+    --li-background-color: var(--primary-dark);
+}
+
+[data-theme*="LIGHT"] .products-list li:hover {
+    --li-border-color: var(--primary);
+    --li-background-color: color-mix(in srgb, var(--primary), transparent 60%);
+}
+
+.products-list li div[data-type="thumbnail"] {
+    --thumbnail-height: 80px;
+    --thumbnail-width: 150px;
+}
+
+.products-list li>div:first-of-type {
+    margin-right: auto;
+}
+
+.products-list li label {
+    @apply flex flex-col justify-start items-start;
+    
+    gap: var(--gap-xs);
+}
+
+.products-list li label input {
+    text-align: center;
+}
+
+.products-list li label span {
+    @apply inline-flex justify-start items-center;
+
+    gap: var(--gap-xs);
+
+    font-weight: 700;
+}
+/*#endregion*/
+
 /*#region Tickets list ==================================== */
 .tickets-list {
     --ul-gap: 0px;
@@ -103,7 +163,7 @@
 }
 
 [data-theme*="LIGHT"] .datetime-form {
-    --div-border-color: color-mix(in srgb, var(--neutral-light), transparent 90%);
+    --div-border-color: color-mix(in srgb, var(--neutral-dark), transparent 90%);
     --div-background-color: color-mix(in srgb, var(--neutral-dark), transparent 50%);
 
     --hr-border-color: var(--neutral-dark);

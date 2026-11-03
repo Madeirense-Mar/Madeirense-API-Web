@@ -32,9 +32,9 @@ import {
     type restaurantEventType,
 } from "@Madeirense/shared";
 
-import env from "env";
-
 import AppSettings from "settings";
+import MXP$App from "configurations";
+import dependencies from "configurations/dependencies";
 
 import { useApp } from "contexts/App";
 import { useModal } from "contexts/Modal";
@@ -58,6 +58,7 @@ import styles from "./Event.module.css";
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 import type {
+    Products,
     Restaurant_Events
 } from "@Madeirense/database/browser";
 
@@ -68,7 +69,23 @@ import type {
 
 // ***************************************************************************************************************
 
-const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
+//#region Interfaces and types ----------------------------
+type updateType = (
+    | "error"
+    | "success"
+    | "updating"
+);
+
+type productPropertyUpdateType = Record<keyof Products, updateType>;
+//#endregion
+
+const {
+    fileUploaderRegularDefaultProps
+} = dependencies["@uploadcare/react-uploader"];
+
+const {
+    "restaurant-events": RestaurantEventsAPI
+} = MXP$App.Base.Business.endpoints;
 
 defineLocale('pt', async () => {
     return locales.get("pt")?.uploadCare ?? {} as any;
@@ -95,7 +112,9 @@ function EventPanel({ id }: { id: number }) {
 
     const [freePricing, setFreePricing] = useState<boolean>(false);
     const [freeSpots, setFreeSpots] = useState<boolean>(false);
+
     const [updater, setUpdater] = useState<keyof Restaurant_Events | "">("");
+    const [productUpdater, setProductUpdater] = useState<Record<number, Partial<productPropertyUpdateType>>>({});
     //#endregion
 
     //#region Variable declarations -----------------------
@@ -136,6 +155,7 @@ function EventPanel({ id }: { id: number }) {
     //#endregion
 
     //#region Functions -----------------------------------
+    //#region Event panel
     function getUpdaterStatusIndicator(...properties: (keyof Restaurant_Events)[]) {
         if (properties.includes(updater as keyof Restaurant_Events)) return (assertions.isLoading)
             ? <Icon name="Loading" className="animate-spin" />
@@ -202,10 +222,10 @@ function EventPanel({ id }: { id: number }) {
     function toggleFreeSpots() { setFreeSpots(f => !f); }
 
     function update(element: any, delay: number = delayMS) {
-        const property = element.name as keyof Restaurant_Events;
+        const property = element.name as (keyof Restaurant_Events | keyof Products);
         const _value = element.value;
 
-        if ((data as restaurantEventType)[property] === _value) return;
+        if ((data as restaurantEventType)[property as keyof Restaurant_Events] === _value) return;
 
         let value;
 
@@ -246,28 +266,68 @@ function EventPanel({ id }: { id: number }) {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
         timeoutRef.current = setTimeout(async () => {
-            try {
-                setUpdater(property);
+            switch ((element as HTMLElement).dataset?.form) {
+                case "product":
+                    const product_id = parseInt((element as HTMLElement).id.split("-")[0]);
 
-                await update_PARTIAL({
-                    id,
-                    property: "Restaurant_Events",
-                    payload: {
-                        [property]: value
+                    try {
+                        setProductUpdater(pu => ({
+                            ...pu,
+                            [product_id]: {
+                                ...pu[product_id],
+                                [property as keyof Products]: "updating"
+                            }
+                        }));
+
+                        await RestaurantEventsAPI.updateProduct(event_id, product_id, {
+                            [property]: value
+                        });
+                    } catch (error) {
+                        setProductUpdater(pu => ({
+                            ...pu,
+                            [product_id]: {
+                                ...pu[product_id],
+                                [property as keyof Products]: "error"
+                            }
+                        }));
+                    } finally {
+                        setProductUpdater(pu => ({
+                            ...pu,
+                            [product_id]: {
+                                ...pu[product_id],
+                                [property as keyof Products]: undefined
+                            }
+                        }));
                     }
-                });
-            } catch (error) {
-                push({
-                    id: "N#ERROR_UPDATING_EVENT",
-                    alert: (error as Error).message,
-                    type: "alert",
-                    options: {
-                        variant: "danger",
-                        ttl: APP_TTL_DEFAULT
+
+                    break;
+
+                default:
+                    try {
+                        setUpdater(property as keyof Restaurant_Events);
+
+                        await update_PARTIAL({
+                            id,
+                            property: "Restaurant_Events",
+                            payload: {
+                                [property]: value
+                            }
+                        });
+                    } catch (error) {
+                        push({
+                            id: "N#ERROR_UPDATING_EVENT",
+                            alert: (error as Error).message,
+                            type: "alert",
+                            options: {
+                                variant: "danger",
+                                ttl: APP_TTL_DEFAULT
+                            }
+                        });
+                    } finally {
+                        setUpdater("");
                     }
-                });
-            } finally {
-                setUpdater("");
+
+                    break;
             }
         }, delay);
     };
@@ -303,6 +363,59 @@ function EventPanel({ id }: { id: number }) {
             setUpdater("");
         }
     }
+    //#endregion
+
+    //#region Product updater management
+    function getProductUpdaterStatusIndicator(product_id: number, properties: keyof Products) {
+        switch (productUpdater?.[product_id]?.[properties]) {
+            case "error":
+                return <Icon name="Error" />;
+
+            case "success":
+                return <Icon name="Check" />;
+
+            case "updating":
+                return <Icon name="Loading" className="animate-spin" />;
+
+            default:
+                return null;
+        }
+    };
+
+    function handleProductThumbnailUpload(product_id: number) {
+        return ({ uuid, mimeType, errors }: any) => {
+            try {
+                if (!uuid) {
+                    console.error(errors);
+
+                    throw new Error("Asset UUID is null, the upload possibly failed. Check the logs for more information");
+                }
+
+                setProductUpdater(pu => ({
+                    ...pu,
+                    [product_id]: { ...pu[product_id], thumbnail: "success" }
+                }));
+            } catch (error) {
+                setProductUpdater(pu => ({
+                    ...pu,
+                    [product_id]: { ...pu[product_id], thumbnail: "error" }
+                }));
+            } finally {
+                setTimeout(() => setProductUpdater(pu => ({
+                    ...pu,
+                    [product_id]: { ...pu[product_id], thumbnail: undefined }
+                })), delayMS);
+            }
+        }
+    };
+
+    function toggleProductThumbnailUpload(product_id: number) {
+        return (e: any) => setProductUpdater(pu => ({
+            ...pu,
+            [product_id]: { ...pu[product_id], thumbnail: "updating" }
+        }));
+    };
+    //#endregion
     //#endregion
 
     //#region Effects -------------------------------------
@@ -535,26 +648,88 @@ function EventPanel({ id }: { id: number }) {
                     <header className="w-full flex flex-row justify-between items-center">
                         <h1>Merchandise</h1>
 
-                        <Button onClick={handleEventProductCreation}>
+                        {!assertions.hasPassed && <Button onClick={handleEventProductCreation}>
                             <Icon name="Add" />
 
                             Adicionar producto
-                        </Button>
+                        </Button>}
                     </header>
 
-                    {(products.length > 0) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
-                        Alteração do só afetará os productos que não foram vendidos
-                    </div>}
+                    {assertions.hasPassed
+                        ? <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                            O event já expirou, não poderá editar os itens de merchandise
+                        </div>
 
-                    <ul className="w-full flex flex-col justify-start items-start gap-3">
-                        {!products.length && <li className="border rounded-md opacity-10 p-3 flex w-full">
+                        : (products.length > 0) && <div data-state="warning" className="w-full flex flex-row justify-center items-center">
+                            Alteração do só afetará os productos que não foram vendidos
+                        </div>}
+
+                    <ul
+                        className={styles["products-list"]}
+                        {...{
+                            ...(assertions.hasPassed)
+                                ? { "data-disabled": "" }
+                                : {}
+                        }}
+                    >
+                        {!products.length && <li data-empty>
                             <em className="m-auto">Sem products registados para o evento</em>
                         </li>}
 
-                        {products.map(p => <li key={p.product_id} className="w-full">
-                            <form className="w-full">
+                        {products.map(p => <li key={p.product_id}>
+                            <div className={resolveClassNames(
+                                "flex flex-col justify-center items-center gap-3",
+                                (productUpdater?.[p.product_id]?.thumbnail == "updating") ? "animate-pulse" : ""
+                            )}>
+                                <div style={{ "backgroundImage": `url(${p.thumbnail})` }} data-type="thumbnail">
+                                </div>
 
-                            </form>
+                                <div className="flex flex-row justify-between items-center gap-2">
+                                    {getProductUpdaterStatusIndicator(p.product_id, "thumbnail")}
+
+                                    <FileUploaderRegular
+                                        {...fileUploaderRegularDefaultProps}
+                                        onFileUploadStart={toggleProductThumbnailUpload(p.product_id)}
+                                        onFileUploadSuccess={handleProductThumbnailUpload(p.product_id)}
+                                    />
+                                </div>
+                            </div>
+
+                            <label className={resolveClassNames((productUpdater?.[p.product_id]?.name == "updating") ? "animate-pulse" : "")}>
+                                <span>
+                                    {getProductUpdaterStatusIndicator(p.product_id, "name")}
+
+                                    Nome
+                                </span>
+
+                                <input
+                                    data-form="product"
+                                    defaultValue={p.name}
+                                    id={`${p.product_id}-name`}
+                                    name="name"
+                                    type="text"
+                                    onBlur={handleEvent}
+                                    onKeyDown={handleKeyDown}
+                                />
+                            </label>
+
+                            <label className={resolveClassNames((productUpdater?.[p.product_id]?.price == "updating") ? "animate-pulse" : "")}>
+                                <span>
+                                    {getProductUpdaterStatusIndicator(p.product_id, "price")}
+
+                                    Preço
+                                </span>
+
+                                <input
+                                    data-form="product"
+                                    defaultValue={p.price.toString()}
+                                    id={`${p.product_id}-price`}
+                                    name="price"
+                                    type="number"
+                                    onBlur={handleEvent}
+                                    onKeyDown={handleKeyDown}
+                                />
+                            </label>
                         </li>)}
                     </ul>
                 </section>
@@ -569,7 +744,7 @@ function EventPanel({ id }: { id: number }) {
                         defaultRestaurant={data?.restaurant_id}
                     />
                 </section>
-            </section>
+            </section >
         }
     };
     //#endregion
@@ -623,7 +798,7 @@ const ScrollToSection = ({
     //#endregion
 
     //#region Functions -----------------------------------
-    function handleUpload(type: assetType) {
+    function handleProductThumbnailUpload(type: assetType) {
         return async ({ uuid, mimeType, errors }: any) => {
             if (!uuid) {
                 console.error(errors);
@@ -679,7 +854,7 @@ const ScrollToSection = ({
         setPickedSection(value as any);
     };
 
-    function toggleUploadState(type: assetType) {
+    function toggleProductThumbnailUpload(type: assetType) {
         return (e: any) => {
             switch (type) {
                 case "thumbnail": setState("uploading-thumbnail"); break;
@@ -708,20 +883,11 @@ const ScrollToSection = ({
                 </div>
 
                 {!hasExpired && <FileUploaderRegular
+                    {...fileUploaderRegularDefaultProps}
                     className="ml-auto"
-                    filesViewMode="grid"
-                    multipleMin={1}
-                    multipleMax={1}
-                    localeName="pt"
                     localeDefinitionOverride={AppSettings.UploadCare.Overrides.update.thumbnail}
-                    onFileUploadStart={toggleUploadState("thumbnail")}
-                    onFileUploadSuccess={handleUpload("thumbnail")}
-                    pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                    sourceList="local, facebook, gdrive"
-                    confirmUpload
-                    gridShowFileNames
-                    imgOnly
-                    useCloudImageEditor
+                    onFileUploadStart={toggleProductThumbnailUpload("thumbnail")}
+                    onFileUploadSuccess={handleProductThumbnailUpload("thumbnail")}
                 />}
             </section>
 
@@ -741,19 +907,12 @@ const ScrollToSection = ({
                 }
 
                 {!hasExpired && <FileUploaderRegular
+                    {...fileUploaderRegularDefaultProps}
                     className="ml-auto"
                     accept="video/mp4,video/webm,video/mov,video/avi"
-                    filesViewMode="grid"
-                    multipleMin={1}
-                    multipleMax={1}
-                    localeName="pt"
                     localeDefinitionOverride={AppSettings.UploadCare.Overrides.update.video}
-                    onFileUploadStart={toggleUploadState("video")}
-                    onFileUploadSuccess={handleUpload("video")}
-                    pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                    sourceList="local, facebook, gdrive"
-                    confirmUpload
-                    gridShowFileNames
+                    onFileUploadStart={toggleProductThumbnailUpload("video")}
+                    onFileUploadSuccess={handleProductThumbnailUpload("video")}
                 />}
             </section>
         </div>
