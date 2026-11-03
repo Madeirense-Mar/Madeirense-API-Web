@@ -188,7 +188,7 @@ const AddRestaurantEventForm = ({
                 <hr className="w-full" />
             </legend>
 
-            <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
+            <div data-type="thumbnail" style={{ backgroundImage: `url(${data?.uploadedThumbnailURL})` }} className="flex flex-col justify-center items-center">
                 {status === "uploading-thumbnail"
                     ? <Icon name="Loading" className="animate-spin" />
                     : <FileUploaderRegular
@@ -266,7 +266,7 @@ const AddRestaurantEventForm = ({
                     />
                 </>
 
-                : <div data-type="thumbnail" className="w-full flex flex-col justify-center items-center rounded-md min-h-[300px] border">
+                : <div data-type="thumbnail" className="flex flex-col justify-center items-center">
                     {status === "uploading-video"
                         ? <Icon name="Loading" className="animate-spin" />
                         : <FileUploaderRegular
