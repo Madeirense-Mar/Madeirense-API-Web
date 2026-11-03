@@ -76,6 +76,12 @@ class RestaurantEventsEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
+    async updateProduct(event_id: number, product_id: number, payload: Partial<restaurantEventProductPayloadType>) {
+        const response = await this.client.patch<typeof payload, Products>(`/restaurant-events/${event_id}/merchandise/${product_id}`, payload);
+
+        return response.data;
+    }
+
     async update_PARTIAL(event_id: number, payload: Partial<restaurantEventPayloadType>) {
         const response = await this.client.patch<typeof payload, Partial<restaurantEventType>>(`/restaurant-events/${event_id}`, payload);
 
