@@ -14,9 +14,8 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
-import env from "env";
-
 import MXP$App from "configurations";
+import dependencies from "configurations/dependencies";
 
 import {
     useModal
@@ -48,9 +47,15 @@ type ModalState = {
 };
 //#endregion
 
+//#region Defaults ------------------------------------
+const {
+    fileUploaderRegularDefaultProps
+} = dependencies["@uploadcare/react-uploader"];
+
 const {
     "restaurant-events": RestaurantEventsAPI
 } = MXP$App.Base.Business.endpoints;
+//#endregion
 
 const AddRestaurantEventMerchandiseForm = ({ callback, className, event_id, onSubmit, ...props }: IPropTypes) => {
     //#region Hooks and state declarations ----------------
@@ -191,19 +196,10 @@ const AddRestaurantEventMerchandiseForm = ({ callback, className, event_id, onSu
             </div>
 
             <FileUploaderRegular
+                {...fileUploaderRegularDefaultProps}
                 className="ml-auto"
-                filesViewMode="grid"
-                multipleMin={1}
-                multipleMax={1}
-                localeName="pt"
                 onFileUploadStart={toggleUploadState}
                 onFileUploadSuccess={handleUpload}
-                pubkey={env.UPLOAD_CARE_PUBLIC_KEY}
-                sourceList="local, facebook, gdrive"
-                confirmUpload
-                gridShowFileNames
-                imgOnly
-                useCloudImageEditor
             />
         </fieldset>
 

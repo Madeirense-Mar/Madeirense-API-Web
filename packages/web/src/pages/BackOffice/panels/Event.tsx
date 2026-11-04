@@ -79,6 +79,7 @@ type updateType = (
 type productPropertyUpdateType = Record<keyof Products, updateType>;
 //#endregion
 
+//#region Defaults ----------------------------------------
 const {
     fileUploaderRegularDefaultProps
 } = dependencies["@uploadcare/react-uploader"];
@@ -93,6 +94,7 @@ defineLocale('pt', async () => {
 
 const delayMS = 2500;
 const today = new Date();
+//#endregion
 
 function EventPanel({ id }: { id: number }) {
     //#region Hook and state declarations -----------------

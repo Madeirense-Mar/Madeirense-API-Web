@@ -19,13 +19,14 @@ import {
     resolveClassNames,
 } from "@Madeirense/shared";
 
-import env from "env";
+import dependencies from "configurations/dependencies";
 
 import { useApp } from "contexts/App";
 import { useModal } from "contexts/Modal";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
+import Tag from "components/tags";
 
 import DescriptionLabel from "components/forms/elements/labels/description";
 import RestaurantsSelector from "components/forms/elements/selects/restaurants";
@@ -39,10 +40,10 @@ import type {
 import type {
     IComponentState
 } from "components/interface";
-import Tag from "components/tags";
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface IPropTypes extends ComponentProps<"form"> {
     callback?: () => void;
 };
@@ -54,12 +55,17 @@ type stateType = {
     pickRestaurant?: boolean,
     pickedProductType?: $Enums.Products_product_type
 };
+//#endregion
 
-const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
+//#region Defaults ----------------------------------------
+const {
+    fileUploaderRegularDefaultProps
+} = dependencies["@uploadcare/react-uploader"];
 
 defineLocale('pt', async () => {
     return locales.get("pt")?.uploadCare as any;
 });
+//#endregion
 
 const AddProductForm = ({
     callback,
@@ -209,36 +215,18 @@ const AddProductForm = ({
                     ? <Icon name="Loading" className="animate-spin" />
 
                     : !data?.uploadedThumbnailURL && <FileUploaderRegular
-                        filesViewMode="grid"
-                        multipleMin={1}
-                        multipleMax={1}
-                        localeName="pt"
+                        {...fileUploaderRegularDefaultProps}
                         onFileUploadStart={toggleUploadState("thumbnail")}
                         onFileUploadSuccess={handleUpload("thumbnail")}
-                        pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                        sourceList="local, facebook, gdrive"
-                        confirmUpload
-                        gridShowFileNames
-                        imgOnly
-                        useCloudImageEditor
                     />
                 }
             </div>
 
             {data?.uploadedThumbnailURL && <FileUploaderRegular
+                {...fileUploaderRegularDefaultProps}
                 className="ml-auto"
-                filesViewMode="grid"
-                multipleMin={1}
-                multipleMax={1}
-                localeName="pt"
                 onFileUploadStart={toggleUploadState("thumbnail")}
                 onFileUploadSuccess={handleUpload("thumbnail")}
-                pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                sourceList="local, facebook, gdrive"
-                confirmUpload
-                gridShowFileNames
-                imgOnly
-                useCloudImageEditor
             />}
         </fieldset>
 

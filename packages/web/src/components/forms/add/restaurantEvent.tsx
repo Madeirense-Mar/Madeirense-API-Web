@@ -18,7 +18,7 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
-import env from "env";
+import dependencies from "configurations/dependencies";
 
 import {
     useApp
@@ -59,11 +59,15 @@ type modalState = {
 };
 //#endregion
 
-const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
+//#region Defaults ------------------------------------
+const {
+    fileUploaderRegularDefaultProps
+} = dependencies["@uploadcare/react-uploader"];
 
 defineLocale('pt', async () => {
     return (locales.get("pt")?.uploadCare ?? {}) as any;
 });
+//#endregion
 
 const AddRestaurantEventForm = ({
     callback,
@@ -192,18 +196,9 @@ const AddRestaurantEventForm = ({
                 {status === "uploading-thumbnail"
                     ? <Icon name="Loading" className="animate-spin" />
                     : <FileUploaderRegular
-                        filesViewMode="grid"
-                        multipleMin={1}
-                        multipleMax={1}
-                        localeName="pt"
+                        {...fileUploaderRegularDefaultProps}
                         onFileUploadStart={toggleUploadState("thumbnail")}
                         onFileUploadSuccess={handleUpload("thumbnail")}
-                        pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                        sourceList="local, facebook, gdrive"
-                        confirmUpload
-                        gridShowFileNames
-                        imgOnly
-                        useCloudImageEditor
                     />
                 }
             </div>
@@ -212,18 +207,9 @@ const AddRestaurantEventForm = ({
                 status === "uploading-thumbnail",
                 data?.uploadedThumbnailURL !== ""
             ].includes(true) && <FileUploaderRegular
-                    filesViewMode="grid"
-                    multipleMin={1}
-                    multipleMax={1}
-                    localeName="pt"
+                    {...fileUploaderRegularDefaultProps}
                     onFileUploadStart={toggleUploadState("thumbnail")}
                     onFileUploadSuccess={handleUpload("thumbnail")}
-                    pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                    sourceList="local, facebook, gdrive"
-                    confirmUpload
-                    gridShowFileNames
-                    imgOnly
-                    useCloudImageEditor
                 />}
         </fieldset>
 
@@ -250,19 +236,12 @@ const AddRestaurantEventForm = ({
                     />
 
                     <FileUploaderRegular
+                        {...fileUploaderRegularDefaultProps}
                         className="ml-auto"
                         accept="video/mp4,video/webm,video/mov,video/avi"
-                        filesViewMode="grid"
-                        multipleMin={1}
-                        multipleMax={1}
-                        localeName="pt"
                         localeDefinitionOverride={AppSettings.UploadCare.Overrides.video}
                         onFileUploadStart={toggleUploadState("video")}
                         onFileUploadSuccess={handleUpload("video")}
-                        pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                        sourceList="local, facebook, gdrive"
-                        confirmUpload
-                        gridShowFileNames
                     />
                 </>
 
@@ -270,18 +249,11 @@ const AddRestaurantEventForm = ({
                     {status === "uploading-video"
                         ? <Icon name="Loading" className="animate-spin" />
                         : <FileUploaderRegular
+                            {...fileUploaderRegularDefaultProps}
                             accept="video/mp4,video/webm,video/mov,video/avi"
-                            filesViewMode="grid"
-                            multipleMin={1}
-                            multipleMax={1}
-                            localeName="pt"
                             localeDefinitionOverride={AppSettings.UploadCare.Overrides.video}
                             onFileUploadStart={toggleUploadState("video")}
                             onFileUploadSuccess={handleUpload("video")}
-                            pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                            sourceList="local, facebook, gdrive"
-                            confirmUpload
-                            gridShowFileNames
                         />
                     }
                 </div>

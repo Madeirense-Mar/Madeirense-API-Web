@@ -1,3 +1,4 @@
+//#region Imports -------------------------------------
 import {
     ChangeEvent,
     useEffect,
@@ -23,7 +24,7 @@ import {
     type scheduleType,
 } from "@Madeirense/shared";
 
-import env from "env";
+import dependencies from "configurations/dependencies";
 
 import {
     useApp
@@ -41,6 +42,7 @@ import styles from "./restaurant.module.css";
 import type {
     IComponentState
 } from "components/interface";
+//#endregion
 
 // ***************************************************************************************************************
 
@@ -65,12 +67,6 @@ type statusType = (
     | "updating"
     | "uploading-thumbnail"
 );
-
-const _defaultData: stateDataType = {
-    assumeSameHours: true,
-    address: undefined,
-    uploadedThumbnailURL: undefined
-};
 
 type timeType = `${number}:${number}`;
 
@@ -132,6 +128,19 @@ function readManualLocation($form: HTMLFormElement): locationType {
 };
 //#endregion
 
+//#region Defaults ------------------------------------
+const {
+    fileUploaderRegularDefaultProps
+} = dependencies["@uploadcare/react-uploader"];
+
+const DEFAULT_STATE_DATA: stateDataType = {
+    assumeSameHours: true,
+    address: undefined,
+    uploadedThumbnailURL: undefined
+};
+
+//#endregion
+
 function RestaurantForm(_props: IPropTypes) {
     const {
         className,
@@ -155,7 +164,7 @@ function RestaurantForm(_props: IPropTypes) {
     const [manualLocation, toggleManualLocation] = useState<boolean>(false);
 
     const [form, updateForm] = useState<IComponentState<stateDataType, statusType>>({
-        data: _defaultData,
+        data: DEFAULT_STATE_DATA,
         error: null,
         status: "idle"
     });
@@ -168,7 +177,7 @@ function RestaurantForm(_props: IPropTypes) {
         status
     } = form;
     const settings = get("Global_Settings") ?? DEFAULT_APP_SETTINGS;
-    
+
     const assertions = {
         "isWorking": ([
             "adding",
@@ -462,18 +471,9 @@ function RestaurantForm(_props: IPropTypes) {
                     ? <Icon name="Loading" className="animate-spin" />
 
                     : !data?.uploadedThumbnailURL && <FileUploaderRegular
-                        filesViewMode="grid"
-                        multipleMin={1}
-                        multipleMax={1}
-                        localeName="pt"
+                        {...fileUploaderRegularDefaultProps}
                         onFileUploadStart={toggleUploadState("thumbnail")}
                         onFileUploadSuccess={handleUpload("thumbnail")}
-                        pubkey={env.UPLOAD_CARE_PUBLIC_KEY}
-                        sourceList="local, facebook, gdrive"
-                        confirmUpload
-                        gridShowFileNames
-                        imgOnly
-                        useCloudImageEditor
                     />
                 }
             </div>

@@ -29,6 +29,7 @@ import {
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
+import dependencies from "configurations/dependencies";
 
 import ApplicationQueries, {
     Queries$Types
@@ -67,9 +68,12 @@ import "./Product.css";
 
 // ***************************************************************************************************************
 
-// #region CONSTANTS
+// #region Defaults ---------------------------------------
+const {
+    fileUploaderRegularDefaultProps
+} = dependencies["@uploadcare/react-uploader"];
+
 const DELAY_MS = 2500;
-const UPLOAD_CARE_PUBLIC_KEY = env.UPLOAD_CARE_PUBLIC_KEY;
 // #endregion
 
 defineLocale('pt', async () => {
@@ -307,7 +311,7 @@ function ProductPanel({ id }: { id: number }) {
                         title="Nome"
                         description={<span className="font-normal opacity-60">Nome apresentado para os clientes na lista de productos do menu, nas facturas/recibos, registos de históricos, pedidos e notificações.</span>}
                         input={{
-                            icon: getUpdaterStatusIndicator("name"),
+                            iconElement: getUpdaterStatusIndicator("name"),
                             element: "input",
                             props: {
                                 className: "w-full",
@@ -326,7 +330,7 @@ function ProductPanel({ id }: { id: number }) {
                         title="Categoria"
                         description={<span className="font-normal opacity-60">Serve para o filtro da lista de productos, agrupa pela categoria de refeição.</span>}
                         input={{
-                            icon: getUpdaterStatusIndicator("product_type"),
+                            iconElement: getUpdaterStatusIndicator("product_type"),
                             element: "select",
                             options: [
                                 {
@@ -361,7 +365,7 @@ function ProductPanel({ id }: { id: number }) {
                         title="Composição"
                         description={<span className="font-normal opacity-60">Serve para o filtro da lista de productos e muda o tipo de cor como é apresentado.</span>}
                         input={{
-                            icon: getUpdaterStatusIndicator("product_composition"),
+                            iconElement: getUpdaterStatusIndicator("product_composition"),
                             element: "select",
                             options: [
                                 {
@@ -397,7 +401,7 @@ function ProductPanel({ id }: { id: number }) {
                         layout="column"
                         description={<span className="font-normal opacity-60">Qual é a história do producto? Melhores aspectos ou características?</span>}
                         input={{
-                            icon: getUpdaterStatusIndicator("description"),
+                            iconElement: getUpdaterStatusIndicator("description"),
                             element: "textarea",
                             props: {
                                 className: "w-full",
@@ -441,7 +445,7 @@ function ProductPanel({ id }: { id: number }) {
                                 description={<span className="font-normal opacity-60">Preço do producto que estará registado.</span>}
                                 alerts={{ warning: "Alteração do só afetará os produtos que não foram vendidos" }}
                                 input={{
-                                    icon: getUpdaterStatusIndicator("price"),
+                                    iconElement: getUpdaterStatusIndicator("price"),
                                     element: "input",
                                     props: {
                                         className: "text-right",
@@ -469,7 +473,7 @@ function ProductPanel({ id }: { id: number }) {
                                 title="Desconto"
                                 description={<span className="font-normal opacity-60">Percentagem de desconto aplicada para o producto, ficará visível no menu.</span>}
                                 input={{
-                                    icon: getUpdaterStatusIndicator("discount"),
+                                    iconElement: getUpdaterStatusIndicator("discount"),
                                     element: "input",
                                     props: {
                                         className: "text-right",
@@ -547,7 +551,7 @@ function ProductPanel({ id }: { id: number }) {
                                 title="Tempo de preparo (em minutos)"
                                 description={<span className="font-normal opacity-60">Representa o tempo de preparo adicionado à estimativa de espera partilhada com o cliente</span>}
                                 input={{
-                                    icon: getUpdaterStatusIndicator("prep_time_minutes"),
+                                    iconElement: getUpdaterStatusIndicator("prep_time_minutes"),
                                     element: "input",
                                     props: {
                                         id: "prep_time_minutes",
@@ -686,20 +690,11 @@ const ScrollToSection = ({
                         </div>
 
                         {!disabled && <FileUploaderRegular
+                            {...fileUploaderRegularDefaultProps}
                             className="ml-auto"
-                            filesViewMode="grid"
-                            multipleMin={1}
-                            multipleMax={1}
-                            localeName="pt"
                             localeDefinitionOverride={AppSettings.UploadCare.Overrides.update.thumbnail}
                             onFileUploadStart={toggleUploadState("thumbnail")}
                             onFileUploadSuccess={handleUpload("thumbnail")}
-                            pubkey={UPLOAD_CARE_PUBLIC_KEY as string}
-                            sourceList="local, facebook, gdrive"
-                            confirmUpload
-                            gridShowFileNames
-                            imgOnly
-                            useCloudImageEditor
                         />}
                     </section>
                 </div>

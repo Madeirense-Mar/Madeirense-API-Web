@@ -17,16 +17,16 @@ const dependencies = {
     } as QueryClientConfig,
     "@uploadcare/react-uploader": {
         fileUploaderRegularDefaultProps: {
-            filesViewMode: "grid",
-            multipleMin: 1,
-            multipleMax: 1,
-            localeName: "pt",
-            sourceList: "local, facebook, gdrive",
             confirmUpload: true,
+            filesViewMode: "grid",
             gridShowFileNames: true,
             imgOnly: true,
+            localeName: "pt",
+            multipleMax: 1,
+            multipleMin: 1,
+            pubkey: env.UPLOAD_CARE_PUBLIC_KEY,
+            sourceList: "local, facebook, gdrive",
             useCloudImageEditor: true,
-            pubkey: env.UPLOAD_CARE_PUBLIC_KEY
         } as ComponentProps<typeof FileUploaderRegular>
     },
 };
