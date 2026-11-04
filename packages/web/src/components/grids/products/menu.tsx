@@ -28,8 +28,6 @@ import {
     useInfiniteQuery
 } from "@tanstack/react-query";
 
-import SliderPicker from "../../pickers/slider";
-
 import MXP$App from "configurations";
 
 import ApplicationQueries from "configurations/queries";
@@ -38,9 +36,10 @@ import {
     type App$Types
 } from "contexts/App";
 
-import SearchBar from "components/forms/searchBar";
 import ProductCard from "components/cards/product";
+import SearchBar from "components/forms/searchBar";
 import Icon from "components/icon";
+import SliderPicker from "components/pickers/slider";
 
 import {
     nextPageTriggerSetup
