@@ -257,6 +257,7 @@ function ProductsMenuGrid({
         }
 
         default: {
+            //#region Filtered list -----------------------
             const fullList = (data?.pages.flatMap(page => page.data) || []);
             const list = fullList
                 .filter(item => search === "" ? true : item?.name.toLowerCase().includes(search.toLowerCase()))
@@ -264,7 +265,9 @@ function ProductsMenuGrid({
                 .filter(item => Object.values(compositionFilters).every(v => !v) ? true : (!item?.product_composition) ? false : Object.entries(compositionFilters).filter(e => e[1]).map(e => e[0] as $Enums.Products_product_composition).includes(item.product_composition))
                 .filter(item => (!defaultRestaurant || item?.restaurant_id === null) ? true : item?.restaurant_id === defaultRestaurant)
                 ;
+            //#endregion
 
+            //#region Slider props declarations -----------
             const $typeSliderPickerProps = {
                 defaultValue: listFilter,
                 list: [
@@ -281,7 +284,7 @@ function ProductsMenuGrid({
                 ],
                 onPick: handleTypeChange
             };
-
+            
             const $compositionSliderPickerProps = {
                 list: (
                     [
@@ -306,7 +309,9 @@ function ProductsMenuGrid({
                     }),
                 onMultiplePick: handleCompositionPick
             };
+            //#endregion
 
+            //#region List render -------------------------
             return <div {...$divProps}>
                 <div className={styles["filter-bar"]}>
                     <SliderPicker {...$typeSliderPickerProps} />
@@ -344,6 +349,7 @@ function ProductsMenuGrid({
                     <Icon name="Loading" className="animate-spin mx-auto my-4" />
                 </li>}
             </div>
+            //#endregion
         }
     };
     //#endregion
