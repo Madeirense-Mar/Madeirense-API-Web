@@ -1,11 +1,15 @@
 import {
-    ComponentPropsWithoutRef,
-    forwardRef
+    forwardRef,
+    type ComponentPropsWithoutRef
 } from "react";
 
-import { Link } from "react-router-dom";
+import {
+    Link
+} from "react-router-dom";
 
-import { resolveClassNames } from "@Madeirense/shared";
+import {
+    resolveClassNames
+} from "@Madeirense/shared";
 
 import styles from "./button.module.css";
 
@@ -24,38 +28,30 @@ interface IPropTypes extends ComponentPropsWithoutRef<typeof Link> {
     variant?: (
         | variantType
         | "tag"
-        | "text"
-        | "text-selected"
+        | `text${"" | "-selected"}`
         | `receipt-${"primary" | "secondary"}`
     );
 };
 
-const AnchorButton = forwardRef<HTMLAnchorElement, IPropTypes>((props, ref) => {
-    const {
-        borderless = false,
-        children = null,
-        className,
-        size = "m",
-        shape = "rect",
-        variant = "primary",
-        type = "button",
-        ...buttonProps
-    } = props;
+const AnchorButton = forwardRef<HTMLAnchorElement, IPropTypes>(({
+    borderless = false,
+    children = null,
+    className,
+    size = "m",
+    shape = "rect",
+    variant = "primary",
+    type = "button",
+    ...props
+}, ref) => {
+    const _className = resolveClassNames(
+        styles[variant],
+        styles[shape],
+        styles[size],
+        borderless ? styles.borderless : undefined,
+        className
+    );
 
-    return <Link
-        className={resolveClassNames(
-            styles[variant],
-            styles[shape],
-            styles[size],
-            borderless ? styles.borderless : undefined,
-            className
-        )}
-        {...{
-            ref,
-            type,
-            ...buttonProps
-        }}
-    >
+    return <Link className={_className} {...{ ref, type, ...props }}>
         {children}
     </Link>
 });

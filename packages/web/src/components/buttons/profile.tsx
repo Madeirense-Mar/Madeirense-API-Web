@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     forwardRef,
     useRef,
@@ -5,7 +6,9 @@ import {
     type MouseEvent
 } from "react";
 
-import { UUID } from "crypto";
+import {
+    UUID
+} from "crypto";
 
 import {
     APP_ACCEPTED_IMAGE_UPLOAD_MIMETYPES,
@@ -18,36 +21,47 @@ import {
 
 import env from "env";
 
-import { useNotifications } from "contexts/Notifications";
-import { useProfile } from "contexts/Profile";
+import { 
+    useNotifications
+} from "contexts/Notifications";
+
+import {
+    useProfile
+} from "contexts/Profile";
 
 import Icon from "components/icon";
 
 import styles from './profile.module.css';
 
-import type { Users } from "@Madeirense/database/browser";
+import type {
+    Users
+} from "@Madeirense/database/browser";
 
-import type { IButtonPropTypes } from "./interfaces";
+import type {
+    IButtonPropTypes
+} from "./interfaces";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ------------------------
 interface IPropTypes extends Omit<IButtonPropTypes, ("variant" | "shape")> {
-    enableUpload?: boolean,
-    src?: string
+    enableUpload?: boolean;
+    src?: string;
 };
+//#endregion
 
-const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, ref) => {
-    const {
-        className,
-        disabled = false,
-        enableUpload = false,
-        size = 's',
-        src = "#",
-        style,
-        onClick,
-        ...props
-    } = _props;
-
+const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>(({
+    className,
+    disabled = false,
+    enableUpload = false,
+    size = 's',
+    src = "#",
+    style,
+    onClick,
+    ...props
+}, ref) => {
+    //#region Hooks and state declarations ----------------
     const $inputRef = useRef<HTMLInputElement | null>(null);
 
     const {
@@ -59,7 +73,9 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
     const { push } = useNotifications();
 
     const [uploading, setUploading] = useState(false);
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const assertions = {
         "isUploadEnabled": [
             !disabled,
@@ -69,11 +85,13 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
             (state === "updating-profile"),
             uploading
         ].includes(true)
-    }
+    };
+    //#endregion
 
-    function handleClick (event: MouseEvent<HTMLButtonElement>) {
+    //#region Functions -----------------------------------
+    function handleClick(event: MouseEvent<HTMLButtonElement>) {
         if (enableUpload) $inputRef.current?.click();
-        
+
         onClick?.(event);
     }
 
@@ -128,10 +146,12 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
             setUploading(false);
         }
     };
+    //#endregion
 
+    //#region DOM -----------------------------------------
     return <button
-        className={resolveClassNames(styles[size], className)}
         style={(src) ? { backgroundImage: `url(${src})`, ...style } : style}
+        className={resolveClassNames(styles[size], className)}
         onClick={handleClick}
         {...props}
         {...{ disabled, ref }}
@@ -141,16 +161,17 @@ const ProfilePictureButton = forwardRef<HTMLButtonElement, IPropTypes>((_props, 
                 {assertions.isUpdating ? <Icon name="Loading" className="animate-spin" /> : <Icon name="Camera" />}
             </div>
 
-            <input 
+            <input
                 ref={$inputRef}
-                accept={APP_ACCEPTED_IMAGE_UPLOAD_MIMETYPES.join(',')} 
-                title="upload file" 
-                type="file" 
-                className="hidden" 
-                onChange={handleUpload} 
+                accept={APP_ACCEPTED_IMAGE_UPLOAD_MIMETYPES.join(',')}
+                title="upload file"
+                type="file"
+                className="hidden"
+                onChange={handleUpload}
             />
         </>}
     </button>
+    //#endregion
 });
 
 export default ProfilePictureButton;
