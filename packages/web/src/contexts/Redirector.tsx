@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useEffect
@@ -17,22 +18,28 @@ import AppSettings from "settings";
 import {
     useProfile
 } from "./Profile";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Context declarations ----------------------------
 const RedirectorContext = createContext({});
+//#endregion
 
 const RedirectorProvider = ({ children }: any) => {
+    //#region Hooks and state declarations ----------------
     const {
         pathname
     } = useLocation();
-
+    
     const {
         state: profileState
     } = useProfile();
-
+    
     const navigate = useNavigate();
+    //#endregion
 
+    //#region Effects -----------------------------------------
     useEffect(() => {
         if (!navigator.onLine) {
             if (!(pathname.endsWith(Madeirense$Enumerators.Pages.App.Offline)))
@@ -74,6 +81,7 @@ const RedirectorProvider = ({ children }: any) => {
         pathname,
         profileState
     ]);
+    //#endregion
 
     return <RedirectorContext.Provider value={{}}>
         {children}

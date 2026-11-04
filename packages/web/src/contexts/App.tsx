@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useCallback,
@@ -29,13 +30,22 @@ import type {
     Global_Settings
 } from "@Madeirense/database/browser";
 
-import type { statusType } from "components/types";
+import type {
+    statusType
+} from "components/types";
 
-import type { IProviderPropTypes } from "./interfaces";
-import type { contextActionType } from "./types";
+import type { 
+    IProviderPropTypes
+} from "./interfaces";
+
+import type {
+    contextActionType
+} from "./types";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 export namespace App$Types {
     export type payload = (
         | { property: "Coupons", payload: Coupons | couponPayloadType }
@@ -83,9 +93,9 @@ interface IContext {
 };
 
 interface IContextState {
-    status: contextStatusType;
     app: App$Types.properties;
-    errors: Error[]
+    errors: Error[];
+    status: contextStatusType;
 };
 
 type contextStatusType = statusType<(
@@ -100,8 +110,10 @@ type notificationPayloadType = (
     | restaurantType
     | restaurantEventType
 );
+//#endregion
 
-const defaultAppProperties = {
+//#region Default declarations ----------------------------
+const DEFAULT_APP_PROPERTIES = {
     Coupons: [],
     Drivers: [],
     Global_Settings: null,
@@ -111,7 +123,9 @@ const defaultAppProperties = {
 } as App$Types.properties;
 
 const DEFAULT_MIN_LIMIT = "100";
+//#endregion
 
+//#region Scoped procedures -------------------------------
 function getPropertyIndexKey(p: keyof App$Types.properties) {
     switch (p) {
         case "Coupons": return "coupon_id" as keyof Coupons;
@@ -124,7 +138,9 @@ function getPropertyIndexKey(p: keyof App$Types.properties) {
         default: return null
     };
 };
+//#endregion
 
+//#region Context declarations ----------------------------
 function reducer(
     state: IContextState,
     action: (
@@ -143,7 +159,7 @@ function reducer(
             return { ...state, errors: [] };
 
         case 'RESET':
-            return { status: 'idle', app: defaultAppProperties, errors: [] };
+            return { status: 'idle', app: DEFAULT_APP_PROPERTIES, errors: [] };
 
         case 'SET_APP':
             return { status: 'idle', app: action.payload, errors: [] };
@@ -235,7 +251,7 @@ function reducer(
 };
 
 const AppContext = createContext<IContext>({
-    app: defaultAppProperties,
+    app: DEFAULT_APP_PROPERTIES,
     errors: [],
     state: "idle",
     create: () => Promise.resolve(false),
@@ -246,14 +262,18 @@ const AppContext = createContext<IContext>({
     update_BATCH: () => Promise.resolve(false),
     update_PARTIAL: () => Promise.resolve(false)
 });
+//#endregion
 
 const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) => {
+    //#region Hooks and state declarations ----------------
     const [state, dispatch] = useReducer(reducer, {
         errors: [],
         status: "loading",
-        app: defaultAppProperties
+        app: DEFAULT_APP_PROPERTIES
     });
+    //#endregion
 
+    //#region Functions -----------------------------------
     const handleError = useCallback((error: unknown, fallbackStatus: contextStatusType = 'idle') => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -386,6 +406,7 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
         }
     }, [clients.coupons, clients.products, handleError, state.app]);
 
+    //#region > Application property updates
     const update = useCallback(async ({
         id,
         property,
@@ -561,7 +582,11 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
             return false;
         }
     }, [clients, state.app, handleError]);
+    //#endregion
+    //#endregion
 
+    //#region Effects -------------------------------------
+    //#region > Application start-up
     useEffect(() => {
         async function load() {
             dispatch({ type: "SET_STATUS", payload: "loading" });
@@ -598,7 +623,9 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
 
         load();
     }, [clients, handleError]);
+    //#endregion
 
+    //#region > Push notification handler
     useEffect(() => {
         if (!('serviceWorker' in navigator)) return;
 
@@ -661,6 +688,8 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
             navigator.serviceWorker.removeEventListener('message', handlePushNotification);
         }
     }, [fetch, storageManager]);
+    //#endregion
+    //#endregion
 
     const contextValue = useMemo(() => ({
         app: state.app,
@@ -689,6 +718,7 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
     </AppContext.Provider>
 };
 
+//#region Hooks -------------------------------------------
 const useApp = () => {
     let context = useContext(AppContext);
 
@@ -696,6 +726,7 @@ const useApp = () => {
 
     return context;
 };
+//#endregion
 
 export {
     AppProvider,

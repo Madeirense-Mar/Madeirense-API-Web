@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useContext,
@@ -12,26 +13,35 @@ import {
 import {
     Application$Types
 } from "@Madeirense/shared";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface ThemeContextType {
     currentTheme: Application$Types.Themes.types,
     switchTheme: () => void;
     toggleVariant: () => void;
 };
+//#endregion
 
+//#region Context declarations ----------------------------
 const ThemeContext = createContext<ThemeContextType>({
     currentTheme: "SEA-DARK",
-    /** Toggles between `LAND` and `SEA` themes. Only active on development environments */
     switchTheme: () => { },
-    /** Toggles between `Light` and `Dark`. */
     toggleVariant: () => { }
 });
+//#endregion
 
 const ThemeProvider = ({ children }: any) => {
+    //#region Hooks and state declarations ----------------
     const [currentTheme, setCurrentTheme] = useState<Application$Types.Themes.types>("SEA-DARK");
-
+    //#endregion
+    
+    //#region Functions -----------------------------------
+    /** 
+     * Toggles between `LAND` and `SEA` themes. Only active on development environments 
+     */
     const switchTheme = () => {
         let theme: Application$Types.Themes.options = (currentTheme.split("-")[0] as Application$Types.Themes.options);
 
@@ -48,6 +58,9 @@ const ThemeProvider = ({ children }: any) => {
         ));
     };
 
+    /**
+     * Toggles between `Light` and `Dark`.
+     */
     const toggleVariant = () => {
         const hasVariant = currentTheme.includes("-");
 
@@ -68,7 +81,9 @@ const ThemeProvider = ({ children }: any) => {
             `${ct.split("-")[0] as Application$Types.Themes.options}-${variant}` 
         ));
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         const $body = document.body;
 
@@ -80,20 +95,23 @@ const ThemeProvider = ({ children }: any) => {
         // The other one is LAND.
         // The resort is also the SEA theme.
         $body.setAttribute(Root$Enumerators.Attributes.Styles.theme, currentTheme);
-    }, [currentTheme])
+    }, [currentTheme]);
+    //#endregion
 
     return <ThemeContext.Provider value={{ currentTheme, switchTheme, toggleVariant }}>
         <>{children}</>
     </ThemeContext.Provider>
 };
 
+//#region Hooks -------------------------------------------
 const useTheme = () => {
     let context = useContext(ThemeContext);
-
+    
     if (!context) throw new Error(`'useModal' was used outside of its context.`);
-
+    
     return context;
 };
+//#endregion
 
 export {
     ThemeProvider,

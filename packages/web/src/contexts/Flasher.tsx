@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useCallback,
@@ -16,9 +17,11 @@ import F_DELIVERED_ORDER from 'components/flashers/order/delivered';
 import F_PUSH_NOTIFICATION_REQUEST from 'components/flashers/pushNotification/request';
 
 import styles from './Flasher.module.css';
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 type orderEventType = (
     | "DELIVERED"
     | "PLACED"
@@ -45,17 +48,23 @@ type FlasherContextType = {
     eject: () => void,
     flash: (t: flasherEventType) => void
 };
+//#endregion
 
+//#region Context declarations ----------------------------
 const FlasherContext = createContext<FlasherContextType>({
     eject: () => { },
     flash: (t: flasherEventType) => { }
 });
+//#endregion
 
 const FlasherProvider = ({ children }: any) => {
+    //#region Hooks and state declarations ----------------
     const $dialogRef = useRef<HTMLDialogElement | null>(null);
 
     const [flasher, setFlasher] = useState<flasherEventType>("EMPTY");
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const assertions = {
         "allowManuelEjection": !([
             "GOODBYE",
@@ -64,6 +73,15 @@ const FlasherProvider = ({ children }: any) => {
         ] as flasherEventType[]).includes(flasher)
     };
 
+    const LOADER_STATE = ([
+        "EMPTY",
+        "LOADING",
+        "PLACED_ORDER",
+        "RESERVED_EVENT"
+    ] as flasherEventType[]).includes(flasher) ? "on" : "off";
+    //#endregion
+
+    //#region Functions -----------------------------------
     const eject = () => {
         setTimeout(() => {
             setFlasher("EMPTY");
@@ -81,14 +99,9 @@ const FlasherProvider = ({ children }: any) => {
             setFlasher(t);
         }, 2000);
     }, []);
+    //#endregion
 
-    const LOADER_STATE = ([
-        "EMPTY",
-        "LOADING",
-        "PLACED_ORDER",
-        "RESERVED_EVENT"
-    ] as flasherEventType[]).includes(flasher) ? "on" : "off";
-
+    //#region DOM -----------------------------------------
     return <FlasherContext.Provider value={{ eject, flash }}>
         <dialog ref={$dialogRef} className={styles.flasher} data-event={flasher}>
             {assertions.allowManuelEjection && <Button id="eject" onClick={eject} shape="circle" variant='secondary' className='opacity-15 hover:opacity-100'>
@@ -104,10 +117,12 @@ const FlasherProvider = ({ children }: any) => {
             <div className='loader' data-state={LOADER_STATE}></div>
         </dialog>
 
-        <>{children}</>
+        {children}
     </FlasherContext.Provider>
+    //#endregion
 };
 
+//#region Hooks -------------------------------------------
 const useFlasher = () => {
     let context = useContext(FlasherContext);
 
@@ -115,6 +130,7 @@ const useFlasher = () => {
 
     return context;
 };
+//#endregion
 
 export {
     FlasherProvider,

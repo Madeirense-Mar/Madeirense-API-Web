@@ -70,7 +70,7 @@ export namespace Notifications$Types {
 };
 //#endregion
 
-//#region Context declarations ------------------------
+//#region Context declarations ----------------------------
 const NotificationsContext = createContext<{
     push: (notification: Omit<payloadType, "ref">) => void,
     pop: (id: idType) => boolean,

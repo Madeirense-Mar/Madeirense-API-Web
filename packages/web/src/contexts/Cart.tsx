@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useCallback,
@@ -11,9 +12,13 @@ import {
     type App$Types
 } from "contexts/App";
 
-import { useProfile } from "./Profile";
+import { 
+    useProfile
+} from "./Profile";
 
-import { statusType } from "components/types";
+import { 
+    statusType
+} from "components/types";
 
 import {
     DEFAULT_APP_PREFERENCES,
@@ -32,11 +37,18 @@ import type {
     Products
 } from "@Madeirense/database/browser";
 
-import type { IProviderPropTypes } from "./interfaces";
-import type { contextActionType } from "./types";
+import type { 
+    IProviderPropTypes
+} from "./interfaces";
+
+import type {
+    contextActionType
+} from "./types";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface IContext {
     add: (product_id: number) => Promise<boolean>,
     applyCoupon: (coupon_code: string, type: cartType) => Promise<void>,
@@ -80,14 +92,18 @@ type cartActionType = (
     | { type: 'SET_DELIVERY_SUMMARY'; payload: cartSummaryType }
     | { type: 'SET_EVENT_SUMMARY'; payload: cartSummaryType }
 );
+//#endregion
 
+//#region Default declarations ----------------------------
 const DEFAULT_CART_STATE = {
     deliveryCart: [],
     deliverySummary: DEFAULT_SUMMARY,
     eventCart: [],
     eventSummary: DEFAULT_SUMMARY
 };
+//#endregion
 
+//#region Context declarations ----------------------------
 function reducer(
     state: IContextState,
     action: cartActionType
@@ -149,8 +165,10 @@ const CartContext = createContext<IContext>({
     remove: () => Promise.resolve(false),
     clear$Dry: () => { }
 });
+//#endregion
 
 const CartProvider = ({ children, clients, storageManager = undefined }: IProviderPropTypes) => {
+    //#region Hooks and state declarations ----------------
     const { state: profileState } = useProfile();
 
     const [state, dispatch] = useReducer(reducer, {
@@ -158,7 +176,9 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         errors: [],
         status: "idle",
     });
+    //#endregion
 
+    //#region Functions -----------------------------------
     const handleError = useCallback((error: unknown, fallbackStatus: contextStatusType = 'idle') => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -353,7 +373,9 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             return false;
         }
     }, [clients.carts, handleError, state.cart.deliveryCart, state.cart.eventCart]);
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         getMySummary(state.status);
     }, [state.status, getMySummary]);
@@ -366,6 +388,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
         }
     }, [profileState, getMyCart]);
 
+    //#region > Push notification handler
     useEffect(() => {
         if (!('serviceWorker' in navigator)) return;
 
@@ -404,6 +427,8 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
             navigator.serviceWorker.removeEventListener('message', triggerSummaryCalculation);
         }
     }, [storageManager, getMyCart]);
+    //#endregion
+    //#endregion
 
     const contextValue = useMemo(() => ({
         add,
@@ -428,6 +453,7 @@ const CartProvider = ({ children, clients, storageManager = undefined }: IProvid
     </CartContext.Provider>
 };
 
+//#region Hooks -------------------------------------------
 const useCart = (): IContext => {
     let context = useContext(CartContext);
 
@@ -435,7 +461,9 @@ const useCart = (): IContext => {
 
     return context;
 };
+//#endregion
 
+//#region Exports -----------------------------------------
 export type {
     cartType
 };
@@ -444,3 +472,4 @@ export {
     CartProvider,
     useCart
 };
+//#endregion

@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import { 
     createContext, 
     useContext, 
@@ -10,30 +11,38 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 
 import styles from "./Modal.module.css";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 type modalOptions = {
     onClose: () => void,
     title: string
-}
+};
 
 interface ModalContextType {
     eject: () => void;
     show: (body: any, options?: Partial<modalOptions>) => void;
 };
+//#endregion
 
+//#region Context declarations ----------------------------
 const ModalContext = createContext<ModalContextType>({
     eject: () => { },
     show: (body: any, options={}) => { }
 });
+//#endregion
 
 const ModalProvider = ({ children }: any) => {
+    //#region Hooks and state declarations ----------------
     const dialogRef = useRef<HTMLDialogElement | null>(null);
 
     const [body, setBody] = useState<any | null>(null);
     const [options, setOptions] = useState<Partial<modalOptions> | null>(null);
+    //#endregion
 
+    //#region Functions -----------------------------------
     const eject = () => {
         dialogRef.current?.close();
 
@@ -53,7 +62,9 @@ const ModalProvider = ({ children }: any) => {
 
         eject();
     };
+    //#endregion
 
+    //#region DOM -----------------------------------------
     return <ModalContext.Provider value={{ eject, show }}>
         <dialog ref={dialogRef} className={styles.modal}>
             <header>
@@ -67,10 +78,12 @@ const ModalProvider = ({ children }: any) => {
             <main>{body}</main>
         </dialog>
 
-        <>{children}</>
+        {children}
     </ModalContext.Provider>
+    //#endregion
 };
 
+//#region Hooks -------------------------------------------
 const useModal = () => {
     let context = useContext(ModalContext);
 
@@ -78,6 +91,7 @@ const useModal = () => {
 
     return context;
 };
+//#endregion
 
 export { 
     ModalProvider, 

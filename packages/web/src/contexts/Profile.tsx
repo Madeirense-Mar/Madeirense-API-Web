@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useCallback,
@@ -39,9 +40,11 @@ import type {
 import type {
     contextActionType
 } from "./types";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface IContext {
     deleteProfile: () => Promise<boolean>;
     errors: Error[];
@@ -61,7 +64,7 @@ interface IContext {
     update: (payload: authenticatedProfileType) => Promise<void>;
     upsertDeliveryLocation: (payload: Delivery_Locations) => Promise<void>;
     user?: authenticatedProfileType;
-}
+};
 
 interface IContextState {
     errors: Error[];
@@ -99,7 +102,9 @@ type updateType = (
     | "location"
     | "profile"
 );
+//#endregion
 
+//#region Context declarations ----------------------------
 function reducer(
     state: IContextState,
     action: actionType
@@ -146,12 +151,14 @@ const ProfileContext = createContext<IContext>({
     upsertDeliveryLocation: () => Promise.resolve(),
     user: undefined,
 });
+//#endregion
 
 const ProfileProvider = ({
     children,
     clients,
     storageManager = MXP$App.Storage
 }: IProviderPropTypes) => {
+    //#region Hooks and state declarations ----------------
     const {
         authentication,
         "delivery-locations": deliveryLocations,
@@ -163,7 +170,9 @@ const ProfileProvider = ({
         status: "loading",
         errors: [],
     });
+    //#endregion
 
+    //#region Functions -----------------------------------
     const handleError = useCallback((error: unknown, fallbackStatus: contextStatusType = 'logged') => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -596,7 +605,9 @@ const ProfileProvider = ({
             return false;
         }
     }, [pushNotifications, handleError, state.user, storageManager]);
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         const initializeSession = async () => {
             dispatch({ type: 'SET_STATUS', payload: 'loading' });
@@ -630,6 +641,7 @@ const ProfileProvider = ({
 
         initializeSession();
     }, [authentication, handleError, storageManager]);
+    //#endregion
 
     const contextValue = useMemo(() => ({
         deleteProfile,
@@ -672,6 +684,7 @@ const ProfileProvider = ({
     );
 };
 
+//#region Hooks -------------------------------------------
 const useProfile = (): IContext => {
     const context = useContext(ProfileContext);
 
@@ -681,7 +694,9 @@ const useProfile = (): IContext => {
 
     return context;
 };
+//#endregion
 
+//#region Exports -----------------------------------------
 export type {
     contextStatusType,
     subscriptionType,
@@ -692,3 +707,4 @@ export {
     ProfileProvider,
     useProfile
 };
+//#endregion

@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useCallback,
@@ -6,8 +7,6 @@ import {
     useMemo,
     useReducer
 } from "react";
-
-import { useProfile } from "./Profile";
 
 import {
     DEFAULT_APP_PREFERENCES,
@@ -18,18 +17,33 @@ import {
     type orderPayloadType,
 } from "@Madeirense/shared";
 
+import MXP$App from "configurations";
+
+import {
+    useProfile
+} from "./Profile";
+
 import type {
     $Enums,
     Orders
 } from "@Madeirense/database/browser";
 
-import type { statusType } from "components/types";
+import type {
+    statusType
+} from "components/types";
 
-import type { IProviderPropTypes } from "./interfaces";
-import type { contextActionType } from "./types";
+import type {
+    IProviderPropTypes
+} from "./interfaces";
+
+import type {
+    contextActionType
+} from "./types";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface IContext {
     cancel: (order_id: number, notes: string) => Promise<boolean>;
     create: (payload: orderPayloadType) => Promise<boolean>;
@@ -63,7 +77,9 @@ type contextStatusType = statusType<
 type notificationPayloadType = {
     order_id: number
 } & Partial<Omit<Orders, "order_id">>;
+//#endregion
 
+//#region Context declarations ----------------------------
 function reducer(
     state: IContextState,
     action: actionType
@@ -111,24 +127,30 @@ const OrdersContext = createContext<IContext>({
     update: () => Promise.resolve(),
     cancel: () => Promise.resolve(false)
 });
+//#endregion
 
 const OrdersProvider = ({
     children,
     clients,
-    storageManager = undefined
+    storageManager = MXP$App.Storage
 }: IProviderPropTypes) => {
+    //#region Hooks and state declarations ----------------
     const {
         orders
     } = clients;
 
-    const { state: profileState } = useProfile();
+    const {
+        state: profileState
+    } = useProfile();
 
     const [state, dispatch] = useReducer(reducer, {
         errors: [],
         orders: [],
         status: "idle",
     });
+    //#endregion
 
+    //#region Functions -----------------------------------
     const handleError = useCallback((error: unknown, fallbackStatus: contextStatusType = 'idle') => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -233,7 +255,9 @@ const OrdersProvider = ({
             handleError(error);
         }
     }, [orders, handleError, state.orders]);
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         switch (profileState) {
             case "logged": getMyOrders(); break;
@@ -277,6 +301,7 @@ const OrdersProvider = ({
             navigator.serviceWorker.removeEventListener('message', updateOrders);
         }
     }, [storageManager]);
+    //#endregion
 
     const contextValue = useMemo(() => ({
         cancel,
@@ -301,6 +326,7 @@ const OrdersProvider = ({
     </OrdersContext.Provider>
 };
 
+//#region Hooks -------------------------------------------
 const useOrders = (): IContext => {
     let context = useContext(OrdersContext);
 
@@ -308,6 +334,7 @@ const useOrders = (): IContext => {
 
     return context;
 };
+//#endregion
 
 export {
     OrdersProvider,
