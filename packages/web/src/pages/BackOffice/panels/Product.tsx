@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     useEffect,
     useMemo,
@@ -52,8 +53,6 @@ import RestaurantsSelect from "components/forms/elements/selects/restaurants";
 
 import DeletionForm from "components/modals/forms/delete";
 
-import env from "env";
-
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
 
 import type {
@@ -65,22 +64,24 @@ import type {
 } from "components/types";
 
 import "./Product.css";
+//#endregion
 
 // ***************************************************************************************************************
 
-// #region Defaults ---------------------------------------
+//#region Defaults ----------------------------------------
 const {
     fileUploaderRegularDefaultProps
 } = dependencies["@uploadcare/react-uploader"];
 
 const DELAY_MS = 2500;
-// #endregion
+//#endregion
 
 defineLocale('pt', async () => {
     return locales.get("pt")?.uploadCare ?? {} as any;
 });
 
 function ProductPanel({ id }: { id: number }) {
+    //#region Hooks and state declarations ----------------
     const { products } = useMemo(() => MXP$App.Base.Business.endpoints, []);
 
     const updaterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -118,9 +119,21 @@ function ProductPanel({ id }: { id: number }) {
         queryFn: ApplicationQueries.getItem<productType>,
         enabled: (appState === "idle") && (cachedData === null)
     });
+    //#endregion
 
+    //#region Variable declarations ----------------------
     const data = which(cachedData, fetchedData) as productType;
 
+    const assertions = {
+        "isLoading": [
+            deleting,
+            isFetching,
+            (appState === "loading")
+        ].includes(true)
+    };
+    //#endregion
+    
+    //#region Functions ----------------------------------
     function getUpdaterStatusIndicator(...properties: (keyof Products)[]) {
         if (properties.length === 0)
             return null;
@@ -244,7 +257,9 @@ function ProductPanel({ id }: { id: number }) {
             }
         }, delay);
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         const tRef = updaterTimeoutRef.current;
         const uRef = updateStatusTimeoutRef.current;
@@ -262,15 +277,9 @@ function ProductPanel({ id }: { id: number }) {
     }, [updater]);
 
     useEffect(() => { setFreePricing(parseInt(`${data?.price ?? '0'}`) === 0); }, [data?.price]);
+    //#endregion
 
-    const assertions = {
-        "isLoading": [
-            deleting,
-            isFetching,
-            (appState === "loading")
-        ].includes(true)
-    };
-
+    //#region DOM -----------------------------------------
     switch (true) {
         case (assertions.isLoading): {
             return <div className="w-full h-full flex flex-row justify-center items-center">
@@ -578,8 +587,10 @@ function ProductPanel({ id }: { id: number }) {
             </>
         }
     };
+    //#endregion
 };
 
+//#region Scroll section ----------------------------------
 type sectionType = "thumbnail";
 
 const ScrollToSection = ({
@@ -702,4 +713,6 @@ const ScrollToSection = ({
         }
     };
 };
+//#endregion
+
 export default ProductPanel;
