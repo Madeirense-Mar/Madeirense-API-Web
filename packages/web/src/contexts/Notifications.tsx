@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     createContext,
     useCallback,
@@ -5,9 +6,7 @@ import {
     useEffect,
     useRef,
     useState,
-    type ComponentProps,
-    type JSX,
-    type MouseEvent
+    type JSX
 } from "react";
 
 import {
@@ -21,13 +20,24 @@ import {
 
 import Button from "components/buttons";
 import Icon from "components/icon";
-import ProgressBar from 'components/progressBar';
+import ProgressBar from "components/progressBar";
 
-import type { variantType } from "components/types";
+import NotificationListItem from "components/lists/notificationListItem";
 
 import styles from "./Notifications.module.css";
 
+import type {
+    variantType
+} from "components/types";
+//#endregion
+
 // ***************************************************************************************************************
+
+//#region Interfaces and types ----------------------------
+enum Notifications {
+    "action" = "action",
+    "alert" = "alert"
+};
 
 type idType = `N#${string}`;
 
@@ -50,12 +60,17 @@ type payloadType = {
     ref: string,
     type: keyof typeof Notifications,
 };
+//#endregion
 
-enum Notifications {
-    "action",
-    "alert"
+//#region Namespaces --------------------------------------
+export namespace Notifications$Types {
+    export type id = idType;
+    export type payload = payloadType;
+    export type type = keyof typeof Notifications;
 };
+//#endregion
 
+//#region Context declarations ------------------------
 const NotificationsContext = createContext<{
     push: (notification: Omit<payloadType, "ref">) => void,
     pop: (id: idType) => boolean,
@@ -63,15 +78,19 @@ const NotificationsContext = createContext<{
     push: (notification: Omit<payloadType, "ref">) => { },
     pop: (id: idType) => false
 });
+//#endregion
 
 const NotificationsProvider = ({ children }: any) => {
+    //#region Hooks and state declarations ----------------
     const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const [currentTTL, updateCurrentTTL] = useState(0);
     const [notifications, setNotifications] = useState<payloadType[]>([]);
     const [showing, setShowing] = useState<number>(-1);
+    //#endregion
 
+    //#region Functions -----------------------------------
     const $pop = useCallback(({ id = undefined, ref = undefined }: Partial<{ id: idType, ref: string }>) => {
         if ([!id, !ref].every(Boolean)) return false;
 
@@ -94,9 +113,15 @@ const NotificationsProvider = ({ children }: any) => {
         let next_index;
 
         switch (_notifications.length) {
-            case 0: setNotifications([]); setShowing(-1); break;
+            case 0:
+                setNotifications([]);
+                setShowing(-1);
+                break;
 
-            case 1: setNotifications(_notifications); setShowing(0); break;
+            case 1:
+                setNotifications(_notifications);
+                setShowing(0);
+                break;
 
             default:
                 if (index === 0) next_index = 1;
@@ -108,7 +133,7 @@ const NotificationsProvider = ({ children }: any) => {
                 setNotifications(_notifications);
                 setShowing(next_index);
                 break;
-        }
+        };
 
         return true;
     }, [notifications]);
@@ -136,7 +161,9 @@ const NotificationsProvider = ({ children }: any) => {
         setShowing(index);
         updateCurrentTTL(0);
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         return () => {
             setShowing(-1);
@@ -186,116 +213,54 @@ const NotificationsProvider = ({ children }: any) => {
                 break;
         };
     }, [currentTTL, showing, notifications]);
+    //#endregion
 
-    return <NotificationsContext.Provider value={{ push, pop }}>
+    //#region DOM -----------------------------------------
+    return <NotificationsContext.Provider value={{ pop, push }}>
         <div
-            id="notification-tray"
             className={resolveClassNames(
-                styles[(showing === -1) ? "warning" : notifications[showing]?.options?.variant ?? "warning"]
+                styles[(showing === -1) ? "warning" : notifications[showing]?.options?.variant ?? "warning"],
+                styles[Boolean(notifications.length) ? "showing" : "hidden"]
             )}
-            data-state={Boolean(notifications.length) ? "showing" : "hidden"}
         >
-            <Button
-                value="prev"
-                onClick={scrollToNotification}
-                variant='secondary'
-                disabled={[-1, 0].includes(showing)}
-            >
+            <Button value="prev" onClick={scrollToNotification} disabled={[-1, 0].includes(showing)} shape="circle">
                 <Icon name="ChevronLeft" />
             </Button>
 
-            <ul>{notifications.map((n, idx) => <ListItem
-                className="flex flex-row justify-start items-start gap-3"
-                key={n.ref}
-                id={n.ref}
-                notification={n}
-                onPop={$pop}
-                data-state={showing === idx ? "idle" : "disabled"}
-            />)}</ul>
+            <ul className={styles.list}>
+                {notifications.map((n, idx) => <NotificationListItem key={n.ref} notification={n} onPop={$pop}
+                    {...{
+                        ...(showing === idx)
+                            ? {}
+                            : { "data-disabled": "" }
+                    }}
+                />)}
+            </ul>
 
-            {(showing === -1) ? null : Boolean(notifications[showing].options?.ttl) && <ProgressBar value={currentTTL} />}
-
-            <Button
-                value="next"
-                onClick={scrollToNotification}
-                variant='secondary'
-                disabled={[-1, notifications.length - 1].includes(showing)}
-            >
+            <Button value="next" onClick={scrollToNotification} disabled={[-1, notifications.length - 1].includes(showing)} shape="circle">
                 <Icon name="ChevronRight" />
             </Button>
+
+            {((showing > -1) && Boolean(notifications[showing].options?.ttl)) && <ProgressBar className={styles["progress-bar"]} value={currentTTL} />}
         </div>
 
-        <>{children}</>
+        {children}
     </NotificationsContext.Provider>
+    //#endregion
 };
 
+//#region Hooks -------------------------------------------
 const useNotifications = () => {
     let context = useContext(NotificationsContext);
 
-    if (!context) throw new Error(`'useNotifications' was used outside of its context.`);
+    if (!context)
+        throw new Error(`"useNotifications" was used outside of its context.`);
 
     return context;
 };
+//#endregion
 
-export { NotificationsProvider, useNotifications };
-
-const ListItem = ({
-    notification: n,
-    onPop,
-    ...props
-}: ComponentProps<"li"> & {
-    notification: payloadType,
-    onPop: (options: Partial<{ id: idType, ref: string }>) => void
-}) => {
-    const {
-        actionLabel = "ver",
-        closeLabel = null,
-        popOnAction = false,
-        icon = null,
-        sticky = false
-    } = n.options ?? {};
-
-    const handleAction = ({ target }: MouseEvent<HTMLButtonElement>) => {
-        n.action?.();
-
-        if (popOnAction) onPop({ ref: (target as HTMLButtonElement).value });
-    };
-
-    const handlePop = ({ target }: MouseEvent<HTMLButtonElement>) => {
-        n.onClose?.();
-
-        onPop({ ref: (target as HTMLButtonElement).value });
-    };
-
-    const $LI_BODY = <>
-        {icon}
-
-        {typeof n.alert === "string" && <span>{n.alert}</span>}
-        {typeof n.alert !== "string" && n.alert}
-
-        {!sticky && <Button value={n.ref} onClick={handlePop} data-shape={closeLabel ? "rect" : "round"} variant='secondary' className='ml-auto'>
-            {closeLabel}
-
-            <Icon name="Close" className='pointer-events-none' />
-        </Button>}
-    </>;
-
-    switch (n.type) {
-        case "action":
-            if (!n.action) console.error("Notification of type action wasn't supplied with a function to be fired.");
-
-            return <li {...props}>
-                {$LI_BODY}
-
-                <Button value={n.ref} data-shape="rect" onClick={handleAction} variant='primary'>
-                    {actionLabel}
-                </Button>
-            </li>;
-
-        case "alert": return <li {...props}>
-            {$LI_BODY}
-        </li>;
-
-        default: return null;
-    }
-}
+export {
+    NotificationsProvider,
+    useNotifications
+};

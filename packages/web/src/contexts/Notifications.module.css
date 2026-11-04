@@ -1,143 +1,129 @@
-.notification {
-    --h: 70px;
+:root {
+    --notification-height: 70px;
+}
 
-    @apply flex flex-row justify-between items-center w-full px-2;
+/*#region Notification ==================================== */
+.notification-tray {
+    @apply flex flex-row justify-between items-center w-full;
 
     position: absolute;
-
     left: 0px;
     top: 0px;
     z-index: 10001;
 
-    height: var(--h);
-    max-height: var(--h);
-    min-height: var(--h);
+    height: var(--notification-height);
+    max-height: var(--notification-height);
+    min-height: var(--notification-height);
     
-    border-color: var(--notifications-border-color, transparent);
+    gap: var(--gap-l);
+    padding: 0 var(--notification-tray-padding-x, var(--padding-m));
+    
+    border-color: var(--notification-tray-border-color, transparent);
 
-    background-color: var(--notifications-background-color, transparent);
+    background-color: var(--notification-tray-background-color, transparent);
 }
 
-.notification[data-state] {
-    padding: 0px;
-}
+/*#region States*/
+.hidden {
+    --notification-tray-padding-x: 0px;
 
-.notification[data-state="hidden"] {
     pointer-events: none;
 
     opacity: 0;
 }
 
-.notification[data-state="showing"] {
+.showing {
     pointer-events: all;
-    
+
     opacity: 1;
 }
 
-.notification *:not(li button) {
-    color: inherit;
-}
+/*#endregion*/
+/*#endregion*/
 
+/*#region Theme variations ================================ */
+/* TODO: Unimplemented style > danger */
 .danger {
-    --notifications-background-color: transparent;
-    --notifications-border-color: transparent;
-    --notifications-text-color: black;
-
-    composes: notification;
+    composes: notification-tray;
 }
 
+/* TODO: Unimplemented style > important */
 .important {
-    --notifications-background-color: transparent;
-    --notifications-border-color: transparent;
-    --notifications-text-color: black;
-
-    composes: notification;
+    composes: notification-tray;
 }
 
+/* TODO: Unimplemented style > primary */
 .primary {
-    --notifications-background-color: transparent;
-    --notifications-border-color: transparent;
-    --notifications-text-color: black;
-
-    composes: notification;
+    composes: notification-tray;
 }
 
+/* TODO: Unimplemented style > secondary */
 .secondary {
-    --notifications-background-color: transparent;
-    --notifications-border-color: transparent;
-    --notifications-text-color: black;
-
-    composes: notification;
+    composes: notification-tray;
 }
 
 /* TODO: Unimplemented style > selected */
 .selected {
-    --notifications-background-color: transparent;
-    --notifications-border-color: transparent;
-    --notifications-text-color: black;
-
-    composes: notification;
+    composes: notification-tray;
 }
 
+/* TODO: Unimplemented style > success */
 .success {
-    --notifications-background-color: transparent;
-    --notifications-border-color: transparent;
-    --notifications-text-color: black;
-    
-    composes: notification;
+    composes: notification-tray;
 }
 
 .warning {
+    composes: notification-tray;
 
-    --notifications-background-color: var(--secondary-dark);
-    --notifications-border-color: transparent;
-    --text-color: white;
-
-    composes: notification;
+    --notification-tray-background-color: var(--secondary-dark);
 }
 
-.notification>button {
-    --button-border-width: 0px;
-    --button-border-radius: 0px;
-    --button-x-padding: 0px;
-    --width: var(--button-height);
+/*#endregion*/
 
-    width: var(--width);
-    max-width: var(--width);
-    min-width: var(--width);
-}
+/*#region Elements ======================================== */
 
-.notification button:disabled {
-    opacity: 0;
-}
+/*#region List*/
+.list,
+.list li {
+    @apply flex flex-row items-center;
 
-.notification div[class*="Progress"] {
-    width: 100%;
-    position: absolute;
-    left: 0px;
-    top: calc(100% - var(--progress-bar-height));
-    border-radius: 0px;
-}
+    height: var(--notification-height);
+    max-height: var(--notification-height);
+    min-height: var(--notification-height);
 
-.notification ul {
-    --w: calc(100% - calc(2 * var(--button-height)));
-}
-
-.notification ul,
-.notification ul li {
-    @apply flex flex-row justify-start items-center;
-
-    height: var(--h);
-    max-height: var(--h);
-    min-height: var(--h);
-    width: var(--w);
-    max-width: var(--w);
-    min-width: var(--w);
     overflow: hidden;
 }
 
-.notification ul li {
+.list {
+    @apply justify-start;
+    
+    flex-grow: 1;
+}
+
+.list li {
+    --w: 100%;
+
     @apply justify-between;
 
-    --w: 100%;
+    width: var(--w);
+    max-width: var(--w);
+    min-width: var(--w);
+
+    gap: var(--gap-m);
 }
+
+/*#endregion*/
+
+/*#region Progress bar*/
+.progress-bar {
+    position: absolute;
+    left: 0px;
+    top: calc(100% - var(--progress-bar-height));
+
+    width: 100%;
+
+    border-radius: 0px;
+}
+
+/*#endregion*/
+/*#endregion*/

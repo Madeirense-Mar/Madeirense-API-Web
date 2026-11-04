@@ -31,11 +31,6 @@
     font-weight: 600;
 }
 
-.button[disabled] {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
 .button svg {
     pointer-events: none;
 
