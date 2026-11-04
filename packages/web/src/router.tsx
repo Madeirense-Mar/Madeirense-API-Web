@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
 	JSX,
 	type ReactElement
@@ -62,9 +63,11 @@ import LegalTermsAndConditionsPage from "pages/Legal/Terms";
 import type {
 	$Enums
 } from "@Madeirense/database/browser";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface IRoute {
 	id: string;
 	label?: string;
@@ -92,12 +95,9 @@ type navLinkType = {
 	label: string,
 	icon?: ReactElement
 };
+//#endregion
 
-const hiddenPaths = [
-	"403",
-	"error",
-];
-
+//#region Functions ---------------------------------------
 /**
  * Transforms each {@link IAppRoute | `route`} and {@link IAppRoute | `branch`} (if any are present), into a {@link navLinkType | navigation link object.}
  * 
@@ -141,6 +141,13 @@ function toNavigationLink(this: IAppRoute, userRole?: keyof typeof $Enums.Users_
 		link: this.path || "#",
 	}
 };
+//#endregion
+
+//#region Variable declarations ---------------------------
+const hiddenPaths = [
+	"403",
+	"error",
+];
 
 /**
  * # Route tree
@@ -223,6 +230,7 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 			},
 		],
 		routes: [
+			//#region Back-office routes ------------------
 			{
 				id: "back-office",
 				path: Madeirense$Enumerators.Pages.BackOffice.Layout,
@@ -331,6 +339,9 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 					},
 				]
 			},
+			//#endregion
+
+			//#region Checkout routes ---------------------
 			{
 				id: "checkout",
 				path: Madeirense$Enumerators.Pages.Checkout.Layout,
@@ -339,7 +350,7 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 				branches: [
 					{
 						id: "checkout-events",
-						path: Madeirense$Enumerators.Pages.Checkout.Events,
+						path: `${Madeirense$Enumerators.Pages.Checkout.Events}/:event_id`,
 						label: "events",
 						element: <CheckoutEventsPage />,
 					},
@@ -357,6 +368,9 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 					},
 				]
 			},
+			//#endregion
+
+			//#region Legal routes ------------------------
 			{
 				id: "legal",
 				path: Madeirense$Enumerators.Pages.Legal.Layout,
@@ -377,6 +391,7 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 					},
 				]
 			}
+			//#endregion
 		],
 		toNavigationLink,
 		toNavigationLinks
@@ -390,6 +405,7 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 		toNavigationLinks
 	}
 ];
+//#endregion
 
 function renderRoutes(
 	routes: ReadonlyArray<IAppRoute>,
@@ -409,7 +425,7 @@ function renderRoutes(
 			}
 
 			{renderRoutes(route.routes || [])}
-		</Route>)
+		</Route>);
 };
 
 const AppRouter = () => {
@@ -419,10 +435,7 @@ const AppRouter = () => {
 
 	return <BrowserRouter>
 		<Routes>
-			{renderRoutes(
-				appRoutesTree,
-				user?.user_role
-			)}
+			{renderRoutes(appRoutesTree, user?.user_role)}
 		</Routes>
 	</BrowserRouter>
 };

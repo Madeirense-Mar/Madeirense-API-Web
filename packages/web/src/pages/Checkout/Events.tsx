@@ -11,7 +11,7 @@ import {
 
 import {
     useNavigate,
-    useSearchParams
+    useParams
 } from "react-router-dom";
 
 import {
@@ -88,9 +88,9 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
         user
     } = useProfile();
 
-    const [searchParams] = useSearchParams();
-
-    const event_id = searchParams.get('event_id');
+    const {
+        event_id
+    } = useParams();
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);

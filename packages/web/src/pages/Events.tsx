@@ -26,10 +26,15 @@ import "./Events.css";
 // ***************************************************************************************************************
 
 const EventsPage = () => {
+    //#region Hook and state declarations -----------------
     const $mainRef = useRef<HTMLElement | null>(null);
     const $ulRef = useRef<HTMLUListElement | null>(null);
 
     const { user } = useProfile();
+
+    const {
+        event_id
+    } = useParams();
 
     const {
         push,
@@ -40,15 +45,15 @@ const EventsPage = () => {
         LoginToPurchaseTickets
     } = locales.get("pt")?.strings ?? {};
 
-    const params = useParams();
-
     const [scrollTop, setScrollTop] = useState(0);
     const [working, setWorking] = useState(false);
-
-    const event_id = parseInt(params.event_id ?? "0");
-
+    //#endregion
+    
+    //#region Variable declarations -----------------------
     const notificationId = "N#LOGIN_TO_PURCHASE_TICKET";
+    //#endregion
 
+    //#region Functions -----------------------------------
     function scrollToNextElement(isWorking: boolean, lastScrollTop: number, ulRef: RefObject<HTMLUListElement | null>) {
         return (e: UIEvent<HTMLElement>) => {
             if (isWorking || !ulRef.current) return;
@@ -100,7 +105,9 @@ const EventsPage = () => {
 
         setWorking(false);
     };
-
+    //#endregion
+    
+    //#region Effects -------------------------------------
     useEffect(() => {
         const $root = document.getElementById("root");
 
@@ -144,7 +151,9 @@ const EventsPage = () => {
         pop,
         user,
     ]);
+    //#endregion
 
+    //#region DOM -----------------------------------------
     return <main
         ref={$mainRef}
         onScroll={scrollToNextElement(working, scrollTop, $ulRef)}
@@ -154,11 +163,12 @@ const EventsPage = () => {
         <RestaurantEventList
             className="w-full"
             ref={$ulRef}
-            selectedEvent={event_id}
+            selectedEvent={parseInt(event_id ?? "0")}
             mode="viewport"
             disableLink
         />
     </main>
+    //#endregion
 };
 
 export default EventsPage;
