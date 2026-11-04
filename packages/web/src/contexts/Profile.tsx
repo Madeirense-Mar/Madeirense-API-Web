@@ -20,16 +20,25 @@ import {
 
 import env from "env";
 
+import MXP$App from "configurations";
+
 import type {
     Delivery_Locations,
     Push_Notification_Subscriptions,
     Users
 } from "@Madeirense/database/browser";
 
-import type { statusType } from "components/types";
+import type {
+    statusType
+} from "components/types";
 
-import type { IProviderPropTypes } from "./interfaces";
-import type { contextActionType } from "./types";
+import type {
+    IProviderPropTypes
+} from "./interfaces";
+
+import type {
+    contextActionType
+} from "./types";
 
 // ***************************************************************************************************************
 
@@ -141,7 +150,7 @@ const ProfileContext = createContext<IContext>({
 const ProfileProvider = ({
     children,
     clients,
-    storageManager
+    storageManager = MXP$App.Storage
 }: IProviderPropTypes) => {
     const {
         authentication,
@@ -319,7 +328,6 @@ const ProfileProvider = ({
     ): Promise<void> => {
         if ([
             !storageManager,
-
         ].includes(true)) return;
 
         const preferences: appPreferencesType =
@@ -450,8 +458,7 @@ const ProfileProvider = ({
     const subscribe = useCallback(async (type: subscriptionType): Promise<boolean> => {
         if (type !== "push-notification" || !state.user) return false;
 
-        const VAPID_PUB_KEY = env.VAPID_PUBLIC_KEY;
-        if (!VAPID_PUB_KEY) return false;
+        if (!env.VAPID_PUBLIC_KEY) return false;
 
         const subscribeToPushNotifications = async (): Promise<boolean> => {
             try {
@@ -465,7 +472,7 @@ const ProfileProvider = ({
 
                 if (!subscription) {
                     await registration.pushManager.subscribe({
-                        applicationServerKey: toUInt8Array(VAPID_PUB_KEY),
+                        applicationServerKey: toUInt8Array(env.VAPID_PUBLIC_KEY),
                         userVisibleOnly: true
                     });
 
