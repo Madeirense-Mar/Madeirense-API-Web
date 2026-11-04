@@ -3,20 +3,21 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useRef,
     useState,
-} from 'react';
+} from "react";
 
 import Icon from "components/icon";
 import Button from "components/buttons";
 
-import F_GOODBYE from 'components/flashers/goodbye';
-import F_RESERVED_EVENT from 'components/flashers/event/reserved';
-import F_PLACED_ORDER from 'components/flashers/order/placed';
-import F_DELIVERED_ORDER from 'components/flashers/order/delivered';
-import F_PUSH_NOTIFICATION_REQUEST from 'components/flashers/pushNotification/request';
+import F_GOODBYE from "components/flashers/goodbye";
+import F_RESERVED_EVENT from "components/flashers/event/reserved";
+import F_PLACED_ORDER from "components/flashers/order/placed";
+import F_DELIVERED_ORDER from "components/flashers/order/delivered";
+import F_PUSH_NOTIFICATION_REQUEST from "components/flashers/pushNotification/request";
 
-import styles from './Flasher.module.css';
+import styles from "./Flasher.module.css";
 //#endregion
 
 // ***************************************************************************************************************
@@ -61,7 +62,7 @@ const FlasherProvider = ({ children }: any) => {
     //#region Hooks and state declarations ----------------
     const $dialogRef = useRef<HTMLDialogElement | null>(null);
 
-    const [flasher, setFlasher] = useState<flasherEventType>("EMPTY");
+    const [flasher, setFlasher] = useState<flasherEventType>("PLACED_ORDER");
     //#endregion
 
     //#region Variable declarations -----------------------
@@ -101,10 +102,17 @@ const FlasherProvider = ({ children }: any) => {
     }, []);
     //#endregion
 
+    useEffect(() => {
+        if (!$dialogRef.current)
+            return;
+
+        $dialogRef.current.showModal();
+    }, []);
+
     //#region DOM -----------------------------------------
     return <FlasherContext.Provider value={{ eject, flash }}>
         <dialog ref={$dialogRef} className={styles.flasher} data-event={flasher}>
-            {assertions.allowManuelEjection && <Button id="eject" onClick={eject} shape="circle" variant='secondary' className='opacity-15 hover:opacity-100'>
+            {assertions.allowManuelEjection && <Button id="eject" onClick={eject} shape="circle" className="opacity-15 hover:opacity-100">
                 <Icon name="Close" />
             </Button>}
 
@@ -114,7 +122,7 @@ const FlasherProvider = ({ children }: any) => {
             {flasher === "PUSH_NOTIFICATION_REQUEST" && <F_PUSH_NOTIFICATION_REQUEST />}
             {flasher === "RESERVED_EVENT" && <F_RESERVED_EVENT />}
 
-            <div className='loader' data-state={LOADER_STATE}></div>
+            <div className={styles.loader} data-state={LOADER_STATE}></div>
         </dialog>
 
         {children}
@@ -126,7 +134,7 @@ const FlasherProvider = ({ children }: any) => {
 const useFlasher = () => {
     let context = useContext(FlasherContext);
 
-    if (!context) throw new Error(`'useFlasher' was used outside of its context.`);
+    if (!context) throw new Error(`"useFlasher" was used outside of its context.`);
 
     return context;
 };

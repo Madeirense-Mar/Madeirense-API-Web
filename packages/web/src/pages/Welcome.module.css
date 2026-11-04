@@ -4,7 +4,7 @@
     height: -webkit-fill-available;
 }
 
-.page main[data-view="panel"] {
+.page[data-view="panel"] {
     grid-template-columns: 1fr 1fr;
 }
 
@@ -99,6 +99,7 @@
     grid-area: oauth;
 }
 
+/*#region Media =========================================== */
 @media only screen and (min-width: 344px) {}
 
 @media only screen and (min-width: 428px) {}
@@ -151,9 +152,11 @@
 
     .signup .section form fieldset:first-of-type {
         --fieldset-flex-direction: row;
-        
+
         @apply flex-nowrap;
     }
 }
 
 @media only screen and (min-width: 1366px) {}
+
+/*#endregion*/

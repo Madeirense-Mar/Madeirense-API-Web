@@ -1,29 +1,29 @@
 .modal {
     --height: 500px;
     --width: 800px;
-    
+
     @apply flex flex-col justify-start items-start gap-2;
 
     overflow: hidden;
     position: fixed;
     pointer-events: none;
     z-index: 10000;
-    
+
     left: 50%;
     top: calc(50% - calc(var(--height) / 2) + calc(var(--height) / 3));
     transform: translateX(-50%);
-    
+
     height: var(--height);
     max-height: var(--height);
     min-height: var(--height);
     width: var(--width);
     max-width: 80%;
     min-width: var(--width);
-    
+
     padding: 20px;
 
-    border-radius: 20px; 
-    
+    border-radius: 20px;
+
     background-color: var(--background-color);
 
     box-shadow: 0 0 40px black;
@@ -31,11 +31,11 @@
     opacity: 0;
 }
 
-.modal > header:first-child {
+.modal>header:first-child {
     @apply w-full flex flex-row justify-start items-center;
 }
 
-.modal main {
+.modal>main {
     overflow: auto;
 
     padding: 0px;
@@ -45,19 +45,19 @@
     width: 100%;
 }
 
-.modal main > section {
+.modal>main>section {
     --section-padding: 0px;
 }
 
-[data-theme*="DARK"] .modal main > section {
+[data-theme*="DARK"] .modal>main>section {
     --section-background-color: transparent;
 }
 
-[data-theme*="LIGHT"] .modal main > section {
+[data-theme*="LIGHT"] .modal>main>section {
     --section-border-width: 0px;
 }
 
-[data-theme*="DARK"] .modal main fieldset {
+[data-theme*="DARK"] .modal>main fieldset {
     --fieldset-background-color: transparent;
 }
 
@@ -78,17 +78,15 @@
 
 .modal[open]::backdrop {
     background-color: black;
-    
+
     pointer-events: all;
     opacity: 0.7;
 }
 
 /*#region Media =========================================== */
-@media only screen and (min-width: 344px) {
-}
+@media only screen and (min-width: 344px) {}
 
-@media only screen and (min-width: 428px) {
-}
+@media only screen and (min-width: 428px) {}
 
 @media only screen and (min-width: 768px) {
     .modal {
@@ -97,6 +95,6 @@
     }
 }
 
-@media only screen and (min-width: 1366px) {
-}
+@media only screen and (min-width: 1366px) {}
+
 /*#endregion*/

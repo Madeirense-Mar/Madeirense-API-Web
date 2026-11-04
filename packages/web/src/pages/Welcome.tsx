@@ -2,14 +2,14 @@ import {
     useEffect,
     useRef,
     useState,
-    type SubmitEvent,
+    type SubmitEvent
 } from "react";
 
 import {
     Link,
     useNavigate,
     useParams,
-    type NavigateOptions,
+    type NavigateOptions
 } from "react-router-dom";
 
 import {
@@ -23,19 +23,30 @@ import {
 
 import AppSettings from "settings";
 
-import { selectPhoneCode } from "components/utilities/DOM";
+import {
+    selectPhoneCode
+} from "components/utilities/DOM";
 
-import { useProfile } from "contexts/Profile";
+import {
+    useProfile
+} from "contexts/Profile";
 
 import Button from "components/buttons";
 import AnchorButton from "components/buttons/anchor";
 import OAuthForm from "components/forms/oauth";
 import Icon from "components/icon";
 
-import { Page$Enumerators } from "./enumerators";
-import { Root$Enumerators } from "styles/enumerators";
+import {
+    Page$Enumerators
+} from "./enumerators";
 
-import { Welcome$Enumerators } from "./Welcome.enumerators";
+import {
+    Root$Enumerators
+} from "styles/enumerators";
+
+import { 
+    Welcome$Enumerators
+} from "./Welcome.enumerators";
 
 import styles from "./Welcome.module.css";
 
@@ -281,13 +292,14 @@ function WelcomePage() {
                         name: [
                             (elements.namedItem("fname") as HTMLInputElement).value as string,
                             (elements.namedItem("lname") as HTMLInputElement).value as string,
-                        ].join(' '),
+                        ].join(" "),
                         email: (elements.namedItem("email") as HTMLInputElement).value as string,
+                        email_marketing: false,
                         password: (elements.namedItem("password") as HTMLInputElement).value as string,
                         phone: [
                             (elements.namedItem("code") as HTMLSelectElement).value as string,
                             parsePhoneNumber((elements.namedItem("phone") as HTMLInputElement).value as string)
-                        ].join(''),
+                        ].join(""),
                         profile_photo: "",
                         user_role: "Customer"
                     }, (user) => navigate(Routing.redirectionMap[user.user_role], navigateOptions));

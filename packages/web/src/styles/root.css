@@ -3,11 +3,11 @@
     width: 100%;
 }
 
-#root[data-page] main {
+#root[data-page]>main {
     height: var(--main-page-height, calc(100% - 70px));
 }
 
-#root[data-page="back-office"] main {
+#root[data-page="back-office"]>main {
     --main-page-height: 100%;
 }
 
@@ -24,11 +24,11 @@
     padding-bottom: 60px;
 }
 
-#root[data-hasorders] main {
+#root[data-hasorders]>main {
     margin-top: 39px;
 }
 
-#root[data-hascart]:has(table[data-visible][data-expanded]) nav {
+#root[data-hascart]:has(table[data-visible][data-expanded])>nav {
     --nav-opacity: 0;
     --nav-pointer-events: none;
 }

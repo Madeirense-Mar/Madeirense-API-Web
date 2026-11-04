@@ -1,0 +1,5 @@
+/*#region Main ============================================ */
+.main {
+    @apply flex flex-col justify-center items-center;
+}
+/*#endregion*/

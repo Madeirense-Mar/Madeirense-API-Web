@@ -13,59 +13,30 @@
     height: var(--height);
     min-height: var(--height);
     max-height: var(--height);
+
     width: var(--width);
     min-width: var(--width);
     max-width: var(--width);
 
-    background-color: var(--base-background-color);
+    background-color: var(--primary);
 }
 
 .flasher[data-event] {
     @apply flex flex-col justify-center items-center gap-3;
 }
 
-.flasher div.loader {
-    --size: 500px;
-    
-    @apply animate-pulse;
-
-    position: absolute;
-    z-index: -1;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
-    height: var(--size);
-    min-height: var(--size);
-    max-height: var(--size);
-    width: var(--size);
-    min-width: var(--size);
-    max-width: var(--size);
-    
-    border-radius: 100%;
-    
-    background: radial-gradient(circle, var(--flasher-empty-background) 30%, transparent 70%);
-}
-
-.flasher:not([open]),
-.flasher div.loader[data-state="off"] {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.flasher[open],
-.flasher div.loader[data-state="on"] {
+.flasher[open] {
     opacity: 1;
-}
-
-.flasher main {
-    max-width: 60%;
 }
 
 .flasher h1 {
     font-size: 4rem;
 
     margin: 52px;
+}
+
+.flasher main {
+    max-width: 60%;
 }
 
 .flasher #eject {
@@ -76,4 +47,57 @@
     top: calc(0px + var(--padding));
     transform: translateX(calc(-100% - var(--padding)));
 }
+
+/*#endregion*/
+
+/*#region Elements ======================================== */
+.flasher:not([open]),
+.loader[data-state="off"] {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    height: var(--size);
+    min-height: var(--size);
+    max-height: var(--size);
+
+    width: var(--size);
+    min-width: var(--size);
+    max-width: var(--size);
+
+    border-radius: 100%;
+
+    background: radial-gradient(circle, var(--primary-light) 30%, transparent 70%);
+}
+
+.loader[data-state="on"] {
+    @apply animate-pulse;
+}
+
+/*#endregion*/
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    .loader {
+        --size: 500px;
+    }
+}
+
+@media only screen and (min-width: 1366px) {
+    .loader {
+        --size: 800px;
+    }
+}
+
 /*#endregion*/
