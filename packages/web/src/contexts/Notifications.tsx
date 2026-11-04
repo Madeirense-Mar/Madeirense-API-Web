@@ -109,7 +109,7 @@ const NotificationsProvider = ({ children }: any) => {
             return false;
         });
 
-        if (index === -1) 
+        if (index === -1)
             return false;
 
         let next_index;
@@ -198,20 +198,27 @@ const NotificationsProvider = ({ children }: any) => {
     }, [notifications, $pop]);
 
     useEffect(() => {
-        if (notifications.length === 0 || showing === -1) return;
-
-        if (!notifications[showing].options?.ttl) return;
+        if ([
+            notifications.length === 0 || showing === -1,
+            !notifications[showing].options?.ttl
+        ].includes(true))
+            return;
 
         switch (true) {
             case (currentTTL >= 100):
-                if (intervalRef.current) clearInterval(intervalRef.current);
+                if (intervalRef.current)
+                    clearInterval(intervalRef.current);
 
                 break;
 
             default:
-                if (intervalRef.current) break;
+                if (intervalRef.current)
+                    break;
 
-                intervalRef.current = setInterval(() => updateCurrentTTL(ct => ct + 1), (notifications[showing].options.ttl / 100));
+                intervalRef.current = setInterval(
+                    () => updateCurrentTTL(ct => ct + 1),
+                    (notifications[showing].options?.ttl as number / 100)
+                );
 
                 break;
         };
