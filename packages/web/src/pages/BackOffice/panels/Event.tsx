@@ -54,8 +54,8 @@ import DeletionForm from "components/modals/forms/delete";
 import AddRestaurantEventMerchandiseForm from "components/modals/forms/event/addMerchandise";
 
 import panelStyles from "components/panels/BackOffice/index.module.css";
-import styles from "./Event.module.css";
 import xScrollSectionStyles from "styles/xScrollSection.module.css";
+import styles from "./Event.module.css";
 
 import type {
     Products,
@@ -92,8 +92,8 @@ defineLocale('pt', async () => {
     return locales.get("pt")?.uploadCare ?? {} as any;
 });
 
-const delayMS = 2500;
-const today = new Date();
+const CURRENT_DATE = new Date();
+const DELAY_MS = 2500;
 //#endregion
 
 function EventPanel({ id }: { id: number }) {
@@ -151,7 +151,7 @@ function EventPanel({ id }: { id: number }) {
         ].includes(appState),
         "hasPassed": [
             (status === "expired"),
-            (today > new Date(event_date))
+            (CURRENT_DATE > new Date(event_date))
         ].includes(true)
     };
     //#endregion
@@ -217,13 +217,13 @@ function EventPanel({ id }: { id: number }) {
 
         timeoutRef.current = setTimeout(async () => {
             $form.dispatchEvent(new Event("submit", { bubbles: true }));
-        }, delayMS);
+        }, DELAY_MS);
     };
 
     function toggleFreePricing() { setFreePricing(f => !f); }
     function toggleFreeSpots() { setFreeSpots(f => !f); }
 
-    function update(element: any, delay: number = delayMS) {
+    function update(element: any, delay: number = DELAY_MS) {
         if (assertions.hasPassed) return;
 
         const property = element.name as (keyof Restaurant_Events | keyof Products);
@@ -410,7 +410,7 @@ function EventPanel({ id }: { id: number }) {
                 setTimeout(() => setProductUpdater(pu => ({
                     ...pu,
                     [product_id]: { ...pu[product_id], thumbnail: undefined }
-                })), delayMS);
+                })), DELAY_MS);
             }
         }
     };
@@ -425,10 +425,21 @@ function EventPanel({ id }: { id: number }) {
     //#endregion
 
     //#region Effects -------------------------------------
-    useEffect(() => { const tRef = timeoutRef.current; return () => { if (tRef) clearTimeout(tRef); } }, []);
+    useEffect(() => {
+        const tRef = timeoutRef.current;
 
-    useEffect(() => { setFreeSpots(((data?.spots ?? 0) as number) === 0); }, [data?.spots]);
-    useEffect(() => { setFreePricing(parseInt(`${data?.price ?? '0'}`) === 0); }, [data?.price]);
+        return () => {
+            if (tRef) clearTimeout(tRef);
+        }
+    }, []);
+
+    useEffect(() => {
+        setFreeSpots(((data?.spots ?? 0) as number) === 0);
+    }, [data?.spots]);
+
+    useEffect(() => {
+        setFreePricing(parseInt(`${data?.price ?? '0'}`) === 0);
+    }, [data?.price]);
     //#endregion
 
     //#region DOM -----------------------------------------
