@@ -100,7 +100,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
     //#region Variable declarations -----------------------
     const restaurant_event = useMemo(() => !event_id ? null : get("Restaurant_Events")?.find(event => event.event_id === parseInt(event_id)), [event_id, get]);
     const restaurant = useMemo(() => !restaurant_event ? null : get("Restaurants")?.find(r => r.restaurant_id === restaurant_event?.restaurant_id), [restaurant_event, get]);
-    const tickets = useMemo(() => (restaurant_event?.Products ?? []).filter(({ product_composition }) => product_composition === "merchandise"), [restaurant_event]);
+    const products = useMemo(() => (restaurant_event?.Products ?? []).filter(({ product_composition }) => product_composition === "merchandise"), [restaurant_event]);
     //#endregion
 
     //#region Functions -----------------------------------
@@ -218,7 +218,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                             </span>
                         </div>}
 
-                        <section className={styles.tickets}>
+                        <section className={styles.products}>
                             <header>
                                 <h2>
                                     Ingressos e outros
@@ -227,7 +227,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
 
                             <div className="w-full flex flex-col justify-start items-start">
                                 <ul className={styles["event-products"]}>
-                                    {tickets.map(t => {
+                                    {products.map(t => {
                                         const quantity = cart.find(p => p.product_id === t.product_id)?.quantity ?? 0;
 
                                         const whileQuantityDecreases = queue.some(q => q.product_id === t.product_id && q.type === "removing");
