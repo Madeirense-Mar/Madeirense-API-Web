@@ -6,6 +6,6 @@
     width: calc(100% - var(--side-menu-max-width));
 }
 
-#root>footer {
+#root[data-page="back-office"]>footer {
     --footer-width: 100%;
 }
