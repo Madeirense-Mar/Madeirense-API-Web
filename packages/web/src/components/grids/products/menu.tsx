@@ -1,3 +1,4 @@
+//#region Imports -------------------------------------
 import {
     useCallback,
     useEffect,
@@ -34,7 +35,6 @@ import MXP$App from "configurations";
 import ApplicationQueries from "configurations/queries";
 
 import {
-    useApp,
     type App$Types
 } from "contexts/App";
 
@@ -52,23 +52,36 @@ import type {
     $Enums,
     Products
 } from "@Madeirense/database/browser";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ------------------------
 interface IPropTypes extends ComponentProps<"div"> {
     defaultRestaurant?: number;
     disableSearch?: boolean;
     group?: productGroupType;
-    mode?: "default" | "admin";
+    mode?: (
+        | "default"
+        | "admin"
+    );
     productComposition?: `${$Enums.Products_product_composition}`;
     productType?: `${$Enums.Products_product_type}`;
     trackAppUpdates?: boolean;
-    type?: "products" | "delisted-products",
+    type?: (
+        | "products"
+        | "delisted-products"
+    );
 };
 
-type filterType = "all" | $Enums.Products_product_type;
+type filterType = (
+    | "all"
+    | $Enums.Products_product_type
+);
+//#endregion
 
-const defaultCompositionFilters = {
+//#region Default variables ---------------------------
+const DEFAULT_COMPOSITION_FILTERS = {
     alcoholic: false,
     fish: false,
     liquid: false,
@@ -79,21 +92,21 @@ const defaultCompositionFilters = {
     vegan: false,
     wheat: false
 };
+//#endregion
 
-function ProductsMenuGrid(_props: IPropTypes) {
-    const {
-        className,
-        defaultRestaurant,
-        disableSearch = false,
-        group,
-        mode = "default",
-        productComposition,
-        productType,
-        trackAppUpdates = false,
-        type = "products",
-        ...props
-    } = _props;
-
+function ProductsMenuGrid({
+    className,
+    defaultRestaurant,
+    disableSearch = false,
+    group,
+    mode = "default",
+    productComposition,
+    productType,
+    trackAppUpdates = false,
+    type = "products",
+    ...props
+}: IPropTypes) {
+    //#region Hooks and state declarations ----------------
     const { Storage } = useMemo(() => MXP$App, []);
 
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -103,13 +116,9 @@ function ProductsMenuGrid(_props: IPropTypes) {
     const [search, setSearch] = useState("");
     const [listFilter, setListFilter] = useState<filterType>(productType ?? "all");
     const [compositionFilters, setCompositionFilters] = useState<Record<$Enums.Products_product_composition, boolean>>({
-        ...defaultCompositionFilters,
+        ...DEFAULT_COMPOSITION_FILTERS,
         ...(!productComposition ? {} : { [productComposition]: true })
     });
-
-    const { get } = useApp();
-
-    const restaurants = get("Restaurants") ?? [];
 
     const {
         data,
@@ -144,7 +153,16 @@ function ProductsMenuGrid(_props: IPropTypes) {
         }),
         [fetchNextPage, hasNextPage, isFetchingNextPage, isFetching]
     );
+    //#endregion
 
+    //#region Variable declarations -----------------------
+    const $divProps = {
+        className: resolveClassNames(className),
+        ...props
+    };
+    //#endregion
+
+    //#region Functions -----------------------------------
     function applySearch({ target, key }: KeyboardEvent<HTMLInputElement>) {
         if (key.toLowerCase() !== "enter") return;
 
@@ -164,7 +182,7 @@ function ProductsMenuGrid(_props: IPropTypes) {
     };
 
     function handleCompositionPick(values: string[]) {
-        const _compositionFilters = { ...defaultCompositionFilters };
+        const _compositionFilters = { ...DEFAULT_COMPOSITION_FILTERS };
 
         values.forEach(v => {
             _compositionFilters[v as $Enums.Products_product_composition] = true;
@@ -180,12 +198,9 @@ function ProductsMenuGrid(_props: IPropTypes) {
 
         updateSearchParams(searchParams);
     };
+    //#endregion
 
-    const $divProps = {
-        className: resolveClassNames(className),
-        ...props
-    };
-
+    //#region Effects -------------------------------------
     useEffect(() => {
         const timeoutId = timeoutRef.current;
 
@@ -224,26 +239,27 @@ function ProductsMenuGrid(_props: IPropTypes) {
             navigator.serviceWorker.removeEventListener('message', triggerRefetch);
         }
     }, [trackAppUpdates, refetch, Storage]);
+    //#endregion
 
+    //#region DOM -----------------------------------------
     switch (status) {
-        case "pending": return <div {...$divProps}>
-            <div className="flex flex-row justify-center items-center w-full h-full">
-                <Icon name="Loading" className="animate-spin mx-auto my-4" />
+        case "pending": {
+            return <div {...$divProps}>
+                <Icon name="Loading" className="animate-spin m-auto" />
             </div>
-        </div>;
+        }
 
-        case "error": return <div {...$divProps}>
-            <div className="w-full h-full flex flex-row justify-center items-center">
-                <div data-state="error" className="flex flex-row justify-center items-center gap-2 px-2 rounded-md">
+        case "error": {
+            return <div {...$divProps}>
+                <div data-state="error" className="flex flex-row justify-center items-center gap-2 px-2">
                     <Icon name="ExclamationCircle" />
 
                     <p>{error?.message}</p>
                 </div>
             </div>
-        </div>;
+        }
 
-        default:
-
+        default: {
             const fullList = (data?.pages.flatMap(page => page.data) || []);
             const list = fullList
                 .filter(item => search === "" ? true : item?.name.toLowerCase().includes(search.toLowerCase()))
@@ -319,13 +335,10 @@ function ProductsMenuGrid(_props: IPropTypes) {
                         const ref = idx === list.length - 1 ? lastElementRef : undefined;
 
                         return <ProductCard
+                            {...{ ref, mode }}
                             key={item.product_id}
                             product={item}
                             disableActions={mode === "admin"}
-                            {...{
-                                ref,
-                                mode
-                            }}
                         />
                     })}
                 </div>
@@ -333,8 +346,10 @@ function ProductsMenuGrid(_props: IPropTypes) {
                 {isFetchingNextPage && <li>
                     <Icon name="Loading" className="animate-spin mx-auto my-4" />
                 </li>}
-            </div>;
-    }
+            </div>
+        }
+    };
+    //#endregion
 };
 
 export default ProductsMenuGrid;
