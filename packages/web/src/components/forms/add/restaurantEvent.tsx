@@ -59,7 +59,7 @@ type modalState = {
 };
 //#endregion
 
-//#region Defaults ------------------------------------
+//#region Defaults ----------------------------------------
 const {
     fileUploaderRegularDefaultProps
 } = dependencies["@uploadcare/react-uploader"];

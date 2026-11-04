@@ -128,7 +128,7 @@ function readManualLocation($form: HTMLFormElement): locationType {
 };
 //#endregion
 
-//#region Defaults ------------------------------------
+//#region Defaults ----------------------------------------
 const {
     fileUploaderRegularDefaultProps
 } = dependencies["@uploadcare/react-uploader"];
