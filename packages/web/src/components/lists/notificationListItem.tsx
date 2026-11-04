@@ -16,12 +16,13 @@ import type {
 
 //#region Interfaces and types ----------------------------
 interface IPropTypes extends ComponentProps<"li"> {
+    disabledActions?: boolean;
     notification: Notifications$Types.payload;
     onPop: (options: Partial<{ id: Notifications$Types.id, ref: string }>) => void;
 };
 //#endregion
 
-const NotificationListItem = ({ notification, onPop, ...props }: IPropTypes) => {
+const NotificationListItem = ({ disabledActions = false, notification, onPop, ...props }: IPropTypes) => {
     const {
         actionLabel = "ver",
         closeLabel = null,
@@ -51,7 +52,7 @@ const NotificationListItem = ({ notification, onPop, ...props }: IPropTypes) => 
         {typeof notification.alert === "string" && <span>{notification.alert}</span>}
         {typeof notification.alert !== "string" && notification.alert}
 
-        {!sticky && <Button value={notification.ref} onClick={handlePop} data-shape={closeLabel ? "rect" : "round"} variant="secondary" className="ml-auto">
+        {!sticky && <Button value={notification.ref} onClick={handlePop} data-shape={closeLabel ? "rect" : "round"} variant="secondary" className="ml-auto" disabled={disabledActions}>
             {closeLabel}
 
             <Icon name="Close" className="pointer-events-none" />
@@ -65,7 +66,7 @@ const NotificationListItem = ({ notification, onPop, ...props }: IPropTypes) => 
             return <li {...props}>
                 {$body}
 
-                <Button value={notification.ref} data-shape="rect" onClick={handleAction} variant="primary">
+                <Button value={notification.ref} data-shape="rect" onClick={handleAction} variant="primary" disabled={disabledActions}>
                     {actionLabel}
                 </Button>
             </li>
@@ -77,9 +78,7 @@ const NotificationListItem = ({ notification, onPop, ...props }: IPropTypes) => 
             </li>
         }
 
-        default: {
-            return null
-        }
+        default: return null;
     };
     //#endregion
 };

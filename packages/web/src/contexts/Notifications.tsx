@@ -86,7 +86,20 @@ const NotificationsProvider = ({ children }: any) => {
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const [currentTTL, updateCurrentTTL] = useState(0);
-    const [notifications, setNotifications] = useState<payloadType[]>([]);
+    const [notifications, setNotifications] = useState<payloadType[]>([
+        {
+            id: `N#Example1`,
+            alert: "Some random bs 1",
+            type: "alert",
+            ref: "jgfkdlsçjkgfdlsç2ijhqprepoi21jfkods"
+        },
+        {
+            id: `N#Example2`,
+            alert: "Some random bs 2",
+            type: "alert",
+            ref: "jgfkdlsçjkgfdlsç2i214ih21po32po"
+        },
+    ]);
     const [showing, setShowing] = useState<number>(-1);
     //#endregion
 
@@ -228,13 +241,7 @@ const NotificationsProvider = ({ children }: any) => {
             </Button>
 
             <ul className={styles.list}>
-                {notifications.map((n, idx) => <NotificationListItem key={n.ref} notification={n} onPop={$pop}
-                    {...{
-                        ...(showing === idx)
-                            ? {}
-                            : { "data-disabled": "" }
-                    }}
-                />)}
+                {notifications.map((n, idx) => <NotificationListItem key={n.ref} id={n.ref} disabledActions={!(showing === idx)} notification={n} onPop={$pop} />)}
             </ul>
 
             <Button value="next" onClick={scrollToNotification} disabled={[-1, notifications.length - 1].includes(showing)} shape="circle">
