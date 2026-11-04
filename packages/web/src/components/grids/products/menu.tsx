@@ -68,10 +68,7 @@ interface IPropTypes extends ComponentProps<"div"> {
     productComposition?: `${$Enums.Products_product_composition}`;
     productType?: `${$Enums.Products_product_type}`;
     trackAppUpdates?: boolean;
-    type?: (
-        | "products"
-        | "delisted-products"
-    );
+    type?: `${"" | "delisted-"}products`;
 };
 
 type filterType = (
