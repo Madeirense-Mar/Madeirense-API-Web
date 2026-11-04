@@ -30,7 +30,7 @@ import Orders from "components/tables/orders";
 import AppFooter from "components/footer/application";
 import AppNav from "components/navigation/application";
 
-import styles from "./Layout.module.css";
+import patternsStyles from "styles/patterns.module.css";
 
 import type {
     $Enums
@@ -54,7 +54,6 @@ const Layout = () => {
     const allowOverlays = useMemo(() => (
         [
             Madeirense$Enumerators.Pages.App.Events,
-            Madeirense$Enumerators.Pages.App["Not Found"],
             Madeirense$Enumerators.Pages.App.Product,
             Madeirense$Enumerators.Pages.App.Profile,
             Madeirense$Enumerators.Pages.App.Resort,
@@ -73,6 +72,7 @@ const Layout = () => {
                 Madeirense$Enumerators.Pages.App.Welcome
             ].every(p => !location.pathname.includes(p))
         ),
+
         "allowOrderOverlay": (
             allowOverlays &&
             [
@@ -81,6 +81,7 @@ const Layout = () => {
                 Madeirense$Enumerators.Pages.Checkout.Layout
             ].every(p => !location.pathname.includes(p))
         ),
+
         "allowPatterns": (
             allowOverlays &&
             [
@@ -90,6 +91,7 @@ const Layout = () => {
                 : location.pathname.includes(link)
             )
         ),
+        
         "disableNavigation": [
             Madeirense$Enumerators.Pages.App.Welcome
         ].some(endpoint => location.pathname.includes(endpoint))
@@ -150,8 +152,8 @@ const Layout = () => {
 
     return <AppContextProvider {...{ providers }}>
         {(!assertions.allowPatterns) ? null : <>
-            <div data-position="left" className={styles.pattern}></div>
-            <div data-position="right" className={styles.pattern}></div>
+            <div data-position="left" className={patternsStyles.pattern}></div>
+            <div data-position="right" className={patternsStyles.pattern}></div>
         </>}
 
         {assertions.allowCartOverlay && <Cart type="delivery" />}

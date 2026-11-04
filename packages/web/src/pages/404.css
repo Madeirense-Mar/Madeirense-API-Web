@@ -1,0 +1,26 @@
+/*#region Page ============================================ */
+#root[data-page="404"] {
+    display: grid;
+}
+
+/*#endregion*/
+
+/*#region Media =========================================== */
+@media only screen and (min-width: 344px) {}
+
+@media only screen and (min-width: 428px) {}
+
+@media only screen and (min-width: 768px) {
+    #root[data-page="404"] {
+        grid-template-rows: 70px auto min-content;
+        grid-template-areas:
+            "application-nav"
+            "application-body"
+            "application-footer"
+        ;
+    }
+}
+
+@media only screen and (min-width: 1366px) {}
+
+/*#endregion*/

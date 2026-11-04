@@ -14,13 +14,18 @@ import {
 
 import AnchorButton from "components/buttons/anchor";
 import Icon from "components/icon";
-import Tag from "components/tags";
 
-import { 
+import AppFooter from "components/footer/application";
+import AppNav from "components/navigation/application";
+
+import {
     Root$Enumerators
 } from "styles/enumerators";
 
 import styles from "./404.module.css";
+import patternsStyles from "styles/patterns.module.css";
+
+import "./404.css";
 //#endregion
 
 // ***************************************************************************************************************
@@ -41,33 +46,42 @@ const NotFoundPage = () => {
     }, []);
 
     //#region DOM -----------------------------------------
-    return <main className={resolveClassNames(styles.page)}>
-        <header>
-            <h1>404</h1>
+    return <>
+        <div data-position="left" className={patternsStyles.pattern}></div>
+        <div data-position="right" className={patternsStyles.pattern}></div>
 
-            <p>
-                Não encontramos o que procura
-            </p>
-        </header>
+        <AppNav />
 
-        <ul>
-            <li>
-                <AnchorButton to={Madeirense$Enumerators.Pages.App.Layout}>
-                    <Icon name="Takeout" />
+        <main className={resolveClassNames(styles.main)}>
+            <header>
+                <h1>404</h1>
 
-                    Encomendar
-                </AnchorButton>
-            </li>
+                <p>
+                    Não encontramos o que procura
+                </p>
+            </header>
 
-            {(orders.length > 0) && <li>
-                <AnchorButton  to={Madeirense$Enumerators.Pages.App.Order}>
-                    <Icon name="Order" />
+            <ul>
+                <li>
+                    <AnchorButton to={Madeirense$Enumerators.Pages.App.Layout}>
+                        <Icon name="Takeout" />
 
-                    Ver os seus pedidos
-                </AnchorButton>
-            </li>}
-        </ul>
-    </main>
+                        Encomendar
+                    </AnchorButton>
+                </li>
+
+                {(orders.length > 0) && <li>
+                    <AnchorButton to={Madeirense$Enumerators.Pages.App.Order}>
+                        <Icon name="Order" />
+
+                        Ver os seus pedidos
+                    </AnchorButton>
+                </li>}
+            </ul>
+        </main>
+
+        <AppFooter />
+    </>
     //#endregion
 };
 
