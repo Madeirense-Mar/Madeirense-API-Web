@@ -1,11 +1,12 @@
 //#region Imports -------------------------------------
 import {
+    useEffect,
     useMemo,
     useRef,
     useState,
     type ComponentProps,
-    type SubmitEvent,
-    type MouseEvent
+    type MouseEvent,
+    type SubmitEvent
 } from "react";
 
 import {
@@ -162,6 +163,14 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
             setIsLoading(false);
         }
     };
+    //#endregion
+
+    //#region Effects -------------------------------------
+    useEffect(() => {
+        return () => {
+            // We must clear the cart here
+        }
+    }, []);
     //#endregion
 
     //#region DOM -----------------------------------------
