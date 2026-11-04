@@ -18,7 +18,7 @@
     min-width: var(--width);
     max-width: var(--width);
 
-    background-color: var(--primary);
+    background-color: var(--primary-dark);
 }
 
 .flasher[data-event] {
@@ -74,7 +74,7 @@
 
     border-radius: 100%;
 
-    background: radial-gradient(circle, var(--primary-light) 30%, transparent 70%);
+    background: radial-gradient(circle, var(--primary) 30%, transparent 70%);
 }
 
 .loader[data-state="on"] {
