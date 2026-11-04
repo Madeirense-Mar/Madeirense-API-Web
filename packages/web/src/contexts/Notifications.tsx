@@ -200,7 +200,7 @@ const NotificationsProvider = ({ children }: any) => {
     useEffect(() => {
         if ([
             notifications.length === 0 || showing === -1,
-            !notifications[showing].options?.ttl
+            !notifications[showing]?.options?.ttl
         ].includes(true))
             return;
 
