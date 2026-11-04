@@ -94,21 +94,23 @@ const NotificationsProvider = ({ children }: any) => {
     const $pop = useCallback(({ id = undefined, ref = undefined }: Partial<{ id: idType, ref: string }>) => {
         if ([!id, !ref].every(Boolean)) return false;
 
-        const index = notifications.findIndex(n => {
-            if (id) return n.id === id;
-            if (ref) return n.ref === ref;
+        let index = -1;
+
+        const _notifications = notifications.filter((n, idx) => {
+            if ([
+                n.id === id,
+                n.ref === ref
+            ].includes(true)) {
+                index = idx;
+
+                return false;
+            }
 
             return false;
         });
 
-        if (index === -1) return false;
-
-        const _notifications = notifications.filter(n => {
-            if (id) return n.id !== id;
-            if (ref) return n.ref !== ref;
-
+        if (index === -1) 
             return false;
-        });
 
         let next_index;
 
@@ -124,11 +126,14 @@ const NotificationsProvider = ({ children }: any) => {
                 break;
 
             default:
-                if (index === 0) next_index = 1;
+                if (index === 0)
+                    next_index = 1;
 
-                else if (index === (_notifications.length - 1)) next_index = _notifications.length - 1;
+                else if (index === (_notifications.length - 1))
+                    next_index = _notifications.length - 1;
 
-                else next_index = index + 1;
+                else
+                    next_index = index + 1;
 
                 setNotifications(_notifications);
                 setShowing(next_index);
@@ -138,9 +143,7 @@ const NotificationsProvider = ({ children }: any) => {
         return true;
     }, [notifications]);
 
-    const pop = useCallback((id: idType) => {
-        return $pop({ id });
-    }, [$pop]);
+    const pop = useCallback((id: idType) => $pop({ id }), [$pop]);
 
     const push = useCallback((n: Omit<payloadType, "ref">) => {
         setNotifications(nf => nf.find(_n => _n.id === n.id)
