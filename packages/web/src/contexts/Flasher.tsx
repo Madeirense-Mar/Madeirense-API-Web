@@ -50,14 +50,14 @@ type flasherEventType = (
 
 type FlasherContextType = {
     eject: (callback?: Function) => void,
-    flash: (t: flasherEventType) => void
+    flash: (t: flasherEventType, onClose?: (event: Event) => void) => void
 };
 //#endregion
 
 //#region Context declarations ----------------------------
 const FlasherContext = createContext<FlasherContextType>({
-    eject: (callback?: Function) => { },
-    flash: (t: flasherEventType) => { }
+    eject: (callback?: Function) => {},
+    flash: (t: flasherEventType, onClose?: (event: Event) => void) => {}
 });
 //#endregion
 
@@ -65,10 +65,13 @@ const FlasherProvider = ({ children }: any) => {
     //#region Hooks and state declarations ----------------
     const $dialogRef = useRef<HTMLDialogElement | null>(null);
 
-    const [flasher, setFlasher] = useState<flasherEventType>("GOODBYE");
+    const [flasher, setFlasher] = useState<flasherEventType>("RESERVED_EVENT");
+    const [closeEvent, setCloseEvent] = useState<((event: Event) => void) | undefined>(undefined);
     //#endregion
 
     //#region Variable declarations -----------------------
+    const delayMS = 2000;
+
     const loaderState = ([
         "EMPTY",
         "LOADING",
@@ -97,17 +100,21 @@ const FlasherProvider = ({ children }: any) => {
             setFlasher("EMPTY");
 
             $dialogRef.current?.close();
-        }, 2000);
+        }, delayMS);
     };
 
-    const flash = useCallback((t: flasherEventType) => {
-        $dialogRef.current?.showModal();
+    const flash = useCallback((t: flasherEventType, onClose?: (event: Event) => void) => {
+        if (!$dialogRef.current)
+            return;
 
+        $dialogRef.current.showModal();
+
+        setCloseEvent(onClose);
         setFlasher("LOADING");
 
         setTimeout(() => {
             setFlasher(t);
-        }, 2000);
+        }, delayMS);
     }, []);
     //#endregion
 
@@ -117,6 +124,17 @@ const FlasherProvider = ({ children }: any) => {
 
         $dialogRef.current.showModal();
     }, []);
+
+    useEffect(() => {
+        if (!$dialogRef.current || !closeEvent)
+            return;
+
+        $dialogRef.current.addEventListener("close", closeEvent);
+        
+        return () => {
+            $dialogRef.current?.removeEventListener("close", closeEvent);
+        }
+    }, [closeEvent]);
 
     //#region DOM -----------------------------------------
     return <FlasherContext.Provider value={{ eject, flash }}>
