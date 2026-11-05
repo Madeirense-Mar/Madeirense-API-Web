@@ -15,10 +15,6 @@ import {
 } from '@Madeirense/shared';
 
 import {
-    getAPIDocs
-} from './lib/swagger.js';
-
-import {
     activateEvents
 } from './middlewares/events.js';
 
@@ -35,14 +31,18 @@ import {
 import passport from './middlewares/passport.js';
 
 import {
+    flushApiKeyUsage
+} from './services/apiKeys.js';
+
+import {
     attachProcessHandlers,
     bridgeConsole,
     logger
 } from './lib/logger.js';
 
 import {
-    flushApiKeyUsage
-} from './services/apiKeys.js';
+    getAPIDocs
+} from './lib/swagger.js';
 
 import {
     verifyMailer
