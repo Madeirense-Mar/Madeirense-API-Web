@@ -40,6 +40,8 @@ import {
     logger
 } from './lib/logger.js';
 
+import redisClient from 'lib/redis.js';
+
 import {
     getAPIDocs
 } from './lib/swagger.js';
@@ -252,6 +254,7 @@ class Server {
         console.log(`> Version: ${env.API_VERSION}`);
         console.log(`> Environment: ${env.NODE_ENV}`);
         console.log(`> Listening on port: ${this.app.get('port')}`);
+        console.log(`> REDIS: ${redisClient.isOpen}`);
         console.log(`> API Console @ ${env.API_URL}/api/management`);
         console.log(`> Docs @ ${env.API_URL}/api/docs`);
 
