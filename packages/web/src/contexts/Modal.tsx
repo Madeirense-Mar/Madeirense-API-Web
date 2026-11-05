@@ -22,14 +22,14 @@ type modalOptions = {
 };
 
 interface ModalContextType {
-    eject: () => void;
+    eject: (callback?: Function) => void;
     show: (body: any, options?: Partial<modalOptions>) => void;
 };
 //#endregion
 
 //#region Context declarations ----------------------------
 const ModalContext = createContext<ModalContextType>({
-    eject: () => { },
+    eject: (callback?: Function) => { },
     show: (body: any, options={}) => { }
 });
 //#endregion
@@ -43,11 +43,13 @@ const ModalProvider = ({ children }: any) => {
     //#endregion
 
     //#region Functions -----------------------------------
-    const eject = () => {
+    const eject = (callback?: Function) => {
         dialogRef.current?.close();
 
         setBody(null);
         setOptions(null);
+
+        callback?.();
     };
 
     const show = (body: any, options?: Partial<modalOptions>) => {

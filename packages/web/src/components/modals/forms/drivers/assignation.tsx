@@ -63,9 +63,7 @@ const DriverAssignationForm = ({
 
             if (!_order) throw new Error("Unable to assign driver to a new order");
 
-            callback?.(_order);
-
-            eject();
+            eject(() => callback?.(_order));
         } catch (error) {
             updateForm(f => {
                 return {

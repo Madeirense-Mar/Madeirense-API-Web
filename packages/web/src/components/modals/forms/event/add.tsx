@@ -19,9 +19,7 @@ const AddRestaurantEventForm = ({
     const { eject } = useModal();
 
     function handleCallback() {
-        eject();
-
-        callback?.();
+        eject(callback);
     };
 
     return <AddForm

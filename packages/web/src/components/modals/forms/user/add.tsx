@@ -73,6 +73,7 @@ const AddUserForm = ({
                     (elements.namedItem("lname") as HTMLInputElement).value as string,
                 ].join(' '),
                 email: (elements.namedItem("email") as HTMLInputElement).value as string,
+                email_marketing: false,
                 phone: [
                     (elements.namedItem("code") as HTMLSelectElement).value as string,
                     parsePhoneNumber((elements.namedItem("phone") as HTMLInputElement).value as string)
@@ -86,9 +87,7 @@ const AddUserForm = ({
 
             updateForm(p => { return { ...p, status: "idle" } });
 
-            callback?.();
-
-            eject();
+            eject(callback);
         } catch (error) {
             updateForm(p => {
                 return {

@@ -146,9 +146,7 @@ const DiscountForm = ({
 
             updateForm(p => { return { ...p, status: "idle" } });
 
-            callback?.();
-
-            eject();
+            eject(callback);
         } catch (error) {
             updateForm(p => { return { ...p, status: "error", error: new Error((error as Error).message) } });
         }

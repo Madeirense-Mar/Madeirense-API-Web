@@ -164,9 +164,7 @@ const AddProductForm = ({
 
             updateForm(p => { return { ...p, status: "idle" } });
 
-            callback?.();
-
-            eject();
+            eject(callback);
 
             if ($submitter.value === "another") setTimeout(() => {
                 show(<AddProductForm />, { title: `Adicionar um novo produto` });

@@ -71,9 +71,7 @@ const DriverReallocationForm = ({
 
             await fetch("Drivers");
 
-            callback?.();
-
-            eject();
+            eject(callback);
         } catch (error) {
             updateForm(f => {
                 return {

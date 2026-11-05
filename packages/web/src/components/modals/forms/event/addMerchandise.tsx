@@ -94,9 +94,7 @@ const AddRestaurantEventMerchandiseForm = ({ callback, className, event_id, onSu
 
     //#region Functions -----------------------------------
     function handleCallback() {
-        eject();
-
-        callback?.();
+        eject(callback);
     };
 
     const handleUpload = ({ uuid, mimeType, errors }: any) => {

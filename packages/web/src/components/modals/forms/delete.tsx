@@ -199,9 +199,7 @@ const DeletionForm = ({
                 default: break;
             };
 
-            callback?.();
-
-            eject();
+            eject(callback);
         } catch (error) {
             updateForm(f => { return { ...f, status: "error", error: new Error((error as Error).message) } });
         }
