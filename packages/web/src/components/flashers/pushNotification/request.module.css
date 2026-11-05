@@ -1,10 +1,16 @@
 .main {
     @apply flex flex-col justify-start items-start;
+
+    gap: var(--gap-xl);
 }
 
 .main p,
 .main ul li {
     text-align: center;
+}
+
+.main p {
+    width: 100%;
 }
 
 .main ul {
