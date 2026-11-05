@@ -1,4 +1,4 @@
-//#region Styles ==========================================
+//#region Styles ------------------------------------------
 
 //#region External styles
 import "@uploadcare/react-uploader/core.css";
@@ -25,6 +25,8 @@ import "styles/card.css";
 
 //#endregion
 
+//#region Imports -----------------------------------------
+
 import ReactDOM from "react-dom/client";
 
 import reportWebVitals from "./reportWebVitals";
@@ -36,7 +38,7 @@ import {
 
 import MXP$App from "configurations";
 
-import { 
+import {
     AppContextProvider
 } from "contexts/utilities/providers";
 
@@ -49,6 +51,7 @@ import { ProfileProvider } from "contexts/Profile";
 import { ThemeProvider } from "contexts/Theme";
 
 import AppRouter from "router";
+//#endregion
 
 // ***************************************************************************************************************
 
@@ -56,8 +59,12 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
+//#region Configurations ----------------------------------
+//#region Dependency
 const queryClient = new QueryClient(MXP$App.configurations.dependencies['@tanstack/react-query']);
+//#endregion
 
+//#region Context provider
 const providers = [
     ThemeProvider,
     NotificationsProvider,
@@ -72,7 +79,9 @@ const providerProps = {
     clients: MXP$App.Base.Business.endpoints,
     storageManager: MXP$App.Storage
 };
+//#endregion
 
+//#region Service worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
         .register("/service-worker.js")
@@ -84,6 +93,8 @@ if ('serviceWorker' in navigator) {
         })
         ;
 }
+//#endregion
+//#endregion
 
 root.render(
     <QueryClientProvider client={queryClient}>

@@ -11,8 +11,10 @@ import env from 'env';
 
 const dependencies = {
     "@tanstack/react-query": {
-        queries: {
-            refetchOnWindowFocus: false
+        defaultOptions: {
+            queries: {
+                refetchOnWindowFocus: false
+            }
         }
     } as QueryClientConfig,
     "@uploadcare/react-uploader": {
