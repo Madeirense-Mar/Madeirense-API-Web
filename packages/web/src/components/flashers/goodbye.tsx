@@ -1,5 +1,6 @@
 import { 
-    type ComponentProps
+    type ComponentProps,
+    type MouseEvent
 } from "react";
 
 import { 
@@ -29,22 +30,28 @@ function GOODBYE_FLASHER({ className, ...props }: ComponentProps<"main">) {
     const { state } = useProfile();
     const { eject } = useFlasher();
     
+    function handleClick (e: MouseEvent<HTMLButtonElement>) {
+        eject();
+    };
+
     return <main className={resolveClassNames(styles.main, className)} {...props}>
-        <h2 className="mx-auto mb-3">
+        <h1 className="mx-auto">
             {GoodbyeTitle}
-        </h2>
+        </h1>
 
-        <p>{GoodbyeParagraph1}</p>
+        <section>
+            {GoodbyeParagraph1 && <p>{GoodbyeParagraph1}</p>}
 
-        <p>{GoodbyeParagraph2}</p>
+            {GoodbyeParagraph2 && <p>{GoodbyeParagraph2}</p>}
 
-        <p className="italic font-bold w-full text-center">
-            {GoodbyeStatement}
-        </p>
+            {GoodbyeParagraph3 && <p>{GoodbyeParagraph3}</p>}
 
-        <p>{GoodbyeParagraph3}</p>
+            <h2 className="italic font-bold w-full text-center">
+                {GoodbyeStatement}
+            </h2>
+        </section>
 
-        <Button onClick={eject} className="mx-auto text-sm" variant="text" disabled={state !== "guest"}>
+        <Button onClick={handleClick} className="mx-auto" disabled={state !== "guest"}>
             {`${GoodbyeCTA} 👋`}
         </Button>
     </main>

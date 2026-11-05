@@ -1,11 +1,16 @@
 .main {
-    @apply flex flex-col justify-start items-start gap-5;
+    @apply flex flex-col justify-center items-center gap-3;
 }
 
-.main > button {
-    font-size: 1.5rem !important;
+.main>section {
+    @apply flex flex-col justify-start items-start gap-8;
+
+    max-width: 500px;
 }
 
-.main > h2 {
+.main>h1 {
     @apply text-center;
+
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
 }
