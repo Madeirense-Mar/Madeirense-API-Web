@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     useEffect,
     useMemo
@@ -35,22 +36,28 @@ import patternsStyles from "styles/patterns.module.css";
 import type {
     $Enums
 } from "@Madeirense/database/browser";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Provider configurations -------------------------
 const providers = [
     ModalProvider,
     RedirectorProvider
 ];
+//#endregion
 
 const Layout = () => {
-    useLocationPermission();
+    //#region Hooks and state declarations ----------------
+    // useLocationPermission();
 
     const { cart } = useCart();
     const { orders } = useOrders();
 
     const location = useLocation();
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const allowOverlays = useMemo(() => (
         [
             Madeirense$Enumerators.Pages.App.Events,
@@ -91,12 +98,14 @@ const Layout = () => {
                 : location.pathname.includes(link)
             )
         ),
-        
+
         "disableNavigation": [
             Madeirense$Enumerators.Pages.App.Welcome
         ].some(endpoint => location.pathname.includes(endpoint))
     }), [allowOverlays, location]);
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         const $root = document.getElementById(Root$Enumerators.Identifiers["#root"]);
 
@@ -149,7 +158,9 @@ const Layout = () => {
         assertions.allowOrderOverlay,
         orders
     ]);
+    //#endregion
 
+    //#region DOM -----------------------------------------
     return <AppContextProvider {...{ providers }}>
         {(!assertions.allowPatterns) ? null : <>
             <div data-position="left" className={patternsStyles.pattern}></div>
@@ -165,7 +176,8 @@ const Layout = () => {
         <Outlet />
 
         {!assertions.disableNavigation && <AppFooter />}
-    </ AppContextProvider>
+    </AppContextProvider>
+    //#endregion
 };
 
 export default Layout;

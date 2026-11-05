@@ -1,90 +1,64 @@
+//#region Imports -----------------------------------------
 import {
-    type ComponentProps,
-    type MouseEvent
+    type ComponentProps
 } from "react";
-
-import {
-    Link,
-    useNavigate
-} from "react-router-dom";
 
 import {
     resolveClassNames,
     toDayOfTheWeek,
     toTimeDecimal,
-    Madeirense$Enumerators,
     type restaurantType,
 } from "@Madeirense/shared";
 
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import type {
-    withVariant
-} from "components/types";
-
-import styles from "./restaurant.module.css";
+import styles from "./card.module.css";
 
 import type {
     $Enums,
     Restaurant_Hours
 } from "@Madeirense/database/browser";
 
+import type {
+    withVariant
+} from "components/types";
+//#endregion
+
 // ***************************************************************************************************************
 
-interface IPropTypes extends ComponentProps<"div"> {
-    disableLink?: boolean;
-    mode?: "default" | "admin";
+//#region Interfaces and types ----------------------------
+export interface ICardPropTypes extends ComponentProps<"div"> {
     restaurant: restaurantType;
-    onSuccess?: (restaurant?: restaurantType) => void;
 };
+//#endregion
 
-function RestaurantCard(_props: withVariant<IPropTypes>) {
-    const {
-        className,
-        disableLink = false,
-        mode = "default",
-        restaurant,
-        onClick,
-        onSuccess,
-        variant = "primary",
-        ...props
-    } = _props;
-
+function RestaurantCardWithoutNavigation ({
+    className,
+    restaurant,
+    variant = "primary",
+    ...props
+}: withVariant<ICardPropTypes>) {
+    //#region Variable declarations -----------------------
     const {
         name,
-        restaurant_id,
         Delivery_Locations,
         Restaurant_Hours,
         thumbnail_url,
     } = restaurant;
 
-    const profileLink = `${Madeirense$Enumerators.Pages.BackOffice.Restaurant}/${restaurant_id}`;
-
-    const { closing_time, opening_time } = ((Restaurant_Hours ?? []) as Restaurant_Hours[])[new Date().getDay()];
+    const { 
+        closing_time, 
+        opening_time
+    } = ((Restaurant_Hours ?? []) as Restaurant_Hours[])[new Date().getDay()];
+    
     const cTime = `${toTimeDecimal(new Date(closing_time).getHours())}:${toTimeDecimal(new Date(closing_time).getMinutes())}`;
     const oTime = `${toTimeDecimal(new Date(opening_time).getHours())}:${toTimeDecimal(new Date(opening_time).getMinutes())}`;
+    //#endregion
 
-    const navigate = useNavigate();
-
-    function handleClick (event: MouseEvent<HTMLDivElement>) {
-        if (disableLink) {
-            onClick?.(event);
-
-            return;
-        }
-
-        navigate(profileLink);
-    }
-
-    return <div
-        className={resolveClassNames(styles[variant], className, disableLink ? undefined : "cursor-pointer")}
-        onClick={handleClick}
-        style={{ backgroundImage: `url(${thumbnail_url})` }}
-        {...props}
-    >
-        {mode === "admin" && <Link to={profileLink}>{name}</Link>}
-        {mode === "default" && <h4>{name}</h4>}
+    //#region DOM -----------------------------------------
+    return <div className={resolveClassNames(styles[variant], className)} style={{ backgroundImage: `url(${thumbnail_url})` }} {...props}>
+        <h4>{name}</h4>
 
         <ul>
             {(Restaurant_Hours ?? []).map((h, idx) => <li key={h.hours_id}>
@@ -114,6 +88,7 @@ function RestaurantCard(_props: withVariant<IPropTypes>) {
             {Delivery_Locations?.address}
         </Tag>
     </div>
+    //#endregion
 };
 
-export default RestaurantCard;
+export default RestaurantCardWithoutNavigation;

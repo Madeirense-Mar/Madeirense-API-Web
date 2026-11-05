@@ -31,11 +31,13 @@ import { useModal } from "contexts/Modal";
 import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
+import Icon from "components/icon";
+
 import OrderCard from "components/cards/order";
 import ProfileHeaderCard from "components/cards/profileHeader";
 import RestaurantCard from "components/cards/restaurant";
+
 import LeafletDeliveryTracker from "components/maps/leaflet/deliveryTracker";
-import Icon from "components/icon";
 
 import BlockUserForm from "components/modals/forms/user/block";
 import DeletionForm from "components/modals/forms/delete";

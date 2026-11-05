@@ -30,11 +30,10 @@ import { useOrders } from "contexts/Orders";
 import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
+import Icon from "components/icon";
 
 import RestaurantCard from "components/cards/restaurant";
 import RestaurantEventCard from "components/cards/restaurantEvent";
-
-import Icon from "components/icon";
 
 import PaymentTypesList from "components/lists/paymentOptions";
 

@@ -44,7 +44,10 @@ import Icon from "components/icon";
 
 import RestaurantCard from "components/cards/restaurant";
 
-import DropOffFieldset, { type DropOffFieldset$Types } from "components/forms/elements/fieldsets/dropOff";
+import DropOffFieldset, { 
+    type DropOffFieldset$Types
+} from "components/forms/elements/fieldsets/dropOff";
+
 import DeliveryLocationsSelector from "components/forms/elements/selects/deliveryLocations";
 
 import PaymentTypesList from "components/lists/paymentOptions";
