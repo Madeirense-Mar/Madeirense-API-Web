@@ -20,7 +20,8 @@ import {
     formatNumber,
     parsePhoneNumber,
     stringRegularExpressions,
-    resolveClassNames
+    resolveClassNames,
+    Madeirense$Enumerators
 } from "@Madeirense/shared";
 
 import { selectPhoneCode } from "components/utilities/DOM";
@@ -152,11 +153,11 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                 ].join(''),
             });
 
-            flash("RESERVED_EVENT");
+            flash("RESERVED_EVENT", (e) => {
+                clear$Dry("event");
 
-            clear$Dry("event");
-
-            navigate("/");
+                navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
+            });
         } catch (e) {
             setError(new Error((e as Error).message));
         } finally {
@@ -168,7 +169,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
     //#region Effects -------------------------------------
     useEffect(() => {
         return () => {
-            // We must clear the cart here
+            clear$Dry("event");
         }
     }, []);
     //#endregion
