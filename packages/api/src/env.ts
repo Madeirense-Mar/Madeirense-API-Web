@@ -149,7 +149,7 @@ const env = {
     //#endregion
 
     //#region REDIS
-    REDIS_URL: process.env.REDIS_URL,
+    REDIS_URL: which(process.env.REDIS_URL, 'redis://localhost:6379') as string,
     REDIS_KEY_PREFIX: (which(process.env.REDIS_KEY_PREFIX, '') as string),
     //#endregion
 
