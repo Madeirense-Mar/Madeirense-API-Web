@@ -30,9 +30,14 @@
 }
 
 .flasher h1 {
+    --default-margin: 52px;
+
     font-size: 4rem;
 
-    margin: 52px;
+    margin-bottom: var(--h1-margin-bottom, var(--default-margin));
+    margin-left: var(--h1-margin-left, var(--default-margin));
+    margin-right: var(--h1-margin-right, var(--default-margin));
+    margin-top: var(--h1-margin-top, var(--default-margin));
 }
 
 .flasher main {
