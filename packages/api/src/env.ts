@@ -37,6 +37,7 @@ const env = {
     // --------------------------: General
     APP_NAME: which(process.env.APP_NAME, 'Madeirense-API') as string,
     API_URL: which(process.env.API_URL, 'http://localhost:3001') as string,
+    API_VERSION: which(process.env.API_VERSION, '0.1.0_dev') as string,
     PORT: parseInt(which(process.env.PORT, '3001') as string),
     NODE_ENV: environment,
     ENABLE_VERBOSITY: which(process.env.ENABLE_VERBOSITY, 'false') === 'true',

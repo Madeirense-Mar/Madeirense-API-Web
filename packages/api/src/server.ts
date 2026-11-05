@@ -14,9 +14,13 @@ import {
     type API$Types
 } from '@Madeirense/shared';
 
-import { getAPIDocs } from './lib/swagger.js';
+import {
+    getAPIDocs
+} from './lib/swagger.js';
 
-import { activateEvents } from './middlewares/events.js';
+import {
+    activateEvents
+} from './middlewares/events.js';
 
 import {
     errorHandler,
@@ -24,7 +28,11 @@ import {
     requestContext
 } from './middlewares/logging.js';
 
-import { requireApiKey } from './middlewares/apiKeys.js';
+import {
+    requireApiKey
+} from './middlewares/apiKeys.js';
+
+import passport from './middlewares/passport.js';
 
 import {
     attachProcessHandlers,
@@ -32,13 +40,15 @@ import {
     logger
 } from './lib/logger.js';
 
-import { flushApiKeyUsage } from './services/apiKeys.js';
+import {
+    flushApiKeyUsage
+} from './services/apiKeys.js';
 
-import { verifyMailer } from './services/mailer.js';
+import {
+    verifyMailer
+} from './services/mailer.js';
 
 import managementRoutes from './management/routes.js';
-
-import passport from './middlewares/passport.js';
 
 import routes from './routes/index.js';
 
@@ -239,7 +249,7 @@ class Server {
 
         console.log(`> URL: ${env.API_URL}`);
         //TODO: Update the version on each release.
-        console.log(`> Version: 0.1.0`);
+        console.log(`> Version: ${env.API_VERSION}`);
         console.log(`> Environment: ${env.NODE_ENV}`);
         console.log(`> Listening on port: ${this.app.get('port')}`);
         console.log(`> API Console @ ${env.API_URL}/api/management`);
