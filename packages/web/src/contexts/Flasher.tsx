@@ -119,13 +119,6 @@ const FlasherProvider = ({ children }: any) => {
     //#endregion
 
     useEffect(() => {
-        if (!$dialogRef.current)
-            return;
-
-        $dialogRef.current.showModal();
-    }, []);
-
-    useEffect(() => {
         if (!$dialogRef.current || !closeEvent)
             return;
 
