@@ -6,6 +6,7 @@ import {
     useEffect,
     useRef,
     useState,
+    type JSX,
     type MouseEvent
 } from "react";
 
@@ -54,10 +55,23 @@ type FlasherContextType = {
 };
 //#endregion
 
+//#region Defaults ----------------------------------------
+const FLASHERS: Record<flasherEventType, (JSX.Element | null)> = {
+    "AWAITING_PAYMENT_CONFIRMATION": <F_AWAITING_PAYMENT_CONFIRMATION_FLASHER />,
+    "DELIVERED_ORDER": <F_DELIVERED_ORDER />,
+    "EMPTY": null,
+    "GOODBYE": <F_GOODBYE />,
+    "LOADING": null,
+    "PLACED_ORDER": <F_PLACED_ORDER />,
+    "PUSH_NOTIFICATION_REQUEST": <F_PUSH_NOTIFICATION_REQUEST />,
+    "RESERVED_EVENT": <F_RESERVED_EVENT />
+};
+//#endregion
+
 //#region Context declarations ----------------------------
 const FlasherContext = createContext<FlasherContextType>({
-    eject: (callback?: Function) => {},
-    flash: (t: flasherEventType, onClose?: (event: Event) => void) => {}
+    eject: (callback?: Function) => { },
+    flash: (t: flasherEventType, onClose?: (event: Event) => void) => { }
 });
 //#endregion
 
@@ -89,7 +103,7 @@ const FlasherProvider = ({ children }: any) => {
     //#endregion
 
     //#region Functions -----------------------------------
-    function handleEjection (e: MouseEvent<HTMLButtonElement>) {
+    function handleEjection(e: MouseEvent<HTMLButtonElement>) {
         eject();
     };
 
@@ -123,7 +137,7 @@ const FlasherProvider = ({ children }: any) => {
             return;
 
         $dialogRef.current.addEventListener("close", closeEvent);
-        
+
         return () => {
             $dialogRef.current?.removeEventListener("close", closeEvent);
         }
@@ -138,12 +152,7 @@ const FlasherProvider = ({ children }: any) => {
                 <Icon name="Close" />
             </Button>}
 
-            {flasher === "AWAITING_PAYMENT_CONFIRMATION" && <F_AWAITING_PAYMENT_CONFIRMATION_FLASHER />}
-            {flasher === "DELIVERED_ORDER" && <F_DELIVERED_ORDER />}
-            {flasher === "GOODBYE" && <F_GOODBYE />}
-            {flasher === "PLACED_ORDER" && <F_PLACED_ORDER />}
-            {flasher === "PUSH_NOTIFICATION_REQUEST" && <F_PUSH_NOTIFICATION_REQUEST />}
-            {flasher === "RESERVED_EVENT" && <F_RESERVED_EVENT />}
+            {FLASHERS[flasher]}
         </dialog>
 
         {children}
