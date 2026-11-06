@@ -24,7 +24,7 @@ import {
 	useProfile
 } from "contexts/Profile";
 
-import Layout from "layouts/Layout";
+import Layout from "pages/Layout";
 
 import NotFoundPage from "pages/404";
 
@@ -40,7 +40,7 @@ import WelcomePage from "pages/Welcome";
 
 import AuthenticationSuccessPage from "pages/Authentication/success";
 
-import BackOfficeLayout from "layouts/BackOffice";
+import BackOfficeLayout from "pages/BackOffice/Layout";
 import BackOfficeBookingsPage from "pages/BackOffice/Bookings";
 import BackOfficeDashboardPage from "pages/BackOffice";
 import BackOfficeDeliveriesPage from "pages/BackOffice/Deliveries";
@@ -51,12 +51,12 @@ import BackOfficeRestaurantPage from "pages/BackOffice/Restaurant";
 import BackOfficeSettingsPage from "pages/BackOffice/Settings";
 import BackOfficeStaffPage from "pages/BackOffice/Staff";
 
-import CheckoutLayout from "layouts/Checkout";
+import CheckoutLayout from "pages/Checkout/Layout";
 import CheckoutEventsPage from "pages/Checkout/Events";
 import CheckoutProductsPage from "pages/Checkout/Products";
 import CheckoutResortPage from "pages/Checkout/Resort";
 
-import LegalLayout from "layouts/Legal";
+import LegalLayout from "pages/Legal/Layout";
 import LegalPrivacyPolicyPage from "pages/Legal/Policy";
 import LegalTermsAndConditionsPage from "pages/Legal/Terms";
 

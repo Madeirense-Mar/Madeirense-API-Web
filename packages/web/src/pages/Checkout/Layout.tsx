@@ -19,7 +19,7 @@ import {
 import Button from "components/buttons";
 import Icon from "components/icon";
 
-import styles from "./Checkout.module.css";
+import styles from "./Layout.module.css";
 
 // ***************************************************************************************************************
 
