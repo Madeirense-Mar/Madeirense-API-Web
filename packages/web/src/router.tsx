@@ -24,10 +24,9 @@ import {
 	useProfile
 } from "contexts/Profile";
 
-import Layout from "pages/Layout";
-
 import NotFoundPage from "pages/404";
 
+import Layout from "pages/Layout";
 import EventsPage from "pages/Events";
 import HomePage from "pages/Home";
 import OfflinePage from "pages/Offline";
