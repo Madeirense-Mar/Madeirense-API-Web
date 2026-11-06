@@ -46,6 +46,7 @@ interface IPropTypes extends ComponentProps<"ul"> {
     defaultRestaurant?: number;
     disableLink?: boolean;
     mode?: "list" | "viewport";
+    onlyShowUpcoming?: boolean;
     selectedEvent?: number;
 };
 
@@ -69,6 +70,7 @@ function RestaurantEventList({
     defaultRestaurant,
     disableLink = false,
     mode = "list",
+    onlyShowUpcoming = false,
     selectedEvent = 0,
     ...props
 }: IPropTypes) {
@@ -93,10 +95,8 @@ function RestaurantEventList({
             `${COMPONENT_NAME}$GetRestaurantEvents`,
             "events",
             {
-                "upcoming": "true",
-                ...(!defaultRestaurant)
-                    ? {}
-                    : { restaurant_id: `${defaultRestaurant}` }
+                ...(onlyShowUpcoming ? { "upcoming": `${onlyShowUpcoming}` } : {}),
+                ...((!defaultRestaurant) ? {} : { restaurant_id: `${defaultRestaurant}` })
             }
         ] as Queries$Types.itemQueryKey[]),
         queryFn: ApplicationQueries.getList<restaurantEventType>,

@@ -157,13 +157,7 @@ const EventsPage = () => {
 
     //#region DOM -----------------------------------------
     return <main ref={$mainRef} onScroll={scrollToNextElement(working, scrollTop, $ulRef)} onScrollEnd={updateScrollTop} className="w-full">
-        <RestaurantEventList
-            ref={$ulRef}
-            className="w-full"
-            disableLink
-            mode="viewport"
-            selectedEvent={parseInt(event_id ?? "0")}
-        />
+        <RestaurantEventList ref={$ulRef} className="w-full" mode="viewport" selectedEvent={parseInt(event_id ?? "0")} disableLink onlyShowUpcoming />
     </main>
     //#endregion
 };
