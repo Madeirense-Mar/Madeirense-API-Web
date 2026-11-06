@@ -55,6 +55,12 @@
 
 /*#endregion*/
 
+/*#region Flasher events ================================== */
+.flasher[data-event="RESERVED_EVENT"] {
+    padding: var(--padding-l) 0;
+}
+/*#endregion*/
+
 /*#region Elements ======================================== */
 .flasher:not([open]),
 .loader[data-state="off"] {

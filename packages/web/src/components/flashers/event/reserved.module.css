@@ -1,5 +1,38 @@
 /*#region Main ============================================ */
 .main {
-    
+    @apply flex flex-col justify-start items-center;
+
+    gap: var(--gap-xl);
+}
+/*#endregion*/
+
+/*#region Sections ======================================== */
+.qr-section {
+    @apply flex flex-col justify-center items-center;
+
+    --section-overflow: visible;
+
+    min-height: 340px;
+}
+
+.qr-section ul {
+    --width: 100%;
+
+    @apply flex flex-row justify-center items-center;
+
+    height: max-content;
+
+    gap: var(--gap-m);
+
+    width: var(--width);
+}
+
+.qr-section ul li {
+    padding: var(--padding-s);
+
+    border: 1px solid var(--neutral-dark);
+    border-radius: 8px;
+
+    background-color: white;
 }
 /*#endregion*/
