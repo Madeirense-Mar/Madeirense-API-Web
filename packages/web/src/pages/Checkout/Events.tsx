@@ -178,9 +178,17 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
     switch (true) {
         case (!event_id): {
             return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
-                <Icon name="ExclamationCircle" />
+                <Icon name="ExclamationCircle" className="text-9xl animate-pulse" />
 
                 Não foi seleccionado um evento para fazer checkout
+            </div>
+        }
+
+        case (!restaurant_event): {
+            return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
+                <Icon name="NoSignal" className="text-9xl animate-pulse" />
+
+                O evento especificado não existe
             </div>
         }
 
