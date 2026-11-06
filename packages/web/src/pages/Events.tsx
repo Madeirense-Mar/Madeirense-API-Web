@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     useEffect,
     useState,
@@ -22,6 +23,7 @@ import RestaurantEventList from "components/lists/restaurantEvents";
 import { Root$Enumerators } from "styles/enumerators";
 
 import "./Events.css";
+//#endregion
 
 // ***************************************************************************************************************
 
@@ -48,7 +50,7 @@ const EventsPage = () => {
     const [scrollTop, setScrollTop] = useState(0);
     const [working, setWorking] = useState(false);
     //#endregion
-    
+
     //#region Variable declarations -----------------------
     const notificationId = "N#LOGIN_TO_PURCHASE_TICKET";
     //#endregion
@@ -106,7 +108,7 @@ const EventsPage = () => {
         setWorking(false);
     };
     //#endregion
-    
+
     //#region Effects -------------------------------------
     useEffect(() => {
         const $root = document.getElementById("root");
@@ -154,18 +156,13 @@ const EventsPage = () => {
     //#endregion
 
     //#region DOM -----------------------------------------
-    return <main
-        ref={$mainRef}
-        onScroll={scrollToNextElement(working, scrollTop, $ulRef)}
-        onScrollEnd={updateScrollTop}
-        className="w-full"
-    >
+    return <main ref={$mainRef} onScroll={scrollToNextElement(working, scrollTop, $ulRef)} onScrollEnd={updateScrollTop} className="w-full">
         <RestaurantEventList
-            className="w-full"
             ref={$ulRef}
-            selectedEvent={parseInt(event_id ?? "0")}
-            mode="viewport"
+            className="w-full"
             disableLink
+            mode="viewport"
+            selectedEvent={parseInt(event_id ?? "0")}
         />
     </main>
     //#endregion
