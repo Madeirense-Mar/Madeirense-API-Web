@@ -65,7 +65,7 @@ const FlasherProvider = ({ children }: any) => {
     //#region Hooks and state declarations ----------------
     const $dialogRef = useRef<HTMLDialogElement | null>(null);
 
-    const [flasher, setFlasher] = useState<flasherEventType>("RESERVED_EVENT");
+    const [flasher, setFlasher] = useState<flasherEventType>("EMPTY");
     const [closeEvent, setCloseEvent] = useState<((event: Event) => void) | undefined>(undefined);
     //#endregion
 
