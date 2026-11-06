@@ -604,7 +604,7 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
                 try { Drivers = [...((await clients.restaurants.getAllAvailableDrivers({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }
                 try { Products = [...((await clients.products.getAll({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }
                 try { Restaurants = [...((await clients.restaurants.getAll()).data ?? [])]; } catch (error) { }
-                try { Restaurant_Events = (await clients["restaurant-events"].getAll({ limit: DEFAULT_MIN_LIMIT })).data ?? []; } catch (error) { }
+                try { Restaurant_Events = (await clients["restaurant-events"].getAll({ limit: DEFAULT_MIN_LIMIT, upcoming: "true" })).data ?? []; } catch (error) { }
 
                 dispatch({
                     type: "SET_APP", payload: {
