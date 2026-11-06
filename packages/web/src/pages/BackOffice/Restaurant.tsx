@@ -20,7 +20,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import RestaurantForm from "components/forms/add/restaurant";
+import RestaurantForm from "components/forms/restaurant/add";
 
 import RestaurantEventList from "components/lists/restaurantEvents";
 

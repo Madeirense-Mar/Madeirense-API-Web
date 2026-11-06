@@ -37,7 +37,7 @@ import Tag from "components/tags";
 import DescriptionLabel from "../elements/labels/description";
 import AddressSelect from "../elements/selects/address";
 
-import styles from "./restaurant.module.css";
+import styles from "./add.module.css";
 
 import type {
     IComponentState

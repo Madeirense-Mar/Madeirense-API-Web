@@ -33,7 +33,7 @@ import AppSettings from "settings";
 import DescriptionLabel from "../elements/labels/description";
 import RestaurantsSelector from "../elements/selects/restaurants";
 
-import styles from "./restaurantEvent.module.css";
+import styles from "./add.module.css";
 
 import type {
     IComponentState

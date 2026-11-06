@@ -8,13 +8,18 @@ import {
     resolveClassNames
 } from "@Madeirense/shared";
 
-import { useCart } from "contexts/Cart";
+import {
+    useCart
+} from "contexts/Cart";
+
 import Button from "components/buttons";
 import Icon from "components/icon";
 
-import styles from './cartQuantityControl.module.css';
-import { variantType } from "components/types";
+import styles from './quantityControls.module.css';
 
+import type { 
+    variantType
+} from "components/types";
 
 // ***************************************************************************************************************
 
@@ -89,7 +94,7 @@ const CartQuantityControlForm = ({
 
             setState("idle");
         } catch (error) {
-            // something happens here
+            // TODO: Implement error handling for cart changes
         }
     };
 

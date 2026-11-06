@@ -26,7 +26,7 @@ import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import CartQuantityControlForm from "components/forms/cartQuantityControl";
+import CartQuantityControlForm from "components/forms/cart/quantityControls";
 
 import styles from './product.module.css';
 

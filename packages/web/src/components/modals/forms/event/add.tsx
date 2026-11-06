@@ -4,7 +4,7 @@ import {
 
 import { useModal } from "contexts/Modal";
 
-import AddForm from "components/forms/add/restaurantEvent";
+import AddForm from "components/forms/restaurantEvent/add";
 
 // ***************************************************************************************************************
 
