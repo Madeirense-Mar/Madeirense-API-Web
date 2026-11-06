@@ -13,7 +13,7 @@ import {
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import styles from "./card.module.css";
+import styles from "./withoutNavigation.module.css";
 
 import type {
     $Enums,
