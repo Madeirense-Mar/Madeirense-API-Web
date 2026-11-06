@@ -184,14 +184,6 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
             </div>
         }
 
-        case (!restaurant_event): {
-            return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
-                <Icon name="NoSignal" className="text-9xl animate-pulse" />
-
-                O evento especificado não existe
-            </div>
-        }
-
         default: {
             switch (state) {
                 case "loading": {
@@ -203,8 +195,15 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                 }
 
                 default: {
+                    if (!restaurant_event)
+                        return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
+                            <Icon name="NoSignal" className="text-9xl animate-pulse" />
+
+                            O evento especificado não existe
+                        </div>;
+
                     return <>
-                        {restaurant_event && <section className={styles.info}>
+                        <section className={styles.info}>
                             <RestaurantEventCard
                                 className="w-full"
                                 restaurantEvent={restaurant_event}
@@ -217,7 +216,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                             <p className="w-full">
                                 {restaurant_event.description}
                             </p>
-                        </section>}
+                        </section>
 
                         {!Boolean(cart.length) && <div data-state="warning" className="w-full flex flex-row justify-center items-center gap-3 p-3">
                             <Icon name="Warning" className="text-2xl" />
