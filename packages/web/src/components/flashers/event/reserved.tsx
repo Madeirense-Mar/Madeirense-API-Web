@@ -38,7 +38,7 @@ import styles from "./reserved.module.css";
 // ***************************************************************************************************************
 
 //#region Default variables -------------------------------
-const componentName = RESERVED_EVENT_FLASHER.name;
+const COMPONENT_NAME = RESERVED_EVENT_FLASHER.name;
 //#endregion
 
 function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRef<"main">) {
@@ -55,7 +55,7 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
         restaurant_id,
         order_id,
         Order_Items = []
-    } = orders.at(-1) ?? {};
+    } = orders.at(0) ?? {};
 
     const {
         data,
@@ -63,10 +63,9 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
         error
     } = useQuery({
         queryKey: [
-            `${componentName}$GetMyTickets`,
+            `${COMPONENT_NAME}$GetMyTickets`,
             "my-tickets",
-            //{ order_id }
-            { order_id: 7 }
+            { order_id }
         ] as Queries$Types.itemQueryKey[],
         queryFn: ApplicationQueries.getList<myTicketType>
     });
@@ -80,6 +79,7 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
     const restaurant = get("Restaurants")?.find(r => r.restaurant_id === restaurant_id);
 
     const merchItems = Order_Items.filter(o => o.Products.product_type !== "ticket");
+
     //#endregion
 
     //#region DOM -----------------------------------------
@@ -100,15 +100,21 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
 
             <p>Mostra os seguintes códigos pelo aplicativo mobile</p>
 
-            <ul className={styles["qr-list"]}>
-                {(isFetching)
-                    ? <Icon name="Loading" className="animate-spin" />
+            {(error)
+                ? <div data-state="error" className="w-full flex flex-row justify-center items-center gap-3">
+                    {error.message}
+                </div>
 
-                    : (myTickets ?? []).map(t => <li key={t.ticket_id}>
-                        <QRCode value={`${t.token}`} />
-                    </li>)
-                }
-            </ul>
+                : <ul className={styles["qr-list"]}>
+                    {(isFetching)
+                        ? <Icon name="Loading" className="animate-spin" />
+
+                        : (myTickets ?? []).map(t => <li key={t.ticket_id}>
+                            <QRCode value={`${t.token}`} />
+                        </li>)
+                    }
+                </ul>
+            }
         </section>
 
         {Boolean(merchItems.length) && <section>
