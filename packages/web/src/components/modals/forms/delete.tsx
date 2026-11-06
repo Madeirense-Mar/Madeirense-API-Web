@@ -104,13 +104,15 @@ const List = ({
     }
 };
 
-const DeletionForm = ({
+const COMPONENT_NAME = DeletionForm.name;
+
+function DeletionForm ({
     callback,
     item,
     itemId,
     requireAuthentication = false,
     ...props
-}: IPropTypes) => {
+}: IPropTypes) {
     const CERTAINTY_KEY = "Tenho a certeza";
 
     const {
@@ -147,7 +149,7 @@ const DeletionForm = ({
         data,
         isFetching
     } = useQuery({
-        queryKey: ["App$GetUserProcesses", itemId],
+        queryKey: [`${COMPONENT_NAME}$GetUserProcesses`, itemId],
         queryFn: ({ queryKey }) => users.getOngoingProcess(queryKey[1] as number),
         enabled: ["profile", "user"].includes(item)
     })

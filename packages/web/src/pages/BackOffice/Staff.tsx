@@ -66,6 +66,8 @@ type stateType = {
 
 type userStateType = "active" | "blocked";
 
+const PAGE_NAME = BackOfficeStaffPage.name;
+
 function BackOfficeStaffPage({ className, ...props }: ComponentProps<"main">) {
     const navigate = useNavigate();
 
@@ -77,7 +79,7 @@ function BackOfficeStaffPage({ className, ...props }: ComponentProps<"main">) {
     const { Storage } = useMemo(() => MXP$App, []);
 
     const [page, updatePage] = useState<IPageState<stateType>>({
-        data: null,
+        data: {},
         error: null,
         status: "idle"
     });
@@ -88,7 +90,7 @@ function BackOfficeStaffPage({ className, ...props }: ComponentProps<"main">) {
         refetch
     } = useQuery({
         queryKey: ([
-            "App$GetAllStaff",
+            `${PAGE_NAME}$GetAllStaff`,
             "staff",
             page.data?.params
         ] as Queries$Types.itemQueryKey[]),

@@ -48,7 +48,9 @@ type filterType = {
     restaurant: number;
 };
 
-const _defaultFilter: filterType = {
+const COMPONENT_NAME = TicketBuyersList.name;
+
+const DEFAULT_FILTER: filterType = {
     event_id: 0,
     payment_status: "",
     restaurant: 0
@@ -64,7 +66,7 @@ function TicketBuyersList(_props: IPropTypes) {
     } = _props;
 
     const defaultFilter = {
-        ..._defaultFilter,
+        ...DEFAULT_FILTER,
         ...!defaultEvent ? {} : { event_id: defaultEvent }
     };
 
@@ -79,7 +81,11 @@ function TicketBuyersList(_props: IPropTypes) {
         isFetchingNextPage,
         status,
     } = useInfiniteQuery({
-        queryKey: ["App$EventTicketBuyers", "tickets", !defaultEvent ? undefined : { event_id: `${defaultEvent}` } as Madeirense$Types.searchQueryRecord],
+        queryKey: [
+            `${COMPONENT_NAME}$EventTicketBuyers`, 
+            "tickets", 
+            !defaultEvent ? undefined : { event_id: `${defaultEvent}` } as Madeirense$Types.searchQueryRecord
+        ],
         queryFn: ({ queryKey }) => ApplicationQueries.getList<boughtTicketType>({ queryKey }),
         getNextPageParam: (lastPage) => {
             return lastPage.pagination?.hasNext

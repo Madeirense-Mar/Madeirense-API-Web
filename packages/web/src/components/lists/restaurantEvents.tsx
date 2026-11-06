@@ -50,7 +50,9 @@ type filterType = {
     restaurant: number
 };
 
-const _defaultFilter: filterType = {
+const COMPONENT_NAME = RestaurantEventList.name;
+
+const DEFAULT_FILTER: filterType = {
     recency: "",
     restaurant: 0
 };
@@ -66,7 +68,7 @@ function RestaurantEventList(_props: IPropTypes) {
     } = _props;
 
     const defaultFilter = {
-        ..._defaultFilter,
+        ...DEFAULT_FILTER,
         ...!defaultRestaurant ? {} : { restaurant: defaultRestaurant }
     };
 
@@ -82,7 +84,7 @@ function RestaurantEventList(_props: IPropTypes) {
         status,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetRestaurantEvents",
+            `${COMPONENT_NAME}$GetRestaurantEvents`,
             "events",
             !defaultRestaurant ? {} : { restaurant_id: `${defaultRestaurant}` }
         ] as Queries$Types.itemQueryKey[]),

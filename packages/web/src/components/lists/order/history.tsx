@@ -35,11 +35,13 @@ interface IPropTypes extends ComponentProps<"ul"> {
     order_id: number
 };
 
-const OrderHistoryList = ({
+const COMPONENT_NAME = OrderHistoryList.name;
+
+function OrderHistoryList ({
     className: cn,
     order_id,
     ..._props
-}: IPropTypes) => {
+}: IPropTypes) {
     const props = {
         className: resolveClassNames(styles.list, cn),
         ..._props
@@ -57,7 +59,7 @@ const OrderHistoryList = ({
         isFetching,
         refetch
     } = useQuery({
-        queryKey: ["OrderHistoryList$History", order_id],
+        queryKey: [`${COMPONENT_NAME}$History`, order_id],
         queryFn: async ({ queryKey }) => await orders.getHistory(queryKey[1] as number)
     });
 

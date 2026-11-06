@@ -51,7 +51,9 @@ import type {
     Users
 } from "@Madeirense/database/browser";
 
-import type { variantType } from "components/types";
+import type { 
+    variantType
+} from "components/types";
 
 // ***************************************************************************************************************
 
@@ -62,6 +64,8 @@ type actionType = (
     | "req_realloc"
     | "delete"
 );
+
+const PAGE_NAME = UserPanel.name;
 
 function UserPanel({ id }: { id: number }) {
     const { users } = useMemo(() => MXP$App.Base.Business.endpoints, []);
@@ -81,7 +85,7 @@ function UserPanel({ id }: { id: number }) {
         refetch
     } = useSuspenseQuery({
         queryKey: ([
-            "App$GetUser",
+            `${PAGE_NAME}$GetUser`,
             "staff",
             id
         ] as Queries$Types.queryKey[]),
@@ -94,7 +98,7 @@ function UserPanel({ id }: { id: number }) {
         refetch: refetchOrders
     } = useQuery({
         queryKey: ([
-            "App$GetCourierOrders",
+            `${PAGE_NAME}$GetCourierOrders`,
             "orders",
             {
                 "courier_id": user?.user_id

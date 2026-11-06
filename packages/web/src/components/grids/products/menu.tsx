@@ -88,6 +88,8 @@ const DEFAULT_COMPOSITION_FILTERS = {
     vegan: false,
     wheat: false
 };
+
+const COMPONENT_NAME = ProductsMenuGrid.name;
 //#endregion
 
 function ProductsMenuGrid({
@@ -127,7 +129,7 @@ function ProductsMenuGrid({
         refetch,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetAllProducts",
+            `${COMPONENT_NAME}$GetAllProducts`,
             type,
             !group ? undefined : ({ group } as Madeirense$Types.searchQueryRecord)
         ]),

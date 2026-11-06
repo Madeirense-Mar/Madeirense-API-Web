@@ -43,6 +43,8 @@ import Button from "components/buttons";
 
 // ***************************************************************************************************************
 
+const PAGE_NAME = BackOfficeDeliveriesPage.name;
+
 function BackOfficeDeliveriesPage({ className, ...props }: ComponentProps<"main">) {
     const { Storage } = useMemo(() => MXP$App, []);
 
@@ -52,7 +54,7 @@ function BackOfficeDeliveriesPage({ className, ...props }: ComponentProps<"main"
         refetch,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetOngoingDeliveries",
+            `${PAGE_NAME}$GetOngoingDeliveries`,
             "orders",
             {
                 statuses: ["assigned"] as $Enums.Orders_status[],

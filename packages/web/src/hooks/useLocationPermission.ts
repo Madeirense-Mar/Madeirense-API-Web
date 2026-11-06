@@ -23,7 +23,9 @@ import { useProfile } from "contexts/Profile";
 
 // ***************************************************************************************************************
 
-const useLocationPermission = () => {
+const HOOK_NAME = useLocationPermission.name;
+
+function useLocationPermission () {
     const { flash } = useFlasher();
     const { push } = useNotifications();
 
@@ -46,7 +48,7 @@ const useLocationPermission = () => {
     const navigate = useNavigate();
 
     const { data: hasCredentials } = useQuery({
-        queryKey: ["App$CheckCredentials"],
+        queryKey: [`${HOOK_NAME}$CheckCredentials`],
         queryFn: () => authentication.hasCredentials(),
         enabled: !!user
     });

@@ -45,6 +45,8 @@ interface IPropTypes extends ComponentProps<"ul"> {
     trackAppUpdates?: boolean;
 };
 
+const COMPONENT_NAME = ProductCommentsList.name;
+
 function ProductCommentsList(_props: IPropTypes) {
     const {
         className,
@@ -74,7 +76,7 @@ function ProductCommentsList(_props: IPropTypes) {
         refetch,
         status,
     } = useInfiniteQuery({
-        queryKey: ["App$GetProductComments", product_id],
+        queryKey: [`${COMPONENT_NAME}$GetProductComments`, product_id],
         queryFn: ({ queryKey }) => products.getComments(queryKey[1] as number),
         getNextPageParam: (lastPage) => {
             return lastPage.pagination?.hasNext

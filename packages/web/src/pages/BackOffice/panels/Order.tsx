@@ -61,6 +61,8 @@ import "./Order.css";
 
 // ***************************************************************************************************************
 
+const PAGE_NAME = OrderPanel.name;
+
 function OrderPanel({ id }: { id: number }) {
     const {
         fetch,
@@ -94,7 +96,7 @@ function OrderPanel({ id }: { id: number }) {
         refetch,
     } = useSuspenseQuery({
         queryKey: ([
-            "App$GetOrder",
+            `${PAGE_NAME}$GetOrder`,
             "order",
             id
         ] as Queries$Types.queryKey[]),

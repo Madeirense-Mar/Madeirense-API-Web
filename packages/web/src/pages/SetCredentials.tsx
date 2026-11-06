@@ -31,6 +31,8 @@ import "./SetCredentials.css";
 
 // ***************************************************************************************************************
 
+const PAGE_NAME = SetCredentialsPage.name;
+
 function SetCredentialsPage() {
     const {
         Routing
@@ -49,7 +51,7 @@ function SetCredentialsPage() {
         isFetching,
         refetch
     } = useQuery({
-        queryKey: ["App$CheckCredentials"],
+        queryKey: [`${PAGE_NAME}$CheckCredentials`],
         queryFn: () => authentication.hasCredentials(),
         enabled: !!user
     });

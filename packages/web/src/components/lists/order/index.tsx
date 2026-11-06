@@ -79,13 +79,15 @@ export namespace OrderList$Types {
     export type status = (keyof typeof OrderList$Enumerators.Statuses);
 };
 
-const _defaultFilter: OrderList$Types.filter = {
+const COMPONENT_NAME = OrdersList.name;
+
+const DEFAULT_FILTER: OrderList$Types.filter = {
     payment: "",
     restaurant: 0,
     status: ""
 };
 
-const filters: Record<OrderList$Types.status, ReadonlyArray<$Enums.Orders_status>> = {
+const LIST_FILTERS: Record<OrderList$Types.status, ReadonlyArray<$Enums.Orders_status>> = {
     "all": ORDERS_STATUS,
     "delivering": ["assigned"],
     "ongoing": ORDERS_PREPARATION_STATUS
@@ -113,7 +115,7 @@ function OrdersList(_props: IPropTypes) {
     } = Base.Business.endpoints;
 
     const defaultFilter = {
-        ..._defaultFilter,
+        ...DEFAULT_FILTER,
         ...((!defaultRestaurant) ? {} : { restaurant: defaultRestaurant })
     };
 
@@ -130,7 +132,7 @@ function OrdersList(_props: IPropTypes) {
         status,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetAllOrders",
+            `${COMPONENT_NAME}$GetAllOrders`,
             type,
             { "type": filter } as Madeirense$Types.searchQueryRecord
         ] as Queries$Types.itemQueryKey[]),
@@ -220,7 +222,7 @@ function OrdersList(_props: IPropTypes) {
             const list = (data?.pages.flatMap(page => page.data) || [])
                 .filter(item => defaultRestaurant ? (item?.restaurant_id === defaultRestaurant) : (listFilter.restaurant === 0) ? true : (item?.restaurant_id === listFilter.restaurant))
                 .filter(item => listFilter.payment === "" ? true : (item?.Payments[0].payment_method === listFilter.payment))
-                .filter(item => filters[statusType].includes(item?.status as $Enums.Orders_status))
+                .filter(item => LIST_FILTERS[statusType].includes(item?.status as $Enums.Orders_status))
                 .filter(item => listFilter.status === "" ? true : (item?.status === listFilter.status))
                 ;
 
@@ -280,7 +282,7 @@ const HeaderListItem = ({
 }) => {
     const { get } = useApp();
 
-    const headerFilters = [
+    const headerLIST_FILTERS = [
         {
             id: "restaurant",
             type: "number",
@@ -305,18 +307,18 @@ const HeaderListItem = ({
             title: "Tipo de ordem",
             options: [
                 { id: "Todos os tipos", value: "" },
-                ...filters[statusType].map(item => ({ value: item, id: getLabel(item) }))
+                ...LIST_FILTERS[statusType].map(item => ({ value: item, id: getLabel(item) }))
             ]
         }
     ];
 
-    function clearFilters() {
+    function clearLIST_FILTERS() {
         setter(defaultFilter);
 
-        headerFilters.forEach(({ id, options }) => (document.getElementById(id) as HTMLSelectElement).value = options[0].value.toString());
+        headerLIST_FILTERS.forEach(({ id, options }) => (document.getElementById(id) as HTMLSelectElement).value = options[0].value.toString());
     };
 
-    function handleChange(filter: typeof headerFilters[0]) {
+    function handleChange(filter: typeof headerLIST_FILTERS[0]) {
         return (e: ChangeEvent<HTMLSelectElement>) => setter(lf => {
             return {
                 ...lf,
@@ -328,7 +330,7 @@ const HeaderListItem = ({
     return <li data-type="filter" className="w-full flex flex-row justify-start items-center gap-3">
         <Icon name="Filter" />
 
-        {headerFilters.map(f => <select
+        {headerLIST_FILTERS.map(f => <select
             defaultValue={((f.id === "restaurant") && (defaultRestaurant !== undefined))
                 ? `${defaultRestaurant}`
                 : f.options[0].value
@@ -344,7 +346,7 @@ const HeaderListItem = ({
             </option>)}
         </select>)}
 
-        <Button onClick={clearFilters} variant="secondary" className="ml-auto">
+        <Button onClick={clearLIST_FILTERS} variant="secondary" className="ml-auto">
             <Icon name="Close" />
         </Button>
     </li>

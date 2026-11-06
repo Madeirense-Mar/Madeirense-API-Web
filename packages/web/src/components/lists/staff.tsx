@@ -52,7 +52,9 @@ type filterType = {
     restaurant: number
 };
 
-const _defaultFilter: filterType = {
+const COMPONENT_NAME = StaffList.name;
+
+const DEFAULT_FILTER: filterType = {
     user_role: "",
     restaurant: 0
 };
@@ -66,7 +68,7 @@ function StaffList(_props: IPropTypes) {
     } = _props;
 
     const defaultFilter = {
-        ..._defaultFilter,
+        ...DEFAULT_FILTER,
         ...!defaultRestaurantId ? {} : { restaurant: defaultRestaurantId }
     };
 
@@ -82,7 +84,7 @@ function StaffList(_props: IPropTypes) {
         status,
     } = useInfiniteQuery({
         queryKey: ([
-            "App$GetRestaurantStaff", 
+            `${COMPONENT_NAME}$GetRestaurantStaff`, 
             "staff", 
             { restaurant_id: `${defaultRestaurantId}` }
         ] as Queries$Types.itemQueryKey[]),

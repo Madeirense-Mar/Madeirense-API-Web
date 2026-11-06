@@ -51,6 +51,8 @@ type statusType = (
     )}`
 );
 
+const COMPONENT_NAME = OrderChatForm.name;
+
 function OrderChatForm(_props: IPropTypes) {
     const {
         className,
@@ -89,7 +91,7 @@ function OrderChatForm(_props: IPropTypes) {
         isFetching,
         refetch
     } = useQuery({
-        queryKey: ["OrderChatForm$ChatMessages", order_id],
+        queryKey: [`${COMPONENT_NAME}$ChatMessages`, order_id],
         queryFn: async ({ queryKey }) => await orders.getChatMessages(queryKey[1] as number)
     });
 

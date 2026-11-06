@@ -33,6 +33,8 @@ interface IPropTypes extends ComponentProps<"article"> {
     slug: legalDocumentSlugType
 };
 
+const COMPONENT_NAME = LegalDocumentView.name;
+
 /**
  * Renders a legal document served by `GET /v1/legal/:slug`. The markdown
  * comes from the API (`api/content/legal/<slug>.md`) — never keep a copy
@@ -50,7 +52,7 @@ function LegalDocumentView({
         refetch
     } = useQuery({
         queryKey: ([
-            "App$GetLegalDocument$LegalPage",
+            `${COMPONENT_NAME}$GetLegalDocument$LegalPage`,
             "legal",
             slug
         ] as Queries$Types.queryKey[]),

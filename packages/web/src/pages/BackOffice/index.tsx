@@ -76,11 +76,13 @@ type queryType = (
 
 type stateType = Record<queryType, fetchOptionsType>;
 
-const defaultFetchOptions = {
+const DEFAULT_FETCH_OPTIONS = {
     query: undefined,
 };
 
-const defaultLoadShadowNumber = 1;
+const DEFAULT_LOAD_SHADOW_NUMBER = 1;
+
+const PAGE_NAME = BackOfficeDashboardPage.name;
 
 function BackOfficeDashboardPage() {
     const {
@@ -100,39 +102,39 @@ function BackOfficeDashboardPage() {
 
     const [page, updatePage] = useState<IPageState<stateType>>({
         data: {
-            "OrderCountPerRestaurant": defaultFetchOptions,
+            "OrderCountPerRestaurant": DEFAULT_FETCH_OPTIONS,
             "OrdersPerInterval": {
-                ...defaultFetchOptions,
+                ...DEFAULT_FETCH_OPTIONS,
                 query: {
-                    ...(defaultFetchOptions.query ?? {}),
+                    ...(DEFAULT_FETCH_OPTIONS.query ?? {}),
                     interval: "monthly",
                     month: (new Date().getMonth()).toString(),
                     year: (new Date().getFullYear()).toString()
                 }
             },
             "TopSellingProducts": {
-                ...defaultFetchOptions,
+                ...DEFAULT_FETCH_OPTIONS,
                 query: {
-                    ...(defaultFetchOptions.query ?? {}),
+                    ...(DEFAULT_FETCH_OPTIONS.query ?? {}),
                     quantity: DEFAULT_API_LIST_LIMIT.toString()
                 }
             },
             "TopOrderAreas": {
-                ...defaultFetchOptions,
+                ...DEFAULT_FETCH_OPTIONS,
                 query: {
-                    ...(defaultFetchOptions.query ?? {}),
+                    ...(DEFAULT_FETCH_OPTIONS.query ?? {}),
                     group_by: "neighborhood",
                     quantity: DEFAULT_API_LIST_LIMIT.toString()
                 }
             },
             "TopCouriers": {
-                ...defaultFetchOptions,
+                ...DEFAULT_FETCH_OPTIONS,
                 query: {
-                    ...(defaultFetchOptions.query ?? {}),
+                    ...(DEFAULT_FETCH_OPTIONS.query ?? {}),
                     quantity: DEFAULT_API_LIST_LIMIT.toString()
                 }
             },
-            "CouponsUseCount": defaultFetchOptions,
+            "CouponsUseCount": DEFAULT_FETCH_OPTIONS,
         },
         error: null,
         status: "idle",
@@ -156,7 +158,7 @@ function BackOfficeDashboardPage() {
         queries: [
             {
                 queryKey: [
-                    "App$OrderCountPerRestaurant",
+                    `${PAGE_NAME}$OrderCountPerRestaurant`,
                     DB$Enumerators.Tables.Restaurants,
                     DB$Enumerators.Tables.Orders,
                     page.data?.OrderCountPerRestaurant.query
@@ -170,7 +172,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$OrdersPerInterval",
+                    `${PAGE_NAME}$OrdersPerInterval`,
                     DB$Enumerators.Tables.Orders,
                     Madeirense$Enumerators.StatisticsParameters.Fact.revenue,
                     page.data?.OrdersPerInterval
@@ -183,7 +185,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$OrderCountPerState",
+                    `${PAGE_NAME}$OrderCountPerState`,
                     DB$Enumerators.Tables.Orders
                 ],
                 queryFn: ({ queryKey }) => statistics.countTablePerColumn<keyof Orders>(
@@ -193,7 +195,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$ProductCountPerState",
+                    `${PAGE_NAME}$ProductCountPerState`,
                     DB$Enumerators.Tables.Products
                 ],
                 queryFn: ({ queryKey }) => statistics.countTablePerColumn<keyof Products>(
@@ -203,7 +205,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$TopSellingProducts",
+                    `${PAGE_NAME}$TopSellingProducts`,
                     DB$Enumerators.Tables.Products,
                     DB$Enumerators.Tables.Orders,
                     page.data?.TopSellingProducts
@@ -216,7 +218,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$TopOrderAreas",
+                    `${PAGE_NAME}$TopOrderAreas`,
                     DB$Enumerators.Tables.Delivery_Locations,
                     DB$Enumerators.Tables.Orders,
                     page.data?.TopOrderAreas
@@ -229,7 +231,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$TopCouriers",
+                    `${PAGE_NAME}$TopCouriers`,
                     DB$Enumerators.Tables.Users,
                     DB$Enumerators.Tables.Orders,
                     page.data?.TopCouriers
@@ -242,7 +244,7 @@ function BackOfficeDashboardPage() {
             },
             {
                 queryKey: [
-                    "App$CouponsUseCount",
+                    `${PAGE_NAME}$CouponsUseCount`,
                     DB$Enumerators.Tables.Coupons,
                     DB$Enumerators.Tables.Orders,
                     Madeirense$Enumerators.StatisticsParameters.Actions.use,
@@ -350,7 +352,7 @@ function BackOfficeDashboardPage() {
         const [
             property,
             type
-        ] = $element.dataset.property?.split('$') as [queryType, keyof (typeof defaultFetchOptions)];
+        ] = $element.dataset.property?.split('$') as [queryType, keyof (typeof DEFAULT_FETCH_OPTIONS)];
 
         const parameter = $element.name;
 
@@ -448,7 +450,7 @@ function BackOfficeDashboardPage() {
                                 {error6.message}
                             </li>}
 
-                            {isFetching6 && <>{Array.from(Array(defaultLoadShadowNumber), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
+                            {isFetching6 && <>{Array.from(Array(DEFAULT_LOAD_SHADOW_NUMBER), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
                                 <Tag className='bg-gray-100/20 animate-pulse'>
                                     <span className='opacity-0'>#{num}</span>
 
@@ -507,7 +509,7 @@ function BackOfficeDashboardPage() {
                                 {error7.message}
                             </li>}
 
-                            {isFetching7 && <>{Array.from(Array(defaultLoadShadowNumber), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
+                            {isFetching7 && <>{Array.from(Array(DEFAULT_LOAD_SHADOW_NUMBER), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
                                 <Tag className='bg-gray-100/20 animate-pulse'>
                                     <span className='opacity-0'>#{num}</span>
 
@@ -564,7 +566,7 @@ function BackOfficeDashboardPage() {
                                 {error8.message}
                             </li>}
 
-                            {isFetching8 && <>{Array.from(Array(defaultLoadShadowNumber), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
+                            {isFetching8 && <>{Array.from(Array(DEFAULT_LOAD_SHADOW_NUMBER), (_, idx) => (idx + 1)).map(num => <li key={num} className='bg-gray-50/20 animate-pulse'>
                                 <Tag className='bg-gray-100/20 animate-pulse'>
                                     <span className='opacity-0'>#{num}</span>
 

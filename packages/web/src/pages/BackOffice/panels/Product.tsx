@@ -74,6 +74,8 @@ const {
 } = dependencies["@uploadcare/react-uploader"];
 
 const DELAY_MS = 2500;
+
+const PAGE_NAME = ProductPanel.name;
 //#endregion
 
 defineLocale('pt', async () => {
@@ -112,7 +114,7 @@ function ProductPanel({ id }: { id: number }) {
         isFetching
     } = useQuery({
         queryKey: ([
-            "App$GetProduct$BackofficePanel",
+            `${PAGE_NAME}$GetProduct$BackofficePanel`,
             "product",
             id
         ] as Queries$Types.queryKey[]),
