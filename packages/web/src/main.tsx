@@ -1,4 +1,6 @@
-//#region Styles ------------------------------------------
+//#region Imports -----------------------------------------
+
+//#region Styles
 
 //#region External styles
 import "@uploadcare/react-uploader/core.css";
@@ -6,11 +8,13 @@ import "@uploadcare/react-uploader/core.css";
 
 //#region App styles
 import "styles/tailwind.css";
+
 import "styles/global.css";
 import "styles/root.css";
 import "styles/page.css";
 import "styles/state.css";
 import "styles/table.css";
+
 import "styles/form/inputs.css";
 import "styles/form/fieldset.css";
 import "styles/form/label.css";
@@ -25,9 +29,9 @@ import "styles/card.css";
 
 //#endregion
 
-//#region Imports -----------------------------------------
-
 import ReactDOM from "react-dom/client";
+
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -101,6 +105,8 @@ root.render(
         <AppContextProvider props={providerProps} {...{ providers }}>
             <AppRouter />
         </AppContextProvider>
+
+        <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
 );
 
