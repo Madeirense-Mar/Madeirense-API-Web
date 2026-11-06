@@ -196,7 +196,7 @@ const EventsCheckoutPage = () => {
                         return <div data-state="warning" className="w-full flex flex-col justify-center items-center gap-2 h-full">
                             <Icon name="NoSignal" className="text-9xl animate-pulse" />
 
-                            O evento especificado não existe
+                            O evento especificado já ocorreu ou não existe
                         </div>
 
                     return <>
