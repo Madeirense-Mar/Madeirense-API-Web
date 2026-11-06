@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     ChangeEvent,
     useCallback,
@@ -35,9 +36,11 @@ import { nextPageTriggerSetup } from "./utilities/functions";
 
 import defaultStyles from "./list.module.css";
 import styles from "./restaurantEvents.module.css";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 interface IPropTypes extends ComponentProps<"ul"> {
     defaultRestaurant?: number;
     disableLink?: boolean;
@@ -49,24 +52,26 @@ type filterType = {
     recency: withEmptyString<"upcoming" | "soon">,
     restaurant: number
 };
+//#endregion
 
+//#region Variable declarations ---------------------------
 const COMPONENT_NAME = RestaurantEventList.name;
 
 const DEFAULT_FILTER: filterType = {
     recency: "",
     restaurant: 0
 };
+//#endregion
 
-function RestaurantEventList(_props: IPropTypes) {
-    const {
-        className,
-        defaultRestaurant,
-        disableLink = false,
-        mode = "list",
-        selectedEvent = 0,
-        ...props
-    } = _props;
-
+function RestaurantEventList({
+    className,
+    defaultRestaurant,
+    disableLink = false,
+    mode = "list",
+    selectedEvent = 0,
+    ...props
+}: IPropTypes) {
+    //#region Hooks and state declarations ----------------
     const defaultFilter = {
         ...DEFAULT_FILTER,
         ...!defaultRestaurant ? {} : { restaurant: defaultRestaurant }
@@ -86,7 +91,12 @@ function RestaurantEventList(_props: IPropTypes) {
         queryKey: ([
             `${COMPONENT_NAME}$GetRestaurantEvents`,
             "events",
-            !defaultRestaurant ? {} : { restaurant_id: `${defaultRestaurant}` }
+            {
+                "upcoming": "true",
+                ...(!defaultRestaurant)
+                    ? {}
+                    : { restaurant_id: `${defaultRestaurant}` }
+            }
         ] as Queries$Types.itemQueryKey[]),
         queryFn: ApplicationQueries.getList<restaurantEventType>,
         getNextPageParam: (lastPage) => {
@@ -106,10 +116,12 @@ function RestaurantEventList(_props: IPropTypes) {
         }),
         [fetchNextPage, hasNextPage, isFetchingNextPage, isFetching]
     );
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const $liHeaderProps = {
         defaultRestaurant,
-        defaultFilter: defaultFilter,
+        defaultFilter,
         setter: setListFilter
     };
 
@@ -117,7 +129,9 @@ function RestaurantEventList(_props: IPropTypes) {
         className: resolveClassNames(styles[mode], className),
         ...props
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         if (selectedEvent === 0) return;
 
@@ -127,25 +141,31 @@ function RestaurantEventList(_props: IPropTypes) {
 
         $element.scrollIntoView({ behavior: "smooth", block: "start" });
     }, [selectedEvent]);
+    //#endregion
 
+    //#region DOM -----------------------------------------
     switch (status) {
-        case "error": return (<ul {...$ulProps}>
-            {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
+        case "error": {
+            return <ul {...$ulProps}>
+                {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
 
-            <li data-state="error" className="rounded-md flex flex-row justify-start items-center gap-2 px-2">
-                <Icon name="ExclamationCircle" />
+                <li data-state="error" className="rounded-md flex flex-row justify-start items-center gap-2 px-2">
+                    <Icon name="ExclamationCircle" />
 
-                <p>{error?.message}</p>
-            </li>
-        </ul>);
+                    <p>{error?.message}</p>
+                </li>
+            </ul>
+        }
 
-        case "pending": return (<ul {...$ulProps}>
-            {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
+        case "pending": {
+            return <ul {...$ulProps}>
+                {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
 
-            <li>
-                <Icon name="Loading" className="animate-spin mx-auto my-4" />
-            </li>
-        </ul>);
+                <li>
+                    <Icon name="Loading" className="animate-spin mx-auto my-4" />
+                </li>
+            </ul>
+        }
 
         default: {
             const _list = data?.pages.flatMap(page => page.data) || [];
@@ -294,6 +314,7 @@ const HeaderListItem = ({
             <Icon name="Close" />
         </Button>
     </li>
+    //#endregion
 };
 
 export default RestaurantEventList;
