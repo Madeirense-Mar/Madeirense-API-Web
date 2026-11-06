@@ -3,7 +3,9 @@ import {
     ClientRequestService,
 } from "@Madeirense/shared";
 
-import { CrossPlatformStorageManager } from "services/storage/managers";
+import {
+    CrossPlatformStorageManager
+} from "services/storage/managers";
 
 import AuthenticationEndpoints from "./endpoints/authentication";
 import CartEndpoints from "./endpoints/cart";
@@ -58,24 +60,24 @@ class BaseAPIService extends APIService {
         this.client = this.getClient();
 
         this.endpoints = {
-            "authentication"    : new AuthenticationEndpoints(this.client, this.storage),
-            "carts"             : new CartEndpoints(this.client, this.storage),
-            "comments"          : new CommentsEndpoints(this.client, this.storage),
-            "coupons"           : new CouponsEndpoints(this.client, this.storage),
-            "courier-positions" : new CourierPositionsEndpoints(this.client, this.storage),
-            "delivery-locations": new DeliveryLocationsEndpoints(this.client, this.storage),
-            "global-settings"   : new GlobalSettingsEndpoints(this.client, this.storage),
-            "legal"             : new LegalEndpoints(this.client, this.storage),
-            "orders"            : new OrdersEndpoints(this.client, this.storage),
-            "payments"          : new PaymentsEndpoints(this.client, this.storage),
-            "products"          : new ProductsEndpoints(this.client, this.storage),
-            "push-notifications": new PushNotificationsEndpoints(this.client, this.storage),
-            "resorts"           : new ResortsEndpoints(this.client, this.storage),
-            "restaurants"       : new RestaurantsEndpoints(this.client, this.storage),
-            "restaurant-events" : new RestaurantEventsEndpoints(this.client, this.storage),
-            "reviews"           : new ReviewsEndpoints(this.client, this.storage),
-            "statistics"        : new StatisticsEndpoints(this.client, this.storage),
-            "users"             : new UsersEndpoints(this.client, this.storage),
+            "authentication"     : new AuthenticationEndpoints(this.client, this.storage),
+            "carts"              : new CartEndpoints(this.client, this.storage),
+            "comments"           : new CommentsEndpoints(this.client, this.storage),
+            "coupons"            : new CouponsEndpoints(this.client, this.storage),
+            "courier-positions"  : new CourierPositionsEndpoints(this.client, this.storage),
+            "delivery-locations" : new DeliveryLocationsEndpoints(this.client, this.storage),
+            "global-settings"    : new GlobalSettingsEndpoints(this.client, this.storage),
+            "legal"              : new LegalEndpoints(this.client, this.storage),
+            "orders"             : new OrdersEndpoints(this.client, this.storage),
+            "payments"           : new PaymentsEndpoints(this.client, this.storage),
+            "products"           : new ProductsEndpoints(this.client, this.storage),
+            "push-notifications" : new PushNotificationsEndpoints(this.client, this.storage),
+            "resorts"            : new ResortsEndpoints(this.client, this.storage),
+            "restaurants"        : new RestaurantsEndpoints(this.client, this.storage),
+            "restaurant-events"  : new RestaurantEventsEndpoints(this.client, this.storage),
+            "reviews"            : new ReviewsEndpoints(this.client, this.storage),
+            "statistics"         : new StatisticsEndpoints(this.client, this.storage),
+            "users"              : new UsersEndpoints(this.client, this.storage),
         }
     }    
 };
