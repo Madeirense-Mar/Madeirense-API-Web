@@ -84,21 +84,23 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
 
     //#region DOM -----------------------------------------
     return <main className={resolveClassNames(styles.main, className)} {...props}>
-        <h1>Reservado!</h1>
+        <section>
+            <h1>Reservado!</h1>
 
-        <p>Reservamos os teu ingresso no restaurante </p>
+            <p>Reservamos os teu ingresso no restaurante </p>
 
-        {(restaurant)
-            ? <RestaurantCardWithoutNavigation className="w-full" {...{ restaurant }} />
-            : <Icon name="Loading" className="animate-spin" />
-        }
+            {(restaurant)
+                ? <RestaurantCardWithoutNavigation className="w-full" {...{ restaurant }} />
+                : <Icon name="Loading" className="animate-spin" />
+            }
+        </section>
 
-        <h2>Ingressos</h2>
+        <section>
+            <h2>Ingressos</h2>
 
-        <p>Mostra os seguintes códigos pelo aplicativo mobile</p>
+            <p>Mostra os seguintes códigos pelo aplicativo mobile</p>
 
-        <section className={resolveClassNames(styles["qr-section"], "w-full")}>
-            <ul>
+            <ul className={styles["qr-list"]}>
                 {(isFetching)
                     ? <Icon name="Loading" className="animate-spin" />
 
@@ -109,14 +111,16 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
             </ul>
         </section>
 
-        {Boolean(merchItems.length) && <>
+        {Boolean(merchItems.length) && <section>
             <h2>Merchandise</h2>
 
             <p>Com o scan do ingresso tens o direito de receber</p>
 
-            <table className="w-full">
+            <table className={resolveClassNames(styles["merch-table"], "w-full")}>
                 <thead>
                     <tr>
+                        <th>Imagem</th>
+
                         <th>Nome</th>
 
                         <th>Descrição</th>
@@ -129,17 +133,22 @@ function RESERVED_EVENT_FLASHER({ className, ...props }: ComponentPropsWithoutRe
 
                 <tbody>
                     {merchItems.map(item => <tr key={item.item_id}>
+                        <td>
+                            <div style={{ "backgroundImage": `url(${item.Products.thumbnail ?? "#"})` }} data-type="thumbnail">
+                            </div>
+                        </td>
+
                         <td>{item.Products.name}</td>
 
                         <td>{item.Products.description}</td>
 
                         <td className="text-right">{`${item.Products.price}`}</td>
-                        
+
                         <td className="text-right">{`x${item.quantity}`}</td>
                     </tr>)}
                 </tbody>
             </table>
-        </>}
+        </section>}
     </main>
     //#endregion
 };

@@ -2,32 +2,37 @@
 .main {
     @apply flex flex-col justify-start items-center;
 
-    gap: var(--gap-xl);
+    gap: 60px;
 }
+
+.main>section {
+    --section-overflow: visible;
+    --section-background-color: transparent;
+    --section-padding: 0px;
+    
+    @apply flex flex-col justify-start items-center;
+
+    gap: var(--gap-m);
+
+    width: 100%;
+}
+
 /*#endregion*/
 
 /*#region Sections ======================================== */
-.qr-section {
-    @apply flex flex-col justify-center items-center;
-
-    --section-overflow: visible;
-
-    min-height: 340px;
-}
-
-.qr-section ul {
+.qr-list {
     --width: 100%;
 
     @apply flex flex-row justify-center items-center;
 
     height: max-content;
 
-    gap: var(--gap-m);
+    gap: inherit;
 
     width: var(--width);
 }
 
-.qr-section ul li {
+.qr-list li {
     padding: var(--padding-s);
 
     border: 1px solid var(--neutral-dark);
@@ -35,4 +40,16 @@
 
     background-color: white;
 }
+
+/*#endregion*/
+
+/*#region Merchandise table =============================== */
+.merch-table>tbody>tr>td {
+    --table-cell-py: var(--padding-s);
+}
+
+.merch-table>tbody>tr>td>div[data-type="thumbnail"] {
+    --thumbnail-height: 70px;
+}
+
 /*#endregion*/
