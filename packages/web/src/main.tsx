@@ -106,7 +106,7 @@ root.render(
             <AppRouter />
         </AppContextProvider>
 
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
 );
 
