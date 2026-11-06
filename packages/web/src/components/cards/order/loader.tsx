@@ -2,9 +2,13 @@ import {
     type ComponentProps
 } from "react";
 
-import { Link } from "react-router-dom";
+import {
+    Link
+} from "react-router-dom";
 
-import { resolveClassNames } from "@Madeirense/shared";
+import {
+    resolveClassNames
+} from "@Madeirense/shared";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
@@ -19,26 +23,23 @@ interface IOrderCardProps extends ComponentProps<"div"> {
     mode?: "default" | "admin";
 };
 
-const OrderCardLoader = (_props: IOrderCardProps) => {
-    const {
-        className,
-        mode = "default",
-        ...props
-    } = _props;
+const OrderCardLoader = ({
+    className,
+    mode = "default",
+    ...props
+}: IOrderCardProps) => {
+    const placeholder = "";
 
-    return <div
-        className={resolveClassNames(styles.loader, className)}
-        {...props}
-    >
+    return <div className={resolveClassNames(styles.loader, className)} {...props} >
         <div className="min-h-[32px] flex flex-row justify-start items-center gap-1 w-full overflow-y-hidden overflow-x-auto">
             <Link to="#" className="pointer-events-none animate-pulse">
                 <Icon name="Link2" />
 
-                <span className="opacity-0">loading...</span>
+                <span className="opacity-0">{placeholder}</span>
             </Link>
 
             <Tag>
-                <span className="opacity-0">loading...</span>
+                <span className="opacity-0">{placeholder}</span>
             </Tag>
 
             {mode === "admin" && <Button
@@ -46,7 +47,7 @@ const OrderCardLoader = (_props: IOrderCardProps) => {
                 variant="secondary"
                 disabled
             >
-                <span className="opacity-0">loading...</span>
+                <span className="opacity-0">{placeholder}</span>
             </Button>}
         </div>
 
@@ -56,19 +57,19 @@ const OrderCardLoader = (_props: IOrderCardProps) => {
             {mode === "admin" && <Tag>
                 <Icon name="User" />
 
-                <span className="opacity-0">loading...</span>
+                <span className="opacity-0">{placeholder}</span>
             </Tag>}
 
             <Tag>
                 <Icon name="CashRegister" />
 
-                <span className="opacity-0">loading...</span>
+                <span className="opacity-0">{placeholder}</span>
             </Tag>
 
             <Tag className="ml-auto">
                 <Icon name="Store" />
 
-                <span className="opacity-0">loading...</span>
+                <span className="opacity-0">{placeholder}</span>
             </Tag>
         </div>
 
