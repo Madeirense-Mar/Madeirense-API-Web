@@ -918,9 +918,14 @@ export async function getMyTickets(
         const page = parseInt((req.query[API$Enumerators.SearchQueries.page] as string) ?? '1');
         const limit = parseInt((req.query[API$Enumerators.SearchQueries.limit] as string) ?? DEFAULT_API_LIST_LIMIT.toString());
 
+        const order_id = req.query["order_id"] ? parseInt(req.query["order_id"] as string) : undefined;
+
         const skip = (page - 1) * limit;
 
-        const where = { user_id: req.user.user_id };
+        const where = { 
+            user_id: req.user.user_id,
+            order_id
+        };
 
         const [rawTickets, total] = await Promise.all([
             prisma.tickets_Purchased.findMany({

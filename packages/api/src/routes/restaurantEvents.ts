@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 import {
     toDateISO
@@ -86,6 +86,10 @@ v1.get(
 v1.get(
     '/my-tickets',
     validatePagination,
+    [
+        query('order_id').optional({ values: 'falsy' }).isInt({ min: 1 }).withMessage('Order id must be a positive whole number'),
+        Validate.Handle.error
+    ],
     controller.getMyTickets as any
 );
 

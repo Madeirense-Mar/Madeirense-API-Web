@@ -29,6 +29,7 @@ export namespace Queries$Types {
         | "room"
         | "staff"
         | "user"
+        | "ticket"
     );
 
     export type itemQueryKey = (
@@ -49,6 +50,7 @@ export namespace Queries$Types {
         | "delisted-products"
         | "my-bookings"
         | "my-orders"
+        | "my-tickets"
         | "rooms"
         | "staff"
         | "tickets"
@@ -101,6 +103,8 @@ export class Queries {
                     return (await this.businessEndpoints.restaurants.get(identifier as number)) as T;
                 case "staff":
                     return (await this.businessEndpoints.users.getStaffMember(identifier as number)) as T;
+                case "ticket":
+                    return (await this.businessEndpoints["restaurant-events"].getMyTicket(identifier as number)) as T;
                 case "user":
                     return (await this.businessEndpoints.users.get(identifier as number)) as T;
 
@@ -146,6 +150,8 @@ export class Queries {
                     return (await this.businessEndpoints.resorts.getMyBookings(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
                 case "my-orders":
                     return (await this.businessEndpoints.orders.getMyOrders(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
+                case "my-tickets":
+                    return (await this.businessEndpoints["restaurant-events"].getMyTickets(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
                 case "orders":
                     return (await this.businessEndpoints.orders.getAll(query as Madeirense$Types.searchQueryRecord)) as APIListType<T>;
                 case "products":

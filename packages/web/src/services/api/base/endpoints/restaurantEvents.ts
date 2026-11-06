@@ -11,7 +11,8 @@ import type {
     restaurantEventPayloadType,
     unionBetween,
     Madeirense$Types,
-    restaurantEventProductPayloadType
+    restaurantEventProductPayloadType,
+    myTicketType
 } from "@Madeirense/shared";
 
 // ***************************************************************************************************************
@@ -31,6 +32,18 @@ class RestaurantEventsEndpoints extends BaseAPIAbstractEndpoint {
 
     async getBoughtTickets(query: Madeirense$Types.searchQueryRecord = {}) {
         const response = await this.client.get<ReadonlyArray<boughtTicketType>>(`/restaurant-events/bought-tickets`, query);
+
+        return response;
+    }
+
+    async getMyTicket(id: number) {
+        const response = await this.client.get<ReadonlyArray<myTicketType>>(`/restaurant-events/my-tickets/${id}`);
+
+        return response;
+    }
+
+    async getMyTickets(query: Madeirense$Types.searchQueryRecord = {}) {
+        const response = await this.client.get<ReadonlyArray<myTicketType>>(`/restaurant-events/my-tickets`, query);
 
         return response;
     }
