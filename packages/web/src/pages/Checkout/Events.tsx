@@ -4,7 +4,6 @@ import {
     useMemo,
     useRef,
     useState,
-    type ComponentProps,
     type MouseEvent,
     type SubmitEvent
 } from "react";
@@ -56,7 +55,7 @@ type queueEntry = {
     type: "adding" | "removing",
 };
 
-const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) => {
+const EventsCheckoutPage = () => {
     //#region Hook and state declarations -----------------
     const $selectRef = useRef<HTMLSelectElement | null>(null);
 
@@ -187,10 +186,8 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
         default: {
             switch (state) {
                 case "loading": {
-                    return <section className={resolveClassNames("w-full h-full", className)} {...props}>
-                        <div className="w-full h-full flex flex-col justify-center items-center gap-2">
-                            <Icon name="Loading" className="animate-spin" />
-                        </div>
+                    return <section className="w-full h-full flex flex-col justify-center items-center">
+                        <Icon name="Loading" className="animate-spin" />
                     </section>
                 }
 
@@ -200,7 +197,7 @@ const EventsCheckoutPage = ({ className, ...props }: ComponentProps<"section">) 
                             <Icon name="NoSignal" className="text-9xl animate-pulse" />
 
                             O evento especificado não existe
-                        </div>;
+                        </div>
 
                     return <>
                         <section className={styles.info}>
