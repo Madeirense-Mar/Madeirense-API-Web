@@ -13,7 +13,7 @@ import {
 
 import RestaurantCardWithoutNavigation, {
     type ICardPropTypes
-} from "./card";
+} from "./withoutNavigation";
 //#endregion
 
 // ***************************************************************************************************************
