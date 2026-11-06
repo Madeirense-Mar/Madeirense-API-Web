@@ -14,8 +14,6 @@
 
 /*#region Mode: Viewport ================================== */
 .viewport {
-    composes: list;
-
     --h: 100%;
     
     height: var(--h);
@@ -36,21 +34,28 @@
     @apply flex flex-col justify-center items-center w-full gap-2;
 }
 
+.viewport li[data-empty] svg {
+    font-size: 8rem;
+}
+
 .viewport .card  {
     --w: 100%;
 
-    border-radius: 0px;
-    border-width: 0px;
+    height: var(--h);
+    max-height: var(--h);
+    min-height: var(--h);
+    
+    width: var(--w);
+    max-width: var(--w);
+    min-width: var(--w);
+
     padding-top: 0px;
     padding-left: 0px;
     padding-right: 0px;
     padding-bottom: var(--container-padding-s);
-    height: var(--h);
-    max-height: var(--h);
-    min-height: var(--h);
-    width: var(--w);
-    max-width: var(--w);
-    min-width: var(--w);
+
+    border-radius: 0px;
+    border-width: 0px;
 }
 
 .viewport .card div[data-area]:not([data-area="video"]) {

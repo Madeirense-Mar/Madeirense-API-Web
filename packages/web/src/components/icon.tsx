@@ -95,8 +95,9 @@ import {
 } from "react-icons/gr";
 
 import {
+    HiMiniSignalSlash,
     HiMiniQueueList,
-    HiPencil,
+    HiPencil
 } from "react-icons/hi2";
 
 import {
@@ -324,6 +325,7 @@ const registry = {
     //#region N --------------------------------------------
     Navigation: MdNavigation,
     NoDrinks: MdOutlineNoDrinks,
+    NoSignal: HiMiniSignalSlash,
     Notes: MdOutlineNotes,
     Notification: IoNotifications,
     NotificationActive: MdNotificationsActive,

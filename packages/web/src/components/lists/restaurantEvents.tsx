@@ -14,6 +14,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import {
+    APIError,
     formatNumber,
     Madeirense$Enumerators,
     resolveClassNames,
@@ -86,7 +87,7 @@ function RestaurantEventList({
         hasNextPage,
         isFetching,
         isFetchingNextPage,
-        status,
+        status
     } = useInfiniteQuery({
         queryKey: ([
             `${COMPONENT_NAME}$GetRestaurantEvents`,
@@ -146,10 +147,29 @@ function RestaurantEventList({
     //#region DOM -----------------------------------------
     switch (status) {
         case "error": {
+            switch (true) {
+                case (error instanceof APIError): switch (error.status) {
+                    case 404:
+                        return <ul {...$ulProps}>
+                            {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
+
+                            <li data-empty>
+                                <Icon name="NoSignal" className="animate-pulse" />
+
+                                <h1>Sem eventos antecipados</h1>
+
+                                <p>Tão logo algum seja marcado, será notificado</p>
+                            </li>
+                        </ul>
+                }
+
+                default: break;
+            };
+
             return <ul {...$ulProps}>
                 {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
 
-                <li data-state="error" className="rounded-md flex flex-row justify-start items-center gap-2 px-2">
+                <li data-state="error" className="flex flex-col justify-center items-center gap-1 rounded-md">
                     <Icon name="ExclamationCircle" />
 
                     <p>{error?.message}</p>
@@ -161,8 +181,8 @@ function RestaurantEventList({
             return <ul {...$ulProps}>
                 {mode === "list" && <HeaderListItem disabled {...$liHeaderProps} />}
 
-                <li>
-                    <Icon name="Loading" className="animate-spin mx-auto my-4" />
+                <li data-empty>
+                    <Icon name="Circle" className="animate-ping" />
                 </li>
             </ul>
         }
