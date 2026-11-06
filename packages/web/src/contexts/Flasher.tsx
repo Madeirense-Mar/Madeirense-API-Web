@@ -13,12 +13,12 @@ import {
 import Button from "components/buttons";
 import Icon from "components/icon";
 
-import F_RESERVED_EVENT from "components/flashers/event/reserved";
-import F_GOODBYE from "components/flashers/goodbye";
-import F_AWAITING_PAYMENT_CONFIRMATION_FLASHER from "components/flashers/order/awaitingPaymentConfirmation";
-import F_DELIVERED_ORDER from "components/flashers/order/delivered";
-import F_PLACED_ORDER from "components/flashers/order/placed";
-import F_PUSH_NOTIFICATION_REQUEST from "components/flashers/pushNotification/request";
+import RESERVED_EVENT from "components/flashers/event/reserved";
+import GOODBYE from "components/flashers/goodbye";
+import AWAITING_PAYMENT_CONFIRMATION from "components/flashers/order/awaitingPaymentConfirmation";
+import DELIVERED_ORDER from "components/flashers/order/delivered";
+import PLACED_ORDER from "components/flashers/order/placed";
+import PUSH_NOTIFICATION_REQUEST from "components/flashers/pushNotification/request";
 
 import styles from "./Flasher.module.css";
 //#endregion
@@ -57,14 +57,14 @@ type FlasherContextType = {
 
 //#region Defaults ----------------------------------------
 const FLASHERS: Record<flasherEventType, (JSX.Element | null)> = {
-    "AWAITING_PAYMENT_CONFIRMATION": <F_AWAITING_PAYMENT_CONFIRMATION_FLASHER />,
-    "DELIVERED_ORDER": <F_DELIVERED_ORDER />,
+    "AWAITING_PAYMENT_CONFIRMATION": <AWAITING_PAYMENT_CONFIRMATION />,
+    "DELIVERED_ORDER": <DELIVERED_ORDER />,
     "EMPTY": null,
-    "GOODBYE": <F_GOODBYE />,
+    "GOODBYE": <GOODBYE />,
     "LOADING": null,
-    "PLACED_ORDER": <F_PLACED_ORDER />,
-    "PUSH_NOTIFICATION_REQUEST": <F_PUSH_NOTIFICATION_REQUEST />,
-    "RESERVED_EVENT": <F_RESERVED_EVENT />
+    "PLACED_ORDER": <PLACED_ORDER />,
+    "PUSH_NOTIFICATION_REQUEST": <PUSH_NOTIFICATION_REQUEST />,
+    "RESERVED_EVENT": <RESERVED_EVENT />
 };
 //#endregion
 
@@ -117,7 +117,7 @@ const FlasherProvider = ({ children }: any) => {
         }, delayMS);
     };
 
-    const flash = useCallback((t: flasherEventType, onClose?: (event: Event) => void) => {
+    const flash = useCallback((_flasher: flasherEventType, onClose?: (event: Event) => void) => {
         if (!$dialogRef.current)
             return;
 
@@ -127,7 +127,7 @@ const FlasherProvider = ({ children }: any) => {
         setFlasher("LOADING");
 
         setTimeout(() => {
-            setFlasher(t);
+            setFlasher(_flasher);
         }, delayMS);
     }, []);
     //#endregion
