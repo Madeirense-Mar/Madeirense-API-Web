@@ -3,7 +3,8 @@ import { Router } from 'express';
 import { body, param, query } from 'express-validator';
 
 import {
-    toDateISO
+    toDateISO,
+    type Madeirense$Types
 } from '@Madeirense/shared';
 
 import {
@@ -62,6 +63,10 @@ const v1 = Router();
 v1.get(
     '/',
     validatePagination,
+    [
+        query("upcoming" as (keyof Madeirense$Types.searchQueryRecord)).isIn(["true"]).withMessage("Send `upcoming` with the value of `true` to filter event lists with strictly upcoming events."),
+        Validate.Handle.error
+    ],
     controller.getAllRestaurantEvents
 );
 

@@ -9,8 +9,8 @@
 @host = http://localhost:3001
 @baseUrl = {{host}}/api/v1/restaurant-events
 @apiKey = REPLACE_WITH_API_KEY
-@email = admin@example.com
-@password = REPLACE_WITH_PASSWORD
+@email = madeirensemar@madeirenseangola.com
+@password = admin123456
 @token = {{login.response.body.$.tokens.sessionToken}}
 
 ### Log in (x-platform: mobile returns the tokens in the body instead of cookies)
@@ -27,6 +27,11 @@ x-platform: mobile
 
 ### All events (public)
 GET {{baseUrl}}?page=1&limit=10
+x-api-key: {{apiKey}}
+
+
+### Only all upcoming events (public)
+GET {{baseUrl}}?page=1&limit=10&upcoming=true
 x-api-key: {{apiKey}}
 
 ### Event by id
