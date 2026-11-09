@@ -165,11 +165,6 @@ export const deleteRestaurant = async (
     }
 };
 
-type getAllRestaurantsCacheType = {
-    restaurants: restaurantType[],
-    pagination: API$Types.paginationDescription
-};
-
 export const getAllRestaurants = async (
     req: IApplicationRequest,
     res: Response<API$Types.response<restaurantType[] | undefined>>
@@ -193,15 +188,12 @@ export const getAllRestaurants = async (
             if (!storedList)
                 throw new Error(`(${cacheKey}) value is null`);
 
-            const {
-                restaurants: cachedRestaurants,
-                pagination: cachedPagination,
-            } = JSON.parse(storedList) as getAllRestaurantsCacheType;
-
             return res.status(200).json({
-                data: cachedRestaurants,
+                ...(JSON.parse(storedList) as {
+                    data: restaurantType[],
+                    pagination: API$Types.paginationDescription
+                }),
                 message: 'Restaurants retrieved successfully',
-                pagination: cachedPagination,
                 success: true
             });
         } catch (error) {
@@ -243,7 +235,7 @@ export const getAllRestaurants = async (
             await redisClient.set(
                 cacheKey,
                 JSON.stringify({
-                    restaurants: data,
+                    data,
                     pagination
                 }),
                 REDIS_DEFAULT_KEY_OPTIONS

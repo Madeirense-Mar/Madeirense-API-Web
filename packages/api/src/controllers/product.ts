@@ -328,11 +328,6 @@ export const deleteProduct = async (
     }
 };
 
-type getAllProductsCacheType = {
-    products: productType[],
-    pagination: API$Types.paginationDescription
-};
-
 export const getAllProducts = async (
     req: IApplicationRequest,
     res: Response<API$Types.response<productType[] | undefined>>
@@ -389,15 +384,12 @@ export const getAllProducts = async (
             if (!storedList)
                 throw new Error(`(${cacheKey}) value is null`);
 
-            const {
-                products: cachedProducts,
-                pagination: cachedPagination,
-            } = JSON.parse(storedList) as getAllProductsCacheType;
-
             return res.status(200).json({
-                data: cachedProducts,
+                ...(JSON.parse(storedList) as {
+                    data: productType[],
+                    pagination: API$Types.paginationDescription
+                }),
                 message: 'Products retrieved successfully',
-                pagination: cachedPagination,
                 success: true
             });
         } catch (error) {
@@ -436,7 +428,7 @@ export const getAllProducts = async (
                 hasNext: page < totalPages,
                 hasPrevious: page > 1
             };
-            
+
             if (!p.length) return res.status(404).json({
                 data: [],
                 message: 'None were found',
@@ -450,7 +442,7 @@ export const getAllProducts = async (
                 ...p,
             }));
 
-            await redisClient.set(cacheKey, JSON.stringify({ products, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
+            await redisClient.set(cacheKey, JSON.stringify({ data: products, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
 
             return res.status(200).json({
                 data: products,
