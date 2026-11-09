@@ -89,6 +89,7 @@ export const getAllCoupons = async (
                 total
             ] = await Promise.all([
                 prisma.coupons.findMany({
+                    where,
                     skip,
                     take: limit,
                     orderBy: {
@@ -109,7 +110,7 @@ export const getAllCoupons = async (
                 hasPrevious: (page > 1)
             };
 
-            if (!coupons.length) return res.json({
+            if (!coupons.length) return res.status(404).json({
                 data: [],
                 code: 'API_GENERIC_NOT_FOUND_ERROR',
                 message: 'There are no coupons',
@@ -124,7 +125,7 @@ export const getAllCoupons = async (
 
             await redisClient.set(cacheKey, JSON.stringify({ data: _coupons, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
 
-            res.json({
+            res.status(200).json({
                 data: _coupons,
                 message: 'Coupons retrieved successfully',
                 pagination,
