@@ -90,10 +90,6 @@ export const validateJWT = async (
 ) => {
     const headers = req.headers;
 
-    const cacheKey = buildCacheKey(validateJWT.name, req, {
-        [API$Enumerators.Headers.platform]: req.headers[API$Enumerators.Headers.platform]
-    });
-
     let hasHitCache = false;
     let user: authenticatedProfileType | null = null;
 
@@ -165,6 +161,10 @@ export const validateJWT = async (
             }
         }
 
+        const cacheKey = buildCacheKey(`${validateJWT.name}:user:${payload.userId}`, req, {
+            [API$Enumerators.Headers.platform]: req.headers[API$Enumerators.Headers.platform]
+        });
+
         try {
             const storedList = await redisClient.json.get(cacheKey) as string | null;
 
@@ -192,7 +192,12 @@ export const validateJWT = async (
                 });
             }
 
-            await redisClient.set(cacheKey, JSON.stringify(user));
+            await redisClient.set(cacheKey, JSON.stringify(user), {
+                expiration: {
+                    type: "EX",
+                    value: 300
+                }
+            });
         } finally {
             if (!user) return;
 
