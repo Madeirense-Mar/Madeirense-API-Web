@@ -48,6 +48,8 @@ import type {
 import type {
     JWTPayloadType
 } from '../types.js';
+import redisClient from 'lib/redis';
+import { buildCacheKey } from 'utilities/functions';
 
 // ***************************************************************************************************************
 
@@ -88,6 +90,13 @@ export const validateJWT = async (
 ) => {
     const headers = req.headers;
 
+    const cacheKey = buildCacheKey(validateJWT.name, req, {
+        [API$Enumerators.Headers.platform]: req.headers[API$Enumerators.Headers.platform]
+    });
+
+    let hasHitCache = false;
+    let user: authenticatedProfileType | null = null;
+
     try {
         const {
             refreshToken,
@@ -119,9 +128,9 @@ export const validateJWT = async (
                             payload = jwt.verify(refreshToken as string, env.JWT_REFRESH_SECRET!) as JWTPayloadType;
 
                             hasSessionExpired = true;
-                            
+
                             break;
-                        
+
                         default: throw (error as Error).message;
                     }
 
@@ -156,38 +165,56 @@ export const validateJWT = async (
             }
         }
 
-        const user: (authenticatedProfileType | null) = await prisma.users.findUnique({
-            where: {
-                user_id: parseInt(payload.userId, 10)
-            },
-            include: Prisma$Utilities.Inclusions.Users.Profile
-        });
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
 
-        if (!user) {
-            return res.status(401).json({
-                code: 'UNAUTHORIZED',
-                data: undefined,
-                httpStatus: 401,
-                message: 'Invalid token',
-                success: false
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            hasHitCache = true;
+
+            user = JSON.parse(storedList) as authenticatedProfileType;
+        } catch (error) {
+            user = await prisma.users.findUnique({
+                where: {
+                    user_id: parseInt(payload.userId, 10)
+                },
+                include: Prisma$Utilities.Inclusions.Users.Profile
             });
-        }
 
-        if (hasSessionExpired) {
-            res.cookie(
-                'sessionToken',
-                generateToken(user, 'SESSION'),
-                {
-                    httpOnly: true,
-                    maxAge: API_MAX_TIME_SESSION_TOKEN,
+            if (!user) {
+                return res.status(401).json({
+                    code: 'UNAUTHORIZED',
+                    data: undefined,
+                    httpStatus: 401,
+                    message: 'Invalid token',
+                    success: false
                 });
+            }
+
+            await redisClient.set(cacheKey, JSON.stringify(user));
+        } finally {
+            if (!user) return;
+
+            if (hasSessionExpired) {
+                res.cookie(
+                    'sessionToken',
+                    generateToken(user, 'SESSION'),
+                    {
+                        httpOnly: true,
+                        maxAge: API_MAX_TIME_SESSION_TOKEN,
+                    });
+            }
+
+            req.user = user;
+
+            setLogContext({
+                userId: user.user_id,
+                cached: hasHitCache
+            });
+
+            next();
         }
-
-        req.user = user;
-
-        setLogContext({ userId: user.user_id });
-
-        next();
     } catch (error) {
         return res.status(403).json({
             code: 'FORBIDDEN',
