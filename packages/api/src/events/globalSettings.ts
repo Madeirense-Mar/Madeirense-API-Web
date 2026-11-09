@@ -18,6 +18,8 @@ import * as pushNotificationController from '../controllers/pushNotifications';
 import type { 
     eventActionType
 } from './types';
+import redisClient from 'lib/redis';
+import { REDIS_CACHE_PREFIX } from 'utilities/constants';
 
 // ***************************************************************************************************************
 
@@ -54,11 +56,17 @@ GlobalSettingsEventEmitter.on('global_settings.eligible_payment_types.updated', 
 
 GlobalSettingsEventEmitter.SILENT$on('global_settings.change_version.updated', async () => {
     try {
+        const global_settings =  await prisma.global_Settings.findFirst();
+
         await prisma.global_Settings.updateMany({
             data: {
                 change_version: randomUUID()
             }
         });
+
+        const keys = await redisClient.keys(`${REDIS_CACHE_PREFIX}:${global_settings?.change_version}*`);
+
+        await redisClient.del(keys);
     } catch (error) {
         console.error(`Failed to update global settings change version:`, error);
     }
