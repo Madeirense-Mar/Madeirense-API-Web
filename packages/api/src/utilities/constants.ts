@@ -27,3 +27,5 @@ export const API_MAX_RATING_NUMBER = 5;
 export const API_MIN_RATING_NUMBER = 1; 
 
 export const API_PASSWORD_ENCRYPTION_ITERATOR = 1000;
+
+export const REDIS_CACHE_PREFIX = "cache";

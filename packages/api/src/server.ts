@@ -18,6 +18,10 @@ import {
     activateEvents
 } from './middlewares/events.js';
 
+import { 
+    propagateChangeVersion
+} from 'middlewares/settingsPropagation.js';
+
 import {
     errorHandler,
     httpLogger,
@@ -82,6 +86,7 @@ class Server {
         // Must stay first: opens the per-request log context (request id, user, API key).
         this.app.use(requestContext);
 
+        this.app.use(propagateChangeVersion as any);
         this.app.use(activateEvents as any);
 
         this.app.use(compression() as any);
@@ -227,6 +232,7 @@ class Server {
             logger.info(`${signal} received — shutting down`, { scope: 'server' });
 
             server.close();
+            redisClient.close();
 
             flushApiKeyUsage()
                 .catch(() => {})

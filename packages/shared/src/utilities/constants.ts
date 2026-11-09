@@ -129,6 +129,11 @@ export const MENU_PRODUCT_TYPES = [
     "starter"
 ] as ReadonlyArray<$Enums.Products_product_type>;
 
+export const EVENT_PRODUCT_TYPES = [
+    "ticket",
+    "merchandise"
+] as ReadonlyArray<$Enums.Products_product_type>;
+
 export const MENU_PRODUCT_COMPOSITIONS = [
     "alcoholic",
     "fish",
