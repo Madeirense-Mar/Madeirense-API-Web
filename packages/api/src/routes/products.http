@@ -8,7 +8,7 @@
 
 @host = http://localhost:3001
 @baseUrl = {{host}}/api/v1/products
-@apiKey = REPLACE_WITH_API_KEY
+@apiKey = mdr_test_7UUjKMCbp-uX4T7IBrOA3PvLBsNeDAdvNdChquco8kw
 @email = admin@example.com
 @password = REPLACE_WITH_PASSWORD
 @token = {{login.response.body.$.tokens.sessionToken}}
@@ -28,8 +28,9 @@ x-platform: mobile
 ### All products (public)
 # product_composition: meat | fish | wheat | vegan | alcoholic | non_alcoholic
 # product_type: starter | main | dessert | beverage | ticket
-# group: event | menu   ·   gt / lt: price range
-GET {{baseUrl}}?page=1&limit=10&group=menu&product_type=main&gt=1000&lt=20000
+# group: event | menu
+# gt / lt: price range
+GET {{baseUrl}}?page=1&limit=10&group=menu
 x-api-key: {{apiKey}}
 
 ### Product by id (public)

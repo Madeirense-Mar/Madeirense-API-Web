@@ -72,7 +72,7 @@ const v1 = Router();
 v1.get(
     '/',
     queryValidation,
-    controller.getAllProducts
+    controller.getAllProducts as any
 );
 
 v1.get(

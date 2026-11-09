@@ -17,16 +17,26 @@ import {
     type API$Types,
     type productType,
     type productCommentType,
-    type productGroupType
+    type productGroupType,
+    EVENT_PRODUCT_TYPES
 } from '@Madeirense/shared';
+
+import {
+    REDIS_CACHE_PREFIX
+} from 'utilities/constants';
 
 import {
     handleControllerError
 } from './utilities/handlers';
 
+import redisClient from 'lib/redis';
+
 import { prisma } from '../lib/prisma';
 
 import type { IEventfulRequest } from '../middlewares/events';
+import type { IApplicationRequest } from 'middlewares/settingsPropagation';
+import { buildCacheKey } from 'utilities/functions';
+import env from 'env';
 
 // ***************************************************************************************************************
 
@@ -188,8 +198,8 @@ export const BATCH$createProduct = async (
 ) => {
     try {
         const response = await prisma.products.createMany({
-            data: req.body.products.map(p => ({ 
-                ...p, 
+            data: req.body.products.map(p => ({
+                ...p,
                 delisted: false,
                 restaurant_id: null,
                 discount: p.discount || 0,
@@ -317,10 +327,19 @@ export const deleteProduct = async (
     }
 };
 
+type getAllProductsCacheType = {
+    products: productType[],
+    pagination: API$Types.paginationDescription
+};
+
 export const getAllProducts = async (
-    req: Request,
+    req: IApplicationRequest,
     res: Response<API$Types.response<productType[] | undefined>>
 ) => {
+    let cacheKey: string = "";
+    let products: productType[] = [];
+    let pagination: API$Types.paginationDescription | undefined = undefined;
+
     try {
         const group = (req.query[Madeirense$Enumerators.SearchQueries.group] as string) || undefined;
         const lesserThan = parseFloat(req.query[Madeirense$Enumerators.SearchQueries.lt] as string) || undefined;
@@ -337,7 +356,7 @@ export const getAllProducts = async (
                 ? {
                     in: (() => {
                         switch (group as productGroupType) {
-                            case "event": return ["ticket"];
+                            case "event": return EVENT_PRODUCT_TYPES;
                             case "menu": return MENU_PRODUCT_TYPES;
 
                             default: Object.values($Enums.Products_product_type);
@@ -348,8 +367,8 @@ export const getAllProducts = async (
             ,
             ...(lesserThan || greaterThan) ? {
                 price: {
-                    greaterThanOrEqualTo: (n) => parseFloat(`${n}`) >= (lesserThan as number),
-                    lessThanOrEqualTo: (n) => parseFloat(`${n}`) <= (greaterThan as number),
+                    ...(lesserThan) ? { lt: lesserThan + 1 } : {},
+                    ...(greaterThan) ? { gt: greaterThan - 1 } : {},
                 }
             } : {},
             AND: [
@@ -357,7 +376,38 @@ export const getAllProducts = async (
             ]
         } as Prisma.ProductsWhereInput;
 
-        let [products, total] = await Promise.all([
+        cacheKey = buildCacheKey(getAllProducts.name, req, {
+            group,
+            lesserThan,
+            greaterThan,
+            page,
+            limit,
+            skip,
+            ...where
+        });
+
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
+
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            const {
+                products: cachedProducts,
+                pagination: cachedPagination,
+            } = JSON.parse(storedList) as getAllProductsCacheType;
+
+            return res.status(200).json({
+                data: cachedProducts,
+                message: 'Products retrieved successfully',
+                pagination: cachedPagination,
+                success: true
+            });
+        } catch (error) {
+            //TODO: Keep reading and learning about caching strategies to then determine which steps are the right ones to do here.
+        }
+
+        const [p, total] = await Promise.all([
             prisma.products.findMany({
                 where,
                 skip,
@@ -384,24 +434,38 @@ export const getAllProducts = async (
 
         const totalPages = Math.ceil(total / limit);
 
-        products = products.map(({ price, discount, ...p }) => ({
+        products = p.map(({ price, discount, ...p }) => ({
             discount: parseFloat(discount.toString()) as any,
             price: parseFloat(price.toString()) as any,
             ...p,
         }));
 
+        pagination = {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasNext: page < totalPages,
+            hasPrevious: page > 1
+        };
+
+        if (products.length > 0)
+            redisClient.set(
+                cacheKey,
+                JSON.stringify({ products, pagination }),
+                {
+                    expiration: {
+                        type: "EX",
+                        value: env.REDIS_VALUE_TTL
+                    }
+                }
+            );
+
         return res.status((!products.length) ? 404 : 200).json({
             data: products,
             message: (!products.length) ? 'None were found' : 'Products retrieved successfully',
-            pagination: {
-                page,
-                limit,
-                total,
-                totalPages,
-                hasNext: page < totalPages,
-                hasPrevious: page > 1
-            },
-            success: (products.length > 0)
+            pagination,
+            success: true
         });
     } catch (error) {
         return handleControllerError(
@@ -431,7 +495,7 @@ export const getDelistedProducts = async (
                 ? {
                     in: (() => {
                         switch (group as productGroupType) {
-                            case "event": return ["ticket"];
+                            case "event": return EVENT_PRODUCT_TYPES;
                             case "menu": return MENU_PRODUCT_TYPES;
 
                             default: Object.values($Enums.Products_product_type);
