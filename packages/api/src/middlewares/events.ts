@@ -4,13 +4,14 @@ import type {
     NextFunction,
     Request
 } from 'express';
+import type { IApplicationRequest } from './settingsPropagation.js';
 
 // ***************************************************************************************************************
 
 export interface IEventfulRequest<
     Params = Record<string, string>,
     Body = any
-> extends Request<Params, any, Body> {
+> extends IApplicationRequest<Params, Body> {
     events?: typeof import('../events/index').default;
 };
 
