@@ -1,3 +1,4 @@
+//#region Imports -----------------------------------------
 import {
     Fragment,
     MouseEvent,
@@ -9,6 +10,8 @@ import {
     type SubmitEvent,
 } from "react";
 
+import { useQuery } from "@tanstack/react-query";
+
 import {
     MENU_PRODUCT_TYPES,
     formatNumber,
@@ -18,19 +21,21 @@ import {
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
+import ApplicationQueries from "configurations/queries";
 
-import { useApp } from "contexts/App";
 import { useModal } from "contexts/Modal";
 
 import Button from "components/buttons";
 import Icon from "components/icon";
 import Tag from "components/tags";
+import { DEFAULT_APPLICATION_QUERY_KEY } from "components/utilities/constants";
 
 import DescriptionLabel from "components/forms/elements/labels/description";
 
 import styles from "./discount.module.css";
 
 import type { IComponentState } from "components/interface";
+//#endregion
 
 // ***************************************************************************************************************
 
@@ -42,28 +47,55 @@ const DiscountForm = ({
     callback?: () => void,
     mode: "add" | "edit",
 } & ComponentProps<"form">) => {
+    //#region Hooks and state declarations ----------------
     const $inputRef = useRef<null | HTMLInputElement>(null);
 
-    const { state, fetch, get } = useApp();
-    const { eject } = useModal();
+    const { 
+        eject
+    } = useModal();
 
-    const { products } = useMemo(() => MXP$App.Base.Business.endpoints, []);
+    const {
+        products: productsAPI
+    } = useMemo(() => MXP$App.Base.Business.endpoints, []);
+
+    const {
+        data: queryResponse,
+        isFetching,
+        refetch
+    } = useQuery({
+        queryKey: [
+            `${DEFAULT_APPLICATION_QUERY_KEY}GetProducts`,
+            "products",
+            undefined
+        ],
+        queryFn: ApplicationQueries.getList<productType>
+    });
+
+    const {
+        data: products = []
+    } = queryResponse ?? {};
 
     const [form, updateForm] = useState<IComponentState<string>>({ data: "", status: "idle", error: null });
     const [searchKey, setSearchKey] = useState("");
+    //#endregion
 
-    const { data = "", error, status } = form;
+    //#region Variable declarations -----------------------
+    const {
+        data = "",
+        error,
+        status
+    } = form;
 
-    const availableProducts = useMemo(() => (get("Products") ?? []).filter(
+    const availableProducts = useMemo(() => (products ?? []).filter(
         p => searchKey === "" ? true : p.name.toLowerCase().includes(searchKey)
-    ), [get, searchKey]);
+    ), [products, searchKey]);
 
-    const discountedProducts = useMemo(() => (get("Products") ?? []).filter(
+    const discountedProducts = useMemo(() => (products ?? []).filter(
         p => [
             searchKey === "" ? true : p.name.toLowerCase().includes(searchKey),
             (parseInt(`${p?.discount}`) ?? 0) > 0
         ].every(v => v)
-    ), [get, searchKey]);
+    ), [products, searchKey]);
 
     const productsListGroup = useMemo(() => {
         switch (mode) {
@@ -81,11 +113,12 @@ const DiscountForm = ({
         ].includes(true),
         "isListEmpty": productsListGroup.every(a => a.length === 0) && searchKey === "",
         "isLoading": [
-            state.includes("Products"),
-            state === "loading"
+            isFetching
         ].includes(true)
     };
+    //#endregion
 
+    //#region Functions -----------------------------------
     function groupProductsByType(array: productType[]) {
         const groupedArray: (productType[])[] = [];
 
@@ -129,20 +162,20 @@ const DiscountForm = ({
             };
 
             switch ($submitter.value) {
-                case "remove-all": await products.clearAllDiscounts(); break;
+                case "remove-all": await productsAPI.clearAllDiscounts(); break;
 
-                case "remove-selected": await products.addDiscounts({
+                case "remove-selected": await productsAPI.addDiscounts({
                     discount: 0,
                     product_ids
                 }); break;
 
-                default: await products.addDiscounts({
+                default: await productsAPI.addDiscounts({
                     discount: parseFloat((elements.namedItem("discount") as HTMLInputElement).value as string),
                     product_ids
                 }); break;
             };
 
-            await fetch("Products");
+            await refetch();
 
             updateForm(p => { return { ...p, status: "idle" } });
 
@@ -151,7 +184,9 @@ const DiscountForm = ({
             updateForm(p => { return { ...p, status: "error", error: new Error((error as Error).message) } });
         }
     };
+    //#endregion
 
+    //#region DOM -----------------------------------------
     return <form onSubmit={PATCH} className={resolveClassNames(styles.form, "h-full w-full flex flex-col justify-start items-start gap-4")} {...props}>
         <fieldset className="w-full flex flex-col justify-start items-start gap-3 rounded-md">
             {assertions.isLoading && <legend className="flex flex-row justify-start items-center gap-2">
@@ -260,11 +295,20 @@ const DiscountForm = ({
     </form>;
 };
 
-const ListItem = ({ product: p, disabled = false, className, ...props }: { product: productType, disabled?: boolean } & ComponentProps<"li">) => {
+//#region List item ---------------------------------------
+const ListItem = ({ 
+    product: p,
+    disabled = false,
+    className,
+    ...props
+}: { product: productType, disabled?: boolean } & ComponentProps<"li">) => {
+    //#region > Variable declarations
     const discount = parseFloat(p.discount.toString());
     const price = parseFloat(p.price.toString());
     const discountedPrice = !discount ? 0 : price - (price * discount) / 100;
+    //#endregion
 
+    //#region > DOM
     return <li className={resolveClassNames(styles["list-item"], className)} {...props}>
         <label data-variant="selectable" htmlFor={`${p.product_id}-product`} className="cursor-pointer w-full flex flex-row justify-start items-center gap-2 ml-5 border-l py-1 px-2">
             <input id={`${p.product_id}-product`} value={p.product_id} name="product_id" type="checkbox" defaultChecked={discount > 0} {...{ disabled }} />
@@ -286,6 +330,8 @@ const ListItem = ({ product: p, disabled = false, className, ...props }: { produ
             </Tag>
         </label>
     </li>
+    //#endregion
 };
+//#endregion
 
 export default DiscountForm;

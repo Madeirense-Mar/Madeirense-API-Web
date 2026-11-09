@@ -17,8 +17,6 @@ import {
     type applicationSettingsType,
     type couponPayloadType,
     type driverType,
-    type productType,
-    type productPayloadType,
     type restaurantType,
     type restaurantPayloadType,
     type restaurantEventType,
@@ -50,7 +48,6 @@ export namespace App$Types {
     export type payload = (
         | { property: "Coupons", payload: Coupons | couponPayloadType }
         | { property: "Global_Settings", payload: Omit<Global_Settings, "setting_id"> }
-        | { property: "Products", payload: Omit<productPayloadType, ("product_id")> }
         | { property: "Restaurants", payload: restaurantPayloadType }
         | { property: "Restaurant_Events", payload: restaurantEventPayloadType }
     )
@@ -64,7 +61,6 @@ export namespace App$Types {
     export type partialPayload = (
         | { property: "Coupons", payload: Partial<Coupons> }
         | { property: "Global_Settings", payload: Partial<Omit<Global_Settings, "setting_id">> }
-        | { property: "Products", payload: Partial<Omit<productPayloadType, ("product_id")>> }
         | { property: "Restaurants", payload: Partial<restaurantPayloadType> }
         | { property: "Restaurant_Events", payload: Partial<restaurantEventPayloadType> }
     )
@@ -72,7 +68,6 @@ export namespace App$Types {
     export type properties = {
         Coupons: Coupons[],
         Global_Settings: applicationSettingsType | null,
-        Products: productType[],
         Drivers: driverType[],
         Restaurants: restaurantType[],
         Restaurant_Events: restaurantEventType[],
@@ -106,7 +101,6 @@ type contextStatusType = statusType<(
 type notificationPayloadType = (
     | Coupons
     | driverType
-    | productType
     | restaurantType
     | restaurantEventType
 );
@@ -117,7 +111,6 @@ const DEFAULT_APP_PROPERTIES = {
     Coupons: [],
     Drivers: [],
     Global_Settings: null,
-    Products: [],
     Restaurants: [],
     Restaurant_Events: []
 } as App$Types.properties;
@@ -131,7 +124,6 @@ function getPropertyIndexKey(p: keyof App$Types.properties) {
         case "Coupons": return "coupon_id" as keyof Coupons;
         case "Drivers": return "user_id" as keyof driverType;
         case "Global_Settings": return "setting_id" as keyof applicationSettingsType;
-        case "Products": return "product_id" as keyof productType;
         case "Restaurant_Events": return "event_id" as keyof restaurantEventType;
         case "Restaurants": return "restaurant_id" as keyof restaurantType;
 
@@ -298,13 +290,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
 
                     break;
 
-                case "Products":
-                    const Product = await clients.products.create(payload);
-
-                    if (Product) app.Products.push(Product);
-
-                    break;
-
                 case "Restaurants":
                     const Restaurant = await clients.restaurants.create(payload);
 
@@ -351,9 +336,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
                 case "Global_Settings":
                     try { app.Global_Settings = (await clients["global-settings"].get()); } catch (error) { } finally { break; };
 
-                case "Products":
-                    try { app.Products = [...((await clients.products.getAll(params)).data ?? [])]; } catch (error) { } finally { break; };
-
                 case "Restaurants":
                     try { app.Restaurants = [...((await clients.restaurants.getAll(params)).data ?? [])]; } catch (error) { } finally { break; };
 
@@ -386,14 +368,7 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
                 case "Coupons":
                     await clients.coupons.delete(property_id);
 
-                    app.Coupons = app.Coupons.filter(p => p.coupon_id === product_id);
-
-                    break;
-
-                case "Products":
-                    const { product_id } = (await clients.products.delete(property_id)).data ?? {};
-
-                    app.Products = app.Products.filter(p => p.product_id === product_id);
+                    app.Coupons = app.Coupons.filter(p => p.coupon_id === property_id);
 
                     break;
 
@@ -404,7 +379,7 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
         } catch (error) {
             handleError(error);
         }
-    }, [clients.coupons, clients.products, handleError, state.app]);
+    }, [clients.coupons, handleError, state.app]);
 
     //#region > Application property updates
     const update = useCallback(async ({
@@ -425,15 +400,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
                     index = app.Coupons.findIndex(({ coupon_id }) => id === coupon_id);
 
                     app.Coupons[index] = { ...app.Coupons[index], ...coupon };
-
-                    break;
-
-                case "Products":
-                    const product = await clients.products.update({ ...(payload), product_id: id, });
-
-                    index = app.Products.findIndex(({ product_id }) => id === product_id);
-
-                    app.Products[index] = { ...app.Products[index], ...product };
 
                     break;
 
@@ -543,15 +509,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
 
                     break;
 
-                case "Products":
-                    const product = await clients.products.update_PARTIAL({ ...payload, product_id: id, });
-
-                    index = app.Products.findIndex(({ product_id }) => id === product_id);
-
-                    app.Products[index] = { ...app.Products[index], ...product };
-
-                    break;
-
                 case "Restaurants":
                     const restaurant = await clients.restaurants.update_PARTIAL(id, payload);
 
@@ -594,7 +551,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
             let Coupons: Coupons[] = [];
             let Drivers: driverType[] = [];
             let Global_Settings: applicationSettingsType | null = null;
-            let Products: productType[] = [];
             let Restaurants: restaurantType[] = [];
             let Restaurant_Events: restaurantEventType[] = [];
 
@@ -602,7 +558,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
                 try { Coupons = [...((await clients.coupons.getAll({ limit: DEFAULT_MIN_LIMIT, valid: "true" })).data ?? [])]; } catch (error) { }
                 try { Global_Settings = (await clients["global-settings"].get()); } catch (error) { }
                 try { Drivers = [...((await clients.restaurants.getAllAvailableDrivers({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }
-                try { Products = [...((await clients.products.getAll({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }
                 try { Restaurants = [...((await clients.restaurants.getAll()).data ?? [])]; } catch (error) { }
                 try { Restaurant_Events = (await clients["restaurant-events"].getAll({ limit: DEFAULT_MIN_LIMIT, upcoming: "true" })).data ?? []; } catch (error) { }
 
@@ -611,7 +566,6 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
                         Coupons,
                         Global_Settings,
                         Drivers,
-                        Products,
                         Restaurants,
                         Restaurant_Events,
                     }

@@ -74,7 +74,7 @@ class ProductsEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
-    async update_PARTIAL({ product_id, ...payload }: Partial<Omit<productPayloadType, "product_id">> & { product_id: number }) {
+    async update_PARTIAL({ product_id, ...payload }: Partial<productPayloadType>) {
         const response = await this.client.patch<typeof payload, productType>(`/products/${product_id}`, payload);
 
         return response.data;

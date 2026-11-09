@@ -1,7 +1,6 @@
 //#region Imports -----------------------------------------
 import {
     useEffect,
-    useMemo,
     useRef,
     useState,
     type KeyboardEvent,
@@ -25,7 +24,6 @@ import {
     getLabel,
     locales,
     resolveClassNames,
-    which,
     type productType,
 } from "@Madeirense/shared";
 
@@ -38,7 +36,6 @@ import ApplicationQueries, {
 
 import AppSettings from "settings";
 
-import { useApp } from "contexts/App";
 import { useModal } from "contexts/Modal";
 import { useNotifications } from "contexts/Notifications";
 
@@ -73,8 +70,11 @@ const {
     fileUploaderRegularDefaultProps
 } = dependencies["@uploadcare/react-uploader"];
 
-const DELAY_MS = 2500;
+const {
+    products: productsAPI
+} = MXP$App.Base.Business.endpoints;
 
+const DELAY_MS = 2500;
 const PAGE_NAME = ProductPanel.name;
 //#endregion
 
@@ -84,34 +84,24 @@ defineLocale('pt', async () => {
 
 function ProductPanel({ id }: { id: number }) {
     //#region Hooks and state declarations ----------------
-    const { products } = useMemo(() => MXP$App.Base.Business.endpoints, []);
-
     const updaterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const updateStatusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-    const navigate = useNavigate();
-
-    const {
-        fetch,
-        get,
-        state: appState,
-        update_PARTIAL,
-    } = useApp();
-
-    const cachedData = get("Products")?.find(({ product_id }) => product_id === id) ?? null;
 
     const { show } = useModal();
     const { push } = useNotifications();
 
-    const [updater, setUpdater] = useState<keyof Products | "">("");
-    const [updateStatus, setUpdateStatus] = useState<"idle" | "success" | "error">("idle");
+    const navigate = useNavigate();
+
     const [deleting, setDeleting] = useState(false);
     const [freePricing, setFreePricing] = useState<boolean>(false);
     const [pickRestaurant, setPickRestaurant] = useState<boolean>(false);
+    const [updater, setUpdater] = useState<keyof Products | "">("");
+    const [updateStatus, setUpdateStatus] = useState<"idle" | "success" | "error">("idle");
 
     const {
-        data: fetchedData,
-        isFetching
+        data,
+        isFetching,
+        refetch
     } = useQuery({
         queryKey: ([
             `${PAGE_NAME}$GetProduct$BackofficePanel`,
@@ -119,22 +109,18 @@ function ProductPanel({ id }: { id: number }) {
             id
         ] as Queries$Types.queryKey[]),
         queryFn: ApplicationQueries.getItem<productType>,
-        enabled: (appState === "idle") && (cachedData === null)
     });
     //#endregion
 
     //#region Variable declarations ----------------------
-    const data = which(cachedData, fetchedData) as productType;
-
     const assertions = {
         "isLoading": [
             deleting,
             isFetching,
-            (appState === "loading")
         ].includes(true)
     };
     //#endregion
-    
+
     //#region Functions ----------------------------------
     function getUpdaterStatusIndicator(...properties: (keyof Products)[]) {
         if (properties.length === 0)
@@ -160,7 +146,7 @@ function ProductPanel({ id }: { id: number }) {
             item="product"
             itemId={data?.product_id as number}
             callback={async () => {
-                await fetch("Products");
+                await refetch();
 
                 navigate(`/back-office/products`, { replace: true })
             }}
@@ -177,9 +163,9 @@ function ProductPanel({ id }: { id: number }) {
         try {
             setUpdater("delisted");
 
-            await products.recover(parseInt((target as HTMLButtonElement).value));
+            await productsAPI.recover(parseInt((target as HTMLButtonElement).value));
 
-            await fetch("Products");
+            await refetch();
         } catch (error) {
             push({
                 id: "N#ERROR_RECOVERING_PRODUCT",
@@ -217,7 +203,7 @@ function ProductPanel({ id }: { id: number }) {
                 if (["", "0"].includes(`${_value}`)) toggleFreePricing();
                 value = _value === "" ? 0 : parseFloat(_value);
                 break;
-                
+
             default:
                 if (_value === "") return;
 
@@ -233,12 +219,9 @@ function ProductPanel({ id }: { id: number }) {
             try {
                 setUpdater(property);
 
-                await update_PARTIAL({
-                    id: data?.product_id as number,
-                    property: "Products",
-                    payload: {
-                        [property]: value
-                    }
+                await productsAPI.update_PARTIAL({
+                    product_id: data?.product_id as number,
+                    [property]: value
                 });
 
                 setUpdateStatus("success");
@@ -263,12 +246,12 @@ function ProductPanel({ id }: { id: number }) {
 
     //#region Effects -------------------------------------
     useEffect(() => {
-        const tRef = updaterTimeoutRef.current;
-        const uRef = updateStatusTimeoutRef.current;
+        const uRef = updaterTimeoutRef.current;
+        const usRef = updateStatusTimeoutRef.current;
 
         return () => {
-            if (tRef) clearTimeout(tRef);
             if (uRef) clearTimeout(uRef);
+            if (usRef) clearTimeout(usRef);
         }
     }, []);
 
@@ -608,18 +591,19 @@ const ScrollToSection = ({
     product_id: number;
     thumbnail_url: string;
 }) => {
-    const {
-        update_PARTIAL
-    } = useApp();
-
+    //#region > Hooks and state declarations
     const [state, setState] = useState<statusType<`uploading-${"thumbnail"}`>>("idle");
     const [pickedSection, setPickedSection] = useState<`product-${sectionType}`>("product-thumbnail");
     const [thumbnail_url, setThumbnailURL] = useState(dt);
+    //#endregion
 
+    //#region > Variable declarations
     const sections = [
         { key: `Capa`, value: "product-thumbnail", icon: <Icon name="Image" /> },
     ];
+    //#endregion
 
+    //#region > Functions
     function handleUpload(type: ("thumbnail" | "video")) {
         return async ({ uuid, mimeType, errors }: any) => {
             if (!uuid) {
@@ -629,6 +613,7 @@ const ScrollToSection = ({
             }
 
             let url = "";
+
             switch (type) {
                 case "thumbnail":
                     url = formatUUID_UC_CDN_URL(uuid);
@@ -640,12 +625,9 @@ const ScrollToSection = ({
             }
 
             try {
-                await update_PARTIAL({
-                    id: product_id,
-                    property: "Products",
-                    payload: {
-                        thumbnail: url
-                    }
+                await productsAPI.update_PARTIAL({
+                    product_id,
+                    thumbnail: url
                 });
             }
             catch (error) { }
@@ -678,7 +660,9 @@ const ScrollToSection = ({
             }
         }
     };
+    //#endregion
 
+    //#region > DOM
     switch (state) {
         case "loading": {
             return <div className="w-full h-full flex flex-row justify-center items-center">
@@ -714,6 +698,7 @@ const ScrollToSection = ({
             </section>
         }
     };
+    //#endregion
 };
 //#endregion
 

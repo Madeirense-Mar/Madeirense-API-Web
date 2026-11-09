@@ -1,8 +1,11 @@
+//#region Imports -----------------------------------------
 import {
     useEffect,
     useMemo,
     useState
 } from "react";
+
+import { useQuery } from "@tanstack/react-query";
 
 import {
     useNavigate,
@@ -13,14 +16,15 @@ import {
     generateRandomNumbers,
     locales,
     Madeirense$Enumerators,
+    productType,
     type productCommentType
 } from "@Madeirense/shared";
 
 import MXP$App from "configurations";
+import ApplicationQueries, { Queries$Types } from "configurations/queries";
 
 import { Page$Enumerators } from "pages/enumerators";
 
-import { useApp } from "contexts/App";
 import { useProfile } from "contexts/Profile";
 
 import Button from "components/buttons";
@@ -37,16 +41,18 @@ import type {
     Users
 } from "@Madeirense/database/browser";
 
-import type { 
+import type {
     IPageState
 } from "components/interface";
 
 import type {
     workQueueStateType
 } from "components/types";
+//#endregion
 
 // ***************************************************************************************************************
 
+//#region Interfaces and types ----------------------------
 type stateType = {
     localComments: workQueueType[],
     section: (
@@ -59,13 +65,14 @@ type stateType = {
 type workQueueType = productCommentType & {
     state?: workQueueStateType
 };
+//#endregion
 
-const ProductPage = () => {
-    const {
-        get,
-        state
-    } = useApp();
+//#region Defaults ----------------------------------------
+const PAGE_NAME = ProductPage.name;
+//#endregion
 
+function ProductPage () {
+    //#region Hooks and state declarations ----------------
     const navigate = useNavigate();
 
     const { user } = useProfile();
@@ -76,7 +83,17 @@ const ProductPage = () => {
 
     const { comments } = useMemo(() => MXP$App.Base.Business.endpoints, []);
 
-    const product = useMemo(() => get("Products")?.find(({ product_id }) => product_id === id), [get, id]);
+    const {
+        data: product,
+        isFetching
+    } = useQuery({
+        queryKey: [
+            `${PAGE_NAME}$GetProduct`,
+            "product",
+            id as Queries$Types.queryKey
+        ],
+        queryFn: ApplicationQueries.getItem<productType>
+    });
 
     const [page, updatePage] = useState<IPageState<stateType>>({
         data: {
@@ -86,7 +103,9 @@ const ProductPage = () => {
         error: null,
         status: "idle"
     });
+    //#endregion
 
+    //#region Variable declarations -----------------------
     const {
         data,
         error: pageError
@@ -98,13 +117,12 @@ const ProductPage = () => {
     } = data ?? {};
 
     const assertions = {
-        "isFetching": [
-            ["loading"].some(s => state.includes(s)),
-            state.includes("Products")
-        ].includes(true),
-        "isUpdating": Boolean(product) && state.includes("Products")
+        "isFetching": [ isFetching ].includes(true),
+        "isUpdating": Boolean(product) && isFetching
     };
+    //#endregion
 
+    //#region Functions -----------------------------------
     async function POST(e: any) {
         e.preventDefault();
 
@@ -143,7 +161,9 @@ const ProductPage = () => {
             updatePage(p => { return { ...p, status: "error", error: new Error((error as Error).message) } })
         }
     };
+    //#endregion
 
+    //#region Effects -------------------------------------
     useEffect(() => {
         const localComments = (page.data?.localComments ?? []);
 
@@ -201,9 +221,9 @@ const ProductPage = () => {
         navigate,
         product,
     ]);
+    //#endregion
 
-    const showNotification = [assertions.isUpdating].includes(true);
-
+    //#region DOM -----------------------------------------
     switch (true) {
         case (assertions.isFetching): {
             return <main className="flex flex-row justify-center items-center">
@@ -211,7 +231,7 @@ const ProductPage = () => {
             </main>
         }
 
-        case (product === undefined): {
+        case (!product): {
             return null;
         }
 
@@ -221,7 +241,7 @@ const ProductPage = () => {
             } = locales.get("pt")?.strings ?? {};
 
             return <main className="flex flex-col justify-start items-start gap-11">
-                {showNotification && <header>
+                {assertions.isUpdating && <header>
                     <Tag>
                         <Icon name="Loading" className="animate-spin" />
                     </Tag>
@@ -231,10 +251,10 @@ const ProductPage = () => {
                     <Icon name="ArrowLeft" />
                 </AnchorButton>
 
-                <ProductCard 
+                <ProductCard
                     className="w-full"
                     disableLink
-                    {...{ product }} 
+                    {...{ product }}
                 />
 
                 {(pageError) && <div className="w-full flex flex-row justify-center items-center gap-5" data-state="error">
@@ -257,6 +277,7 @@ const ProductPage = () => {
             </main>
         }
     };
+    //#endregion
 };
 
 export default ProductPage;

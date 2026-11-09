@@ -13,12 +13,16 @@ import {
     DEFAULT_APP_PREFERENCES,
     PHONE_CODES,
     generateRandomNumbers,
+    productType,
     resolveClassNames,
     type appPreferencesType,
     type parsedAddressObjectType
 } from "@Madeirense/shared";
 
+import { useQuery } from "@tanstack/react-query";
+
 import MXP$App from "configurations";
+import ApplicationQueries from "configurations/queries";
 
 import {
     selectPhoneCode
@@ -26,7 +30,6 @@ import {
 
 import useCurrentLocation from "hooks/useCurrentLocation";
 
-import { useApp } from 'contexts/App';
 import { useFlasher } from "contexts/Flasher";
 import { useModal } from "contexts/Modal";
 import { useNotifications } from "contexts/Notifications";
@@ -34,6 +37,7 @@ import { useProfile } from "contexts/Profile";
 
 import { Root$Enumerators } from "styles/enumerators";
 
+import { DEFAULT_APPLICATION_QUERY_KEY } from "components/utilities/constants";
 import Button from "components/buttons";
 import ProfilePictureButton from "components/buttons/profile";
 import ProductCard from "components/cards/product";
@@ -118,12 +122,14 @@ function ProfilePage() {
     const $accountSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const $selectRef = useRef<HTMLSelectElement | null>(null);
 
-    const { get } = useApp();
+    const { Storage } = useMemo(() => MXP$App, []);
     const { users: usersAPI } = MXP$App.Base.Business.endpoints;
 
-    const currentLocation = useCurrentLocation();
-
     const { flash } = useFlasher();
+    const { show } = useModal();
+    const { push } = useNotifications();
+
+    const currentLocation = useCurrentLocation();
 
     const {
         removeDeliveryLocation,
@@ -133,11 +139,6 @@ function ProfilePage() {
         upsertDeliveryLocation,
         user,
     } = useProfile();
-
-    const { show } = useModal();
-    const { push } = useNotifications();
-
-    const { Storage } = useMemo(() => MXP$App, []);
 
     const [page, updatePage] = useState<IPageState<stateType, `${("deleting" | "saving")}-${forms}`>>({
         data: {
@@ -149,12 +150,6 @@ function ProfilePage() {
         error: null
     });
 
-    const {
-        alerts,
-        deliveryLocations,
-        preferences
-    } = page.data ?? {};
-
     const [pickedDeliveryLocation, setPickedDeliveryLocation] = useState<{
         special_instructions?: string,
         name?: string,
@@ -164,13 +159,38 @@ function ProfilePage() {
     } & parsedAddressObjectType | null>(null);
 
     const [showDeliveryLocationMap, toggleDeliveryLocationMap] = useState(false);
+
     const [validationStates, setValidationStates] = useState<Record<UniqueFields, boolean>>(Object.fromEntries([
         ...Object.values(UniqueFields).map(v => [v, false])
     ]));
+
+    const {
+        data: queryResponse
+    } = useQuery({
+        queryKey: [
+            `${DEFAULT_APPLICATION_QUERY_KEY}GetProducts`,
+            "products",
+            undefined
+        ],
+        queryFn: ApplicationQueries.getList<productType>
+    });
+
+    const {
+        data: products = []
+    } = queryResponse ?? {};
     //#endregion
 
     //#region Variable declarations -----------------------
-    const favoriteProducts = useMemo(() => (get("Products") ?? []).filter(({ product_id }) => user?.Favorites?.map(p => p.product_id).includes(product_id)), [user, get]);
+    const {
+        alerts,
+        deliveryLocations,
+        preferences
+    } = page.data ?? {};
+
+    const favoriteProducts = useMemo(() => (products ?? [])
+        .filter(({ product_id }) => user?.Favorites?.map(p => p.product_id).includes(product_id)),
+        [user, products]
+    );
 
     const defaultPhoneCode = PHONE_CODES.find(pc => (user?.phone || "").includes(pc.code))?.code ?? "";
 
