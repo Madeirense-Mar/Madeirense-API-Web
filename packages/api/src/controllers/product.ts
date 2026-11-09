@@ -404,69 +404,67 @@ export const getAllProducts = async (
                 success: true
             });
         } catch (error) {
-            //TODO: Keep reading and learning about caching strategies to then determine which steps are the right ones to do here.
-        }
-
-        const [p, total] = await Promise.all([
-            prisma.products.findMany({
-                where,
-                skip,
-                take: limit,
-                include: {
-                    Restaurants: {
-                        select: {
-                            restaurant_id: true,
-                            name: true,
-                            location: true
+            const [p, total] = await Promise.all([
+                prisma.products.findMany({
+                    where,
+                    skip,
+                    take: limit,
+                    include: {
+                        Restaurants: {
+                            select: {
+                                restaurant_id: true,
+                                name: true,
+                                location: true
+                            }
+                        },
+                        _count: {
+                            select: {
+                                "User_Comments": true,
+                                "Order_Items": true
+                            }
                         }
                     },
-                    _count: {
-                        select: {
-                            "User_Comments": true,
-                            "Order_Items": true
+                    orderBy: { name: 'desc' }
+                }),
+                prisma.products.count({ where })
+            ]);
+
+            const totalPages = Math.ceil(total / limit);
+
+            products = p.map(({ price, discount, ...p }) => ({
+                discount: parseFloat(discount.toString()) as any,
+                price: parseFloat(price.toString()) as any,
+                ...p,
+            }));
+
+            pagination = {
+                page,
+                limit,
+                total,
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrevious: page > 1
+            };
+
+            if (products.length > 0)
+                redisClient.set(
+                    cacheKey,
+                    JSON.stringify({ products, pagination }),
+                    {
+                        expiration: {
+                            type: "EX",
+                            value: env.REDIS_VALUE_TTL
                         }
                     }
-                },
-                orderBy: { name: 'desc' }
-            }),
-            prisma.products.count({ where })
-        ]);
+                );
 
-        const totalPages = Math.ceil(total / limit);
-
-        products = p.map(({ price, discount, ...p }) => ({
-            discount: parseFloat(discount.toString()) as any,
-            price: parseFloat(price.toString()) as any,
-            ...p,
-        }));
-
-        pagination = {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrevious: page > 1
-        };
-
-        if (products.length > 0)
-            redisClient.set(
-                cacheKey,
-                JSON.stringify({ products, pagination }),
-                {
-                    expiration: {
-                        type: "EX",
-                        value: env.REDIS_VALUE_TTL
-                    }
-                }
-            );
-
-        return res.status((!products.length) ? 404 : 200).json({
-            data: products,
-            message: (!products.length) ? 'None were found' : 'Products retrieved successfully',
-            pagination,
-            success: true
-        });
+            return res.status((!products.length) ? 404 : 200).json({
+                data: products,
+                message: (!products.length) ? 'None were found' : 'Products retrieved successfully',
+                pagination,
+                success: true
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,
