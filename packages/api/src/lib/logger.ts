@@ -42,6 +42,7 @@ export type logContextType = {
     apiKey?: string;
     method?: string;
     path?: string;
+    cached?: boolean;
 };
 
 export const logContext = new AsyncLocalStorage<logContextType>();
