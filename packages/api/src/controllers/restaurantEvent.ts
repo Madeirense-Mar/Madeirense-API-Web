@@ -25,6 +25,8 @@ import {
     emailTicketPurchase
 } from './emails';
 
+import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
+
 import {
     Messages
 } from './utilities/enumerators';
@@ -50,7 +52,6 @@ import { prisma } from '../lib/prisma';
 import type { IEventfulRequest } from '../middlewares/events';
 import type { IAuthenticatedRequest } from '../interfaces';
 import type { IApplicationRequest } from 'middlewares/settingsPropagation';
-import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
 
 // ***************************************************************************************************************
 
@@ -388,7 +389,7 @@ export async function getAllRestaurantEvents(
 
             return res.status(200).json({
                 data: cachedData,
-                message: 'Restaurants retrieved successfully',
+                message: 'Restaurant events retrieved successfully',
                 pagination: cachedPagination,
                 success: true
             });
