@@ -29,7 +29,6 @@ import redisClient from 'lib/redis';
 import type { IAuthenticatedRequest } from '../interfaces';
 import type { IApplicationRequest } from 'middlewares/settingsPropagation';
 
-
 // ***************************************************************************************************************
 
 export const getRestaurantTheme = async (
@@ -70,13 +69,13 @@ export const getGlobalSettings = async (
         const cacheKey = buildCacheKey(getGlobalSettings.name, req);
 
         try {
-            const storedList = await redisClient.json.get(cacheKey) as string | null;
+            const storedValue = await redisClient.json.get(cacheKey) as string | null;
 
-            if (!storedList)
+            if (!storedValue)
                 throw new Error(`(${cacheKey}) value is null`);
 
             return res.status(200).json({
-                data: JSON.parse(storedList) as Global_Settings,
+                data: JSON.parse(storedValue) as Global_Settings,
                 message: `Fetched settings`,
                 success: true
             });
