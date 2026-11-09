@@ -444,10 +444,10 @@ export const getAllProducts = async (
                 success: true
             });
 
-            products = p.map(({ price, discount, ...p }) => ({
+            products = p.map(({ price, discount, ...p }) => convertDecimals({
                 discount: parseFloat(discount.toString()) as any,
                 price: parseFloat(price.toString()) as any,
-                ...convertDecimals(p),
+                ...p,
             }));
 
             await redisClient.set(cacheKey, JSON.stringify({ products, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
