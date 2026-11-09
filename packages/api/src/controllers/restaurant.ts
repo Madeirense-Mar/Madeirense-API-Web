@@ -168,9 +168,6 @@ export const getAllRestaurants = async (
     req: Request,
     res: Response<API$Types.response<restaurantType[] | undefined>>
 ) => {
-    let cacheKey: string = "";
-    let pagination: API$Types.paginationDescription | undefined = undefined;
-
     try {
         const platform = (req.headers[API$Enumerators.Headers.platform] ?? "web") as platformType;
 
@@ -179,7 +176,7 @@ export const getAllRestaurants = async (
 
         const skip = (page - 1) * limit;
 
-        cacheKey = buildCacheKey(getAllRestaurants.name, req, {
+        const cacheKey = buildCacheKey(getAllRestaurants.name, req, {
             platform,
             page,
             limit,
@@ -220,22 +217,7 @@ export const getAllRestaurants = async (
 
             const totalPages = Math.ceil(total / limit);
 
-            if (!restaurants.length) return res.status(404).json({
-                data: [],
-                code: 'API_GENERIC_NOT_FOUND_ERROR',
-                message: 'None were found',
-                pagination: {
-                    page,
-                    limit,
-                    total,
-                    totalPages,
-                    hasNext: page < totalPages,
-                    hasPrevious: page > 1
-                },
-                success: true,
-            });
-
-            pagination = {
+            const pagination = {
                 page,
                 limit,
                 total,
@@ -243,6 +225,14 @@ export const getAllRestaurants = async (
                 hasNext: page < totalPages,
                 hasPrevious: page > 1
             };
+
+            if (!restaurants.length) return res.status(404).json({
+                data: [],
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                message: 'None were found',
+                pagination,
+                success: true,
+            });
 
             const data = restaurants.map(convertDecimals);
 

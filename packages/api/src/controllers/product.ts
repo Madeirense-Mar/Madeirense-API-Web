@@ -337,9 +337,7 @@ export const getAllProducts = async (
     req: IApplicationRequest,
     res: Response<API$Types.response<productType[] | undefined>>
 ) => {
-    let cacheKey: string = "";
     let products: productType[] = [];
-    let pagination: API$Types.paginationDescription | undefined = undefined;
 
     try {
         const group = (req.query[Madeirense$Enumerators.SearchQueries.group] as string) || undefined;
@@ -377,7 +375,7 @@ export const getAllProducts = async (
             ]
         } as Prisma.ProductsWhereInput;
 
-        cacheKey = buildCacheKey(getAllProducts.name, req, {
+        const cacheKey = buildCacheKey(getAllProducts.name, req, {
             group,
             lesserThan,
             greaterThan,
@@ -432,20 +430,7 @@ export const getAllProducts = async (
 
             const totalPages = Math.ceil(total / limit);
 
-            products = p.map(({ price, discount, ...p }) => ({
-                discount: parseFloat(discount.toString()) as any,
-                price: parseFloat(price.toString()) as any,
-                ...convertDecimals(p),
-            }));
-
-            if (!products.length) return res.status(404).json({
-                data: [],
-                message: 'None were found',
-                pagination,
-                success: true
-            });
-
-            pagination = {
+            const pagination = {
                 page,
                 limit,
                 total,
@@ -453,6 +438,19 @@ export const getAllProducts = async (
                 hasNext: page < totalPages,
                 hasPrevious: page > 1
             };
+            
+            if (!p.length) return res.status(404).json({
+                data: [],
+                message: 'None were found',
+                pagination,
+                success: true
+            });
+
+            products = p.map(({ price, discount, ...p }) => ({
+                discount: parseFloat(discount.toString()) as any,
+                price: parseFloat(price.toString()) as any,
+                ...convertDecimals(p),
+            }));
 
             await redisClient.set(cacheKey, JSON.stringify({ products, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
 
