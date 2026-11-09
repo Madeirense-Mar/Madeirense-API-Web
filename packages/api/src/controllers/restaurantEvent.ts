@@ -451,7 +451,7 @@ export async function getAllRestaurantEvents(
                 ...e
             }));
 
-            await redisClient.set(cacheKey, JSON.stringify({ events, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
+            await redisClient.set(cacheKey, JSON.stringify({ data: events, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
 
             return res.status(200).json({
                 data: events,
