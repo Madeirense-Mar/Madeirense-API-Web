@@ -2,8 +2,6 @@ import {
     type Response
 } from 'express';
 
-import { prisma } from '../lib/prisma';
-
 import {
     $Enums,
     Prisma,
@@ -25,13 +23,15 @@ import {
     type restaurantOrderHistoryType,
 } from '@Madeirense/shared';
 
-import {
-    handleControllerError
-} from './utilities/handlers';
+import { convertDecimals } from 'utilities/converters';
+import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
+import { buildCacheKey } from 'utilities/functions';
+import { handleControllerError } from './utilities/handlers';
 
-import {
-    Prisma$Utilities
-} from '../utilities/ORM';
+import { Prisma$Utilities } from '../utilities/ORM';
+
+import { prisma } from '../lib/prisma';
+import redisClient from 'lib/redis';
 
 import {
     clearCart$Dry,
@@ -42,7 +42,6 @@ import {
 import type {
     IAuthenticatedRequest
 } from '../interfaces';
-import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -752,34 +751,60 @@ export const getMyOrders = async (
             ...(type === 'ticket' && { AND: [{ Order_Items: { some: { Products: { product_type: { in: ['ticket'] } } } } }] })
         };
 
-        const [orders, total] = await Promise.all([
-            prisma.orders.findMany({
-                where,
-                skip,
-                take: limit,
-                include: Prisma$Utilities.Inclusions.Orders.Data,
-                orderBy: { created_at: 'desc' }
-            }),
-            prisma.orders.count({
-                where: { user_id }
-            })
-        ]);
+        const cacheKey = buildCacheKey(`${getMyOrders.name}:user:${user_id}`, req, {
+            type,
+            skip,
+            ...where
+        });
 
-        const totalPages = Math.ceil(total / limit);
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
 
-        return res.json({
-            data: convertDecimals(orders),
-            message: 'User orders retrieved successfully',
-            pagination: {
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            return res.status(200).json({
+                ...(JSON.parse(storedList) as {
+                    data: restaurantOrderType[],
+                    pagination: API$Types.paginationDescription
+                }),
+                message: "User's orders retrieved successfully",
+                success: true
+            });
+        } catch (error) {
+            const [orders, total] = await Promise.all([
+                prisma.orders.findMany({
+                    where,
+                    skip,
+                    take: limit,
+                    include: Prisma$Utilities.Inclusions.Orders.Data,
+                    orderBy: { created_at: 'desc' }
+                }),
+                prisma.orders.count({ where })
+            ]);
+
+            const totalPages = Math.ceil(total / limit);
+
+            const pagination = {
                 page,
                 limit,
                 total,
                 totalPages,
                 hasNext: page < totalPages,
                 hasPrevious: page > 1
-            },
-            success: true,
-        });
+            };
+
+            const data = convertDecimals(orders);
+
+            await redisClient.set(cacheKey, JSON.stringify({ data, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
+
+            return res.json({
+                data,
+                message: "User's orders retrieved successfully",
+                pagination,
+                success: true,
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,
@@ -865,34 +890,56 @@ export const getOrderById = async (
 
         const id = parseInt(_id as string, 10);
 
-        const order = await prisma.orders.findUnique({
-            where: { order_id: id },
-            include: Prisma$Utilities.Inclusions.Orders.Data
+        const cacheKey = buildCacheKey(`${getOrderById.name}:order:${id}:user:${user_id}`, req, {
+            user_id,
+            user_role
         });
 
-        if (!order) {
-            return res.status(404).json({
-                data: undefined,
-                code: 'API_GENERIC_NOT_FOUND_ERROR',
-                message: 'Order not found',
-                success: false
+        try {
+            const storedValue = await redisClient.json.get(cacheKey) as string | null;
+
+            if (!storedValue)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            return res.status(200).json({
+                data: (JSON.parse(storedValue) as restaurantOrderType),
+                message: 'Order retrieved successfully',
+                success: true
+            });
+        } catch (error) {
+            const order = await prisma.orders.findUnique({
+                where: { order_id: id },
+                include: Prisma$Utilities.Inclusions.Orders.Data
+            });
+
+            if (!order) {
+                return res.status(404).json({
+                    data: undefined,
+                    code: 'API_GENERIC_NOT_FOUND_ERROR',
+                    message: 'Order not found',
+                    success: false
+                });
+            }
+
+            if (user_role === 'Customer' && order.user_id !== user_id) {
+                return res.status(403).json({
+                    data: undefined,
+                    code: 'FORBIDDEN',
+                    success: false,
+                    message: 'Access denied'
+                });
+            }
+
+            const data = convertDecimals(order);
+
+            await redisClient.set(cacheKey, JSON.stringify(data), REDIS_DEFAULT_KEY_OPTIONS);
+
+            return res.json({
+                data,
+                message: 'Order retrieved successfully',
+                success: true
             });
         }
-
-        if (user_role === 'Customer' && order.user_id !== user_id) {
-            return res.status(403).json({
-                data: undefined,
-                code: 'FORBIDDEN',
-                success: false,
-                message: 'Access denied'
-            });
-        }
-
-        return res.json({
-            success: true,
-            message: 'Order retrieved successfully',
-            data: convertDecimals(order)
-        });
     } catch (error) {
         return handleControllerError(
             res,
