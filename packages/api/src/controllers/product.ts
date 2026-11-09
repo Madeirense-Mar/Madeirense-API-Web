@@ -22,8 +22,10 @@ import {
 } from '@Madeirense/shared';
 
 import {
-    REDIS_CACHE_PREFIX
+    REDIS_DEFAULT_KEY_OPTIONS
 } from 'utilities/constants';
+
+import { buildCacheKey } from 'utilities/functions';
 
 import {
     handleControllerError
@@ -35,8 +37,7 @@ import { prisma } from '../lib/prisma';
 
 import type { IEventfulRequest } from '../middlewares/events';
 import type { IApplicationRequest } from 'middlewares/settingsPropagation';
-import { buildCacheKey } from 'utilities/functions';
-import env from 'env';
+import { convertDecimals } from 'utilities/converters';
 
 // ***************************************************************************************************************
 
@@ -434,8 +435,15 @@ export const getAllProducts = async (
             products = p.map(({ price, discount, ...p }) => ({
                 discount: parseFloat(discount.toString()) as any,
                 price: parseFloat(price.toString()) as any,
-                ...p,
+                ...convertDecimals(p),
             }));
+
+            if (!products.length) return res.status(404).json({
+                data: [],
+                message: 'None were found',
+                pagination,
+                success: true
+            });
 
             pagination = {
                 page,
@@ -446,21 +454,11 @@ export const getAllProducts = async (
                 hasPrevious: page > 1
             };
 
-            if (products.length > 0)
-                redisClient.set(
-                    cacheKey,
-                    JSON.stringify({ products, pagination }),
-                    {
-                        expiration: {
-                            type: "EX",
-                            value: env.REDIS_VALUE_TTL
-                        }
-                    }
-                );
+            await redisClient.set(cacheKey, JSON.stringify({ products, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
 
-            return res.status((!products.length) ? 404 : 200).json({
+            return res.status(200).json({
                 data: products,
-                message: (!products.length) ? 'None were found' : 'Products retrieved successfully',
+                message: 'Products retrieved successfully',
                 pagination,
                 success: true
             });
