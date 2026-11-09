@@ -27,6 +27,14 @@ import {
 } from '../utilities/converters';
 
 import {
+    REDIS_DEFAULT_KEY_OPTIONS
+} from 'utilities/constants';
+
+import {
+    buildCacheKey
+} from 'utilities/functions';
+
+import {
     handleControllerError
 } from './utilities/handlers';
 
@@ -35,12 +43,10 @@ import {
 } from '../utilities/ORM';
 
 import { prisma } from '../lib/prisma';
+import redisClient from 'lib/redis';
 
 import type { IEventfulRequest } from '../middlewares/events';
-import redisClient from 'lib/redis';
-import { buildCacheKey } from 'utilities/functions';
-import env from 'env';
-import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
+import type { IApplicationRequest } from 'middlewares/settingsPropagation';
 
 // ***************************************************************************************************************
 
@@ -165,7 +171,7 @@ type getAllRestaurantsCacheType = {
 };
 
 export const getAllRestaurants = async (
-    req: Request,
+    req: IApplicationRequest,
     res: Response<API$Types.response<restaurantType[] | undefined>>
 ) => {
     try {
