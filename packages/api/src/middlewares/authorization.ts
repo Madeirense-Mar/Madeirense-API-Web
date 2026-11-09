@@ -18,16 +18,10 @@ import {
 import env from '../env';
 
 import {
-    prisma
-} from '../lib/prisma';
-
-import {
     API_MAX_TIME_SESSION_TOKEN
 } from '../utilities/constants.js';
 
-import {
-    setLogContext
-} from '../lib/logger.js';
+import { buildCacheKey } from 'utilities/functions';
 
 import {
     generateToken
@@ -45,11 +39,19 @@ import type {
     IAuthenticatedRequest,
 } from '../interfaces.js';
 
+import {
+    setLogContext
+} from '../lib/logger.js';
+
+import {
+    prisma
+} from '../lib/prisma';
+
+import redisClient from 'lib/redis';
+
 import type {
     JWTPayloadType
 } from '../types.js';
-import redisClient from 'lib/redis';
-import { buildCacheKey } from 'utilities/functions';
 
 // ***************************************************************************************************************
 
