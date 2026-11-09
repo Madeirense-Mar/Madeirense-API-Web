@@ -599,7 +599,7 @@ const AppProvider = ({ children, clients, storageManager }: IProviderPropTypes) 
             let Restaurant_Events: restaurantEventType[] = [];
 
             try {
-                try { Coupons = [...((await clients.coupons.getAll({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }
+                try { Coupons = [...((await clients.coupons.getAll({ limit: DEFAULT_MIN_LIMIT, valid: "true" })).data ?? [])]; } catch (error) { }
                 try { Global_Settings = (await clients["global-settings"].get()); } catch (error) { }
                 try { Drivers = [...((await clients.restaurants.getAllAvailableDrivers({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }
                 try { Products = [...((await clients.products.getAll({ limit: DEFAULT_MIN_LIMIT })).data ?? [])]; } catch (error) { }

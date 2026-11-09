@@ -1,12 +1,17 @@
 import { Router } from 'express';
 
 import {
-    body
+    body,
+    query
 } from 'express-validator';
 
 import {
     type Coupons
 } from '@Madeirense/database';
+
+import {
+    type Madeirense$Types
+} from '@Madeirense/shared';
 
 import {
     API_MIN_ID_NUMBER
@@ -55,6 +60,10 @@ const v1 = Router();
 v1.get(
     '/',
     validatePagination,
+    [
+        query("valid" as (keyof Madeirense$Types.searchQueryRecord)).optional({ values: 'falsy' }).isIn(["true"]).withMessage("Send `valid` with the value of `true` to filter coupon lists with strictly non-expired entries."),
+        Validate.Handle.error
+    ],
     controller.getAllCoupons as any
 );
 

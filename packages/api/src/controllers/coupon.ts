@@ -48,7 +48,20 @@ export const getAllCoupons = async (
 
         const skip = (page - 1) * limit;
 
-        const cacheKey = buildCacheKey(getAllCoupons.name, req, { skip });
+        const valid = req.query.valid === 'true';
+
+        const where: Prisma.CouponsWhereInput = {};
+
+        if (valid) {
+            where.expires_at = {
+                gte: new Date()
+            };
+        }
+
+        const cacheKey = buildCacheKey(getAllCoupons.name, req, {
+            skip,
+            ...where
+        });
 
         try {
             const storedList = await redisClient.json.get(cacheKey) as string | null;

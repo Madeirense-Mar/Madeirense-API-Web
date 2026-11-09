@@ -86,6 +86,7 @@ export namespace Madeirense$Enumerators {
         "user_id" = "user_id",
         "to" = "to",
         "user_role" = "user_role",
+        "valid" = "valid",
         "year" = "year",
         "withRooms" = "withRooms"
     }
