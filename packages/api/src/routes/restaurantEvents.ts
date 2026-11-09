@@ -67,7 +67,7 @@ v1.get(
         query("upcoming" as (keyof Madeirense$Types.searchQueryRecord)).optional({ values: 'falsy' }).isIn(["true"]).withMessage("Send `upcoming` with the value of `true` to filter event lists with strictly upcoming events."),
         Validate.Handle.error
     ],
-    controller.getAllRestaurantEvents
+    controller.getAllRestaurantEvents as any
 );
 
 v1.use(validateJWT as any); // ========================================================================

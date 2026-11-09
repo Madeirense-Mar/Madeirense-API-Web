@@ -22,6 +22,10 @@ import {
 } from '@Madeirense/shared';
 
 import {
+    emailTicketPurchase
+} from './emails';
+
+import {
     Messages
 } from './utilities/enumerators';
 
@@ -30,22 +34,23 @@ import {
 } from './utilities/handlers';
 
 import {
-    emailTicketPurchase
-} from './emails';
+    convertDecimals
+} from '../utilities/converters';
+
+import { buildCacheKey } from 'utilities/functions';
 
 import {
     generateTicketToken,
     verifyTicketToken
 } from '../utilities/generators';
 
-import {
-    convertDecimals
-} from '../utilities/converters';
-
+import redisClient from 'lib/redis';
 import { prisma } from '../lib/prisma';
 
 import type { IEventfulRequest } from '../middlewares/events';
 import type { IAuthenticatedRequest } from '../interfaces';
+import type { IApplicationRequest } from 'middlewares/settingsPropagation';
+import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
 
 // ***************************************************************************************************************
 
@@ -338,7 +343,7 @@ export async function deleteRestaurantEvent(
 };
 
 export async function getAllRestaurantEvents(
-    req: Request,
+    req: IApplicationRequest,
     res: Response<API$Types.response<restaurantEventType[] | undefined>>
 ) {
     try {
@@ -362,60 +367,98 @@ export async function getAllRestaurantEvents(
             };
         }
 
-        let [events, total] = await Promise.all([
-            prisma.restaurant_Events.findMany({
-                where,
-                skip,
-                take: limit,
-                include: {
-                    Restaurants: {
-                        select: {
-                            restaurant_id: true,
-                            name: true,
-                            location: true
+        const cacheKey = buildCacheKey(getAllRestaurantEvents.name, req, {
+            skip,
+            ...where
+        });
+
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
+
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            const {
+                data: cachedData,
+                pagination: cachedPagination,
+            } = JSON.parse(storedList) as {
+                data: restaurantEventType[],
+                pagination: API$Types.paginationDescription
+            };
+
+            return res.status(200).json({
+                data: cachedData,
+                message: 'Restaurants retrieved successfully',
+                pagination: cachedPagination,
+                success: true
+            });
+        } catch (error) {
+            let [events, total] = await Promise.all([
+                prisma.restaurant_Events.findMany({
+                    where,
+                    skip,
+                    take: limit,
+                    include: {
+                        Restaurants: {
+                            select: {
+                                restaurant_id: true,
+                                name: true,
+                                location: true
+                            }
+                        },
+                        Products: true,
+                        _count: {
+                            select: {
+                                Products: true,
+                                Tickets_Purchased: true
+                            }
                         }
                     },
-                    Products: true,
-                    _count: {
-                        select: {
-                            Products: true,
-                            Tickets_Purchased: true
-                        }
-                    }
-                },
-                orderBy: { event_date: 'asc' }
-            }),
-            prisma.restaurant_Events.count({ where })
-        ]);
+                    orderBy: { event_date: 'asc' }
+                }),
+                prisma.restaurant_Events.count({ where })
+            ]);
 
-        const totalPages = Math.ceil(total / limit);
+            const totalPages = Math.ceil(total / limit);
 
-        // convertDecimals covers the nested `Products` (tickets) array too —
-        // those weren't going through any conversion at all before, so a
-        // ticket's `price`/`discount` (Prisma Decimal) was reaching
-        // clients as a JSON string, not a number. Same bug class already
-        // fixed for orders.ts/coupon.ts (see mobile/CLAUDE.md); the
-        // top-level `price` still gets its own parseFloat first since
-        // it's destructured out before the rest is converted.
-        events = events.map(({ price, ...e }) => convertDecimals({
-            price: parseFloat(price.toString()) as any,
-            ...e
-        }));
-
-        return res.status(!events.length ? 404 : 200).json({
-            code: !events.length ? 'API_GENERIC_NOT_FOUND_ERROR' : undefined,
-            data: events,
-            message: !events.length ? 'There are no registered events' : 'Restaurant events retrieved successfully',
-            pagination: {
+            const pagination = {
                 page,
                 limit,
                 total,
                 totalPages,
                 hasNext: page < totalPages,
                 hasPrevious: page > 1
-            },
-            success: (events.length > 0),
-        });
+            };
+
+            if (!events.length) return res.status(404).json({
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                data: events,
+                message: 'There are no registered events',
+                pagination,
+                success: true,
+            });
+
+            // convertDecimals covers the nested `Products` (tickets) array too —
+            // those weren't going through any conversion at all before, so a
+            // ticket's `price`/`discount` (Prisma Decimal) was reaching
+            // clients as a JSON string, not a number. Same bug class already
+            // fixed for orders.ts/coupon.ts (see mobile/CLAUDE.md); the
+            // top-level `price` still gets its own parseFloat first since
+            // it's destructured out before the rest is converted.
+            events = events.map(({ price, ...e }) => convertDecimals({
+                price: parseFloat(price.toString()) as any,
+                ...e
+            }));
+
+            await redisClient.set(cacheKey, JSON.stringify({ events, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
+
+            return res.status(200).json({
+                data: events,
+                message: 'Restaurant events retrieved successfully',
+                pagination,
+                success: true,
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,
@@ -922,7 +965,7 @@ export async function getMyTickets(
 
         const skip = (page - 1) * limit;
 
-        const where = { 
+        const where = {
             user_id: req.user.user_id,
             order_id
         };
