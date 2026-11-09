@@ -16,15 +16,19 @@ import {
 } from '@Madeirense/shared';
 
 import { prisma } from '../lib/prisma';
+import redisClient from 'lib/redis';
+
+import { buildCacheKey } from 'utilities/functions';
 
 import {
     handleControllerError
 } from './utilities/handlers';
 
-import {
-    type IEventfulRequest
-} from '../middlewares/events';
+import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
 import { convertDecimals } from 'utilities/converters';
+
+import { type IEventfulRequest } from '../middlewares/events';
+import type { IApplicationRequest } from 'middlewares/settingsPropagation';
 
 // ***************************************************************************************************************
 
@@ -35,7 +39,7 @@ type couponPayload = {
 };
 
 export const getAllCoupons = async (
-    req: Request,
+    req: IApplicationRequest,
     res: Response<API$Types.response<Coupons[]>>
 ) => {
     try {
@@ -44,38 +48,76 @@ export const getAllCoupons = async (
 
         const skip = (page - 1) * limit;
 
-        const [
-            coupons,
-            total
-        ] = await Promise.all([
-            prisma.coupons.findMany({
-                skip,
-                take: limit,
-                orderBy: {
-                    expires_at: 'desc'
-                }
-            }),
-            prisma.coupons.count()
-        ]);
+        const cacheKey = buildCacheKey(getAllCoupons.name, req, { skip });
 
-        const totalPages = Math.ceil(total / limit);
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
 
-        res.json({
-            data: coupons.map(({ discount, ...c }) => ({
-                discount: parseFloat(discount.toString()) as any,
-                ...c
-            })),
-            message: 'Coupons retrieved successfully',
-            pagination: {
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            const {
+                data: cachedData,
+                pagination: cachedPagination,
+            } = JSON.parse(storedList) as {
+                data: Coupons[],
+                pagination: API$Types.paginationDescription
+            };
+
+            return res.status(200).json({
+                data: cachedData,
+                message: 'Coupons retrieved successfully',
+                pagination: cachedPagination,
+                success: true
+            });
+        } catch (error) {
+            const [
+                coupons,
+                total
+            ] = await Promise.all([
+                prisma.coupons.findMany({
+                    skip,
+                    take: limit,
+                    orderBy: {
+                        expires_at: 'desc'
+                    }
+                }),
+                prisma.coupons.count()
+            ]);
+
+            const totalPages = Math.ceil(total / limit);
+
+            const pagination = {
                 page,
                 limit,
                 total,
                 totalPages,
                 hasNext: (page < totalPages),
                 hasPrevious: (page > 1)
-            },
-            success: true
-        });
+            };
+
+            if (!coupons.length) return res.json({
+                data: [],
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                message: 'There are no coupons',
+                pagination,
+                success: true
+            });
+
+            const _coupons = coupons.map(({ discount, ...c }) => convertDecimals({
+                discount: parseFloat(discount.toString()) as any,
+                ...c
+            }));
+
+            await redisClient.set(cacheKey, JSON.stringify({ data: _coupons, pagination }), REDIS_DEFAULT_KEY_OPTIONS);
+
+            res.json({
+                data: _coupons,
+                message: 'Coupons retrieved successfully',
+                pagination,
+                success: true
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,

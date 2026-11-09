@@ -55,7 +55,7 @@ const v1 = Router();
 v1.get(
     '/',
     validatePagination,
-    controller.getAllCoupons
+    controller.getAllCoupons as any
 );
 
 v1.use(validateJWT as any); // ========================================================================
