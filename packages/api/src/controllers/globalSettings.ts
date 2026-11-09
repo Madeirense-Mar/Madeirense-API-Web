@@ -15,15 +15,20 @@ import {
     type applicationSettingsType
 } from '@Madeirense/shared';
 
+import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
+
+import { buildCacheKey } from 'utilities/functions';
+
 import {
     handleControllerError
 } from './utilities/handlers';
 
 import prisma from '../lib/prisma';
+import redisClient from 'lib/redis';
 
-import type {
-    IAuthenticatedRequest
-} from '../interfaces';
+import type { IAuthenticatedRequest } from '../interfaces';
+import type { IApplicationRequest } from 'middlewares/settingsPropagation';
+
 
 // ***************************************************************************************************************
 
@@ -58,31 +63,48 @@ export const getRestaurantTheme = async (
 }
 
 export const getGlobalSettings = async (
-    req: Request,
+    req: IApplicationRequest,
     res: Response<API$Types.response<Global_Settings | undefined>>
 ) => {
     try {
-        const global_settings = await prisma.global_Settings.findFirst({
-            include: {
-                Global_Settings_Eligible_Payment_Types: {
-                    select: {
-                        payment_method: true
+        const cacheKey = buildCacheKey(getGlobalSettings.name, req);
+
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
+
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            return res.status(200).json({
+                data: JSON.parse(storedList) as Global_Settings,
+                message: `Fetched settings`,
+                success: true
+            });
+        } catch (error) {
+            const global_settings = await prisma.global_Settings.findFirst({
+                include: {
+                    Global_Settings_Eligible_Payment_Types: {
+                        select: {
+                            payment_method: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        if (!global_settings) return res.status(404).json({
-            data: undefined,
-            message: `There are no saved settings`,
-            success: false
-        });
+            if (!global_settings) return res.status(404).json({
+                data: undefined,
+                message: `There are no saved settings`,
+                success: false
+            });
 
-        return res.status(200).json({
-            data: global_settings,
-            message: `Fetched settings`,
-            success: true
-        });
+            await redisClient.set(cacheKey, JSON.stringify(global_settings), REDIS_DEFAULT_KEY_OPTIONS);
+
+            return res.status(200).json({
+                data: global_settings,
+                message: `Fetched settings`,
+                success: true
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,
@@ -118,31 +140,50 @@ export const getGlobalSettingsVersion = async (
 };
 
 export const getGlobalEligiblePayments = async (
-    req: Request,
+    req: IApplicationRequest,
     res: Response<API$Types.response<$Enums.Global_Settings_Eligible_Payment_Types_payment_method[] | undefined>>
 ) => {
     try {
-        const global_settings = await prisma.global_Settings.findFirst({
-            include: {
-                Global_Settings_Eligible_Payment_Types: {
-                    select: {
-                        payment_method: true
+        const cacheKey = buildCacheKey(getGlobalEligiblePayments.name, req);
+
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
+
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            return res.status(200).json({
+                data: JSON.parse(storedList) as $Enums.Global_Settings_Eligible_Payment_Types_payment_method[],
+                message: `Fetched eligible payments`,
+                success: true
+            });
+        } catch (error) {
+            const global_settings = await prisma.global_Settings.findFirst({
+                include: {
+                    Global_Settings_Eligible_Payment_Types: {
+                        select: {
+                            payment_method: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        if (!global_settings) return res.status(404).json({
-            data: undefined,
-            message: `There are no saved settings`,
-            success: false
-        });
+            if (!global_settings) return res.status(404).json({
+                data: undefined,
+                message: `There are no saved settings`,
+                success: false
+            });
 
-        return res.status(200).json({
-            data: global_settings.Global_Settings_Eligible_Payment_Types.map(({ payment_method }) => payment_method),
-            message: `Fetched eligible payments`,
-            success: true
-        });
+            const payments = global_settings.Global_Settings_Eligible_Payment_Types.map(({ payment_method }) => payment_method);
+
+            await redisClient.set(cacheKey, JSON.stringify(payments), REDIS_DEFAULT_KEY_OPTIONS);
+
+            return res.status(200).json({
+                data: payments,
+                message: `Fetched eligible payments`,
+                success: true
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,
