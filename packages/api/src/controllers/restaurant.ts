@@ -184,8 +184,6 @@ export const getAllRestaurants = async (
 
         const cacheKey = buildCacheKey(getAllRestaurants.name, req, {
             platform,
-            page,
-            limit,
             skip
         });
 

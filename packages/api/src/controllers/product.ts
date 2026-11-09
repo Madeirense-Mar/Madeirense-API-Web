@@ -379,8 +379,6 @@ export const getAllProducts = async (
             group,
             lesserThan,
             greaterThan,
-            page,
-            limit,
             skip,
             ...where
         });
