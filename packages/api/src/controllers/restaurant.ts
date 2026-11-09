@@ -37,6 +37,10 @@ import {
 import { prisma } from '../lib/prisma';
 
 import type { IEventfulRequest } from '../middlewares/events';
+import redisClient from 'lib/redis';
+import { buildCacheKey } from 'utilities/functions';
+import env from 'env';
+import { REDIS_DEFAULT_KEY_OPTIONS } from 'utilities/constants';
 
 // ***************************************************************************************************************
 
@@ -155,10 +159,18 @@ export const deleteRestaurant = async (
     }
 };
 
+type getAllRestaurantsCacheType = {
+    restaurants: restaurantType[],
+    pagination: API$Types.paginationDescription
+};
+
 export const getAllRestaurants = async (
     req: Request,
-    res: Response<API$Types.response<any | undefined>>
+    res: Response<API$Types.response<restaurantType[] | undefined>>
 ) => {
+    let cacheKey: string = "";
+    let pagination: API$Types.paginationDescription | undefined = undefined;
+
     try {
         const platform = (req.headers[API$Enumerators.Headers.platform] ?? "web") as platformType;
 
@@ -167,36 +179,89 @@ export const getAllRestaurants = async (
 
         const skip = (page - 1) * limit;
 
-        const [restaurants, total] = await Promise.all([
-            prisma.restaurants.findMany({
-                skip,
-                take: limit,
-                include: {
-                    ...Prisma$Utilities.Inclusions.Restaurants.Data,
-                    ...((platform === "mobile") ? {
-                        Restaurant_Hours: true,
-                    } : {})
-                }
-            }),
-            prisma.restaurants.count()
-        ]);
+        cacheKey = buildCacheKey(getAllRestaurants.name, req, {
+            platform,
+            page,
+            limit,
+            skip
+        });
 
-        const totalPages = Math.ceil(total / limit);
+        try {
+            const storedList = await redisClient.json.get(cacheKey) as string | null;
 
-        return res.status(!restaurants.length ? 404 : 200).json({
-            data: (platform === "mobile") ? restaurants.map(convertDecimals) : restaurants,
-            code: !restaurants.length ? 'API_GENERIC_NOT_FOUND_ERROR' : undefined,
-            message: !restaurants.length ? 'None were found' : 'Restaurants retrieved successfully',
-            pagination: {
+            if (!storedList)
+                throw new Error(`(${cacheKey}) value is null`);
+
+            const {
+                restaurants: cachedRestaurants,
+                pagination: cachedPagination,
+            } = JSON.parse(storedList) as getAllRestaurantsCacheType;
+
+            return res.status(200).json({
+                data: cachedRestaurants,
+                message: 'Restaurants retrieved successfully',
+                pagination: cachedPagination,
+                success: true
+            });
+        } catch (error) {
+            const [restaurants, total] = await Promise.all([
+                prisma.restaurants.findMany({
+                    skip,
+                    take: limit,
+                    include: {
+                        ...Prisma$Utilities.Inclusions.Restaurants.Data,
+                        ...((platform === "mobile") ? {
+                            Restaurant_Hours: true,
+                        } : {})
+                    }
+                }),
+                prisma.restaurants.count()
+            ]);
+
+            const totalPages = Math.ceil(total / limit);
+
+            if (!restaurants.length) return res.status(404).json({
+                data: [],
+                code: 'API_GENERIC_NOT_FOUND_ERROR',
+                message: 'None were found',
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages,
+                    hasNext: page < totalPages,
+                    hasPrevious: page > 1
+                },
+                success: true,
+            });
+
+            pagination = {
                 page,
                 limit,
                 total,
                 totalPages,
                 hasNext: page < totalPages,
                 hasPrevious: page > 1
-            },
-            success: (restaurants.length > 0),
-        });
+            };
+
+            const data = restaurants.map(convertDecimals);
+
+            await redisClient.set(
+                cacheKey,
+                JSON.stringify({
+                    restaurants: data,
+                    pagination
+                }),
+                REDIS_DEFAULT_KEY_OPTIONS
+            );
+
+            return res.status(200).json({
+                data,
+                message: 'Restaurants retrieved successfully',
+                pagination,
+                success: true,
+            });
+        }
     } catch (error) {
         return handleControllerError(
             res,

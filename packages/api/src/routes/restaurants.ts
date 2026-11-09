@@ -46,7 +46,7 @@ const v1 = Router();
 v1.get(
     '/',
     validatePagination,
-    controller.getAllRestaurants
+    controller.getAllRestaurants as any
 );
 
 v1.get(
