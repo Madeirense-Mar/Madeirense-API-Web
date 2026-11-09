@@ -151,7 +151,7 @@ const env = {
     //#region REDIS
     REDIS_URL: which(process.env.REDIS_URL, 'redis://localhost:6379') as string,
     REDIS_KEY_PREFIX: (which(process.env.REDIS_KEY_PREFIX, '') as string),
-    REDIS_VALUE_TTL: parseInt(which(process.env.REDIS_VALUE_TTL, '3600') as string),
+    REDIS_VALUE_TTL: parseInt(which(process.env.REDIS_VALUE_TTL, '600') as string),
     //#endregion
 
     //#region UploadCare
