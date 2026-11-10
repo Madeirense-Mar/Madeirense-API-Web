@@ -44,17 +44,22 @@ import {
     Root$Enumerators
 } from "styles/enumerators";
 
-import { 
+import {
     Welcome$Enumerators
 } from "./Welcome.enumerators";
 
 import styles from "./Welcome.module.css";
 
 import "./Welcome.css";
+import MXP$App from "configurations";
 
 // ***************************************************************************************************************
 
 type formType = keyof typeof Welcome$Enumerators.Forms;
+
+const {
+    authentication: authenticationAPI
+} = MXP$App.Base.Business.endpoints;
 
 function WelcomePage() {
     const {
@@ -80,6 +85,7 @@ function WelcomePage() {
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [error, setError] = useState<Error | null>(null);
     const [password, setPassword] = useState<string>("");
+    const [showResetFlowMessage, setShowResetFlowMessage] = useState(true);
 
     function handleOAuthError(error: APIError<any>) {
         setError(new APIError(error));
@@ -99,6 +105,10 @@ function WelcomePage() {
             $root.removeAttribute(Root$Enumerators.Attributes.Context.page);
         }
     }, []);
+
+    useEffect(() => {
+        setShowResetFlowMessage(false);
+    }, [type]);
 
     const validations = {
         "password": [
@@ -145,57 +155,73 @@ function WelcomePage() {
             async function POST(e: SubmitEvent<HTMLFormElement>) {
                 e.preventDefault();
 
-                const $form = e.target as HTMLFormElement;
-                const elements = $form.elements;
+                const $formData = new FormData(e.target as HTMLFormElement);
 
                 setError(null);
 
                 try {
-                    await login({
-                        email: (elements.namedItem("email") as HTMLInputElement).value as string,
-                        password: (elements.namedItem("password") as HTMLInputElement).value as string
+                    await authenticationAPI.requestReset({
+                        email: $formData.get("email") as string
                     });
+
+                    setShowResetFlowMessage(true);
                 } catch (error) {
                     setError(error as Error);
                 }
             };
 
-            return <main {...$mainProps}>
-                <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
+            if (showResetFlowMessage) return <main {...$mainProps}>
+                <section className={resolveClassNames(styles.panel)}>
                 </section>
 
-                <section className={resolveClassNames(styles.section, "flex flex-row justify-center items-center")}>
+                <section className={resolveClassNames(styles.section, "gap-10")}>
+                    <header className="mr-auto">
+                        <h2 className="flex flex-row justify-start items-center gap-5">
+                            <AnchorButton to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`} shape="circle">
+                                <Icon name="ArrowLeft" />
+                            </AnchorButton>
+                        </h2>
+                    </header>
+
+                    <p className="text-3xl mr-auto">Se o teu e-mail existe, faremos o envio das próximos passos a seguir para a reposição da sua password.</p>
+
+                    <p className="text-3xl mr-auto">Até já!</p>
+                </section>
+            </main>
+
+            return <main {...$mainProps}>
+                <section className={resolveClassNames(styles.panel)}>
+                </section>
+
+                <section className={resolveClassNames(styles.section)}>
+                    <header className="mr-auto">
+                        <h2 className="flex flex-row justify-start items-center gap-5">
+                            <AnchorButton to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`} shape="circle">
+                                <Icon name="ArrowLeft" />
+                            </AnchorButton>
+                        </h2>
+
+                        <p>Deixe o seu email e faremos o envio das suas credenciais</p>
+                    </header>
+
                     <form onSubmit={POST} autoComplete="on">
-                        <header>
-                            <h2 className="flex flex-row justify-start items-center gap-5">
-                                <AnchorButton to={`${Madeirense$Enumerators.Pages.App.Welcome}/${Welcome$Enumerators.Forms.login}`} shape="circle">
-                                    <Icon name="ArrowLeft" />
-                                </AnchorButton>
-
-                                forgot
-                            </h2>
-
-                            <p>Deixe o seu email e faremos o envio das suas credenciais</p>
-                        </header>
-
                         <fieldset data-section={type} data-state={state === "authenticating" ? "disabled" : "idle"}>
                             <label htmlFor="email">E-mail</label>
-                            <input id="email" name="login" type="email" placeholder="oteuemail@provedor.com" required />
 
+                            <input id="email" name="email" type="email" placeholder="oteuemail@provedor.com" required />
                         </fieldset>
 
                         {error && <div data-state="error" className="w-full text-center p-1">
                             {error.message}
                         </div>}
 
-                        <Button type="submit" disabled={!assertions.arePasswordsValid || assertions.isLoading} className="mt-2 w-full">
+                        <Button type="submit" disabled={assertions.isLoading} className="mt-2 w-full">
                             {(assertions.isLoading)
                                 ? <Icon name="Loading" className="animate-spin" />
                                 : "Entrar"
                             }
                         </Button>
                     </form>
-
                 </section>
             </main>
         }
@@ -220,7 +246,7 @@ function WelcomePage() {
             };
 
             return <main {...$mainProps}>
-                <section className={resolveClassNames(styles.panel, "flex flex-row justify-center items-center")}>
+                <section className={resolveClassNames(styles.panel)}>
                 </section>
 
                 <section className={resolveClassNames(styles.section, "flex flex-row justify-center items-center")}>

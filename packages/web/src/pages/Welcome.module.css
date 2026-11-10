@@ -16,11 +16,14 @@
 
 /*#region Section*/
 .section {
-    @apply flex flex-col justify-center items-center gap-2 w-full;
+    @apply flex flex-col justify-center items-center w-full;
+
     grid-area: form;
-    background-color: var(--base-background);
+
     border: var(--border-width) solid var(--border-color);
     border-radius: 12px;
+
+    background-color: var(--base-background);
 }
 
 .section label,
@@ -98,6 +101,12 @@
     height: -webkit-fill-available;
     grid-area: oauth;
 }
+
+/*#region Forgot ========================================== */
+.forgot {
+    --fieldset-padding: 0px;
+}
+/*#endregion*/
 
 /*#region Media =========================================== */
 @media only screen and (min-width: 344px) {}

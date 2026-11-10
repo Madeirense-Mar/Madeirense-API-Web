@@ -103,6 +103,12 @@ class AuthenticationEndpoints extends BaseAPIAbstractEndpoint {
 
         return response.data;
     }
+
+    async requestReset(payload: { email: string }) {
+        const response = await this.client.post<typeof payload, any>('/auth/reset', payload);
+
+        return response.data;
+    }
 };
 
 export default AuthenticationEndpoints;
