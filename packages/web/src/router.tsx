@@ -34,10 +34,12 @@ import OrderPage from "pages/Order";
 import ProductPage from "pages/Product";
 import ProfilePage from "pages/Profile";
 import ResortPage from "pages/Resort";
-import SetCredentialsPage from "pages/SetCredentials";
 import WelcomePage from "pages/Welcome";
 
-import AuthenticationSuccessPage from "pages/Authentication/success";
+import AuthenticationLayout from "pages/Authentication/Layout";
+import AuthenticationPasswordResetPage from "pages/Authentication/PasswordReset";
+import AuthenticationSetCredentialsPage from "pages/Authentication/SetCredentials";
+import AuthenticationSuccessPage from "pages/Authentication/Success";
 
 import BackOfficeLayout from "pages/BackOffice/Layout";
 import BackOfficeBookingsPage from "pages/BackOffice/Bookings";
@@ -186,18 +188,6 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 				element: <ProfilePage />,
 			},
 			{
-				id: "successful-authentication",
-				path: Madeirense$Enumerators.Pages.Authentication.Success,
-				label: "OAuth callback",
-				element: <AuthenticationSuccessPage />,
-			},
-			{
-				id: "authentication-set-credentials",
-				path: Madeirense$Enumerators.Pages.Authentication["Set Credentials"],
-				label: "Definir credenciais",
-				element: <SetCredentialsPage />,
-			},
-			{
 				id: "events",
 				path: `${Madeirense$Enumerators.Pages.App.Events}/:event_id?`,
 				label: "events",
@@ -229,6 +219,35 @@ const appRoutesTree: ReadonlyArray<IAppRoute> = [
 			},
 		],
 		routes: [
+			//#region Authentication routes ---------------
+			{
+				id: "authentication",
+				path: Madeirense$Enumerators.Pages.Authentication.Layout,
+				label: "authentication",
+				element: <AuthenticationLayout />,
+				branches: [
+					{
+						id: "authentication-reset-password",
+						path: Madeirense$Enumerators.Pages.Authentication["Reset Password"],
+						label: "Repor password",
+						element: <AuthenticationPasswordResetPage />,
+					},
+					{
+						id: "authentication-set-credentials",
+						path: Madeirense$Enumerators.Pages.Authentication["Set Credentials"],
+						label: "Definir credenciais",
+						element: <AuthenticationSetCredentialsPage />,
+					},
+					{
+						id: "successful-authentication",
+						path: Madeirense$Enumerators.Pages.Authentication.Success,
+						label: "OAuth callback",
+						element: <AuthenticationSuccessPage />,
+					}
+				]
+			},
+			//#endregion
+			
 			//#region Back-office routes ------------------
 			{
 				id: "back-office",

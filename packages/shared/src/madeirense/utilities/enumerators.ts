@@ -15,6 +15,7 @@ export namespace Madeirense$Enumerators {
 
         export enum Authentication {
             "Layout" = "/authentication",
+            "Reset Password" = "/authentication/reset-password",
             "Set Credentials" = "/authentication/set-credentials",
             "Success" = "/authentication/success",
         }

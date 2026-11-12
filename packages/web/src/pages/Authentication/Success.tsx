@@ -22,7 +22,7 @@ import AppSettings from "settings";
 import Icon from "components/icon";
 import Tag from "components/tags";
 
-import styles from "./index.module.css";
+import styles from "./Success.module.css";
 
 import type { variantType } from "components/types";
 

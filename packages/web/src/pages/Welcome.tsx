@@ -86,6 +86,7 @@ function WelcomePage() {
     const [error, setError] = useState<Error | null>(null);
     const [password, setPassword] = useState<string>("");
     const [showResetFlowMessage, setShowResetFlowMessage] = useState(true);
+    const [requestingPasswordReset, setRequestingPasswordReset] = useState(false);
 
     function handleOAuthError(error: APIError<any>) {
         setError(new APIError(error));
@@ -139,11 +140,14 @@ function WelcomePage() {
             validations["confirmPassword"].every(({ validation }) => validation)
         ),
         "isLoading": [
-            "authentication",
-            "loading",
-            "logged",
-            "registering"
-        ].includes(state)
+            requestingPasswordReset,
+            [
+                "authentication",
+                "loading",
+                "logged",
+                "registering"
+            ].includes(state)
+        ].includes(true)
     };
 
     const $mainProps = {
@@ -158,7 +162,8 @@ function WelcomePage() {
                 const $formData = new FormData(e.target as HTMLFormElement);
 
                 setError(null);
-
+                setRequestingPasswordReset(true);
+                
                 try {
                     await authenticationAPI.requestReset({
                         email: $formData.get("email") as string
@@ -167,6 +172,8 @@ function WelcomePage() {
                     setShowResetFlowMessage(true);
                 } catch (error) {
                     setError(error as Error);
+                } finally {
+                    setRequestingPasswordReset(false);
                 }
             };
 
