@@ -8,7 +8,7 @@
 
 @host = http://localhost:3001
 @baseUrl = {{host}}/api/v1/auth
-@apiKey = REPLACE_WITH_API_KEY
+@apiKey = mdr_test_7UUjKMCbp-uX4T7IBrOA3PvLBsNeDAdvNdChquco8kw
 @email = admin@example.com
 @password = REPLACE_WITH_PASSWORD
 @token = {{login.response.body.$.tokens.sessionToken}}
@@ -34,6 +34,15 @@ x-api-key: {{apiKey}}
 {
   "email": "{{email}}",
   "password": "{{password}}"
+}
+
+### Request password reset
+POST {{baseUrl}}/reset
+Content-Type: application/json
+x-api-key: {{apiKey}}
+
+{
+  "email": "rcesar221@hotmail.com"
 }
 
 ### Current user (passport JWT strategy)

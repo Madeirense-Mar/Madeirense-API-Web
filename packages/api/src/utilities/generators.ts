@@ -8,24 +8,39 @@ import type {
 
 // ***************************************************************************************************************
 
-export const generateToken = (user: any, type: ('SESSION' | 'REFRESH' | '') = ''): string => {
+export const generateToken = (
+    user: any,
+    type: ('SESSION' | 'REFRESH' | 'PASSWORD-RESET' | '') = '',
+    expiresIn = (env.JWT_EXPIRE || '7d')
+): string => {
     const payload: JWTPayloadType = {
         userId: user.user_id,
         email: user.email,
         role: user.user_role
     };
 
-    const secret = type === 'REFRESH'
-        ? (env.JWT_REFRESH_SECRET ?? '')
-        : type === 'SESSION'
-            ? (env.JWT_SESSION_SECRET ?? '')
-            : '';
+    let secret = "";
+
+    switch (type) {
+        case "REFRESH":
+        case "SESSION":
+            secret = env[`JWT_${type}_SECRET`];
+
+            break;
+
+        case "PASSWORD-RESET":
+            secret = env.JWT_PASSWORD_RESET_SECRET;
+            break;
+
+        default:
+            throw new Error(`The requested token type [${type}] has no secret configured`);
+    };
 
     return jwt.sign(
         payload,
         secret,
         {
-            expiresIn: env.JWT_EXPIRE || '7d'
+            expiresIn
         } as jwt.SignOptions
     );
 };

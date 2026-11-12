@@ -104,6 +104,15 @@ v1.post(
     controller.logout as any
 );
 
+v1.post(
+    '/reset',
+    [
+        body('email').isEmail().withMessage(`Must be a valid e-mail address`),
+        Validate.Handle.error
+    ],
+    controller.reset as any
+);
+
 v1.get(
     '/me',
     passport.authenticate('jwt', { session: false }),

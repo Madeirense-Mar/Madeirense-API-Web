@@ -37,6 +37,7 @@ const env = {
     
     //#region General
     APP_NAME: which(process.env.APP_NAME, 'Madeirense-API') as string,
+    APP_PASSWORD_RESET_EXPIRY_TIME: which(process.env.APP_PASSWORD_RESET_EXPIRY_TIME, '3h') as string,
     API_URL: which(process.env.API_URL, 'http://localhost:3001') as string,
     API_VERSION: which(process.env.API_VERSION, '0.1.0_dev') as string,
     PORT: parseInt(which(process.env.PORT, '3001') as string),
@@ -116,6 +117,7 @@ const env = {
     JWT_SECRET: process.env.JWT_SECRET as string,
     JWT_SESSION_SECRET: process.env.JWT_SESSION_SECRET as string,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
+    JWT_PASSWORD_RESET_SECRET: process.env.JWT_PASSWORD_RESET_SECRET as string,
     JWT_EXPIRE: process.env.JWT_EXPIRE as string,
     //#endregion
 
@@ -146,6 +148,7 @@ const env = {
     CORS_ALLOW_ALL: (which(process.env.CORS_ALLOW_ALL, 'false') as string) === 'true',
     CORS_ORIGIN_WHITE_LIST: (which(process.env.CORS_ORIGIN_WHITE_LIST, 'http://localhost:3000') as string).split(','),
     FRONTEND_URL: which(process.env.FRONTEND_URL, 'http://localhost:3000') as string,
+    FRONTEND_PASSWORD_RESET_URL: which(process.env.FRONTEND_PASSWORD_RESET_URL, 'http://localhost:3000/authentication/reset-password') as string,
     //#endregion
 
     //#region REDIS

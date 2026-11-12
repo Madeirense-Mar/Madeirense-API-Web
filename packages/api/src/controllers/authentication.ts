@@ -54,7 +54,7 @@ import {
     parseTokensFromRequest
 } from '../utilities/parsers';
 
-import { 
+import {
     DEFAULT_COOKIES_OPTIONS
 } from './utilities/constants';
 
@@ -72,6 +72,9 @@ import type {
 
 
 import type { JWTPayloadType } from '../types';
+import type { IApplicationRequest } from 'middlewares/settingsPropagation';
+import { sendMailNow } from '../services/mailer';
+import { renderEmail } from '../services/emailTemplates';
 
 // ***************************************************************************************************************
 
@@ -298,6 +301,42 @@ export const who = async (
     });
 };
 
+export const reset = async (
+    req: IApplicationRequest<any, { email: string }>,
+    res: Response<API$Types.response<undefined>>
+) => {
+    try {
+        const user = await prisma.users.findFirst({
+            where: { email: req.body.email }
+        });
+
+        if (!user) throw new Error("Couldn't find user");
+
+        const authenticationToken = generateToken(user, "PASSWORD-RESET", env.APP_PASSWORD_RESET_EXPIRY_TIME);
+
+        //This may take time, let's not wait for it. Just fire and forget for now
+        sendMailNow(
+            {
+                to: req.body.email,
+                ...renderEmail("password-reset", {
+                    user_name: user.name,
+                    expiry_time: env.APP_PASSWORD_RESET_EXPIRY_TIME,
+                    redirect_url: `${env.FRONTEND_PASSWORD_RESET_URL}?token=${authenticationToken}`
+                })
+            },
+            `password-reset-request-user:${user.user_id}-${user.email}`
+        );
+    } catch (error) {
+        console.error("Unable to send e-mail: ", error);
+    }
+
+    return res.json({
+        success: true,
+        message: 'Sent a reset e-mail to the specified address if it exists',
+        data: undefined
+    });
+}
+
 export const refresh = async (
     req: IAuthenticatedRequest<any, { refreshToken: string }>,
     res: Response<API$Types.response<Users>>
@@ -370,18 +409,18 @@ const renewTokens = ({
             };
 
         case (refreshToken !== '' && sessionToken === ''):
-            const { 
-                email, 
+            const {
+                email,
                 role: user_role,
-                userId: user_id 
+                userId: user_id
             } = jwt.verify(
-                refreshToken as string, 
+                refreshToken as string,
                 env.JWT_REFRESH_SECRET
             ) as JWTPayloadType;
 
-            const payload = { 
-                email, 
-                user_id, 
+            const payload = {
+                email,
+                user_id,
                 user_role
             };
 
