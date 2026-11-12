@@ -31,11 +31,11 @@ const RedirectorProvider = ({ children }: any) => {
     const {
         pathname
     } = useLocation();
-    
+
     const {
         state: profileState
     } = useProfile();
-    
+
     const navigate = useNavigate();
     //#endregion
 
@@ -48,9 +48,10 @@ const RedirectorProvider = ({ children }: any) => {
             return;
         };
 
-        function branchToDefaultRedirections() {
+        function defaultNavigationBranches() {
             switch (true) {
                 case (pathname.endsWith(Madeirense$Enumerators.Pages.App.Offline)):
+                case (pathname.endsWith(Madeirense$Enumerators.Pages.Authentication["Reset Password"])):
                     navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
                     break;
 
@@ -68,13 +69,13 @@ const RedirectorProvider = ({ children }: any) => {
 
                         break;
 
-                    default: branchToDefaultRedirections(); break;
+                    default: defaultNavigationBranches(); break;
                 };
 
                 break;
             }
 
-            default: branchToDefaultRedirections(); break;
+            default: defaultNavigationBranches(); break;
         };
     }, [
         navigate,
