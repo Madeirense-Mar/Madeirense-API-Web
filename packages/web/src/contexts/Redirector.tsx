@@ -51,7 +51,6 @@ const RedirectorProvider = ({ children }: any) => {
         function defaultNavigationBranches() {
             switch (true) {
                 case (pathname.endsWith(Madeirense$Enumerators.Pages.App.Offline)):
-                case (pathname.endsWith(Madeirense$Enumerators.Pages.Authentication["Reset Password"])):
                     navigate(Madeirense$Enumerators.Pages.App.Layout, { replace: true });
                     break;
 
