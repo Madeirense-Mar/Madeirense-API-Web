@@ -27,7 +27,7 @@ export type serviceConstructorOptionsType<CustomOptions> = {
     tokens?: Partial<tokenObjectType>,
 } & CustomOptions;
 
-export type tokenType = "session" | "refresh";
+export type tokenType = "session" | "refresh" | "recovery";
 export type tokenObjectType = Record<`${tokenType}Token`, string>;
 
 export type withTokens<T> = T & { tokens?: tokenObjectType };

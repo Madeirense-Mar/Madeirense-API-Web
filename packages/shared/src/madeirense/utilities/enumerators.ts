@@ -82,6 +82,7 @@ export namespace Madeirense$Enumerators {
         "statuses" = "statuses",
         "status_type" = "status_type",
         "strict" = "strict",
+        "token" = "token",
         "type" = "type",
         "upcoming" = "upcoming",
         "user_id" = "user_id",

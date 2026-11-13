@@ -2,6 +2,8 @@ import {
     DEFAULT_API_CLIENT_DEBUG_OPTIONS
 } from '../utilities/constants.js';
 
+import { which } from '../utilities/functions.js';
+
 import { APIError } from './error.js';
 
 import type { valuePair } from 'types';
@@ -71,6 +73,7 @@ export class ClientRequestService {
     private defaultHeaders: Record<string, string>;
     private credentials: authenticationCredentialsType | null = null;
 
+    private recoveryToken: string | null = null;
     private refreshToken: string | null = null;
     private sessionToken: string | null = null;
 
@@ -148,8 +151,14 @@ export class ClientRequestService {
             headers.Authorization = `Basic ${btoa(`${this.credentials.email}:${this.credentials.password}`)}`;
         }
 
-        if (this.sessionToken) {
-            headers.Authorization = `Bearer ${this.sessionToken ?? this.refreshToken}`;
+        const token = which(
+            this.recoveryToken,
+            this.refreshToken,
+            this.sessionToken
+        );
+
+        if (!token) {
+            headers.Authorization = `Bearer ${token}`;
         }
 
         return headers;
@@ -159,9 +168,14 @@ export class ClientRequestService {
         this.credentials = credentials;
     }
 
-    setToken({ sessionToken, refreshToken }: Partial<tokenObjectType> = {}): void {
-        this.sessionToken = sessionToken ?? null;
+    setToken({ 
+        recoveryToken,
+        refreshToken, 
+        sessionToken
+    }: Partial<tokenObjectType> = {}): void {
+        this.recoveryToken = recoveryToken ?? null;
         this.refreshToken = refreshToken ?? null;
+        this.sessionToken = sessionToken ?? null;
     }
 
     private async request<ResponseData, ErrorCode extends string = "">(

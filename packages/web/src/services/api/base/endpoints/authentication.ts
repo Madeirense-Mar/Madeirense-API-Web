@@ -41,9 +41,11 @@ class AuthenticationEndpoints extends BaseAPIAbstractEndpoint {
         return response.data;
     }
 
-    async setCredentials(password: string) {
+    async setCredentials(password: string, recoveryToken?: string) {
         let cachedData: cachedDataType = defaultCachedData;
 
+        if (recoveryToken) this.client.setToken({ recoveryToken });
+        
         const response = await this.client.post<{ password: string }, boolean>('/auth/set-credentials', { password });
 
         if (this.storage) {
@@ -108,6 +110,12 @@ class AuthenticationEndpoints extends BaseAPIAbstractEndpoint {
         const response = await this.client.post<typeof payload, any>('/auth/reset', payload);
 
         return response.success;
+    }
+
+    async validateResetToken(payload: { token: string }) {
+        const response = await this.client.post<typeof payload, Users>('/auth/reset/validate-token', payload);
+
+        return response.data;
     }
 };
 

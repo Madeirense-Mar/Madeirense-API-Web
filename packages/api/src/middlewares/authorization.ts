@@ -97,11 +97,12 @@ export const validateJWT = async (
 
     try {
         const {
+            recoveryToken,
             refreshToken,
             sessionToken
         } = parseTokensFromRequest(req);
 
-        if ([refreshToken, sessionToken].every(t => t === '')) {
+        if ([recoveryToken, refreshToken, sessionToken].every(t => t === '')) {
             return res.status(401).json({
                 code: 'UNAUTHORIZED',
                 data: undefined,
@@ -115,10 +116,23 @@ export const validateJWT = async (
         let hasSessionExpired: boolean = false;
 
         try {
-            if (!sessionToken) throw new Error('expired');
+            switch (true) {
+                case (recoveryToken !== undefined):
+                    payload = jwt.verify(recoveryToken as string, env.JWT_PASSWORD_RESET_SECRET!) as JWTPayloadType;
 
-            payload = jwt.verify(sessionToken as string, env.JWT_SESSION_SECRET!) as JWTPayloadType;
+                    break;
+
+                default:
+                    if (!sessionToken) throw new Error('expired');
+
+                    payload = jwt.verify(sessionToken as string, env.JWT_SESSION_SECRET!) as JWTPayloadType;
+
+                    break;
+            }
         } catch (error) {
+            if (recoveryToken)
+                throw (error as Error).message;
+            
             switch (headers[API$Enumerators.Headers.platform] as keyof typeof API$Enumerators.Platforms) {
                 case 'web':
                     switch (true) {

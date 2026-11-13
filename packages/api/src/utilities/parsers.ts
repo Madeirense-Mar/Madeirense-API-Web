@@ -13,17 +13,12 @@ import {
 export const parseTokensFromRequest = (req: Request): tokenObjectType => {
     const platform: platformType = (req.headers[API$Enumerators.Headers.platform] as platformType ?? 'web');
 
-    let [
-        refreshToken,
-        sessionToken
-    ] = [
-            '',
-            ''
-        ];
+    let [recoveryToken, refreshToken, sessionToken] = ['', '', ''];
 
     switch (platform) {
         case 'mobile':
         case 'service':
+            recoveryToken = "";
             refreshToken = "";
 
             const token = req.headers["authorization"];
@@ -33,14 +28,16 @@ export const parseTokensFromRequest = (req: Request): tokenObjectType => {
 
         default:
             ({
+                recoveryToken = '',
                 refreshToken = '',
-                sessionToken = ''
+                sessionToken = '',
             } = parseJWTTokensFromHeaderCookies((req.headers.cookie ?? '')));
 
             break;
     }
 
     return {
+        recoveryToken,
         refreshToken,
         sessionToken
     };
@@ -48,6 +45,7 @@ export const parseTokensFromRequest = (req: Request): tokenObjectType => {
 
 export const parseJWTTokensFromHeaderCookies = (cookie: string): tokenObjectType => {
     const tokens = {
+        recoveryToken: '',
         refreshToken: '',
         sessionToken: ''
     };
@@ -55,7 +53,7 @@ export const parseJWTTokensFromHeaderCookies = (cookie: string): tokenObjectType
     if (cookie === '') return tokens;
 
     cookie.replace(/\s/g, '').split(';')
-        .filter(cookie => ['refreshToken', 'sessionToken'].some(k => cookie.includes(`${k}=`)))
+        .filter(cookie => ['recoveryToken', 'refreshToken', 'sessionToken'].some(k => cookie.includes(`${k}=`)))
         .forEach(token => {
             const [key, value] = token.split('=') as string[];
 
