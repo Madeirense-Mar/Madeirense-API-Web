@@ -90,7 +90,7 @@ const AuthenticationSuccessPage = ({
                 setErrorMessage(error instanceof Error ? error.message : "Authentication failed");
 
                 setTimeout(() => {
-                    navigate('/login');
+                    navigate(`${Madeirense$Enumerators.Pages.App.Welcome}/login`);
                 }, 3000);
             }
         };
