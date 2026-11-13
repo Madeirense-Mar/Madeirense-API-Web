@@ -163,7 +163,7 @@ function WelcomePage() {
 
                 setError(null);
                 setRequestingPasswordReset(true);
-                
+
                 try {
                     await authenticationAPI.requestReset({
                         email: $formData.get("email") as string
@@ -212,7 +212,7 @@ function WelcomePage() {
                     </header>
 
                     <form onSubmit={POST} autoComplete="on">
-                        <fieldset data-section={type} data-state={state === "authenticating" ? "disabled" : "idle"}>
+                        <fieldset data-section={type} {...{ ...(state === "authenticating" ? { "data-disabled": "" } : {}) }}>
                             <label htmlFor="email">E-mail</label>
 
                             <input id="email" name="email" type="email" placeholder="oteuemail@provedor.com" required />
@@ -264,7 +264,7 @@ function WelcomePage() {
                             <p>O melhor da culinária Madeirense em Angola</p>
                         </header>
 
-                        <fieldset data-section={type} data-state={state === "authenticating" ? "disabled" : "idle"}>
+                        <fieldset data-section={type} {...{ ...(state === "authenticating" ? { "data-disabled": "" } : {}) }}>
                             <label htmlFor="email">
                                 E-mail
 
@@ -350,7 +350,7 @@ function WelcomePage() {
                             <p>Não se vai arrepender</p>
                         </header>
 
-                        <fieldset data-section={`${type}-name`} className="w-full flex justify-start items-start gap-2" data-state={state === "authenticating" ? "disabled" : "idle"}>
+                        <fieldset data-section={`${type}-name`} className="w-full flex justify-start items-start gap-2" {...{ ...(state === "authenticating" ? { "data-disabled": "" } : {}) }}>
                             <label htmlFor="fname">
                                 <span>Primeiro nome</span>
 
@@ -364,7 +364,7 @@ function WelcomePage() {
                             </label>
                         </fieldset>
 
-                        <fieldset data-section={`${type}-contact`} data-state={state === "authenticating" ? "disabled" : "idle"}>
+                        <fieldset data-section={`${type}-contact`} {...{ ...(state === "authenticating" ? { "data-disabled": "" } : {}) }}>
                             <label htmlFor="email">
                                 <span>E-mail</span>
 
@@ -388,7 +388,7 @@ function WelcomePage() {
                             </div>
                         </fieldset>
 
-                        <fieldset data-section={`${type}-credentials`} data-state={state === "authenticating" ? "disabled" : "idle"}>
+                        <fieldset data-section={`${type}-credentials`} {...{ ...(state === "authenticating" ? { "data-disabled": "" } : {}) }}>
                             <label htmlFor="password">
                                 Password
 
