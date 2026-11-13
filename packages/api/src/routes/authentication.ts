@@ -14,8 +14,7 @@ import {
 } from '@Madeirense/shared';
 
 import {
-    API_MAX_TIME_REFRESH_TOKEN,
-    API_MAX_TIME_SESSION_TOKEN
+    API_MAX_TIME_REFRESH_TOKEN
 } from '../utilities/constants.js';
 
 import { generateToken } from '../utilities/generators.js';
@@ -111,6 +110,15 @@ v1.post(
         Validate.Handle.error
     ],
     controller.reset as any
+);
+
+v1.post(
+    '/reset/validate-token',
+    [
+        body('token').isJWT().withMessage(`Must be a valid JWT token address`),
+        Validate.Handle.error
+    ],
+    controller.validateResetToken as any
 );
 
 v1.get(

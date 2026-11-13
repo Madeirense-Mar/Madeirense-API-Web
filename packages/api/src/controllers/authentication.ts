@@ -1,12 +1,9 @@
 import {
-    type CookieOptions,
     type Request,
     type Response
 } from 'express';
 
 import jwt from 'jsonwebtoken';
-
-import { prisma } from '../lib/prisma';
 
 import {
     type Users
@@ -15,6 +12,7 @@ import {
 import {
     isEmpty,
     API$Enumerators,
+    Madeirense$Enumerators,
     type API$Types,
     type authenticatedProfileType,
     type authenticationCredentialsType,
@@ -44,14 +42,12 @@ import {
     clearCart$Dry
 } from './cart';
 
-
 import {
     Prisma$Utilities
 } from '../utilities/ORM';
 
 import {
-    parseJWTTokensFromHeaderCookies,
-    parseTokensFromRequest
+    parseJWTTokensFromHeaderCookies
 } from '../utilities/parsers';
 
 import {
@@ -66,15 +62,16 @@ import {
     handleControllerError
 } from './utilities/handlers';
 
+import { prisma } from '../lib/prisma';
+import { sendMailNow } from '../services/mailer';
+import { renderEmail } from '../services/emailTemplates';
+
 import type {
     IAuthenticatedRequest
 } from '../interfaces';
 
-
 import type { JWTPayloadType } from '../types';
 import type { IApplicationRequest } from 'middlewares/settingsPropagation';
-import { sendMailNow } from '../services/mailer';
-import { renderEmail } from '../services/emailTemplates';
 
 // ***************************************************************************************************************
 
@@ -321,7 +318,7 @@ export const reset = async (
                 ...renderEmail("password-reset", {
                     user_name: user.name,
                     expiry_time: env.APP_PASSWORD_RESET_EXPIRY_TIME,
-                    redirect_url: `${env.FRONTEND_PASSWORD_RESET_URL}?token=${authenticationToken}`
+                    redirect_url: `${env.FRONTEND_PASSWORD_RESET_URL}?${Madeirense$Enumerators.SearchQueries.token}=${authenticationToken}`
                 })
             },
             `password-reset-request-user:${user.user_id}-${user.email}`
@@ -349,6 +346,7 @@ export const refresh = async (
     // otherwise it just echoes the same dead token back. sessionToken: ''
     // forces the "mint fresh from refreshToken" branch. Fixed 2026-09-08.
     const newTokens = renewTokens({
+        recoveryToken: '',
         sessionToken: '',
         refreshToken: req.body.refreshToken
     });
@@ -392,7 +390,33 @@ export const setCredentials = async (
     }
 };
 
+export const validateResetToken = async (
+    req: IApplicationRequest<any, { token: string }>,
+    res: Response<API$Types.response<Users>>
+) => {
+    try {
+        const { userId, email } = jwt.verify(req.body.token, env.JWT_PASSWORD_RESET_SECRET!) as JWTPayloadType;
+
+        return res.status(200).json({
+            data: await prisma.users.findUnique({
+                where: {
+                    user_id: parseInt(userId),
+                    email
+                }
+            }),
+            message: 'Token is valid',
+            success: true,
+        });
+    } catch (error) {
+        return handleControllerError(
+            res,
+            error
+        );
+    }
+};
+
 const renewTokens = ({
+    recoveryToken,
     refreshToken,
     sessionToken
 }: tokenObjectType): tokenObjectType => {
@@ -404,6 +428,7 @@ const renewTokens = ({
             ].every(isEmpty)
         ):
             return {
+                recoveryToken: '',
                 refreshToken: '',
                 sessionToken: ''
             };
@@ -425,12 +450,14 @@ const renewTokens = ({
             };
 
             return {
+                recoveryToken: '',
                 refreshToken: generateToken(payload, 'REFRESH'),
                 sessionToken: generateToken(payload, 'SESSION')
             };
 
         default:
             return {
+                recoveryToken,
                 refreshToken,
                 sessionToken
             };
