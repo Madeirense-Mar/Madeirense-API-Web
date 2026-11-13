@@ -1,74 +1,97 @@
 /*#region Default =========================================== */
 [data-state] {
-    border: var(--element-border-width, 1px) var(--element-border-style, solid) var(--element-border-color, transparent);
-    border-radius: var(--element-border-radius, 12px);
+    border: var(--element-border-width, var(--base-border-width, 1px)) var(--element-border-style, var(--base-border-style, solid)) var(--element-border-color, var(--base-border-color, transparent));
+    border-radius: var(--element-border-radius, var(--base-border-radius, 12px));
 
-    background-color: var(--element-background-color, transparent);
+    background-color: var(--element-background-color,var(--base-background-color, transparent));
 }
 
 /*#endregion*/
 
 /*#region Error =========================================== */
 [data-state="error"] {
-    --element-border-style: dotted;
+    --base-border-style: dotted;
 }
 
-[data-theme="LAND-DARK"] [data-state="error"] {
-    --element-border-color: var(--accent);
-    --element-background-color: var(--accent);
+[data-theme*="DARK"] [data-state="error"] {
+    --base-border-color: var(--accent);
+    --base-background-color: color-mix(in srgb, var(--accent), black 80%);
+
+    --text-color: var(--accent);
 }
 
-[data-theme="SEA-DARK"] [data-state="error"] {
-    --element-border-color: var(--accent);
-    --element-background-color: var(--accent);
+[data-theme*="LIGHT"] [data-state="error"] {
+    --base-border-color: var(--accent);
+    --base-background-color: color-mix(in srgb, var(--accent), white 80%);
 }
+/*#endregion*/
 
-[data-theme="LAND-LIGHT"] [data-state="error"] {
-    --element-border-color: var(--accent);
-    --element-background-color: var(--accent);
-}
+/*#region Idle =========================================== */
+[data-state="idle"] {
+    --base-border-color: transparent;
+    --base-border-radius: 0px;
+    --base-border-style: solid;
+    --base-border-width: 0px;
 
-[data-theme="SEA-LIGHT"] [data-state="error"] {
-    --element-border-color: var(--accent);
-    --element-background-color: var(--accent);
+    --base-background-color: transparent;
 }
 /*#endregion*/
 
 /*#region Info =========================================== */
 [data-state="info"] {
-    --element-border-style: solid;
+    --base-border-style: solid;
 }
 
 [data-theme*="DARK"] [data-state="info"] {
-    --element-border-color: var(--primary);
-    --element-background-color: var(--primary-dark);
+    --base-border-color: var(--primary);
+    --base-background-color: var(--primary-dark);
 
     --text-color: var(--primary-light);
 }
 
 [data-theme*="LIGHT"] [data-state="info"] {
-    --element-border-color: var(--secondary-dark);
-    --element-background-color: var(--secondary-light);
+    --base-border-color: var(--secondary-dark);
+    --base-background-color: var(--secondary-light);
 
     --text-color: var(--secondary-dark);
 }
 /*#endregion*/
 
+/*#region Valid ========================================== */
+[data-state="valid"] {
+    --base-border-style: solid;
+}
+
+[data-theme*="DARK"] [data-state="valid"] {
+    --base-border-color: var(--success);
+    --base-background-color: var(--success-dark);
+
+    --text-color: var(--success);
+}
+
+[data-theme*="LIGHT"] [data-state="valid"] {
+    --base-border-color: var(--success);
+    --base-background-color: color-mix(in srgb, var(--success), transparent 50%);
+
+    --text-color: var(--success-dark);
+}
+/*#endregion*/
+
 /*#region Warning =========================================== */
 [data-state="warning"] {
-    --element-border-style: dashed;
+    --base-border-style: dashed;
 }
 
 [data-theme*="DARK"] [data-state="warning"] {
-    --element-border-color: var(--secondary);
-    --element-background-color: var(--secondary-dark);
+    --base-border-color: var(--secondary);
+    --base-background-color: var(--secondary-dark);
 
     --text-color: var(--secondary);
 }
 
 [data-theme*="LIGHT"] [data-state="warning"] {
-    --element-border-color: var(--secondary-dark);
-    --element-background-color: var(--secondary-light);
+    --base-border-color: var(--secondary-dark);
+    --base-background-color: var(--secondary-light);
 
     --text-color: var(--secondary-dark);
 }
